@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
+from . import views
 
+app_name = ''
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('landing.urls')),
+    path('', views.landing, name='landing'),
 ]
