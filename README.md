@@ -1,10 +1,9 @@
 # PO-PIN
 <p>SMU-engineer 4th Project Team 1</p>
-<h1>PO-PIN</h1>
-<hr><br>
+<br>
 
 협업 방식
-<hr><br>
+<br>
 feature branch : 새로운 기능을 제작할 때 생성해주세요. 
 ex. 로그인 파트 제작을 진행하시면 feature/login
 <br>
