@@ -11,3 +11,6 @@ def list(request):
 
     context = {'list': qs}
     return render(request, 'list.html', context)
+
+def view(request, pno):
+    return render(request, 'view.html')
