@@ -9,12 +9,13 @@ class TempUser(models.Model):
         return f'{self.user_id}'
 
 class TempIdol(models.Model):
-    groub = models.CharField(max_length=50)
+    group = models.CharField(max_length=50)
     member = models.CharField(max_length=50)
     
     def __str__(self):
-        return f'{self.groub} | {self.member}'
-        
+        return f'{self.group} | {self.member}'
+
+    
 class Photocard(models.Model):
     CATEGORY_CHOICES = [
         ('앨범', '앨범'),
@@ -54,8 +55,8 @@ class Photocard(models.Model):
     # models.py
 
     pno = models.AutoField(primary_key=True)
-    seller = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='sell')
-    buyer = models.ForeignKey(TempUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='buy')
+    seller = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='selling_photocards')
+    buyer = models.ForeignKey(TempUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='buying_photocards')
 
     title = models.CharField(max_length=100, default='title')
     image = models.ImageField(upload_to='photocards/')
@@ -77,6 +78,13 @@ class Photocard(models.Model):
 
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-
+    
     def __str__(self):
-        return f'{self.title} ({self.idol.groub}/{self.idol.member})'
+        return f'{self.title} ({self.idol.group}/{self.idol.member})'
+
+class TempWish(models.Model):
+    user = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='wished_photocards')
+    photocard = models.ForeignKey(Photocard, on_delete=models.CASCADE, related_name='wished_by_users')
+    
+    def __str__(self):
+        return f'{self.user.user_id} | {self.photocard.pno}'
