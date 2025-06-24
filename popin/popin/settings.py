@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'mypage',
     'signupFT',
     'photocard',
+    'idols',
+    
 ]
 
 MIDDLEWARE = [
