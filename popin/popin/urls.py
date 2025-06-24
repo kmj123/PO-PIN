@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('landing.urls')),
     path('mypage/', include('mypage.urls')),
+    path('signup/', include('signupFT.urls')),
 ]

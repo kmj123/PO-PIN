@@ -2,8 +2,5 @@ from django.shortcuts import render
 
 # Create your views here.
 
-def landing(request):
-    return render(request, 'signup.html')
-
-def landing(request):
-    return render(request, 'FM.html')
+def agree(request):
+    return render(request, '1.agree.html')
