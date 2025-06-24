@@ -1,0 +1,944 @@
+
+
+
+
+<!DOCTYPE html> <html lang="ko"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>마이페이지</title> <style> * { margin: 0; padding: 0; box-sizing: border-box; } body { font-f
+
+pasted
+
+
+
+붙여넣은 내용
+
+24.63 KB •928줄
+•
+원본과 형식이 일치하지 않을 수 있습니다
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .nav {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav a {
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .nav a:hover {
+        color: #667eea;
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        display: flex;
+        gap: 2rem;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+        min-width: 320px;
+        flex-shrink: 0;
+    }
+
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: white;
+        overflow: hidden;
+    }
+
+    .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .profile-info h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .profile-info h3 {
+        color: #666;
+        font-weight: normal;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .favorite-btn {
+        width: 100%;
+        max-width: 250px;
+        height: 80px;
+        border-radius: 40px;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .favorite-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .stats {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+    }
+
+    .content {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        flex: 1;
+        min-width: 0;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+
+    .tab {
+        background: rgba(255, 255, 255, 0.7);
+        border: none;
+        padding: 0.8rem 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .tab:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+    }
+
+    .tab.active {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+    }
+
+    .change-btn, .view-all-btn, .back-btn {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .back-btn {
+        background: #6c757d;
+    }
+
+    .back-btn:hover {
+        background: #5a6268;
+    }
+
+    .change-btn:hover, .view-all-btn:hover, .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .item {
+        background: rgba(248, 249, 250, 0.8);
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .item h3 {
+        color: #333;
+        margin-bottom: 0.5rem;
+        word-break: break-word;
+    }
+
+    .item p {
+        color: #666;
+        line-height: 1.6;
+        word-break: break-word;
+    }
+
+    .album-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .album-card {
+        background: rgba(248, 249, 250, 0.8);
+        border-radius: 12px;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .album-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .album-cover {
+        width: 100%;
+        height: 120px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+    }
+
+    .album-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .album-info h4 {
+        color: #333;
+        margin-bottom: 0.3rem;
+        font-size: 0.9rem;
+        word-break: break-word;
+    }
+
+    .album-info p {
+        color: #666;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-count {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .photocard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+
+    .photocard {
+        background: white;
+        border-radius: 8px;
+        padding: 0.8rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-align: center;
+    }
+
+    .photocard:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .photocard-img {
+        width: 100%;
+        height: 100px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        overflow: hidden;
+    }
+
+    .photocard-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .photocard h5 {
+        color: #333;
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .photocard p {
+        color: #666;
+        font-size: 0.7rem;
+    }
+
+    .transaction-tabs, .review-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .transaction-tab, .review-tab {
+        background: rgba(248, 249, 250, 0.8);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .transaction-tab.active, .review-tab.active {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .review-item {
+        border-left: 4px solid #667eea;
+    }
+
+    .blocked-user {
+        border-left: 4px solid #e74c3c;
+        position: relative;
+    }
+
+    .unblock-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 0.3rem 0.8rem;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .unblock-btn:hover {
+        background: #c0392b;
+    }
+
+    .view-all-container {
+        text-align: center;
+        margin-top: 1.5rem;
+    }
+
+    .current-album {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 8px;
+        border-left: 4px solid #667eea;
+    }
+
+    .cards-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .rating {
+        margin-right: 0.5rem;
+    }
+
+    /* 모바일 우선 반응형 디자인 */
+    
+    /* 태블릿 크기 */
+    @media (min-width: 768px) and (max-width: 1023px) {
+        .main {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .profile-card {
+            min-width: auto;
+        }
+        
+        .profile-header {
+            flex-direction: row;
+            text-align: left;
+            align-items: flex-start;
+        }
+        
+        .stats {
+            justify-content: flex-start;
+        }
+        
+        .album-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+        
+        .photocard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        }
+    }
+
+    /* 모바일 크기 */
+    @media (max-width: 767px) {
+        .header {
+            padding: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            flex-direction: column;
+            padding: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            gap: 1rem;
+        }
+        
+        .nav.active {
+            display: flex;
+        }
+        
+        .mobile-menu-btn {
+            display: block;
+        }
+        
+        .logo {
+            font-size: 1.4rem;
+        }
+        
+        .main {
+            flex-direction: column;
+            margin: 1rem auto;
+            padding: 0 0.5rem;
+            gap: 1rem;
+        }
+        
+        .profile-card {
+            min-width: auto;
+            padding: 1.5rem;
+        }
+        
+        .profile-header {
+            gap: 1rem;
+        }
+        
+        .profile-info h1 {
+            font-size: 1.3rem;
+        }
+        
+        .profile-info h3 {
+            font-size: 0.8rem;
+        }
+        
+        .favorite-btn {
+            height: 70px;
+            font-size: 12px;
+        }
+        
+        .stats {
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            min-width: 80px;
+        }
+        
+        .stat-number {
+            font-size: 1.2rem;
+        }
+        
+        .content {
+            padding: 1.5rem;
+        }
+        
+        .tabs {
+            gap: 0.3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .tabs::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+        
+        .tabs::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+        
+        .tab {
+            font-size: 0.8rem;
+            padding: 0.6rem 0.8rem;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        
+        .section-header h2 {
+            font-size: 1.2rem;
+        }
+        
+        .item {
+            padding: 1rem;
+        }
+        
+        .album-grid {
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+        
+        .album-cover {
+            height: 100px;
+        }
+        
+        .photocard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .photocard {
+            padding: 0.5rem;
+        }
+        
+        .photocard-img {
+            height: 80px;
+        }
+        
+        .photocard h5 {
+            font-size: 0.7rem;
+        }
+        
+        .photocard p {
+            font-size: 0.6rem;
+        }
+        
+        .transaction-tabs, .review-tabs {
+            gap: 0.5rem;
+        }
+        
+        .transaction-tab, .review-tab {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+        
+        .current-album {
+            font-size: 1rem;
+            padding: 0.8rem;
+        }
+        
+        .cards-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .unblock-btn {
+            position: static;
+            margin-top: 0.5rem;
+            align-self: flex-start;
+        }
+        
+        .blocked-user {
+            padding-bottom: 3rem;
+        }
+    }
+
+    /* 초소형 모바일 */
+    @media (max-width: 480px) {
+        .profile-card {
+            padding: 1rem;
+        }
+        
+        .content {
+            padding: 1rem;
+        }
+        
+        .tabs {
+            padding-bottom: 0.3rem;
+        }
+        
+        .tab {
+            font-size: 0.7rem;
+            padding: 0.5rem 0.6rem;
+        }
+        
+        .album-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+        
+        .photocard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+            gap: 0.5rem;
+        }
+        
+        .item {
+            padding: 0.8rem;
+        }
+        
+        .stats {
+            gap: 0.5rem;
+        }
+        
+        .stat-number {
+            font-size: 1rem;
+        }
+    }
+
+    /* 큰 화면 */
+    @media (min-width: 1400px) {
+        .main {
+            max-width: 1400px;
+            gap: 3rem;
+        }
+        
+        .profile-card {
+            min-width: 380px;
+        }
+        
+        .album-grid {
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        
+        .photocard-grid {
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        }
+    }
+</style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">포카마켓</div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <nav class="nav" id="nav">
+            <a href="#">홈</a>
+            <a href="#">포카교환</a>
+            <a href="#">커뮤니티</a>
+            <a href="#">마이페이지</a>
+        </nav>
+    </header>
+
+    <main class="main">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="avatar">
+                    <img src="https://via.placeholder.com/80x80/667eea/ffffff?text=👤" alt="프로필">
+                </div>
+                <div class="profile-info">
+                    <h1>포카러버123</h1>
+                    <h3>"포카모으기를 좋아하는 포카 덕후"</h3>
+                    
+                    <button class="favorite-btn" onclick="showFavoriteModal()">
+                        <div>나의 최애</div>
+                        <div id="current-favorite" style="font-size: 12px; margin-top: 5px; opacity: 0.9;">그룹 선택하기</div>
+                    </button>
+                    
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-number">156</div>
+                            <div>보유 포카</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">23</div>
+                            <div>교환 완료</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">4.8</div>
+                            <div>평점</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('keywords')">키워드</button>
+                <button class="tab" onclick="showTab('recent')">최근본글</button>
+                <button class="tab" onclick="showTab('cards')">내가 가진 포토카드</button>
+                <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
+                <button class="tab" onclick="showTab('transactions')">교환거래</button>
+                <button class="tab" onclick="showTab('reviews')">후기글</button>
+                <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                <button class="tab" onclick="showTab('blocked')">차단한 사용자</button>
+            </div>
+
+            <div id="keywords" class="tab-content active">
+                <div class="section-header">
+                    <h2>키워드</h2>
+                </div>
+                <div class="item">
+                    <h3>관심 키워드</h3>
+                    <p>#정국포카 #로제포카 #한정판 #시그네쳐 #러키드로우</p>
+                </div>
+                <div class="item">
+                    <h3>알림 키워드</h3>
+                    <p>#BTS #BLACKPINK #NewJeans #포카교환 #급구</p>
+                </div>
+            </div>
+
+            <div id="recent" class="tab-content">
+                <div class="section-header">
+                    <h2>최근본글</h2>
+                </div>
+                <div class="item">
+                    <h3>BTS 정국 포토카드 교환해요</h3>
+                    <p>2024.01.20 12:30 - Map of the Soul: 7</p>
+                </div>
+                <div class="item">
+                    <h3>블랙핑크 로제 포카 판매합니다</h3>
+                    <p>2024.01.20 11:45 - THE ALBUM 한정판</p>
+                </div>
+                <div class="item">
+                    <h3>NewJeans 민지 포카 급구해요!</h3>
+                    <p>2024.01.19 16:20 - OMG 앨범</p>
+                </div>
+            </div>
+
+            <div id="cards" class="tab-content">
+                <div class="cards-header">
+                    <h2>내가 가진 포토카드</h2>
+                    <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
+                </div>
+                
+                <div id="album-list" class="album-grid">
+                    <div class="album-card" onclick="showPhotoCards('bts-mots7')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/667eea/ffffff?text=BTS" alt="Map of the Soul: 7">
+                        </div>
+                        <div class="album-info">
+                            <h4>Map of the Soul: 7</h4>
+                            <p>BTS</p>
+                            <span class="card-count">5장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bp-thealbum')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/e91e63/ffffff?text=BP" alt="THE ALBUM">
+                        </div>
+                        <div class="album-info">
+                            <h4>THE ALBUM</h4>
+                            <p>BLACKPINK</p>
+                            <span class="card-count">3장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bts-ly')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/9c27b0/ffffff?text=LY" alt="Love Yourself">
+                        </div>
+                        <div class="album-info">
+                            <h4>Love Yourself: Her</h4>
+                            <p>BTS</p>
+                            <span class="card-count">4장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('nj-omg')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/4caf50/ffffff?text=NJ" alt="OMG">
+                        </div>
+                        <div class="album-info">
+                            <h4>OMG</h4>
+                            <p>NewJeans</p>
+                            <span class="card-count">6장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('nj-getup')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/ff9800/ffffff?text=GetUp" alt="Get Up">
+                        </div>
+                        <div class="album-info">
+                            <h4>Get Up</h4>
+                            <p>NewJeans</p>
+                            <span class="card-count">8장</span>
+                        </div>
+                    </div>
+                    
+                    <div class="album-card" onclick="showPhotoCards('bp-bornpink')">
+                        <div class="album-cover">
+                            <img src="https://via.placeholder.com/150x120/f44336/ffffff?text=Born" alt="Born Pink">
+                        </div>
+                        <div class="album-info">
+                            <h4>Born Pink</h4>
+                            <p>BLACKPINK</p>
+                            <span class="card-count">2장</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="photocard-list" style="display: none;">
+                    <div id="current-album-title" class="current-album"></div>
+                    <div class="photocard-grid"></div>
+                </div>
+            </div>
+
+            <div id="wishlist" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">위시리스트</h2>
+                <div class="item">
+                    <h3>BTS V 포토카드</h3>
+                    <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                </div>
+                <div class="item">
+                    <h3>블랙핑크 제니 포토카드</h3>
+                    <p>Born Pink 앨범 - 급구합니다</p>
+                </div>
+                <div class="item">
+                    <h3>NewJeans 하니 포토카드</h3>
+                    <p>Get Up 앨범 - 원하는 카드입니다</p>
+                </div>
+            </div>
+
+            <div id="transactions" class="tab-content">
+                <h2 style="margin-bottom: 1.5rem;">교환거래</h2>
+                <div class="transaction-tabs">
+                    <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
+                    <button class="transaction-tab" onclick="showTransaction
