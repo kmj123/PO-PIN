@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WISH CARD - NCT WISH 포토카드 교환</title>
     <style>
-        * { 
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -45,12 +45,20 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display:block;
+            width:250px;
         }
+
+        .logo img{
+            margin-right:10px; 
+            width:45px; height:45px;
+            vertical-align: middle;}
 
         .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             list-style: none;
+            width:400px;
         }
 
         .nav-menu a {
@@ -85,6 +93,7 @@
         .auth-buttons {
             display: flex;
             gap: 1rem;
+            width:250px;
         }
 
         .btn {
@@ -153,7 +162,7 @@
             box-shadow: -5px 0 20px rgba(0,0,0,0.1);
             padding: 5rem 0 2rem 0;
             z-index: 101;
-            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: right 0.3s ease; /* 슬라이딩 효과 */
             overflow-y: auto;
         }
 
@@ -324,6 +333,8 @@
             font-size: 1.2rem;
             font-weight: 600;
         }
+
+        .card-image img{width:226px; height:284px; object-fit: cover;}
 
         .card-info {
             padding: 1.5rem;
@@ -507,17 +518,17 @@
     <!-- 헤더 -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">PO-PIN</div>
+            <a href="#" class="logo"><img src='images/logo.png'>PO-PIN</a>
             <ul class="nav-menu">
                 <li><a href="#home">홈</a></li>
-                <li><a href="/photocard/list/">포카교환</a></li>
+                <li><a href="#exchange">포카교환</a></li>
                 <li><a href="#community">커뮤니티</a></li>
                 <li><a href="#decorate">포카꾸미기</a></li>
                 <li><a href="#mypage">마이페이지</a></li>
             </ul>
             <div class="auth-buttons">
                 <a href="#login" class="btn btn-outline">로그인</a>
-                <a href="/signup/agree/" class="btn btn-primary">회원가입</a>
+                <a href="#signup" class="btn btn-primary">회원가입</a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
@@ -541,24 +552,24 @@
     <!-- 히어로 섹션 -->
     <section class="hero">
         <h1>나의 최애와 함께하는<br>포토카드 교환</h1>
-        <p class="subtitle">위시즈들을 위한 특별한 포토카드 교환 플랫폼</p>
+        <p class="subtitle">팬들을 위한 특별한 포토카드 교환 플랫폼</p>
         <a href="#exchange" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem; margin-top: 1rem;">지금 시작하기</a>
         
         <div class="hero-features">
             <div class="feature-card">
                 <div class="feature-icon">📍</div>
                 <h3>위치기반 교환</h3>
-                <p>내 주변 위시즈들과 안전하고 편리하게 포토카드를 교환하세요</p>
+                <p>내 주변 팬들과 안전하고 편리하게<br>포토카드를 교환하세요</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">💬</div>
                 <h3>실시간 채팅</h3>
-                <p>교환 상대와 실시간으로 소통하며 거래를 진행할 수 있어요</p>
+                <p>교환 상대와 실시간으로 소통하며<br>거래를 진행할 수 있어요</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">🎨</div>
                 <h3>포카 꾸미기</h3>
-                <p>나만의 개성있는 포토카드를 만들고 다른 위시즈들과 공유해보세요</p>
+                <p>나만의 개성있는 포토카드를 만들고<br>다른 팬들과 공유해보세요</p>
             </div>
         </div>
     </section>
@@ -568,9 +579,9 @@
         <h2 class="section-title">🔥 인기 포토카드</h2>
         <div class="cards-grid">
             <div class="card-item">
-                <div class="card-image">SION 포토카드</div>
+                <div class="card-image"><img src="images/wonyoung.jpg"></div>
                 <div class="card-info">
-                    <h4>시온 (SION)</h4>
+                    <h4>원영 (WONYOUNG)</h4>
                     <div class="card-meta">
                         <span class="card-album">WISH 1집</span>
                         <span class="card-likes">❤️ 24</span>
@@ -584,7 +595,7 @@
             </div>
             
             <div class="card-item">
-                <div class="card-image">RIKU 포토카드</div>
+                <div class="card-image"><img src="images/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>리쿠 (RIKU)</h4>
                     <div class="card-meta">
@@ -600,7 +611,7 @@
             </div>
             
             <div class="card-item">
-                <div class="card-image">YUSHI 포토카드</div>
+                <div class="card-image"><img src="images/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>유시 (YUSHI)</h4>
                     <div class="card-meta">
@@ -616,7 +627,7 @@
             </div>
             
             <div class="card-item">
-                <div class="card-image">JAEHEE 포토카드</div>
+                <div class="card-image"><img src="images/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>재희 (JAEHEE)</h4>
                     <div class="card-meta">
