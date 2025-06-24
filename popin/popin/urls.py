@@ -7,7 +7,6 @@ urlpatterns = [
     path('', include('landing.urls')),
     path('mypage/', include('mypage.urls')),
     path('photocard/', include('photocard.urls')),
-]
 
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.
 urlpatterns += static(settings.MEDIA_URL, 
