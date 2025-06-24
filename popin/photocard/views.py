@@ -13,4 +13,6 @@ def list(request):
     return render(request, 'list.html', context)
 
 def view(request, pno):
-    return render(request, 'view.html')
+    qs = Photocard.objects.get(pno=pno)
+    context = {"info":qs}
+    return render(request, 'view.html', context)
