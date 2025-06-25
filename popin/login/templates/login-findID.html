@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
-    <title>로그인</title>
+    <title>로그인 - 아이디 찾기</title>
     <style>
         *{margin : 0; padding : 0; box-sizing: border-box;}
         body {
@@ -52,6 +52,10 @@
             width: 100%;
             border-radius: 6px;
             border: 1px solid #ccc;}
+            .login-form .pw{
+            width: 50%;
+            display: flex;
+            }
         .login-options {
             display: flex;
             justify-content: space-between;
@@ -60,75 +64,66 @@
             margin-bottom: 16px;
         }
 
-        .login-options .idsave {
-            display: flex;
-            align-items: center;
-            font-size: 13px;
-            gap: 6px;
-        }
-
-        .login-options .idsave input {
-            margin: 0;
-            width: auto;
-        }
-
-        .login-options .idsave span {
-            display: inline-block;
-            color: #333;
-        }
         a{text-decoration: none;}
-        .right-options {
-            display: flex;
-            align-items: center;
-        }
-        .right-options a {
-            font-size: 12px;
-            margin-left: 6px;
-            color: #9b9595dc;
-        }
         .login-form .loginOG{ line-height: 1.5;}
         .login-form hr{margin-bottom : 15px; color : #bbb6b6;}
         .login-form .signup{font-size : 12px; display : flex;}
         .join{color : #760fd6ef;}
         .login-form .kakao{ margin-top: 10px;}
-        .login-form .loginOG{border : none; background : #8A79AF; color : #fffdfd;}
-            
+        .login-form .email{display: flex;}
+        .login-form .email a{text-align: center; text-align : center; font-size : 18px; line-height: 40px;}
+        .login-form .code{display: flex; }
+        .login-form .button { margin-left : 10px;width : 50%; border : none; background : #8A79AF; color : #fffdfd;}
+        .login-form .findID{background : #8A79AF; color : #fffdfd;}
+        .login-form .emailAuto{
+            display: block;  
+            margin-bottom: 5px; 
+            padding: 12px;
+            width: 100%;
+            height : 45px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            background-color: white;
+            margin-left: 0;
+        }
+        .back{color : #8A79AF; }
     </style>
 </head>
 <body>
     <div>
-        <!-- 로고 -->
         <div class = "login-form">
-            <div class = "top">
-                <h2>PO-PIN</h2>
+        <div class = "top">
+            <h2>PO-PIN</h2>
             </div>
-            <div class = "subtitle">찍는곳이 성지, 포핀에서 덕심 폭발</div>
+            <div class = "subtitle">아이디를 잊어버리셨나요?</div>
             <hr>
-        <!-- 로그인 -->
-            <h3>로그인</h3>
-            <label>아이디</label>
-            <input type = "text" name = "id" class = "input id" placeholder="아이디를 입력하세요.">
-            <label>비밀번호</label>
-            <input type = "text" name = "pw" class = "input pw" placeholder="비밀번호를 입력하세요.">
-            <div class="login-options">
-                <label class="idsave">
-                    <input type="checkbox" id="idsave">
-                    <span>아이디 저장</span>
-                </label>
-                <div class="right-options">
-                    <a href="#" class="findId">아이디 찾기</a> 
-                    <a>|</a>
-                    <a href="#" class="findPw">비밀번호 찾기</a>
-                </div>
+            <!-- 아이디찾기 -->
+            <h3>아이디 찾기</h3>
+            <div class = "subtitle">가입 시 입력했던 정보를 통해 아이디를 찾을 수 있습니다.</div>
+
+            <label>이름</label>
+            <input type = "text" name = "name" class = "input id" placeholder="실명을 입력하세요.">
+            <label>이메일주소</label>
+            <div class = "email">
+                <input type = "text" name = "pw" class = "input pw" placeholder="example">
+                <a>@</a>
+                <input type = "text" name = "pw" class = "input pw" placeholder="popin.com">
             </div>
-            <input class = "loginOG" type = "button" value = "로그인">
-            <p class = "or">__________________________________또는__________________________________</p>
-            <img class = "kakao" src = "/static/images/login/kakaologin.png" alt = "카카오톡 로그인">
-            <div class = "signup">
-                <p>아직 계정이 없으신가요?</p>
-                <a>  </a>
-                <a href="#" class="join">  회원가입</a>
+            <select class = "emailAuto">
+                <option value="">선택하세요.</option>
+                <option value="naver.com">naver.com</option>
+                <option value="gmail.com">gmail.com</option>
+                <option value="hanmail.net">hanmail.net</option>
+                <option value="직접입력">직접입력</option>
+            </select>
+            <div class = "code">
+                <input type = "text" name = "pw" class = "input pw" placeholder="인증번호 6자리">
+                <input class = "button pw" type = "button" value = "인증번호전송">
             </div>
+            <input class = "findID" type = "button" value = "아이디찾기">
+            <input class = "back" type = "button" value = "로그인 페이지로 이동">
         </div>
     </div>
     

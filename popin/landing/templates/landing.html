@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -153,7 +154,7 @@
         .mobile-menu {
             position: fixed;
             top: 0;
-            right: -100%;
+            right: 100%;
             width: 300px;
             height: 100%;
             min-height: 100vh;
@@ -162,7 +163,7 @@
             box-shadow: -5px 0 20px rgba(0,0,0,0.1);
             padding: 5rem 0 2rem 0;
             z-index: 101;
-            transition: right 0.3s ease; /* 슬라이딩 효과 */
+            transition: left 0.3s ease; /* 슬라이딩 효과 */
             overflow-y: auto;
         }
 
@@ -518,10 +519,10 @@
     <!-- 헤더 -->
     <header class="header">
         <nav class="nav">
-            <a href="#" class="logo"><img src='images/logo.png'>PO-PIN</a>
+            <a href="#" class="logo"><img src='/static/images/landing/logo.png'>PO-PIN</a>
             <ul class="nav-menu">
                 <li><a href="#home">홈</a></li>
-                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="/photocard/list/">포카교환</a></li>
                 <li><a href="#community">커뮤니티</a></li>
                 <li><a href="#decorate">포카꾸미기</a></li>
                 <li><a href="#mypage">마이페이지</a></li>
@@ -579,7 +580,7 @@
         <h2 class="section-title">🔥 인기 포토카드</h2>
         <div class="cards-grid">
             <div class="card-item">
-                <div class="card-image"><img src="images/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>원영 (WONYOUNG)</h4>
                     <div class="card-meta">
@@ -595,7 +596,7 @@
             </div>
             
             <div class="card-item">
-                <div class="card-image"><img src="images/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>리쿠 (RIKU)</h4>
                     <div class="card-meta">
@@ -611,7 +612,7 @@
             </div> 
             
             <div class="card-item">
-                <div class="card-image"><img src="images/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>유시 (YUSHI)</h4>
                     <div class="card-meta">
@@ -627,7 +628,7 @@
             </div>
             
             <div class="card-item">
-                <div class="card-image"><img src="images/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
                 <div class="card-info">
                     <h4>재희 (JAEHEE)</h4>
                     <div class="card-meta">

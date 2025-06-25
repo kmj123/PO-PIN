@@ -13,21 +13,23 @@
         <div class="cards-grid">
             {% for i in list %}
             <div class="card-item">
-                <div class="card-image">
-                    <img src="/media/{{i.image}}" alt="{{i.pno}}">
-                </div>
-                <div class="card-info">
-                    <h4>{{i.idol__group}} {{i.idol__member}}</h4>
-                    <div class="card-meta">
-                        <span class="card-album">{{i.album}}</span>
-                        <span class="card-likes">❤️ {{ i.wish_count }}</span>
+                <a href="/photocard/view/{{i.pno}}/">
+                    <div class="card-image">
+                        <img src="/media/{{i.image}}" alt="{{i.pno}}">
                     </div>
-                    <div class="card-tags">
-                        <span class="tag">{{i.trade_type}}</span>
-                        <span class="tag">{{i.category}}</span>
+                    <div class="card-info">
+                        <h4>{{i.idol__group}} {{i.idol__member}}</h4>
+                        <div class="card-meta">
+                            <span class="card-album">{{i.album}}</span>
+                            <span class="card-likes">❤️ {{ i.wish_count }}</span>
+                        </div>
+                        <div class="card-tags">
+                            <span class="tag">{{i.trade_type}}</span>
+                            <span class="tag">{{i.category}}</span>
+                        </div>
+                        <div class="card-location">📍 {{i.place}}</div>
                     </div>
-                    <div class="card-location">📍 {{i.place}}</div>
-                </div>
+                </a>
             </div>
             {% endfor %}
             
