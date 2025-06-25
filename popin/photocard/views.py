@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from photocard.models import Photocard
 from idols.models import Member
 from photocard.models import TempUser
+from photocard.models import TempWish
 
 from django.db.models import Count
 from datetime import date
@@ -130,3 +131,15 @@ def update(request, pno):
 def delete(request, pno):
     Photocard.objects.get(pno=pno).delete()
     return redirect('/photocard/list/')
+
+def wish(request, pno):
+    user = TempUser.objects.first() # 로그인 구현 후 수정
+    photocard = Photocard.objects.get(pno=pno)
+    
+    try: 
+        qs = TempWish.objects.get(user=user, photocard=photocard)
+        qs.delete()
+    except:
+        TempWish.objects.create(user=user, photocard=photocard)
+    
+    return redirect('/photocard/list')

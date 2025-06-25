@@ -86,6 +86,9 @@ class Photocard(models.Model):
 class TempWish(models.Model):
     user = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='wished_photocards')
     photocard = models.ForeignKey(Photocard, on_delete=models.CASCADE, related_name='wished_by_users')
+    class Meta:
+        unique_together = ('user', 'photocard')
     
     def __str__(self):
         return f'{self.user.user_id} | {self.photocard.pno}'
+    
