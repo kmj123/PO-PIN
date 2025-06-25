@@ -10,25 +10,50 @@ from datetime import date
 
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
-    qs = Photocard.objects.select_related('member__group').annotate(
+    # 쿼리 파라미터 받아오기
+    idol_id = request.GET.get('idol')
+    place = request.GET.get('place')
+    category = request.GET.get('category')
+    sort = request.GET.get('sort')
+    
+    # 전체 포토카드 리스트 불러오기
+    photocards = Photocard.objects.select_related('member__group').annotate(
         wish_count=Count('wished_by_users')
     )
-    context = {'list': qs}
+    
+    # 조건부 필터링 (값이 있을 경우에만 필터링)
+    if idol_id:
+        photocards = photocards.filter(member__id=idol_id)
+    if place:
+        photocards = photocards.filter(place=place)
+    if category:
+        photocards = photocards.filter(category=category)
+        
+    # 좋아요 순 정렬 옵션 적용
+    if sort == 'likes':
+        photocards = photocards.annotate(wish_count=Count('wished_by_users')).order_by('-wish_count')
+        
+    
+    
+    context = {'list': photocards}
     return render(request, 'list.html', context)
 
 # 선택 포토카드 거래글 상세정보
 def view(request, pno):
+    # pno 포토카드 불러오기
     qs = Photocard.objects.get(pno=pno)
+    
+    # 포토카드 상세정보 반환
     context = {"info":qs}
     return render(request, 'view.html', context)
 
 # 포토카드 거래글 작성
 def write(request):
     if request.method == "GET" :
-	# choices : select options 반환 >> PHOTOCARD model.py 참고!!
-	# ex) Photocard.CATEGORY_CHOICES
-	# > ('앨범', '앨범'),('특전', '특전'),('MD', 'MD'),('공방', '공방'),('기타', '기타'),
-	# member : idol의 member 반환
+        # choices : select options 반환 >> PHOTOCARD model.py 참고!!
+        # ex) Photocard.CATEGORY_CHOICES
+        # > ('앨범', '앨범'),('특전', '특전'),('MD', 'MD'),('공방', '공방'),('기타', '기타'),
+        # member : idol의 member 반환
         context = {
         'category_choices': Photocard.CATEGORY_CHOICES,
         'poca_state_choices': Photocard.P_STATE_CHOICES,
@@ -39,8 +64,9 @@ def write(request):
         return render(request, 'write.html', context)
         
     elif request.method == 'POST':
-	# 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
-	# 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
+        # 작성 버튼 클릭 시 필요한 필드 정보
+        # 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
+        # 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
 
         title = request.POST.get('title')
         image = request.FILES.get('image')
@@ -60,7 +86,7 @@ def write(request):
         trade_type=request.POST.get('trade_type')
         place=request.POST.get('place')
         
-        sell_state = '중'
+        sell_state = '중' # 등록 시 default
         
         if request.POST.get('available_at') == "" :
             available_at = str(date.today())
@@ -74,9 +100,12 @@ def write(request):
         print(title, image, seller, category, album, member, poca_state, tag, trade_type, place, sell_state, available_at, latitude, longitude)
         print('-------------------------')
         
+        # Photocard 객체 생성
         Photocard.objects.create(
             title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
         )
+        
+        # redirect로 이동
         return redirect('/photocard/list')
 
 # 포토카드 거래글 수정
@@ -132,6 +161,7 @@ def delete(request, pno):
     Photocard.objects.get(pno=pno).delete()
     return redirect('/photocard/list/')
 
+# 포토카드 위시 등록 & 삭제
 def wish(request, pno):
     user = TempUser.objects.first() # 로그인 구현 후 수정
     photocard = Photocard.objects.get(pno=pno)
