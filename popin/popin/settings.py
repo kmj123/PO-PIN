@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'signupFT',
     'photocard',
     'idols',
+    'adpage',
 ]
 
 MIDDLEWARE = [

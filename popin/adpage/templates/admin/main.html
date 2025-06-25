@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="/static/css/admin/main.css">
+    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>관리자</title>
+    <style>
+        *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner{
+            width : 1200px;
+            height : 80px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+        }
+        .banner h2{ font-size : 40px; color : #7E6EB0; line-height : 2; padding-left : 25px;}
+        .table{display : flex;
+            margin-top : 20px;}
+        .menu{ width : 220px;
+                height : 300px;
+                background :rgba(255, 255, 255, 0.95);
+                border-radius : 20px;       
+                color :rgb(86, 85, 88);
+        }
+        .menu h3{ font-size : 20px; margin-left : 20px; padding : 15px 0;}
+        .menu li{
+            margin-left : 25px;
+            padding-left : 15px;
+            list-style: none;
+            font-weight : 500;
+            margin-bottom : 15px;
+            width : 180px;
+            height : 40px;
+            line-height : 2.5;
+            border-radius : 10px;
+            
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+        }
+        .dashboard{
+            width : 950px;
+            height : 800px;
+            background : white;
+            border-radius : 25px;
+            background : rgba(255, 255, 255, 0.95);
+            margin-left : 25px;
+        }
+        .dash-top{height : 80px; width : 900px;
+                margin : 30px 40px 0 40px;font-size : 20px;}
+        .dash-top hr{ margin-right : 40px; color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        .box{display : flex;}
+        .box div { display : flex;
+                    flex-direction: column; 
+                    justify-content: center; 
+                    align-items: center;     
+                    width : 180px;
+                    height : 180px;
+                    background : white;
+                    border-radius : 15px;
+                    margin : 10px 0 auto;
+                    margin-left : 45px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+        .box p{ color : #667EEA; font-size : 35px; font-weight : 700;}
+        .box a{ color : #666666; font-size : 15px;font-weight : 500;}
+        .dashboard h3{font-size : 25px; margin : 20px; padding-left : 25px;}
+        table{ margin-left : 75px; width : 800px; text-align : center; height : 350px;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);}
+            {% comment %}   display: table-header-group;	테이블 헤더처럼 동작하게 함
+                            vertical-align: middle;	요소 안 텍스트를 수직 가운데 정렬
+                            unicode-bidi: isolate;	양방향 텍스트 정렬을 독립적으로 처리
+                            border-color: inherit;	테두리 색을 부모 요소에서 상속 {% endcomment %}
+        thead {
+                display: table-header-group;
+                vertical-align: middle;
+                unicode-bidi: isolate;
+                border-color: inherit;
+                background :linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color : rgba(245, 246, 250, 0.95);
+            }
+        tbody {
+            display: table-row-group;
+            vertical-align: middle;
+            unicode-bidi: isolate;
+            border-color: inherit;
+        }
+        .menu li:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: rgba(255, 255, 255, 0.95);
+            cursor: pointer; 
+            }
+            </style>
+        </head>
+        <script>
+        // 모든 메뉴 li 요소 가져오기
+        const menuItems = document.querySelectorAll('.menu ul li');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+            // 먼저 모든 li에서 'board' 클래스 제거
+            menuItems.forEach(i => i.classList.remove('board'));
+            // 클릭한 항목에만 'board' 클래스 추가
+            item.classList.add('board');
+            });
+        });
+        </script>
+<body>
+    <div>
+        <div class = "banner">
+            <strong><h2>PO-PIN</h2></strong>
+        </div>
+        <div class = "table">
+            <div class = "menu">
+                <h3>관리자 메뉴</h3>
+                <ul>
+                    <li class = "board">대시보드</li>
+                    <li>공지사항</li>
+                    <li>게시글 관리</li>
+                    <li>사용자 관리</li>
+                </ul>
+            </div>
+            <div class = "dashboard">
+                <div class = "dash-top">
+                    <h2>관리자 대시보드</h2>
+                    <hr>
+                </div>
+                <div class = "box">
+                    <div>
+                        <p>1,234</p>
+                        <a>전체 사용자</a>
+                    </div>
+                    <div>
+                        <p>5,678</p>
+                        <a>전체 게시글</a>
+                    </div>
+                    <div>
+                        <p>12</p>
+                        <a>대기중인 신고</a>
+                    </div>
+                    <div>
+                        <p>8</p>
+                        <a>차단 사용자</a>
+                    </div>
+                </div>
+                <h3>최근 활동</h3>
+                <table>
+                    <thead>
+                        <tr style = "height : 60px;">
+                            <th>시간</th>
+                            <th>활동</th>
+                            <th>사용자</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>신규 회원가입</td>
+                            <td>user123</td>
+                            <td>활성</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>게시글 신고</td>
+                            <td>user123</td>
+                            <td>대기</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
