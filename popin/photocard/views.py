@@ -22,7 +22,6 @@ def view(request, pno):
     return render(request, 'view.html', context)
 
 # 포토카드 거래글 작성
-# 포토카드 거래글 작성
 def write(request):
     if request.method == "GET" :
 	# choices : select options 반환 >> PHOTOCARD model.py 참고!!
@@ -78,7 +77,8 @@ def write(request):
             title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
         )
         return redirect('/photocard/list')
-    
+
+# 포토카드 거래글 수정
 def update(request, pno):
     photo_qs = Photocard.objects.get(pno=pno)
     if request.method == "GET":
@@ -125,3 +125,8 @@ def update(request, pno):
         photo_qs.save()
         
         return redirect('/photocard/list')
+
+# 포토카드 거래글 삭제
+def delete(request, pno):
+    Photocard.objects.get(pno=pno).delete()
+    return redirect('/photocard/list/')
