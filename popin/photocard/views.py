@@ -110,8 +110,10 @@ def write(request):
 
 # 포토카드 거래글 수정
 def update(request, pno):
+    # 포토카드 상세정보 불러오기 (context 작성 참고)
     photo_qs = Photocard.objects.get(pno=pno)
     if request.method == "GET":
+        
         member_qs = Member.objects.all()
         context = {
             'category_choices': Photocard.CATEGORY_CHOICES,
@@ -123,6 +125,8 @@ def update(request, pno):
             'photocard': photo_qs
         }
         return render(request, 'update.html', context)
+    
+    # 포토카드 상세정보 수정
     elif request.method == "POST":
         photo_qs.title = request.POST.get('title')
         photo_qs.image = request.FILES.get('image')
@@ -167,9 +171,12 @@ def wish(request, pno):
     photocard = Photocard.objects.get(pno=pno)
     
     try: 
+        # 테이블에 해당 유저가 해당 포토카드를 위시 했는지 조회
         qs = TempWish.objects.get(user=user, photocard=photocard)
+        # 이미 존재할 경우 삭제
         qs.delete()
     except:
+        # 존재하지 않을 경우 추가
         TempWish.objects.create(user=user, photocard=photocard)
     
     return redirect('/photocard/list')
