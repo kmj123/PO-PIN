@@ -6,595 +6,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
     <title>마이페이지</title>
+</head>
 <style>
-    * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}
-
-.header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-}
-
-.logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-
-.nav {
-    display: flex;
-    gap: 2rem;
-}
-
-.nav a {
+a{
     text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.3s ease;
+}
+#favorite-btn {
+    cursor: pointer;
 }
 
-.nav a:hover {
-    color: #667eea;
+#favorite-btnSave {
+    cursor: pointer;
+    width: 350px;
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid #c1c1c1;
+    margin-top: 2rem;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    font-size: 20px;
 }
 
-@media (max-width: 768px) {
-.main {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    display: flex;
-    flex-direction:row;
-    flex-wrap:wrap;
-    gap:1rem;
-    flex-direction: column;
-    padding: 1rem;
-    }       
+#favorite-btnClose {
+    cursor: pointer;
+    width: 350px;
+    height: 50px;
+    border-radius: 8px;
+    border: 1px solid #c1c1c1;
+    margin-top: 2rem
 }
 
-/* 프로필 */
-.profile-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+#modalContainer {
     width: 100%;
     height: 100%;
-    
-}
-
-.profile-header {
-    display: inline-block;
-    align-items: center;
-    gap: 2rem;
-    justify-content: space-evenly;
-}
-
-.avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    position: fixed;
+    top: 0;
+    left: 0;
     display: flex;
-    align-items: center;
     justify-content: center;
-    font-size: 2rem;
-    color: white;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999; /* 다른 요소보다 위로 오게 */
 }
 
-.profile-info {
-    margin-left: auto;
-    margin-top: 30px;
-}
-
-.profile-info h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    color: #333;
-}
-
-.stats {
-    display: flex;
-    gap: 2rem;
-}
-
-.stat {
-    text-align: center;
-}
-
-.stat-number {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #667eea;
-}
-
-.tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-.tab {
-    background: rgba(255, 255, 255, 0.7);
-    border: none;
-    padding: 0.8rem 1.2rem;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+#modalContent {
+    background-color: #ffffff;
+    width: 500px;
+    height: 700px;
+    padding: 50px;
+    border-radius: 30px;
     position: relative;
 }
 
-.tab:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-}
-
-.tab.active {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-}
-
-.edit-btn {
-    margin-left: 0.5rem;
-    opacity: 0.7;
-}
-
-@media (max-width: 1024px) {
-.content {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: auto;
-    margin-left: 20px;
-    }
-}
-
-.tab-content {
+#modalContainer.hidden {
     display: none;
 }
 
-.tab-content.active {
-    display: block;
+{% comment %} 프로필 수정 {% endcomment %}
+.profileTop{
+    display:flex;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+.profileTop img{
+    margin-right:10px;
+    width: 40px;
+    height: 40px;
+    margin-left: 10px;
 }
 
-.section-header h2 {
-    color: #333;
-    font-size: 1.5rem;
-}
-
-.change-btn, .view-all-btn {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
+.profileTop button{
+    background: none;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    font-weight: 500;
+    padding: 0;
+    width: 50px;
+    height: 40px;
+    margin: 20px;
 }
 
-.change-btn:hover, .view-all-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+.profileTop h1{
+    margin-top: 13px;
+    width: 600px;
+    padding: 10px;
 }
 
-.item {
-    background: rgba(248, 249, 250, 0.8);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    transition: transform 0.3s ease;
-    cursor:pointer;
-}
-
-.item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-.item h3 {
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.item .wishlist{
-    display: flex;
-    height: 120px;
-    display: flex;
-}
-
-.wish-list-img{
-    width: 30%;
-    height: 100%;
-}
-
-.wish-list-img img{
-    width: 45%;
-    height: 100%;
-    margin-left: 30px;
-    border-radius:20px;
-}
-
-.polaroid-grid {
+.profileContent{
+    margin: 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 1rem;
 }
 
-.polaroid {
-    background: #ffffff;
-    padding: 1rem;
+.profileContent label{
+    margin-bottom: 5px;
+    margin-top:5px;
+}
+
+.profileContent input {
+    height: 50px;
+    width: 350px;
     border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s ease;
-    position: relative;
-    transform: rotate(-1deg);
-    cursor:pointer;
-    height: 315px;
+    border: 1px solid #c1c1c1;
 }
 
-.polaroid:nth-child(even) {
-    transform: rotate(1deg);
-}
-
-.polaroid:hover {
-    transform: rotate(0deg) translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-}
-
-.polaroid-image {
-    width: 100%;
-    height: 200px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-    position: relative;
-}
-
-.polaroid-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-.polaroid-text {
-    text-align: center;
-    padding: 0.5rem;
-}
-
-.group-name {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.3rem;
-}
-
-.member-name {
-    font-size: 1rem;
-    color: #667eea;
-    font-weight: 500;
-}
-
-/* 폴라로이드에 빈티지 효과 추가 */
-.album-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.album-card {
-    background: rgba(248, 249, 250, 0.8);
-    border-radius: 12px;
-    padding: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.album-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    background: rgba(255, 255, 255, 0.9);
-}
-
-.album-cover {
-    width: 100%;
-    height: 150px;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-    position: relative;
-}
-
-.album-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.album-info h4 {
-    color: #333;
-    margin-bottom: 0.3rem;
-    font-size: 1rem;
-}
-
-.album-info p {
+.wish-list-txt p {
+    margin: 0.5rem 0 0;
     color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
 }
 
-.card-count {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.cards-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.back-btn {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-    background: #5a6268;
-    transform: translateY(-2px);
-}
-
-.current-album {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: rgba(102, 126, 234, 0.1);
-    border-radius: 8px;
-    border-left: 4px solid #667eea;
-}
-
-.photocard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.photocard {
-    background: white;
-    border-radius: 8px;
-    padding: 0.8rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.photocard:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.photocard-img {
-    width: 100%;
-    height: 120px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-    overflow: hidden;
-}
-
-.photocard-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.photocard h5 {
-    color: #333;
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
-}
-
-.photocard p {
-    color: #666;
-    font-size: 0.8rem;
-}
-
-.card {
-    background: rgba(248, 249, 250, 0.8);
-    padding: 1.5rem;
-    border-radius: 12px;
-    text-align: center;
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.card-img {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.card h4 {
-    color: #333;
-    margin-bottom: 0.5rem;
-}
-
-.rating {
-    margin-right: 0.5rem;
-}
-
-.review-item {
-    border-left: 4px solid #667eea;
-}
-
-.blocked-user {
-    border-left: 4px solid #e74c3c;
-}
-
-.unblock-btn {
-    background: #e74c3c;
-    color: white;
-    border: none;
-    padding: 0.3rem 0.8rem;
+.badge {
+    font-size: 0.75rem;
+    padding: 3px 8px;
     border-radius: 5px;
-    cursor: pointer;
-    float: right;
-    transition: background 0.3s ease;
-}
-
-.unblock-btn:hover {
-    background: #c0392b;
-}
-
-.transaction-tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.transaction-tab {
-    background: rgba(248, 249, 250, 0.8);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.transaction-tab.active {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    margin-left: 8px;
+    vertical-align: middle;
     color: white;
 }
 
-.review-tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+.badge.complete {
+    background-color: #4caf50;
 }
 
-.review-tab {
-    background: rgba(248, 249, 250, 0.8);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.badge.reserved {
+    background-color: #ff9800;
 }
-
-.review-tab.active {
-    background: linear-gradient(45deg, #667eea, #764ba2);
-    color: white;
-}
-
-.view-all-container {
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-@media (max-width: 768px) {
-    .header {
-        padding: 1rem;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .profile-header {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .tabs {
-        justify-content: center;
-    }
-
-    .tab {
-        font-size: 0.9rem;
-        padding: 0.6rem 1rem;
-    }
-
-    .stats {
-        gap: 1rem;
-    }
-
-    .polaroid-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .polaroid {
-        transform: rotate(0deg);
-    }
-
-    .polaroid:nth-child(even) {
-        transform: rotate(0deg);
-    }
-}
-
 </style>
-</head>
+
 <body>
     <header class="header">
         <div class="logo"></div>
@@ -608,47 +142,101 @@ body {
 
     <!--프로필-->
     <main class="main">
-        <form action='/mypage/pchange/' type="post">
-        {% csrf_token %}
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="polaroid">
-                    <div class="polaroid-image">
-                        <a href="/mypage/pchange/">
-                            <img src='/static/images/mypage/도영.jfif/'>
-                        </a>
+        <form>
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="polaroid">
+                        <div class="polaroid-image">
+                            <!--클릭시 프로필변경페이지 이동-->
+                            <a href="/mypage/pchange/">
+                                <img src='/static/images/mypage/도영.jfif/'>
+                            </a>
+                        </div>
+                        
+                        <!-- 프로필 수정 모달창 오픈 -->
+                        <button id="favorite-btn" type="button">
+                            <img src="/static/images/mypage/svt_logo.jfif/" alt="group_logo">
+                        </button>
                     </div>
-                    <!--최애 아티스트 그룹, 멤버명 선택 구현 -->
-                    <button id="favorite-btn" onclick="showFavoriteModal()" style="width:80px; height:50px; border-radius:90px; margin-bottom:30px; background: linear-gradient(45deg, #667eea, #764ba2); color: white; border: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.3s ease;">
-                        <div>나의 최애</div>
-                    </button>
-                </div>
-                <div class="profile-info">
-                    <h1>포카러버123</h1>
-                    <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
-                    <br>
-                    
-                    <div class="stats">
-                        <div class="stat">
-                            <div class="stat-number">156</div>
-                            <div>보유 포카</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">23</div>
-                            <div>교환 완료</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-number">4.8</div>
-                            <div>평점</div>
+                    <div class="profile-info">
+                        <h1 style="text-align:center;">포카러버123</h1>
+                        <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
+                        <br>
+                        
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-number">156</div>
+                                <div>보유 포카</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">23</div>
+                                <div>교환 완료</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">4.8</div>
+                                <div>평점</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            </form>
-        </div>
+        </form>
         <!--//프로필-->
 
-        
+        <!--프로필 수정 모달창 구현-->
+        <form action="/mypage/profile/" method="post" name="profileFrm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="modalContainer" class="hidden">
+                <div id="modalContent">
+                    <div class="profileTop">
+                        <button id="favorite-btnClose" type="button" style="background: none; border: none; padding: 0; width: 40px; height: 40px;">
+                            <img src="/static/images/mypage/cancelicon.png" style="width: 40px; height: 40px;">
+                        </button>
+                        <h1>프로필 수정</h1>
+                    </div>
+                    <div class="profileContent">
+                        <label for="profile_image">사진 변경</label>
+                            <input type="file" id="profile_image" name="profile_image">
+                        <label for="nickname">닉네임</label>
+                            <input type="text" id="nickname" name="nickname">
+                        <label for="mybias">최애변경</label>
+                            <input type="text" id="mybias" name="mybias">
+                        <label for="myself">자기소개</label>
+                            <input type="text" id="myself" name="myself">
+                        <div class="profileButton">
+                            <button id="favorite-btnSave" type="button">변경사항 저장</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- 모달창 스크립트 -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const modalOpenButton = document.getElementById('favorite-btn');
+                const modalSaveButton = document.getElementById('favorite-btnSave');
+                const modalCloseButton = document.getElementById('favorite-btnClose');
+                const modal = document.getElementById('modalContainer');
+
+                // 모달창 오픈
+                modalOpenButton.addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                });
+
+                // 모달창 저장
+                modalSaveButton.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                });
+
+                // 모달창 취소
+                modalCloseButton.addEventListener('click',() => {
+                    modal.classList.add('hidden');
+                });
+            });
+        </script>
+
+
         <div class="content">
             <div class="tabs">
                 <button class="tab active " onclick="showTab('keywords')">키워드</button>
@@ -777,39 +365,50 @@ body {
             <!--위시리스트-->
             <div id="wishlist" class="tab-content">
                 <h2 style="margin-bottom: 1.5rem;">위시리스트</h2>
-                <div class="item">
-                    <div class="wishlist">
-                        <div class="wish-list-img">
-                            <img src="/static/images/mypage/유우시.jfif/">
-                        </div>
-                        <div class="wish-list-txt">
-                            <h3>NCT 유우시 포토카드</h3>
-                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="item">
-                    <div class="wishlist">
-                        <div class="wish-list-img">
-                            <img src="/static/images/mypage/승관.jfif/">
-                        </div>
-                        <div class="wish-list-txt">
-                            <h3>SEVENTEEN 승관 포토카드</h3>
-                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                <a href="/photocard/view/">
+                    <div class="item">
+                        <div class="wishlist">
+                            <div class="wish-list-img">
+                                <img src="/static/images/mypage/유우시.jfif/">
+                            </div>
+                            <div class="wish-list-txt">
+                                <h3>NCT 유우시 포토카드
+                                    <span class="badge complete">거래완료</span>
+                                </h3>
+                                <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="item">
-                    <div class="wishlist">
-                        <div class="wish-list-img">
-                            <img src="/static/images/mypage/윈터.jpg/">
-                        </div>
-                        <div class="wish-list-txt">
-                            <h3>AESPA 윈터 포토카드</h3>
-                            <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                </a>
+                <a href="/photocard/view/">
+                    <div class="item">
+                        <div class="wishlist">
+                            <div class="wish-list-img">
+                                <img src="/static/images/mypage/승관.jfif/">
+                            </div>
+                            <div class="wish-list-txt">
+                                <h3>SEVENTEEN 승관 포토카드
+                                    <span class="badge reserved">예약중</span>
+                                </h3>
+                                <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
+                <a href="/photocard/view/">
+                    <div class="item">
+                        <div class="wishlist">
+                            <div class="wish-list-img">
+                                <img src="/static/images/mypage/윈터.jpg/">
+                            </div>
+                            <div class="wish-list-txt">
+                                <h3>AESPA 윈터 포토카드
+                                </h3>
+                                <p>Map of the Soul: 7 - 구하고 있어요!</p>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <div id="transactions" class="tab-content">
@@ -833,7 +432,6 @@ body {
                         <p>30,000원 - Love Yourself | 상태: 판매완료</p>
                     </div>
                     <div class="view-all-container">
-                        <button class="view-all-btn" onclick="goToFullPage('selling')">전체보기</button>
                     </div>
                 </div>
 
@@ -851,7 +449,6 @@ body {
                         <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
                     </div>
                     <div class="view-all-container">
-                        <button class="view-all-btn" onclick="goToFullPage('buying')">전체보기</button>
                     </div>
                 </div>
             </div>
@@ -877,7 +474,6 @@ body {
                         <p>소통이 원활하고 약속 시간도 잘 지켜주셨어요. - 포카러님</p>
                     </div>
                     <div class="view-all-container">
-                        <button class="view-all-btn" onclick="goToFullPage('received-reviews')">전체보기</button>
                     </div>
                 </div>
 
@@ -895,7 +491,6 @@ body {
                         <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
                     </div>
                     <div class="view-all-container">
-                        <button class="view-all-btn" onclick="goToFullPage('written-reviews')">전체보기</button>
                     </div>
                 </div>
             </div>
@@ -919,7 +514,6 @@ body {
             <div id="blocked" class="tab-content">
                 <div class="section-header">
                     <h2>내가 차단한 사용자</h2>
-                    <button class="change-btn">변경하기</button>
                 </div>
                 <div class="item blocked-user">
                     <h3>스팸유저123</h3>
