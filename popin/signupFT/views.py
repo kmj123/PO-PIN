@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect
 from idols.models import Group, Member  
 
-
 def agree(request):
     return render(request, '1.agree.html')
 
@@ -19,12 +18,3 @@ def member_select(request):
 
 def completed(request):
     return render(request, '5.completed.html')
-
-
-
-
-
-
-
-
-    
