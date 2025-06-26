@@ -16,3 +16,9 @@ def view(request, pno):
     qs = Photocard.objects.get(pno=pno)
     context = {"info":qs}
     return render(request, 'view.html', context)
+
+def exchange(request):
+    return render(request, 'exchange.html')
+
+def detail(request):
+    return render(request, 'pocadetail.html')

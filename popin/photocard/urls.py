@@ -6,4 +6,6 @@ app_name = 'photocard'
 urlpatterns = [
     path('list/', views.list, name='list'),
     path('view/<int:pno>/', views.view, name='view'),
+    path('exchange/', views.exchange, name='exchange'),
+    path('detail/', views.detail, name='detail'),
 ]

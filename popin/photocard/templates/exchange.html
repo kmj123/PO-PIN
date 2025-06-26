@@ -1,0 +1,572 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>포토카드 교환</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow:hidden;
+        }
+
+        /* 헤더 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display:block;
+            width:250px;
+        }
+
+        .logo img{
+            margin-right:10px; 
+            width:45px; height:45px;
+            vertical-align: middle;}
+            
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            width:400px;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-right:15px;
+        }
+
+        .alarm {
+            font-size:18px;
+        }
+
+        /* 모바일 사이드메뉴 */
+        .mobile-sidebar-menu{
+            position: fixed;
+            top: 0;
+            right: 100%; /* 메뉴가 오른쪽 밖에 숨겨짐 */
+            width: 300px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.98);
+            transition: left 0.3s ease; /* 슬라이딩 효과 */
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            z-index: 9998;
+            padding: 5rem 0 0 0;
+        }
+        .mobile-sidebar-menu.active {right:0;}
+
+        .mobile-sidebar-menu ul{list-style: none; padding:0;}
+
+        .mobile-menu-btn{display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            z-index: 9999;
+            position: fixed;
+            top:15px; right:35px;}
+
+        .mobile-menu-btn:hover{background-color: rgba(102, 126, 234, 0.1);}
+
+        .mobile-user-info{
+            display:flex;
+            font-weight:600;
+            font-size:22px;
+            position: relative;
+            top:-55px; left:30px;
+        }
+
+        .mobile-user-info > .username {
+            margin-right:10px;
+        }
+
+        .mobile-user-info > .alarm {
+            line-height: 33px;
+        }
+        
+        .mobile-menu-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mobile-menu-list li {
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .mobile-menu-list li:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu-list a {
+            display: block;
+            padding: 1.2rem 2rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .mobile-menu-list a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .content{
+            width:1200px;
+            display:flex;
+            margin:0 auto;
+        }
+
+        /* 검색 필터 영역 */
+        .sfilter{
+            width:330px;
+            height:800px;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 40px 25px 0 25px;
+            padding:20px;
+            border-radius: 20px;
+        }
+
+        .sfilter h4{color:#666666;}
+
+        .sfilter > div{padding-top:20px;}
+
+
+        /* 멤버 선택 토글 */
+        .memberToggle{display:none;}
+        
+        .members {
+            display:grid;
+            grid-template-rows: repeat(3, 40px);
+            grid-template-columns: repeat(2, 124px);
+            gap:10px;
+            margin-top:10px;
+        }
+        .members label {
+            font-size: 15px;
+            color: #333;
+            background-color: white;
+            border: 2px solid #e4e4e4;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 35px;
+            cursor:pointer;
+            user-select: none;
+        }
+        .memberToggle:checked + label {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding-top:2px;
+        }
+
+
+        /* 드롭다운 */
+        .dropdown{
+            position: relative;
+            display: inline-block;
+            width:100%;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 254px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            max-height: 150px; /* 드롭다운 최대 높이 설정 */
+            overflow-y: auto;  /* 세로 스크롤 활성화 */
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown-text {
+            background:#eee;
+            cursor: pointer;
+            border:2px solid #ddd;
+            border-radius: 5px;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        .clocation{
+            display:flex;
+            justify-content: space-between;
+            align-items:center;
+            border:2px solid #ddd;
+            border-radius: 5px;
+            margin-top:10px;
+            padding:10px;
+            user-select: none;
+        }
+
+        .clocation a{color:#333;}
+
+
+        /* 포토카드 리스트 영역 */
+        .photocardList {
+            width:870px;
+            height:800px;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 40px 25px 0 25px;
+            padding:20px;
+            border-radius: 20px;
+        }
+
+        .photoGrid {
+            display:grid;
+            grid-template-rows: repeat(3, 245px);
+            grid-template-columns: repeat(4, 183px);
+            gap:10px;
+        }
+
+        .cardItem img{width:100%; height:100%; object-fit:cover;}
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .nav {
+                position: relative;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-sidebar-menu{
+                display:none;   /* 기본은 닫힘 */
+            }
+
+            .mobile-sidebar-menu.active {
+                display:block;
+            }
+
+            .nav-menu, .user-info {
+                display: none;
+            }
+
+            .content{
+                width:100%;
+                height:100%;
+                object-fit:cover;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .mobile-menu {
+                width: 280px;
+            }
+        }
+    </style>
+
+    <script>
+        $(document).ready(function() {
+            // 모바일 메뉴 토글 기능
+            const $mobileMenuBtn = $('#mobileMenuBtn');
+            const $mobileMenu = $('#mobileSidebarMenu');
+
+            function toggleMobileMenu() {
+                $mobileMenu.toggleClass('active');
+                $mobileMenuBtn.html($mobileMenu.hasClass('active') ? '✕' : '☰');
+
+                // 모바일 메뉴가 열릴 때 전체 페이지 높이에 맞게 조정
+                if ($mobileMenu.hasClass('active')) {
+                    const documentHeight = Math.max(
+                        $(document).height(),
+                        $(window).height()
+                    );
+                    $mobileMenu.css('height', documentHeight);
+                } else {
+                    $mobileMenu.css('height', '');
+                }
+            }
+
+            $mobileMenuBtn.on('click', toggleMobileMenu);
+
+            // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+            $('.mobile-menu-list a').on('click', toggleMobileMenu);
+
+            // 윈도우 리사이즈 시 모바일 메뉴 닫기
+            $(window).on('resize', function() {
+                if ($(window).width() > 768) {
+                    $mobileMenu.removeClass('active');
+                    $mobileMenuBtn.html('☰');
+                }
+            });
+
+
+            // 멤버 선택 토글 //
+            // 전체 체크박스를 선택/해제하는 이벤트
+            $('#memberAll').change(function() {
+                const isChecked = $(this).prop('checked');
+                // 옵션들이 전체 선택되거나 해제됨
+                $('.memberToggle').prop('checked', isChecked);
+            });
+
+            // 각 옵션 체크박스가 선택되었을 때
+            $('.memberToggle').change(function() {
+                const totalOptions = $('.memberToggle').not('#memberAll').length;
+                const selectedOptions = $('.memberToggle:checked').not('#memberAll').length;
+
+                // 모든 옵션이 선택되면 전체 체크박스를 체크
+                if (selectedOptions == totalOptions) {
+                    $('#memberAll').prop('checked', true);
+                } else {
+                    $('#memberAll').prop('checked', false);
+                }
+            });
+
+
+            // 드롭다운 //
+            // 텍스트 클릭 시 드롭다운 메뉴 토글
+            $('.dropdown-text').click(function() {
+                var dropdownContent = $(this).next('.dropdown-content');
+                dropdownContent.toggle();
+            });
+
+            // 메뉴 항목 클릭 시 텍스트 변경
+            $('.dropdown-content a').click(function(e) {
+                e.preventDefault(); // 링크 기본 동작 방지
+                var selectedOption = $(this).data('option');
+                $(this).closest('.dropdown').find('.dropdown-text').text(selectedOption);
+                $(this).closest('.dropdown').find('.dropdown-content').hide(); // 해당 드롭다운 숨기기
+            });
+
+            // 메뉴 외부 클릭 시 드롭다운 닫기
+            $(document).click(function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-content').hide();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo"><img src='/static/images/landing/logo.png'>PO-PIN</a>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="#community">커뮤니티</a></li>
+                <li><a href="#decorate">포카꾸미기</a></li>
+                <li><a href="#mypage">마이페이지</a></li>
+            </ul>
+            <div class="user-info">
+                <div class="username"><span>포카러버123</span>님</div>
+                <div class="alarm">🔔</div>
+            </div>
+        
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            
+            <!-- 모바일 사이드메뉴 -->
+            <div class="mobile-sidebar-menu" id="mobileSidebarMenu">
+                <div class="mobile-user-info">
+                    <div class="username"><span>포카러버123</span>님</div>
+                    <div class="alarm">🔔</div>
+                </div>
+                <div class="mobile-menu" id="mobileMenu">
+                    <ul class="mobile-menu-list">
+                        <li><a href="#home">홈</a></li>
+                        <li><a href="#exchange">포카교환</a></li>
+                        <li><a href="#community">커뮤니티</a></li>
+                        <li><a href="#decorate">포카꾸미기</a></li>
+                        <li><a href="#mypage">마이페이지</a></li>
+                    </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div class="content">
+        <section class="sfilter">
+            <h3>🔍 검색필터</h3>
+            <div class="fchoice">
+                <h4>멤버 선택</h4>
+                <div class="members">
+                    <input type="checkbox" id="memberAll" class="memberToggle">
+                    <label for="memberAll">전체</label>
+
+                    <input type="checkbox" id="member1" class="memberToggle">
+                    <label for="member1">멤버 1</label>
+
+                    <input type="checkbox" id="member2" class="memberToggle">
+                    <label for="member2">멤버 2</label>
+
+                    <input type="checkbox" id="member3" class="memberToggle">
+                    <label for="member3">멤버 3</label>
+
+                    <input type="checkbox" id="member4" class="memberToggle">
+                    <label for="member4">멤버 4</label>
+
+                    <input type="checkbox" id="member5" class="memberToggle">
+                    <label for="member5">멤버 5</label>
+                </div>
+            </div>
+            <div class="fcategory">
+                <h4>카테고리</h4>
+                <div class="dropdown">
+                    <div class="dropdown-text" id="dropdownText">전체</div>
+                    <div class="dropdown-content">
+                        <a href="#" data-option="전체">전체</a>
+                        <a href="#" data-option="교환">교환</a>
+                        <a href="#" data-option="판매">판매</a>
+                    </div>
+                </div>
+            </div>
+            <div class="ftrade">
+                <h4>거래 유형</h4>
+                <div class="dropdown">
+                    <div class="dropdown-text" id="dropdownText2">전체</div>
+                    <div class="dropdown-content">
+                        <a href="#" data-option="전체">전체</a>
+                        <a href="#" data-option="거래중">거래중</a>
+                        <a href="#" data-option="거래완료">거래완료</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flocation fdiv">
+                <h4>📍 위치 설정</h4>
+                <div class="clocation">강남구 (현재 위치)<a href="#"><i class="fas fa-map"></i></a></div>
+                <div class="dropdown">
+                    <div class="dropdown-text" id="dropdownText3">자주 거래되는 장소</div>
+                    <div class="dropdown-content">
+                        <a href="#" data-option="상암">상암</a>
+                        <a href="#" data-option="더현대">더현대</a>
+                        <a href="#" data-option="인스파이어">인스파이어</a>
+                        <a href="#" data-option="홍대입구">홍대입구</a>
+                        <a href="#" data-option="올림픽공원">올림픽공원</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="photocardList">
+            <div class="photoGrid">
+                <div class="cardItem"><a href="/photocard/detail/">
+                    <img src="/static/images/landing/wonyoung.jpg"></a>
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+                <div class="cardItem">
+                    <img src="/static/images/landing/wonyoung.jpg">
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
