@@ -3,116 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
   <title>관리자 | 게시글관리</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      color: #333;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .banner {
-      width: 1200px;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      padding-left: 25px;
-    }
-    .banner h2 {
-      font-size: 40px;
-      color: #7E6EB0;
-    }
-    .table {
-      display: flex;
-      margin-top: 20px;
-    }
-    .menu {
-      width: 220px;
-      height: 300px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      color: rgb(86, 85, 88);
-    }
-    .menu h3 {
-      font-size: 20px;
-      margin-left: 20px;
-      padding: 15px 0;
-    }
-    .menu li {
-      margin-left: 25px;
-      padding-left: 15px;
-      list-style: none;
-      font-weight: 500;
-      margin-bottom: 15px;
-      width: 180px;
-      height: 40px;
-      line-height: 2.5;
-      border-radius: 10px;
-    }
-    .menu .board {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: rgba(255, 255, 255, 0.95);
-    }
-    .menu li:hover {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.82) 0%, #764ba2 100%);
-      color: rgba(255, 255, 255, 0.95);
-      cursor: pointer;
-    }
-    .notice {
-      width: 950px;
-      height: 800px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 25px;
-      margin-left: 25px;
-      padding-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .dash-top {
-      height: 80px;
-      width: 900px;
-      margin: 30px 40px 0 40px;
-      font-size: 20px;
-    }
-    .dash-top hr {
-      margin-right: 40px;
-      color: rgba(219, 213, 213, 0.63);
-      margin-top: 15px;
-    }
-    .box {
-      display: flex;
-      margin-left: 40px;
-    }
-    .box div {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 280px;
-      height: 180px;
-      background: white;
-      border-radius: 15px;
-      margin-left: 8px;
-      margin-top: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    }
-    .box p {
-      color: #667EEA;
-      font-size: 35px;
-      font-weight: 700;
-    }
-    .box a {
-      color: #666666;
-      font-size: 15px;
-      font-weight: 500;
-    }
+   *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner{
+            width : 1000px;
+            height : 70px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-center {
+            display: flex;
+            align-items: center;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .table{display : flex;
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: rgba(255, 255, 255, 0.95);
+            cursor: pointer; 
+            }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .notice{
+            width : 100%;
+            height : 800px;
+            background : white;
+            border-radius : 25px;
+            background : rgba(255, 255, 255, 0.95);
+        }
+        .dash-top{height : 80px; width : 860px; text-align : center;
+                margin : 30px 40px 0 70px;font-size : 16px;}
+        .dash-top hr{ color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        .box{display : flex; }
+        .box div { display : flex;
+                    position: relative;
+                    left: 36px;
+                    flex-direction: column; 
+                    justify-content: center; 
+                    align-items: center;     
+                    width : 250px;
+                    height : 220px;
+                    background : white;
+                    border-radius : 15px;
+                    margin : 10px 0 auto;
+                    margin-left : 45px;
+                   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+        .box p{ color : #667EEA; font-size : 35px; font-weight : 700;}
+        .box a{ color : #666666; font-size : 15px;font-weight : 500;}
+        .notice h3{font-size : 25px; margin : 20px; padding-left : 25px;}
     .filter {
       position: relative;
       margin: 25px auto 0 auto;
@@ -175,6 +190,7 @@
 
     .action-btn {
       position: relative;
+      margin-right : 35px;
       padding: 10px 20px;
       font-size: 14px;
       font-weight: 600;
@@ -224,7 +240,7 @@
     }
 
     table {
-      width: 94%;
+      width: 85%;
       margin: 0 auto;
       border-collapse: collapse;
       background: white;
@@ -250,7 +266,7 @@
     .bottom-bar {
       margin: 10px auto 0 auto;
       padding: 10px;
-      width: 94%;
+      width: 85%;
       background: white;
       border-radius: 15px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -305,21 +321,28 @@
       transform: none;
       box-shadow: none;
     }
+    table{}
   </style>
 </head>
 <body>
   <div>
-    <div class="banner"><strong><h2>PO-PIN</h2></strong></div>
+    <div class="banner">
+      <strong><h2>PO-PIN</h2></strong>
+      <div class = "menu">
+                <ul>
+                    <li>대시보드</li>
+                    <li class = "board">공지사항</li>
+                    <li>게시글 관리</li>
+                    <li>사용자 관리</li>
+                </ul>
+            </div>
+            <div class="banner-right">
+                <a href="#" class="home">
+                    <i class="fi fi-rr-home"></i>홈으로
+                </a>
+            </div>
+    </div>
     <div class="table">
-      <div class="menu">
-        <h3>관리자 메뉴</h3>
-        <ul>
-          <li>대시보드</li>
-          <li>공지사항</li>
-          <li class="board">게시글 관리</li>
-          <li>사용자 관리</li>
-        </ul>
-      </div>
       <div class="notice">
         <div class="dash-top">
           <h2>게시글 관리</h2>

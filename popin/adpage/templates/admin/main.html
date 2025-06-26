@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
     <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
     <link rel="stylesheet" type="text/css" href="/static/css/admin/main.css">
     <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -19,51 +20,101 @@
             justify-content: center;
         }
         .banner{
-            width : 1200px;
-            height : 80px;
+            width : 1000px;
+            height : 70px;
             background :rgba(255, 255, 255, 0.95);
             border-radius : 20px;
             display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
         }
-        .banner h2{ font-size : 40px; color : #7E6EB0; line-height : 2; padding-left : 25px;}
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-center {
+            display: flex;
+            align-items: center;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
         .table{display : flex;
-            margin-top : 20px;}
-        .menu{ width : 220px;
-                height : 300px;
-                background :rgba(255, 255, 255, 0.95);
-                border-radius : 20px;       
-                color :rgb(86, 85, 88);
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
         }
-        .menu h3{ font-size : 20px; margin-left : 20px; padding : 15px 0;}
-        .menu li{
-            margin-left : 25px;
-            padding-left : 15px;
+        .menu ul {
+            display: flex;
             list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
             font-weight : 500;
-            margin-bottom : 15px;
-            width : 180px;
+            width : 115px;
             height : 40px;
-            line-height : 2.5;
-            border-radius : 10px;
-            
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
         }
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
         }
         .dashboard{
-            width : 950px;
+            width : 100%;
             height : 800px;
             background : white;
             border-radius : 25px;
             background : rgba(255, 255, 255, 0.95);
-            margin-left : 25px;
         }
-        .dash-top{height : 80px; width : 900px;
-                margin : 30px 40px 0 40px;font-size : 20px;}
-        .dash-top hr{ margin-right : 40px; color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        .dash-top{height : 80px; width : 860px; text-align : center;
+                margin : 30px 40px 0 70px;font-size : 16px;}
+        .dash-top hr{ color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
         .box{display : flex;}
-        .box div { display : flex;
+        .box div { 
+                    position: relative;
+                    left: 50px;
+                    align-items : center;
+                    display : flex;
                     flex-direction: column; 
                     justify-content: center; 
                     align-items: center;     
@@ -71,20 +122,18 @@
                     height : 180px;
                     background : white;
                     border-radius : 15px;
-                    margin : 10px 0 auto;
-                    margin-left : 45px;
+                    margin : 15px 10px 10px 10px;
+                    margin-left : 30px;
                 box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
         .box p{ color : #667EEA; font-size : 35px; font-weight : 700;}
         .box a{ color : #666666; font-size : 15px;font-weight : 500;}
-        .dashboard h3{font-size : 25px; margin : 20px; padding-left : 25px;}
-        table{ margin-left : 75px; width : 800px; text-align : center; height : 350px;
-                border-radius: 15px;
+        .dashboard h3{font-size : 23px; text-align : center; margin : 20px; }
+        table{ margin-left : 75px; width : 85%; text-align : center; height : 350px;
+                margin-top : 50px;
+                border-radius: 25px;
                 overflow: hidden;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);}
-            {% comment %}   display: table-header-group;	테이블 헤더처럼 동작하게 함
-                            vertical-align: middle;	요소 안 텍스트를 수직 가운데 정렬
-                            unicode-bidi: isolate;	양방향 텍스트 정렬을 독립적으로 처리
-                            border-color: inherit;	테두리 색을 부모 요소에서 상속 {% endcomment %}
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-collapse: collapse; border: none}
         thead {
                 display: table-header-group;
                 vertical-align: middle;
@@ -104,8 +153,38 @@
             color: rgba(255, 255, 255, 0.95);
             cursor: pointer; 
             }
-            </style>
-        </head>
+
+        .pagination {
+            margin-top : 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            }
+
+            .pagination a,
+            .pagination strong {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            }
+
+            .pagination strong {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            }
+
+            .pagination a:hover {
+            background: #f0f0f0;
+            }
+    </style>
         <script>
         // 모든 메뉴 li 요소 가져오기
         const menuItems = document.querySelectorAll('.menu ul li');
@@ -118,22 +197,29 @@
             item.classList.add('board');
             });
         });
-        </script>
+    </script>
+</head>
 <body>
     <div>
         <div class = "banner">
             <strong><h2>PO-PIN</h2></strong>
+            <div class="banner-center">
+                <div class = "menu">
+                    <ul>
+                        <li class = "board">대시보드</li>
+                        <li>공지사항</li>
+                        <li>게시글 관리</li>
+                        <li>사용자 관리</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="banner-right">
+                <a href="#" class="home">
+                    <i class="fi fi-rr-home"></i>홈으로
+                </a>
+            </div>
         </div>
         <div class = "table">
-            <div class = "menu">
-                <h3>관리자 메뉴</h3>
-                <ul>
-                    <li class = "board">대시보드</li>
-                    <li>공지사항</li>
-                    <li>게시글 관리</li>
-                    <li>사용자 관리</li>
-                </ul>
-            </div>
             <div class = "dashboard">
                 <div class = "dash-top">
                     <h2>관리자 대시보드</h2>
@@ -157,10 +243,9 @@
                         <a>차단 사용자</a>
                     </div>
                 </div>
-                <h3>최근 활동</h3>
                 <table>
                     <thead>
-                        <tr style = "height : 60px;">
+                        <tr style = "height : 55px;">
                             <th>시간</th>
                             <th>활동</th>
                             <th>사용자</th>
@@ -200,9 +285,23 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="bottom-bar">
+                <div class="pagination">
+                    <a href="#">«</a>
+                    <a href="#">‹</a>
+                    <strong>1</strong>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">5</a>
+                    <a href="#">›</a>
+                    <a href="#">»</a>
+                </div>
+                </div>
             </div>
         </div>
     </div>
     
+
 </body>
 </html>
