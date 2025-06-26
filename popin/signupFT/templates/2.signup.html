@@ -305,8 +305,8 @@
             <label for="gender">성별</label>
             <select id="gender" name="gender" required>
               <option value="">선택해주세요</option>
-              <option value="male">남성</option>
-              <option value="female">여성</option>
+              <option value="M">남성</option>
+              <option value="F">여성</option>
             </select>
           </div>
         </div>
@@ -354,12 +354,11 @@
       document.getElementById('emailStatus').innerText = '실패: ' + data.error;
     }
   })
-}
-      
+
       document.getElementById('emailSuccess').style.display = 'block';
       document.getElementById('verificationGroup').style.display = 'block';
-    }
 
+}
     function verifyCode() {
       const code = document.getElementById('verificationCode').value;
       if (!code) {
