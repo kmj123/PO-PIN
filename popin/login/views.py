@@ -37,7 +37,7 @@ def loginp(request):
             user = User.objects.get(user_id=user_id)
             if check_password(password, user.password):
                 request.session['user_id'] = user.user_id
-                return redirect('/')  # 홈 또는 메인 페이지
+                return redirect('home:main')  # 홈 또는 메인 페이지
             else:
                 messages.error(request, "비밀번호가 일치하지 않습니다.")
         except User.DoesNotExist:
