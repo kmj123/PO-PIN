@@ -46,6 +46,12 @@ def view(request, pno):
     # 포토카드 상세정보 반환
     context = {"info":qs}
     return render(request, 'view.html', context)
+  
+def exchange(request):
+    return render(request, 'exchange.html')
+
+def detail(request):
+    return render(request, 'pocadetail.html')
 
 # 포토카드 거래글 작성
 def write(request):
