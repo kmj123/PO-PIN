@@ -396,6 +396,9 @@
     }
   </style>
 </head>
+
+
+
 <body>
   <div class="signup-wrapper">
     <div class="nav-buttons">
@@ -404,7 +407,7 @@
       <button class="nav-btn" onclick="goToPage('location', event)">장소 선택</button>
       <button class="nav-btn active" onclick="goToPage('member', event)">멤버 선택</button>
     </div>
-
+    
     <div class="signup-container">
       <div class="header">
         <h1 class="page-title">PO-PIN</h1>
@@ -412,13 +415,16 @@
         <br />
         <hr />
       </div>
-
+      
+      <form id="memberForm" method="POST" action="{% url 'signup:member_select' %}">
+        {% csrf_token %}
       <div class="search-container">
         <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
         <div class="filter-buttons">
           <button class="filter-btn active" data-filter="all">전체</button>
-          <button class="filter-btn" data-filter="boy">보이그룹</button>
-          <button class="filter-btn" data-filter="girl">걸그룹</button>
+          <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+          <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+          
         </div>
       </div>
 
@@ -436,8 +442,9 @@
       </div>
       
       <div class="groups-container" id="groupsContainer"></div>
-
+      <div id="hiddenInputsContainer"></div>
       <button id="completeBtn" class="btn btn-primary" onclick="completeMemberSelection()" type="button" disabled>완료</button>
+      </form>
     </div>
   </div>
 
@@ -489,30 +496,28 @@
       const container = document.getElementById('groupsContainer');
       const searchNotice = document.getElementById('searchNotice');
       const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-      
+
       if (!searchTerm) {
         container.innerHTML = '';
         searchNotice.style.display = 'block';
         return;
       }
-      
+
       searchNotice.style.display = 'none';
       container.innerHTML = '';
 
       const renderGroupType = (groupsObj, type) => {
         Object.entries(groupsObj).forEach(([groupName, members]) => {
           if (currentFilter !== 'all' && currentFilter !== type) return;
-          
+
           const groupMatches = groupName.toLowerCase().includes(searchTerm);
           const memberMatches = members.some(member => member.toLowerCase().includes(searchTerm));
-          
+
           if (groupMatches || memberMatches) {
             const groupCard = document.createElement('div');
             groupCard.className = 'group-card';
-            
-            const filteredMembers = searchTerm ? 
-              members.filter(member => member.toLowerCase().includes(searchTerm) || groupMatches) : 
-              members;
+
+            const filteredMembers = members.filter(member => member.toLowerCase().includes(searchTerm) || groupMatches);
 
             groupCard.innerHTML = `
               <div class="group-header">
@@ -527,7 +532,7 @@
                   const isSelected = selectedMembers.has(`${groupName}-${member}`);
                   const isDisabled = !isSelected && selectedMembers.size >= 2;
                   return `
-                    <button class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
+                    <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
                             data-group="${groupName}" data-member="${member}">
                       ${member}
                     </button>
@@ -535,7 +540,7 @@
                 }).join('')}
               </div>
             `;
-            
+
             container.appendChild(groupCard);
           }
         });
@@ -550,9 +555,8 @@
       const container = document.getElementById('selectedMembers');
       const list = document.getElementById('selectedList');
       const completeBtn = document.getElementById('completeBtn');
-      
+
       count.textContent = selectedMembers.size;
-      
       if (selectedMembers.size === 0) {
         container.style.display = 'none';
         completeBtn.disabled = true;
@@ -576,38 +580,36 @@
         alert('최소 1명 이상의 멤버를 선택해주세요.');
         return;
       }
-      
-      const memberList = Array.from(selectedMembers).map(item => {
+
+      const container = document.getElementById('hiddenInputsContainer');
+      container.innerHTML = '';
+
+      selectedMembers.forEach(item => {
         const [group, member] = item.split('-');
-        return `${group} - ${member}`;
-      }).join(', ');
-      
-      alert(`회원가입이 완료되었습니다!\n선택한 최애 멤버: ${memberList}`);
+
+        const groupInput = document.createElement('input');
+        groupInput.type = 'hidden';
+        groupInput.name = 'group_name';
+        groupInput.value = group;
+
+        const memberInput = document.createElement('input');
+        memberInput.type = 'hidden';
+        memberInput.name = 'member_name';
+        memberInput.value = member;
+
+        container.appendChild(groupInput);
+        container.appendChild(memberInput);
+      });
+
+      document.getElementById('memberForm').submit();
     }
 
     function goToPage(page, event) {
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       event.target.classList.add('active');
-
-      switch(page) {
-        case 'terms':
-          alert('약관 동의 페이지로 이동합니다.');
-          break;
-        case 'info':
-          alert('회원 정보 페이지로 이동합니다.');
-          break;
-        case 'location':
-          alert('장소 선택 페이지로 이동합니다.');
-          break;
-        case 'member':
-          alert('현재 멤버 선택 페이지입니다.');
-          break;
-      }
     }
 
-    // 이벤트 리스너
+    // 이벤트 연결
     document.getElementById('searchInput').addEventListener('input', renderGroups);
 
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -624,7 +626,7 @@
         const group = e.target.dataset.group;
         const member = e.target.dataset.member;
         const key = `${group}-${member}`;
-        
+
         if (selectedMembers.has(key)) {
           selectedMembers.delete(key);
           e.target.classList.remove('selected');
@@ -634,11 +636,11 @@
             e.target.classList.add('selected');
           }
         }
-        
+
         updateSelectedDisplay();
         renderGroups();
       }
-      
+
       if (e.target.classList.contains('remove-btn')) {
         const item = e.target.dataset.item;
         selectedMembers.delete(item);

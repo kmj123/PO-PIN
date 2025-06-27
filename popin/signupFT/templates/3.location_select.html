@@ -230,6 +230,8 @@
     </div>
 
     <div class="signup-container">
+      <form id="locationForm" method="POST" action="{% url 'signup:location_select' %}">
+     {% csrf_token %}
       <div class="header">
         <h1 class="page-title">PO-PIN</h1>
         <h3 class="subtitle">자주 가는 장소 선택</h3>
@@ -263,12 +265,13 @@
           <span>광야</span>
         </div>
       </div>
-
+      <input type="hidden" name="locations" id="locationsInput">
       <div class="notice">
         클릭하면 선택됩니다. 최대 2곳까지 선택 가능합니다!
       </div>
 
-      <button id="nextBtn" class="btn btn-primary" onclick="goToPage('member', event)" type="button">다음</button>
+         <button id="nextBtn" class="btn btn-primary" type="submit" disabled>다음</button>
+  </form>
     </div>
   </div>
 
@@ -297,15 +300,18 @@
       });
     });
 
-    function updateNextButton() {
-      const nextBtn = document.getElementById('nextBtn');
-      if (selectedLocations.length > 0) {
-        nextBtn.disabled = false;
-      } else {
-        nextBtn.disabled = true;
-      }
-    }
+ function updateNextButton() {
+  const nextBtn = document.getElementById('nextBtn');
+  const locationsInput = document.getElementById('locationsInput');
 
+  if (selectedLocations.length > 0) {
+    nextBtn.disabled = false;
+    locationsInput.value = selectedLocations.join(',');  // 예: sangam,olympic
+  } else {
+    nextBtn.disabled = true;
+    locationsInput.value = '';
+  }
+}
     function goToPage(page, event) {
       document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.classList.remove('active');
