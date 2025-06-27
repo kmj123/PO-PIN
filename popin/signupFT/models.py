@@ -28,9 +28,8 @@ class User(models.Model):
     email = models.EmailField(unique=True, verbose_name="이메일")
     
     # bias_group 필드를 Group 모델을 참조하는 ForeignKey로 변경
-    bias_group = models.ForeignKey(
+    bias_group = models.ManyToManyField(
         Group, 
-        on_delete=models.SET_NULL, # 그룹이 삭제되어도 사용자는 유지되도록 SET_NULL (null=True, blank=True 필요)
         blank=True, 
         null=True, 
         related_name='fans_group', # 역참조 이름
@@ -38,9 +37,8 @@ class User(models.Model):
     )
     
     # bias_member 필드를 Member 모델을 참조하는 ForeignKey로 변경
-    bias_member = models.ForeignKey(
+    bias_member = models.ManyToManyField(
         Member, 
-        on_delete=models.SET_NULL, # 멤버가 삭제되어도 사용자는 유지되도록 SET_NULL (null=True, blank=True 필요)
         blank=True, 
         null=True, 
         related_name='fans_member', # 역참조 이름
@@ -62,8 +60,9 @@ class User(models.Model):
     nickname = models.CharField(max_length=100, unique=True, verbose_name="닉네임")
     profile_image = models.ImageField(upload_to='profiles/', null=True, blank=True, verbose_name="프로필 이미지")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일")
+    agree_marketing = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True, verbose_name="최근 수정일")
-
+    
     class Meta:
         verbose_name = "사용자"
         verbose_name_plural = "사용자 목록"

@@ -10,6 +10,8 @@ urlpatterns = [
     path('photocard/', include('photocard.urls')),
     path('signup/', include('signupFT.urls')),
     path('idols/', include('idols.urls')),
+    path('login/', include('login.urls')),
+    path('home/', include('home.urls')),
 ]
 
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.
