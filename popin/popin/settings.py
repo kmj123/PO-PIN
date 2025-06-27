@@ -138,3 +138,15 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 이메일 백엔드 설정 (개발용)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# 이메일 서버
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# 본인 Gmail 계정
+EMAIL_HOST_USER = 'aaa@gmail.com'
+EMAIL_HOST_PASSWORD = 'qwer1234'  # 앱 비밀번호
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

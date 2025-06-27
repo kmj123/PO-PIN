@@ -528,8 +528,8 @@
                 <li><a href="#mypage">마이페이지</a></li>
             </ul>
             <div class="auth-buttons">
-                <a href="#login" class="btn btn-outline">로그인</a>
-                <a href="#signup" class="btn btn-primary">회원가입</a>
+                <a href="/login/loginp/" class="btn btn-outline">로그인</a>
+                <a href="/signup/agree/" class="btn btn-primary">회원가입</a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
@@ -579,69 +579,23 @@
     <section class="popular-cards">
         <h2 class="section-title">🔥 인기 포토카드</h2>
         <div class="cards-grid">
+            {% for photocard in photocards%}
             <div class="card-item">
-                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/media/{{photocard.image}}"></div>
                 <div class="card-info">
-                    <h4>원영 (WONYOUNG)</h4>
+                    <h4>{{photocard.member.group.name}} {{photocard.member.name}}</h4>
                     <div class="card-meta">
-                        <span class="card-album">WISH 1집</span>
-                        <span class="card-likes">❤️ 24</span>
+                        <span class="card-album">{{photocard.album}}</span>
+                        <span class="card-likes">❤️ {{photocard.wish_count}}</span>
                     </div>
                     <div class="card-tags">
-                        <span class="tag">교환</span>
-                        <span class="tag">럭키드로우</span>
+                        <span class="tag">{{photocard.trade_type}}</span>
+                        <span class="tag">{{photocard.category}}</span>
                     </div>
-                    <div class="card-location">📍 강남구</div>
+                    <div class="card-location">📍 {{photocard.place}}</div>
                 </div>
             </div>
-            
-            <div class="card-item">
-                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
-                <div class="card-info">
-                    <h4>리쿠 (RIKU)</h4>
-                    <div class="card-meta">
-                        <span class="card-album">WISH 1집</span>
-                        <span class="card-likes">❤️ 18</span>
-                    </div>
-                    <div class="card-tags">
-                        <span class="tag">판매</span>
-                        <span class="tag">앨범포카</span>
-                    </div>
-                    <div class="card-location">📍 홍대</div>
-                </div>
-            </div> 
-            
-            <div class="card-item">
-                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
-                <div class="card-info">
-                    <h4>유시 (YUSHI)</h4>
-                    <div class="card-meta">
-                        <span class="card-album">WISH 1집</span>
-                        <span class="card-likes">❤️ 31</span>
-                    </div>
-                    <div class="card-tags">
-                        <span class="tag">교환</span>
-                        <span class="tag">팬사인회</span>
-                    </div>
-                    <div class="card-location">📍 신촌</div>
-                </div>
-            </div>
-            
-            <div class="card-item">
-                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
-                <div class="card-info">
-                    <h4>재희 (JAEHEE)</h4>
-                    <div class="card-meta">
-                        <span class="card-album">WISH 1집</span>
-                        <span class="card-likes">❤️ 27</span>
-                    </div>
-                    <div class="card-tags">
-                        <span class="tag">교환</span>
-                        <span class="tag">하자없음</span>
-                    </div>
-                    <div class="card-location">📍 잠실</div>
-                </div>
-            </div>
+            {%endfor%}
         </div>
     </section>
 

@@ -226,29 +226,32 @@
         <br />
         <hr />
       </div>
-
+<form method="POST" action="{% url 'signup:agree' %}">
+  {% csrf_token %}
       <div class="terms-agreement">
         <div class="checkbox-group">
           <input id="agreeAll" type="checkbox" onchange="toggleAllAgreements()" />
           <label for="agreeAll">전체 동의</label>
         </div>
         <div class="checkbox-group">
-          <input class="agreement-checkbox required-checkbox" id="agreeTerms" type="checkbox" onchange="checkRequiredAgreements()" />
+          <input class="agreement-checkbox required-checkbox" id="agreeTerms" name="agree_terms" type="checkbox" onchange="checkRequiredAgreements()" />
           <label for="agreeTerms" class="required">이용약관 동의 (필수)</label>
         </div>
         <div class="checkbox-group">
-          <input class="agreement-checkbox required-checkbox" id="agreePrivacy" type="checkbox" onchange="checkRequiredAgreements()" />
+          <input class="agreement-checkbox required-checkbox" id="agreePrivacy"name="agree_privacy" type="checkbox" onchange="checkRequiredAgreements()" />
           <label for="agreePrivacy" class="required">개인정보 처리방침 동의 (필수)</label>
         </div>
         <div class="checkbox-group">
-          <input class="agreement-checkbox" id="agreeMarketing" type="checkbox" onchange="checkRequiredAgreements()" />
+          <input class="agreement-checkbox" id="agreeMarketing"name="agree_marketing" type="checkbox" onchange="checkRequiredAgreements()" />
           <label for="agreeMarketing" class="optional">마케팅 정보 수신 동의 (선택)</label>
         </div>
       </div>
 
-      <div class="error-message" id="errorMessage">필수 약관에 모두 동의해주세요.</div>
-      <button id="submitBtn" class="btn btn-primary" disabled onclick="goToPage('info', event)">다음</button>
-    </div>
+
+       <div class="error-message" id="errorMessage">필수 약관에 모두 동의해주세요.</div>
+  <button id="submitBtn" class="btn btn-primary" type="submit" disabled>다음</button>
+</form>
+  </div>
   </div>
 
   <script>
