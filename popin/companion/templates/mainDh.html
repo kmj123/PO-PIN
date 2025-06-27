@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>동행게시판</title>
   <style>
     * {
@@ -436,50 +437,6 @@
       color: #667eea;
       font-weight: 500;
     }
-
-    /* 참여 버튼 스타일 */
-    .post-actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
-      padding-top: 15px;
-      border-top: 1px solid #f0f0f0;
-    }
-
-    .join-btn {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 25px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      min-width: 120px;
-    }
-
-    .join-btn.active {
-      background: linear-gradient(45deg, #4caf50, #45a049);
-      color: white;
-    }
-
-    .join-btn.active:hover {
-      background: linear-gradient(45deg, #45a049, #3d8b40);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
-    }
-
-    .join-btn.disabled {
-      background: #f0f0f0;
-      color: #aaa;
-      cursor: not-allowed;
-    }
-
-    .join-btn.disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
         /* Modal */
         .modal {
             display: none;
@@ -652,6 +609,86 @@
             font-weight: 500;
         }
 
+        /* 참여 버튼 스타일 */
+    .post-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .join-btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      min-width: 120px;
+    }
+
+    .join-btn.active {
+      background: linear-gradient(45deg, #4caf50, #45a049);
+      color: white;
+    }
+
+    .join-btn.active:hover {
+      background: linear-gradient(45deg, #45a049, #3d8b40);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .join-btn.disabled {
+      background: #f0f0f0;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .join-btn.disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pagination a,
+    .pagination strong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      text-decoration: none;
+      color: #666;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination strong {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .pagination a:hover {
+      background: #f0f0f0;
+    }
+
+    .pagination img {
+      width: 16px;
+      height: 16px;
+    }
+
+
         /* Responsive */
         @media (max-width: 1024px) {
             .main-content {
@@ -760,7 +797,7 @@
         </div>
         <div class="postlist">
                     <!-- 동행 카드들 -->
-                    <div class="post-card" data-category="fansign" data-status="full">
+                    <div class="post-card" data-category="fansign">
                         <div class="post-header">
                             <div>
                                 <h3 class="post-title">IVE 팬사인회 동행 모집</h3>
@@ -806,13 +843,12 @@
                                 <span>💬 23</span>
                             </div>
                         </div>
-
                         <div class="post-actions">
                             <button class="join-btn disabled">모집 완료</button>
                         </div>
                     </div>
 
-                    <div class="post-card" data-category="exhibition" data-status="recruiting">
+                    <div class="post-card" data-category="exhibition">
                         <div class="post-header">
                             <div>
                                 <h3 class="post-title">BTS 전시회 관람 동행</h3>
@@ -858,65 +894,10 @@
                                 <span>💬 6</span>
                             </div>
                         </div>
-
                         <div class="post-actions">
-                            <button class="join-btn active">참여하기</button>
+                          <button class="join-btn active">참여하기</button>
                         </div>
-                    </div>
-
-                    <!-- 추가 예시 카드 -->
-                    <div class="post-card" data-category="concert" data-status="recruiting">
-                        <div class="post-header">
-                            <div>
-                                <h3 class="post-title">NewJeans 콘서트 같이 가요!</h3>
-                                <div class="post-tags">
-                                    <span class="post-tag">콘서트</span>
-                                    <span class="post-tag">NewJeans</span>
-                                    <span class="post-tag">잠실</span>
-                                </div>
-                            </div>
-                            <span class="post-status status-recruiting">모집중</span>
-                        </div>
-                        
-                        <div class="post-info">
-                            <div class="info-item">
-                                <span class="info-date">📅</span>
-                                <span>2024년 8월 15일 (목) 19:00</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-place">📍</span>
-                                <span>잠실 실내체육관</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-people">👥</span>
-                                <span>1/4명 (3명 더 모집)</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-mon">💰</span>
-                                <span>교통비 각자</span>
-                            </div>
-                        </div>
-                        
-                        <div class="post-description">
-                            NewJeans 첫 단독 콘서트! 혼자 가기 아쉬워서 같이 갈 분들 찾아요 🐰 콘서트 후 같이 맛있는 거 먹어요!
-                        </div>
-                        
-                        <div class="post-footer">
-                            <div class="post-author">
-                                <span>👤 bunny_lover</span>
-                                <span class="post-meta">1일 전</span>
-                            </div>
-                            <div class="participants">
-                                <span>👁️ 45</span>
-                                <span>💬 12</span>
-                            </div>
-                        </div>
-
-                        <div class="post-actions">
-                            <button class="join-btn active">참여하기</button>
-                        </div>
-                    </div>
-
+                      </div>
                 <div id="postModal" class="modal">
                     <div class="modal-content">
                         <button class="close-btn" onclick="closePostModal()">&times;</button>
@@ -924,3 +905,65 @@
                         <p id="modalPostDate">📅 날짜</p>
                         <p id="modalPostPlace">📍 장소</p>
                         <p id="modalPostPeople">👥 인원</p>
+                        <p id="modalPostMoney">💰 비용</p>
+                        <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
+                        설명 내용
+                        </div>
+                    </div>
+                    </div>
+                    <div class="pagination">
+                      <a href="#" title="첫 페이지">«</a>
+                      <a href="#" title="이전 페이지">‹</a>
+                      <strong>1</strong>
+                      <a href="#">2</a>
+                      <a href="#">3</a>
+                      <a href="#">4</a>
+                      <a href="#">5</a>
+                      <a href="#" title="다음 페이지">›</a>
+                      <a href="#" title="마지막 페이지">»</a>
+                    </div>
+                </div>
+                <button type="button" class ="topBtn"><img src="/static/images/login/topBtn.svg" alt="Triangle Icon" width="24" height="24"></button>
+<script>
+  const postModal = document.getElementById("postModal");
+
+  // 모달 열기
+  function openPostModal(title, date, place, people, money, desc) {
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostDate").textContent = `📅 ${date}`;
+    document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
+    document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
+    document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+
+    postModal.style.display = "block";
+  }
+
+  // 모달 닫기
+  function closePostModal() {
+    postModal.style.display = "none";
+  }
+
+  // 바깥 클릭 시 닫기
+  window.onclick = function(event) {
+    if (event.target === postModal) {
+      postModal.style.display = "none";
+    }
+  }
+
+  // 모든 post-card에 클릭 이벤트 달기
+  document.querySelectorAll(".post-card").forEach(card => {
+    card.addEventListener("click", () => {
+      const title = card.querySelector(".post-title").textContent.trim();
+      const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+      const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+      const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+      const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
+      const desc = card.querySelector(".post-description")?.textContent.trim();
+
+      openPostModal(title, date, place, people, money, desc);
+    });
+  });
+</script>
+
+</html>

@@ -12,6 +12,7 @@ urlpatterns = [
     path('idols/', include('idols.urls')),
     path('login/', include('login.urls')),
     path('adpage/', include('adpage.urls')),
+    path('companion/', include('companion.urls')),
 ]
 
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.

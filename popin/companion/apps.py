@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class DonghangConfig(AppConfig):
+class CompanionConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'donghang'
+    name = 'companion'

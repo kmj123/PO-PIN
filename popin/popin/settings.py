@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'photocard',
     'idols',
     'adpage',
+    'companion',
 ]
 
 MIDDLEWARE = [
