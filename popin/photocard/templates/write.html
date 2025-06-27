@@ -1,72 +1,730 @@
+
+{% include 'header2.html' %}
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>포토카드 업로드</title>
 </head>
+<style>
+.Upload-Container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(2555,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    background-filter: blur(10px);
+    overflow: hidden;
+}
+.Upload-header {
+    background: linear-gradient(153deg, #bbc8ff, #9c42a0);
+    padding: 30px;
+    text-align: center;
+    color: #ffff;
+    margin-bottom: 29px;
+}
+.Upload-header h2{
+    font-size:2.5rem;
+    margin-bottom:10px;
+    font-weight: 700;
+}
+.Upload-header p{
+    opacity: 0.9;
+    font-size: 1rem;
+}
+.Upload-Form{
+    padding: 20px;
+}
+.form-section h3{
+    margin-bottom: 10px;
+}
+.form-content{
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.file-upload-area {
+    border: 3px dashed #e1e5e9;
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+}
+
+.file-upload-area:hover,
+.file-upload-area.dragover {
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: scale(1.02);
+}
+
+.file-upload-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+}
+
+.preview-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.preview-image {
+    max-width: 250px;
+    max-height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    object-fit: cover;
+}
+
+.trade-type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.trade-option {
+    padding: 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.trade-option:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.trade-option.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.trade-option h4 {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.trade-option p {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.price-input {
+    display: none;
+    margin-top: 15px;
+}
+
+.price-input.active {
+    display: block;
+}
+
+.location-options {
+    margin-top: 15px;
+}
+
+.location-toggle {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.location-btn {
+    padding: 10px 20px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.location-btn.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.map-container {
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #e1e5e9;
+    margin-top: 10px;
+    display: none;
+}
+
+.map-container.active {
+    display: block;
+}
+
+.location-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.button-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 18px 40px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6ec7 0%, #b06ab3 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 110, 199, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+}
+
+.required {
+    color: #ff4757;
+}
+
+.form-section {
+    background: #f8f9fa;
+    padding: 5px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e1e5e9;
+}
+
+.member-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    align-items: end;
+}
+
+.album-type-selector {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.album-type-btn {
+    padding: 8px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.album-type-btn.active {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.album-input {
+    margin-top: 15px;
+}
+
+.blocked-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    color: #856404;
+    display: none;
+}
+
+.blocked-notice.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .trade-type-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-container {
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 2em;
+    }
+
+    .member-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16b7fa3fde4aebba2a5972919f45a4f1"></script>
 <body>
-    <form action="/photocard/write/" method="POST" enctype='multipart/form-data'>
+<!--상단 헤더더-->
+    {%block content%}
+    {%endblock%}
+<!--//상단헤더-->
+
+<div class="Upload-Container">
+    <!--//Upload-header-->
+    <div class="Upload-header">
+        <h1>✨포토카드 업로드</h1>
+        <p>소중한 포토카드를 등록하고 다른 팬들과 교환해보세요!</p>
+    </div>
+    <!--//Upload-header-->
+
+    <!--Upload-Form-->
+    <div class="Upload-Form">
+        <form action="/photocard/write/" method="POST" enctype='multipart/form-data' id="uploadForm">
         {% csrf_token %}
+            <!-- 기본정보 섹션 -->
+            <div class="form-section">
+                <h3 class="section-title">📋 기본 정보</h3>
+             
+                <!--제목-->
+                <div class="form-content">
+                    <label for="title">제목 <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" required placeholder="포토카드 제목을 입력해주세요">
+                </div>
 
-        <label>제목</label>
-        <input type="text" name="title"><br><br>
+                <!-- 이미지 업로드 -->
+                <div class="form-content">
+                    <label>사진 <span class="required">*</span></label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="file-upload-icon">📷</div>
+                        <h4>이미지를 드래그하거나 클릭하여 업로드</h4>
+                        <p>JPG, PNG, GIF 파일을 지원합니다 (최대 10MB)</p>
+                        <input type="file" name="image" id="imageInput" class="fileType" accept="image/*" style="display: none;" required>
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="previewImage" class="preview-image" alt="미리보기">
+                    </div>
+                </div>
 
-        <label>이미지 경로</label>
-        <input type="file" name='image' class="fileType" />
+                <!-- 그룹 - 멤버 -->
+                <div class="form-content">
+                    <label>그룹 - 멤버 <span class="required">*</span></label>
+                    <div class="member-grid">
+                        <select name="group" id="group" required>
+                            <option value="">그룹 선택</option>
+                            {% for group in groups %}
+                            <option value="{{ group }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="member" id="member" required>
+                            <option value="">멤버 선택</option>
+                            {% for mem in member %}
+                            <option value="{{ mem }}">{{ mem }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
-        <label>카테고리</label>
-        <select name="category">
-            {% for key, label in category_choices %}
-            <option value="{{ key }}">{{ label }}</option>
-            {% endfor %}
-        </select><br><br>
+                <!-- 앨범 정보 -->
+                <div class="form-content">
+                    <label>앨범</label>
+                    <div class="album-type-selector">
+                        <button type="button" class="album-type-btn" data-type="album_name">앨범명</button>
+                        <button type="button" class="album-type-btn" data-type="lucky_draw">럭드</button>
+                        <button type="button" class="album-type-btn" data-type="unreleased">미공포</button>
+                    </div>
+                    <div class="album-input">
+                        <input type="text" name="album" id="albumInput" placeholder="앨범 정보를 입력해주세요">
+                        <input type="hidden" name="album_type" id="albumType">
+                    </div>
+                </div>
+            <!--//기본정보섹션-->
 
-        <label>앨범</label>
-        <input type="text" name="album"><br><br>
+            <!--거래유형섹션-->
+            <div class="form-section">
+                <h3 class="section-title">💰 거래 유형</h3>
+                
+                <div class="form-content">
+                    <label>거래 유형 선택 <span class="required">*</span></label>
+                    <div class="trade-type-selector">
+                        <div class="trade-option" data-type="sale">
+                            <h4>💰 판매글</h4>
+                            <p>가격을 설정하여 판매</p>
+                        </div>
+                        <div class="trade-option" data-type="exchange">
+                            <h4>🔄 교환글</h4>
+                            <p>다른 포토카드와 교환</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="trade_type" id="tradeType" required>
+                    
+                    <div class="price-input" id="priceInput">
+                        <label for="price">가격 (원) <span class="required">*</span></label>
+                        <input type="number" id="price" name="price" placeholder="판매 가격을 입력해주세요" min="0">
+                    </div>
 
-        <label>멤버 ID</label>
-        <select name="member" id="">
-            {% for mem in member %}
-            <option value="{{ mem }}">{{ mem }}</option>
-            {% endfor %}
-        </select>
+                    <div class="blocked-notice" id="blockedNotice">
+                        <strong>⚠️ 알림:</strong> 교환글은 가격 설정이 불가능합니다.
+                    </div>
+                </div>
+            </div>
+            <!--//거래유형섹션-->
 
-        <label>포토카드 상태</label>
-        <select name="poca_state">
-            {% for key, label in poca_state_choices %}
-            <option value="{{ key }}">{{ label }}</option>
-            {% endfor %}
-        </select><br><br>
+            <!--상세설명섹션-->
+            <div class="form-section">
+                <h3 class="section-title">📝 상세 설명</h3>
+                
+                <div class="form-content">
+                    <label for="description">상세설명</label>
+                    <textarea id="description" name="description" placeholder="포토카드의 상태, 교환 희망 사항 등을 자세히 설명해주세요"></textarea>
+                </div>
 
-        <label>태그</label>
-        <input type="text" name="tag"><br><br>
+                <div class="form-content">
+                    <label for="tag">태그</label>
+                    <input type="text" id="tag" name="tag" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                </div>
+            </div>
+            <!--//상세설명섹션-->
 
-        <label>교환/구매</label>
-        <select name="trade_type">
-            {% for key, label in trade_type_choices %}
-            <option value="{{ key }}">{{ label }}</option>
-            {% endfor %}
-        </select><br><br>
+            <!--위치정보섹션-->
+            <div class="form-section">
+                <h3 class="section-title">📍 거래 위치</h3>
+                
+                <div class="form-content">
+                    <label>위치 선택 방법</label>
+                    <div class="location-toggle">
+                        <button type="button" class="location-btn" data-location="db">DB 장소</button>
+                        <button type="button" class="location-btn" data-location="current">내 위치</button>
+                    </div>
 
-        <label>거래 장소</label>
-        <select name="place">
-            {% for key, label in place_choices %}
-            <option value="{{ key }}">{{ label }}</option>
-            {% endfor %}
-        </select><br><br>
-<!--해당 부분 input 입력이 아닌 지도 api에서 반환해 주세요-->
-        <label>위도</label>
-        <input type="text" name="latitude"><br><br>
+                    <div id="dbLocationContainer">
+                        <select name="db_location" id="dbLocation">
+                            <option value="">장소를 선택해주세요</option>
+                            {% for key, label in place_choices %}
+                            <option value="{{ key }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <label>경도</label>
-        <input type="text" name="longitude"><br><br>
-<!--해당 부분 input 입력이 아닌 지도 api에서 반환해 주세요-->
-        <label>거래 가능 날짜</label>
-        <input type="date" name="available_at"><br><br>
+                    <div id="mapContainer">
+                        <div id="map" class="map-container"></div>
+                        <div class="location-info" id="locationInfo">
+                            지도를 클릭하여 거래 장소를 선택해주세요
+                        </div>
+                    </div>
 
-        <input type="submit" value="등록">
-    </form>
+                    <input type="hidden" name="location_type" id="locationType">
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                </div>
+            </div>
+            <!--//위치정보섹션-->
 
+            <!-- 버튼 -->
+            <div class="button-container">
+                <button type="button" class="btn btn-secondary" onclick="history.back()">
+                    취소하기
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+    </div>
+    <!--//Upload-Form-->
+</div>  
+<!--//Upload-Container-->
+<script>
+
+    //파일 업로드 관련
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const imageinput = document.getElementById('imageinput');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+
+    fileUploadArea.addEventListener('click', () => imageInput.click());
+
+    fileUploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        fileUploadArea.classList.add('dragover');
+    });
+
+    fileUploadArea.addEventListener('dragleave', () => {
+        fileUploadArea.classList.remove('dragover');
+    });
+
+    fileUploadArea.addEventListener('drop',(e)=>{
+        e.preventDefault();
+        fileUploadArea.ClassList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length>0){
+            handleFile(files[0]);
+        }
+    });
+
+    imageInput.addEventListener('change',(e) => {
+        if(e.target.files.length>0){
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    // 이미지 미리보기 영역
+    function handleFile(file){
+        if(file.type.startsWith('image/')){
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = "block";
+                console.log(e)
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+    
+    // 앨범 타입 선택
+    const albumtypeBtns = document.querySelectorAll('.album-type-btn');
+    const albumTypeInput = document.getElementById('albumType');
+
+    albumtypeBtns.forEach(btn => {
+        btn.addEventListener('click',()=>{
+            albumtypeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            albumTypeInput.value = btn.dataset.type;
+        });
+    });
+
+    // 거래 유형 선택
+    const tradeOptions = document.querySelectorAll('.trade-option');
+    const tradeTypeInput = document.getElementById('tradeType');
+    const priceInput = document.getElementById('priceInput');
+    const blockedNotice = document.getElementById('blockedNotice');
+    const priceField = document.getElementById('price');
+
+    tradeOptions.forEach(option => {
+        option.addEventListener('click',() =>{
+            tradeOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+
+            const type = option.dataset.type;
+            tradeTypeInput.value = type;
+
+            if (type == 'sale'){
+                priceInput.classList.add('active');
+                blockedNotice.classList.remove('active');
+                priceField.required = true;
+            } else{
+                priceInput.classList.remove('active');
+                blockedNotice.classList.add('active');
+                priceField.required = false;
+                priceField.value='';
+            }
+        });
+    });
+
+    // 위치선택
+    const locationBtns = document.querySelectorAll('.location-btn');
+    const locationTypeInput = document.getElementById('locationType');
+    const dbLocationContainer = document.getElementById('dbLocationContainer');
+    const mapContainer = document.getElementById('mapContainer');
+
+    locationBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            locationBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const locationType = btn.dataset.location;
+            locationTypeInput.value = locationType;
+
+            if(locationType == 'db'){
+                dbLocationContainer.style.display = 'block';
+                mapContainer.classList.remove('active');
+            } else{
+                dbLocationContainer.style.display = 'none';
+                mapContainer.classList.add('active');
+                initMap();
+            }
+        });
+    });
+
+    // 카카오 지도 API
+    let map, maker;
+    let selectedLat = null, selectedLng=null;
+
+    function initMap() {
+        if (map) return;    // 이미 초기화 된 경우 리턴
+
+        const container = document.getElementById('map');
+        const options ={
+            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+            level: 3
+        };
+
+        map = new kakao.maps.Map(container,options);
+
+        // 현재위치 가져오기
+        if(navigator.geolocation){
+            navigator.geolocations.getCurrentPosition(function(position){
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const locPosition  = new kakao.maps.LatLng(lat, lng);
+
+                map.setCenter(locPosition);
+
+                // 현재ㅐ 위치에 마커 표시
+                marker = new kakao.maps.Marker({
+                    position: locPosition
+                });
+                marker.setMap(map);
+
+                selectedLat = lat;
+                selectedLng = lng;
+                document.getElementById('latitude').value = lat;
+                document.getElementById('longitude').value = lng;
+                document.getElementById('locationInfo').innerHTML ='현재 위치가 설정되었습니다.';
+            });
+        }
+
+        // 지도 클릭 이벤트
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent){
+            const latlng = mouseEvent.latLng;
+            selectedLat = latlng.getLat();
+            seelctedLng = latlng.getLng();
+
+            if(marker){
+                marker.setMap(null);
+            }
+            marker = new kakao.maps.Marker({
+                position: latlng
+            });
+            marker.setMap(map);
+
+            const ggeocoder = new kakao.maps.services.Geocoder();
+            geocoder.coord2Address(selecttedLng, selectedLat, function(result, status){
+                if (status === kakao.maps.services.Status.OK) {
+                    const addr = result[0].address.address_name;
+                    document.getElementById('locationInfo').innerHTML = '선택된 위치: ${addr}';
+
+                    document.getElementById('latitude').value = selectedLat;
+                    document.getElementById('longitude').value = selectedLng;
+                }
+            });
+        });
+    }   
+
+    // 폼제출 검증
+    document.getElementById('uploadForm').addEventListener('submit',function(e){
+        const locationType = document.getElementById('locationType').value;
+
+        if(!locationType){
+            e.preventDefault();
+            alert("위치 선택 방법을 선택해주세요!");
+            return false;
+        }
+        if(locationType === 'current' && (!selectedLat || !selectedLng)) {
+            e.preventDefault();
+            alert('지도에서 거래장소를 선택해주세요!');
+            return false;
+        }
+
+        const tradeType = document.getElementById('tradeType').value;
+        if (!tradeType){
+            e.preventDefault();
+            alert('거래 유형을 선택해주세요!');
+            return false;
+        }
+
+        if (tradeType === 'sale' && !document.getElementById('price').value){
+            e.preventDefault();
+            alert('판매가격을 입력해주세요!');
+            return false;
+        }
+    });
+
+    
+</script>
 </body>
 </html>
