@@ -193,7 +193,18 @@ def update(request, pno):
 
 # 포토카드 거래글 삭제
 def delete(request, pno):
-    Photocard.objects.get(pno=pno).delete()
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = User.objects.get(user_id=user_id) # 사용자
+    photo_qs = Photocard.objects.get(pno=pno) # 수정 포토카드 게시글
+    
+    # 사용자 아이디와 수정 포토카드 게시글의 판매자가 같을 시 True
+    if user.user_id == photo_qs.seller.user_id :
+        Photocard.objects.get(pno=pno).delete()
+        
     return redirect('/photocard/list/')
 
 # 포토카드 위시 등록 & 삭제
