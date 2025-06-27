@@ -6,16 +6,18 @@ from django.core.mail import send_mail
 from django.http import JsonResponse 
 from django.conf import settings
 import random
-# 이메일 인증번호 전송 
+
 def send_verification_code(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         name = request.POST.get('name')
+
         try:
             user = User.objects.get(email=email, name=name)
             code = str(random.randint(100000, 999999))
+
             request.session['verify_code'] = code
-            request.session['verify_user'] = user.user_id
+            request.session['verify_user_email'] = email
 
             send_mail(
                 subject='[PO-PIN] 이메일 인증번호',
@@ -26,7 +28,8 @@ def send_verification_code(request):
             )
             return JsonResponse({'success': True})
         except User.DoesNotExist:
-            return JsonResponse({'success': False, 'message': '회원 정보가 일치하지 않습니다.'})
+            return JsonResponse({'success': False, 'message': '일치하는 사용자가 없습니다.'})
+
 # 로그인
 def loginp(request):
     if request.method == 'POST':
@@ -45,21 +48,29 @@ def loginp(request):
 
     return render(request, 'login.html')
 
-
-# 아이디 찾기
+# 아이디 찾기 처리
 def loginID(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
+        code = request.POST.get('code')
+
+        # 세션에서 인증정보 가져오기
+        session_code = request.session.get('verify_code')
+        session_email = request.session.get('verify_user_email')
+
+        if code != session_code or email != session_email:
+            messages.error(request, '인증번호가 일치하지 않거나 이메일 인증이 완료되지 않았습니다.')
+            return render(request, 'login-findID.html')
+
         try:
             user = User.objects.get(name=name, email=email)
-            return render(request, "login-findID.html", {'found_id': user.user_id})
+            return render(request, 'login-findID.html', {'found_id': user.user_id})
         except User.DoesNotExist:
             messages.error(request, '일치하는 회원이 없습니다.')
-    return render(request, "login-findID.html")
 
+    return render(request, 'login-findID.html')
 
-# 비밀번호 찾기 (세션에 user_id 저장)
 
 def loginPW(request):
     if request.method == 'POST':
