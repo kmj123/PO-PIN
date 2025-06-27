@@ -11,7 +11,7 @@ from datetime import date
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
     # 쿼리 파라미터 받아오기
-    idol_ids = request.GET.getlist('idol')
+    idol_names = request.GET.getlist('idol')
     place = request.GET.get('place')
     category = request.GET.get('category')
     sort = request.GET.get('sort')
@@ -22,8 +22,8 @@ def list(request):
     )
     
     # 조건부 필터링 (값이 있을 경우에만 필터링)
-    if idol_ids:
-        photocards = photocards.filter(member__id__in=idol_ids)
+    if idol_names:
+        photocards = photocards.filter(member__name__in=idol_names)
     if place:
         photocards = photocards.filter(place=place)
     if category:
