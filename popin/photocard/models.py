@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import date
+from idols.models import Member
 
 class TempUser(models.Model):
     user_id = models.CharField(max_length=50)
@@ -62,7 +63,7 @@ class Photocard(models.Model):
     image = models.ImageField(upload_to='photocards/')
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='Album')
     album = models.CharField(max_length=50, default='1집')
-    idol = models.ForeignKey(TempIdol, on_delete=models.CASCADE, related_name='photocards')
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='photocards', null=True, blank=True)
 
     poca_state = models.CharField(max_length=20, choices=P_STATE_CHOICES, default='상')
     tag = models.CharField(max_length=20, null=True, blank=True)  # choices 생략됨
@@ -80,11 +81,14 @@ class Photocard(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     
     def __str__(self):
-        return f'{self.title} ({self.idol.group}/{self.idol.member})'
+        return f'{self.title} ({self.member})'
 
 class TempWish(models.Model):
     user = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='wished_photocards')
     photocard = models.ForeignKey(Photocard, on_delete=models.CASCADE, related_name='wished_by_users')
+    class Meta:
+        unique_together = ('user', 'photocard')
     
     def __str__(self):
         return f'{self.user.user_id} | {self.photocard.pno}'
+    
