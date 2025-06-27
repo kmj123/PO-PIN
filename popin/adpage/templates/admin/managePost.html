@@ -331,8 +331,8 @@
       <div class = "menu">
                 <ul>
                     <li>대시보드</li>
-                    <li class = "board">공지사항</li>
-                    <li>게시글 관리</li>
+                    <li >공지사항</li>
+                    <li class = "board">게시글 관리</li>
                     <li>사용자 관리</li>
                 </ul>
             </div>
@@ -356,7 +356,7 @@
 
         <div class="filter">
           <div class="filt">
-            <select class="board">
+            <select>
               <option value="">전체 게시판</option>
               <option value="">교환후기</option>
               <option value="">나눔</option>
@@ -438,6 +438,18 @@
   </div>
 
   <script>
+    // 모든 메뉴 li 요소 가져오기
+    const menuItems = document.querySelectorAll('.menu ul li');
+
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+        // 먼저 모든 li에서 'board' 클래스 제거
+        menuItems.forEach(i => i.classList.remove('board'));
+        // 클릭한 항목에만 'board' 클래스 추가
+        item.classList.add('board');
+        });
+    });
+
     // 전체 선택 체크박스 기능
     const selectAllCheckbox = document.getElementById('selectAll');
     const rowCheckboxes = document.querySelectorAll('.row-checkbox');
