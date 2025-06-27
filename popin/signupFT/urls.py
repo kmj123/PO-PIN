@@ -9,4 +9,5 @@ urlpatterns = [
     path('location_select/', views.location_select, name='location_select'),
     path('member_select/', views.member_select, name='member_select'),
     path('completed/', views.completed, name='completed'),
+    
 ]
