@@ -59,7 +59,7 @@ def signup(request):
         birth_date_str = request.POST.get('birth_date')
         gender = request.POST.get('gender')
         email = request.POST.get('email')
-
+        nickname=request.POST.GET('nickname')
         # 1. 유효성 검사
         if password != confirmPassword:
             messages.error(request, "비밀번호가 일치하지 않습니다.")
@@ -85,12 +85,12 @@ def signup(request):
         # 3. 유저 생성
         user = User(
             user_id=user_id,
-            password=make_password(password),  # ✅ 여기 수정
+            password=make_password(password),  
             name=name,
+            nickname=nickname,
             birth_date=birth_date,
             gender=gender,
             email=email,
-            nickname=user_id,
             agree_marketing=agree_marketing
         )
         user.save()
