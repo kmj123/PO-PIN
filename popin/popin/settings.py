@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     'adpage',
     'companion',
     'home',
+    'chgReview',
+    'proxy',
+    'sharing',
 ]
 
 MIDDLEWARE = [

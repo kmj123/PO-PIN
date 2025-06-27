@@ -4,5 +4,5 @@ from . import views
 
 app_name = 'companion'
 urlpatterns = [
-    path('board/', views.board, name='board'),
+    path('', views.main, name='main'),
 ]

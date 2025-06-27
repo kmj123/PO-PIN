@@ -437,6 +437,35 @@
       color: #667eea;
       font-weight: 500;
     }
+
+    .topBtn{
+      position: fixed;
+      right: 300px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .topBtn.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .topBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+
         /* Modal */
         .modal {
             display: none;
@@ -895,7 +924,7 @@
                             </div>
                         </div>
                         <div class="post-actions">
-                          <button class="join-btn active">참여하기</button>
+                          <button class="join-btn active">채팅하기</button>
                         </div>
                       </div>
                 <div id="postModal" class="modal">
@@ -923,7 +952,9 @@
                       <a href="#" title="마지막 페이지">»</a>
                     </div>
                 </div>
-                <button type="button" class ="topBtn"><img src="/static/images/login/topBtn.svg" alt="Triangle Icon" width="24" height="24"></button>
+              </div>
+              <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+            </body>
 <script>
   const postModal = document.getElementById("postModal");
 
@@ -935,7 +966,6 @@
     document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
     document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
     document.getElementById("modalPostDescription").textContent = desc;
-
     postModal.style.display = "block";
   }
 
@@ -951,19 +981,48 @@
     }
   }
 
-  // 모든 post-card에 클릭 이벤트 달기
-  document.querySelectorAll(".post-card").forEach(card => {
-    card.addEventListener("click", () => {
-      const title = card.querySelector(".post-title").textContent.trim();
-      const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
-      const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
-      const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
-      const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
-      const desc = card.querySelector(".post-description")?.textContent.trim();
+      document.querySelectorAll(".post-card").forEach(card => {
+      card.addEventListener("click", (event) => {
+        // 클릭한 요소가 버튼이거나, post-actions 내부 요소면 return
+        if (
+          event.target.tagName === 'BUTTON' ||
+          event.target.closest(".post-actions")
+        ) {
+          return; // 클릭 무시 (모달 열지 않음)
+        }
 
-      openPostModal(title, date, place, people, money, desc);
+        // 모달 내용 채우기
+        const title = card.querySelector(".post-title")?.textContent.trim();
+        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
+        const desc = card.querySelector(".post-description")?.textContent.trim();
+
+        // 모달 열기 함수 호출
+        openPostModal(title, date, place, people, money, desc);
+      });
     });
-  });
-</script>
 
+    // Top 버튼 기능
+    const topBtn = document.getElementById('topBtn');
+    
+    // 스크롤 이벤트 리스너
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        topBtn.classList.add('show');
+      } else {
+        topBtn.classList.remove('show');
+      }
+    });
+    
+    // 맨 위로 이동 기능
+    topBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+</script>
+</body>
 </html>
