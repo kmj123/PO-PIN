@@ -157,7 +157,9 @@
          <input type="submit" class="loginOG" value="로그인">
           </form>
              <p class = "or">__________________________________또는__________________________________</p>
-            <img class = "kakao" src = "/static/images/login/kakaologin.png" alt = "카카오톡 로그인">
+             <a href="{% url 'login:kakao_login' %}">
+                <img class = "kakao" src = "/static/images/login/kakaologin.png" alt = "카카오톡 로그인">
+            </a>
             <div class = "signup">
                 <p>아직 계정이 없으신가요?</p>
                 <a>  </a>

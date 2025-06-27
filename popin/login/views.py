@@ -6,6 +6,59 @@ from django.core.mail import send_mail
 from django.http import JsonResponse 
 from django.conf import settings
 import random
+import requests
+
+def kakao_login(request):
+    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
+    return redirect(
+        f"https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
+    )
+
+def kakao_callback(request):
+    code = request.GET.get('code')
+    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
+
+    # 1. 토큰 요청
+    token_url = "https://kauth.kakao.com/oauth/token"
+    token_data = {
+        "grant_type": "authorization_code",
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "code": code,
+    }
+    token_res = requests.post(token_url, data=token_data)
+    token_json = token_res.json()
+    access_token = token_json.get("access_token")
+
+    # 2. 사용자 정보 요청
+    profile_url = "https://kapi.kakao.com/v2/user/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    profile_res = requests.get(profile_url, headers=headers)
+    profile_json = profile_res.json()
+
+    kakao_id = profile_json.get("id")
+    email = profile_json.get("kakao_account", {}).get("email")
+    nickname = profile_json.get("properties", {}).get("nickname")
+
+    # 3. DB 저장 또는 로그인 처리 (예시)
+    from signupFT.models import User
+    user, created = User.objects.get_or_create(
+        user_id=f'kakao_{kakao_id}',
+        defaults={'email': email or '', 'nickname': nickname or '', 'password': '카카오계정'},  # 임시 비번
+    )
+    request.session['user_id'] = user.user_id
+    return redirect('home:main')
+
+
+
+
+
+
+
+
+
 
 def send_verification_code(request):
     if request.method == 'POST':
