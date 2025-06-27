@@ -1071,15 +1071,15 @@
                     
                     <div class="quick-stats">
                         <div class="stat-card">
-                            <div class="stat-number">1,234</div>
+                            <div class="stat-number">{{total_photocard}}</div>
                             <div class="stat-label">전체 게시글</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">567</div>
+                            <div class="stat-number">{{total_user}}</div>
                             <div class="stat-label">활성 사용자</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">890</div>
+                            <div class="stat-number">{{completed_photocard}}</div>
                             <div class="stat-label">교환 완료</div>
                         </div>
                         <div class="stat-card">
@@ -1090,62 +1090,22 @@
 
                     <h2 style="margin-bottom: 20px;">최근 인기 포토카드</h2>
                     <div class="photo-grid">
+                        {% for photocard in photocards %}
                         <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                            <div class="photo-image"><img src="/media/{{photocard.image}}"></div>
                             <div class="photo-info">
-                                <div class="photo-title">NewJeans 하니</div>
+                                <div class="photo-title">{{photocard.title}}</div>
                                 <div class="photo-tags">
-                                    <span class="photo-tag">NewJeans</span>
-                                    <span class="photo-tag">하니</span>
+                                    <span class="photo-tag">{{photocard.member.group.name}}</span>
+                                    <span class="photo-tag">{{photocard.member.name}}</span>
                                 </div>
                                 <div class="photo-stats">
-                                    <span>❤️ 42</span>
-                                    <span>💬 8</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">BLACKPINK 리사</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">BLACKPINK</span>
-                                    <span class="photo-tag">리사</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 35</span>
-                                    <span>💬 12</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">BTS 정국</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">BTS</span>
-                                    <span class="photo-tag">정국</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 58</span>
-                                    <span>💬 15</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">IVE 안유진</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">IVE</span>
-                                    <span class="photo-tag">안유진</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 47</span>
+                                    <span>❤️ {{photocard.wish_count}}</span>
                                     <span>💬 9</span>
                                 </div>
                             </div>
                         </div>
+                        {%endfor%}
                     </div>
 
                     <!-- 최신 게시글 -->
