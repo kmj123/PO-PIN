@@ -1,3 +1,4 @@
+
 from django.shortcuts import render,redirect
 from signupFT.models import User
 
@@ -15,5 +16,3 @@ def main(request):
         return render(request, 'main.html', context)
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
-    
-  

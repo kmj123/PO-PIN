@@ -3,6 +3,6 @@ from.import views
 
 app_name = 'mypage'
 urlpatterns = [
-    path('mypage/',views.mypage,name='mypage'),
+    path('profile/',views.profile,name='profile'),
     path('pchange/',views.pchange,name='pchange'),
 ]

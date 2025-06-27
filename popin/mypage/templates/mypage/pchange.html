@@ -1,86 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/mypage.css"> {% endcomment %}
-    <title>프로필변경</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/static/css/mypage.css"/>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <title>프로필 변경</title>
+  <style>
+    #modalOpenButton {
+      cursor: pointer;
+    }
+
+    #modalCloseButton {
+        cursor: pointer;
+        width: 112px;
+        height: 37px;
+    }
+
+    #modalContainer {
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    #modalContent {
+      background-color: #ffffff;
+      width: 50%;
+      height:600px;
+      padding: 20px;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    #modalContainer.hidden {
+      display: none;
+    }
+  </style>
 </head>
-    <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-    }
-
-    .header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .logo {
-        font-size: 1.8rem;
-        font-weight: bold;
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-
-    .nav {
-        display: flex;
-        gap: 2rem;
-    }
-
-    .nav a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
-
-    .nav a:hover {
-        color: #667eea;
-    }
-
-    .main {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .box{
-        border:1px solid black;
-        background:white;
-        height:700px;
-        width: 500px;
-        
-    }
-</style>
 <body>
-    <header class="header">
-        <div class="logo"></div>
-        <nav class="nav">
-            <a href="#">홈</a>
-            <a href="#">포카교환</a>
-            <a href="#">커뮤니티</a>
-            <a href="#">마이페이지</a>
-        </nav>
-    </header>
-    <div class="box">
-        
+  <button id="modalOpenButton">변경하기</button>
+
+<!--모달창 열림-->
+<form aciton="" method="post" name="profileFrm">
+    {% csrf_token %}
+    <table>
+        <tbody>
+
+        </tbody>
+    </table>
+    <div id="modalContainer" class="hidden">
+        <div id="modalContent">
+            <h1>프로필 변경</h1>
+            <label for="username">사용자 이름:</label>
+                <input type="text" id="username" name="username"><br><br>
+            <label for="email">이메일:</label>
+                <input type="email" id="email" name="email"><br><br>
+            <label for="email">이메일:</label>
+                <input type="email" id="email" name="email"><br><br>
+            <label for="email">이메일:</label>
+                <input type="email" id="email" name="email"><br><br>
+            <label for="email">이메일:</label>
+                <input type="email" id="email" name="email"><br><br>
+            <label for="email">이메일:</label>
+                <input type="email" id="email" name="email"><br><br>
+            <button id="modalCloseButton">변경사항 저장</button>
+        </div>
     </div>
+</form>
+
+  <!-- 🔽 스크립트는 body 하단에 위치 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modalOpenButton = document.getElementById('modalOpenButton');
+      const modalCloseButton = document.getElementById('modalCloseButton');
+      const modal = document.getElementById('modalContainer');
+
+      modalOpenButton.addEventListener('click', () => {
+        modal.classList.remove('hidden');
+      });
+
+      modalCloseButton.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+    });
+  </script>
 </body>
 </html>
