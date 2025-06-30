@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+    <title>관리자 | 공지사항</title>
+    <style>
+        *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* 헤더 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .notice{
+            width : 100%;
+            height : 800px;
+            background : white;
+            border-radius : 25px;
+            background : rgba(255, 255, 255, 0.95);
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        .dash-top{height : 80px; width : 860px; text-align : center;
+                margin : 30px 40px 0 70px;font-size : 16px;}
+        .dash-top hr{ color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        .box{display : flex;}
+        .box div { display : flex;
+                    flex-direction: column; 
+                    justify-content: center; 
+                    align-items: center;     
+                    width : 180px;
+                    height : 180px;
+                    background : white;
+                    border-radius : 15px;
+                    margin : 10px 0 auto;
+                    margin-left : 45px;}
+        .box p{ color : #667EEA; font-size : 35px; font-weight : 700;}
+        .box a{ color : #666666; font-size : 15px;font-weight : 500;}
+        .notice h3{font-size : 25px; margin : 20px; padding-left : 25px;}
+        table {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-collapse: collapse; border: none
+                margin-top: 15px;
+                /* margin-left는 제거하여 테이블을 중앙에 놓습니다. */
+                width: 80%;
+                text-align: center;
+                height: 550px;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                margin: 15px auto 0 auto; /* 테이블을 수평 중앙에 정렬 */
+                border-collapse: collapse; /* 테두리 중첩 허용 */
+                }
+
+                thead {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: rgba(245, 246, 250, 0.95);
+                /* thead 자체에는 border를 주지 않습니다. */
+                }
+
+                tbody {
+                /* display, vertical-align, unicode-bidi, border-color는 기본값이므로 제거 */
+                font-weight: 400;
+                /* tbody가 시작하는 부분에 위쪽 테두리를 주어 thead와 구분합니다. */
+                /* border-top: 1px solid #f0f0f0; */ /* 필요하다면 여기에 선을 넣을 수도 있습니다. */
+                }
+
+                /* <th> 요소에는 테두리를 완전히 제거합니다. */
+                th {
+                padding: 13px;
+                text-align: center;
+                vertical-align: middle;
+                border: none; /* 핵심: 모든 테두리 제거 */
+                }
+
+                /* <td> 요소에만 하단 테두리를 적용합니다. */
+                td {
+                padding: 13px;
+                text-align: center;
+                vertical-align: middle;
+                border-bottom: 1px solid #f0f0f0; /* 각 데이터 셀 하단에 선 */
+                }
+
+                /* tbody의 마지막 행에는 하단 테두리를 제거하여 불필요한 선을 없앱니다. */
+                tbody tr:last-child td {
+                border-bottom: none;
+                }
+        button{ width : 150px; height : 40px; margin-left : 750px;
+        margin-bottom : 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color : white;
+        border-radius : 10px; border: none;}
+        a{text-decoration : none; color : #333333;}
+
+            .pagination {
+            margin-top : 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            }
+
+            .pagination a,
+            .pagination strong {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            }
+
+            .pagination strong {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            }
+
+            .pagination a:hover {
+            background: #f0f0f0;
+            }
+
+    </style>
+    <script>
+        // 모든 메뉴 li 요소 가져오기
+        const menuItems = document.querySelectorAll('.menu ul li');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+            // 먼저 모든 li에서 'board' 클래스 제거
+            menuItems.forEach(i => i.classList.remove('board'));
+            // 클릭한 항목에만 'board' 클래스 추가
+            item.classList.add('board');
+            });
+        });
+    </script>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">PO-PIN</div>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="#community">커뮤니티</a></li>
+                <li><a href="#decorate">포카꾸미기</a></li>
+                <li><a href="#customer">고객지원</a></li>
+            </ul>
+            <div class="banner-right">
+                <a href="#" class="home">
+                    <i class="fi-rr-caret-left"></i>이전으로
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="notice">
+        <div class="dash-top">
+            <h2>공지사항</h2>
+            <hr>
+        </div>
+        <table>
+            <colgroup>
+                <col style="width: *;">
+                <col style="width: 25%;">
+                <col style="width: 15%;">
+            </colgroup>
+            <thead>
+                <tr style="height : 60px;">
+                    <th>제목</th>
+                    <th>등록일</th>
+                    <th>조회수</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td><a href="">포카꾸미기 이용 안내</a></td>
+                    <td>2025-06-25</td>
+                    <td>123</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="bottom-bar">
+        <div class="pagination">
+            <a href="#">«</a>
+            <a href="#">‹</a>
+            <strong>1</strong>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">›</a>
+            <a href="#">»</a>
+        </div>
+        </div>
+    </div>
+</body>
+</html>
