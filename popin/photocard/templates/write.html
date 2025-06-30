@@ -1,6 +1,7 @@
 
-{% include 'header2.html' %}
+{% extends 'header_login.html' %}
 {% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -49,7 +50,7 @@ label {
     font-weight: 600;
     color: #333;
     margin-bottom: 8px;
-    font-size: 0.95em;
+    font-size: 1.2em;
 }
 
 input[type="text"],
@@ -345,13 +346,50 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+.search-notice{
+    display: flex;
+    background-color: #ffff;
+    width: 100%;
+    padding: 7px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+}
+
+.search-notice span{
+    color: #6f767d;
+}
+.modal{
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content{
+    border-radius: 8px;
+    width: 90%;
+    max-width: 850px;
+    background-color: #ffff;
+    FONT-WEIGHT: 200;
+    margin: 17% auto;
+    padding: 20px;
+}
+
+.close {
+  position: block;
+  top: 10px;
+  right: 16px;
+  font-size: 28px;
+  cursor: pointer;
+}
 </style>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16b7fa3fde4aebba2a5972919f45a4f1"></script>
 <body>
-<!--상단 헤더더-->
-    {%block content%}
-    {%endblock%}
-<!--//상단헤더-->
 
 <div class="Upload-Container">
     <!--//Upload-header-->
@@ -371,7 +409,7 @@ textarea {
              
                 <!--제목-->
                 <div class="form-content">
-                    <label for="title">제목 <span class="required">*</span></label>
+                    <label for="title">게시글 제목 <span class="required">*</span></label>
                     <input type="text" id="title" name="title" required placeholder="포토카드 제목을 입력해주세요">
                 </div>
 
@@ -389,23 +427,28 @@ textarea {
                     </div>
                 </div>
 
-                <!-- 그룹 - 멤버 -->
-                <div class="form-content">
-                    <label>그룹 - 멤버 <span class="required">*</span></label>
-                    <div class="member-grid">
-                        <select name="group" id="group" required>
-                            <option value="">그룹 선택</option>
-                            {% for group in groups %}
-                            <option value="{{ group }}">{{ group }}</option>
-                            {% endfor %}
-                        </select>
-                        <select name="member" id="member" required>
-                            <option value="">멤버 선택</option>
-                            {% for mem in member %}
-                            <option value="{{ mem }}">{{ mem }}</option>
-                            {% endfor %}
-                        </select>
+                <!-- 아티스트 검색 모달창 오픈 -->
+                <div class="searchModalOpen">
+                    <div class="form-content">
+                        <label>그룹 - 멤버 <span class="required">*</span></label>
+                        <div class="member-grid">
+                            <div class="search-notice" id="searchNotice">
+                                <img src="/static/images/search.svg/">
+                                <span class="artist-search">아티스트 검색</span>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- 아티스트 검색 모달창-->
+                <div id="searchModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeModal" class="close">&times;</span>
+                    <h2>게시글 검색</h2>
+                    
+                    <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+                    <div id="searchResults"></div>
+                </div>
                 </div>
 
                 <!-- 앨범 정보 -->
@@ -479,7 +522,8 @@ textarea {
                         <button type="button" class="location-btn" data-location="db">DB 장소</button>
                         <button type="button" class="location-btn" data-location="current">내 위치</button>
                     </div>
-
+                    
+                    <!--DB 장소-->
                     <div id="dbLocationContainer">
                         <select name="db_location" id="dbLocation">
                             <option value="">장소를 선택해주세요</option>
@@ -488,7 +532,8 @@ textarea {
                             {% endfor %}
                         </select>
                     </div>
-
+                    
+                    <!--내위치-->
                     <div id="mapContainer">
                         <div id="map" class="map-container"></div>
                         <div class="location-info" id="locationInfo">
@@ -502,6 +547,7 @@ textarea {
                 </div>
             </div>
             <!--//위치정보섹션-->
+
 
             <!-- 버튼 -->
             <div class="button-container">
@@ -621,79 +667,16 @@ textarea {
 
             if(locationType == 'db'){
                 dbLocationContainer.style.display = 'block';
-                mapContainer.classList.remove('active');
-            } else{
+                mapContainer.style.display = 'none';
+            } else if(locationType == 'current'){
                 dbLocationContainer.style.display = 'none';
-                mapContainer.classList.add('active');
+                mapContainer.style.display = 'block';
                 initMap();
             }
         });
+        dbLocationContainer.style.display = 'none';
+        mapContainer.style.display = 'none';
     });
-
-    // 카카오 지도 API
-    let map, maker;
-    let selectedLat = null, selectedLng=null;
-
-    function initMap() {
-        if (map) return;    // 이미 초기화 된 경우 리턴
-
-        const container = document.getElementById('map');
-        const options ={
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-            level: 3
-        };
-
-        map = new kakao.maps.Map(container,options);
-
-        // 현재위치 가져오기
-        if(navigator.geolocation){
-            navigator.geolocations.getCurrentPosition(function(position){
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const locPosition  = new kakao.maps.LatLng(lat, lng);
-
-                map.setCenter(locPosition);
-
-                // 현재ㅐ 위치에 마커 표시
-                marker = new kakao.maps.Marker({
-                    position: locPosition
-                });
-                marker.setMap(map);
-
-                selectedLat = lat;
-                selectedLng = lng;
-                document.getElementById('latitude').value = lat;
-                document.getElementById('longitude').value = lng;
-                document.getElementById('locationInfo').innerHTML ='현재 위치가 설정되었습니다.';
-            });
-        }
-
-        // 지도 클릭 이벤트
-        kakao.maps.event.addListener(map, 'click', function(mouseEvent){
-            const latlng = mouseEvent.latLng;
-            selectedLat = latlng.getLat();
-            seelctedLng = latlng.getLng();
-
-            if(marker){
-                marker.setMap(null);
-            }
-            marker = new kakao.maps.Marker({
-                position: latlng
-            });
-            marker.setMap(map);
-
-            const ggeocoder = new kakao.maps.services.Geocoder();
-            geocoder.coord2Address(selecttedLng, selectedLat, function(result, status){
-                if (status === kakao.maps.services.Status.OK) {
-                    const addr = result[0].address.address_name;
-                    document.getElementById('locationInfo').innerHTML = '선택된 위치: ${addr}';
-
-                    document.getElementById('latitude').value = selectedLat;
-                    document.getElementById('longitude').value = selectedLng;
-                }
-            });
-        });
-    }   
 
     // 폼제출 검증
     document.getElementById('uploadForm').addEventListener('submit',function(e){
@@ -723,8 +706,10 @@ textarea {
             return false;
         }
     });
-
+// 아티스트 검색 모달창 오픈
+const modal = document.getElementById('')
     
 </script>
 </body>
 </html>
+{%endblock content%}

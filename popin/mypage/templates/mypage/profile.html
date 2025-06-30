@@ -1,23 +1,17 @@
-{%include 'header_login.html'%}
+{% extends 'header_login.html'%}
 {% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
-    <title>마이페이지</title>
-</head>
-<style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
+        <title>마이페이지</title>
+    </head>
     
-</style>
-
-<body>
-<!--상단 헤더더-->
-    {%block content%}
-    {%endblock%}
-<!--//상단헤더-->
-
+    <body>
     <!--프로필-->
     <main class="main">
         <form>
@@ -655,5 +649,8 @@
             });
         });
     </script>
+
+{%endblock%}
+<!--//상단헤더-->
 </body>
 </html>
