@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+    <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+    <link rel="stylesheet" type="text/css" href="/static/css/admin/main.css">
+    <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>관리자</title>
+    <style>
+        *{margin : 0; padding : 0;  box-sizing : border-box;}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .banner{
+            width : 1000px;
+            height : 70px;
+            background :rgba(255, 255, 255, 0.95);
+            border-radius : 20px;
+            display : flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+        .banner h2{ 
+            font-size : 30px; 
+            color : #7E6EB0;
+            align-items : center; 
+            margin-left: 15px;
+        }
+        .banner-center {
+            display: flex;
+            align-items: center;
+        }
+        .banner-right {
+            display: flex;
+            align-items: center;
+        }
+        .table{display : flex;
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .dashboard{
+            width : 100%;
+            height : 800px;
+            background : white;
+            border-radius : 25px;
+            background : rgba(255, 255, 255, 0.95);
+        }
+        .dash-top{height : 80px; width : 860px; text-align : center;
+                margin : 30px 40px 0 70px;font-size : 16px;}
+        .dash-top hr{ color : rgba(219, 213, 213, 0.63); margin-top : 15px;}
+        .box{display : flex;}
+        .box div { 
+                    position: relative;
+                    left: 50px;
+                    align-items : center;
+                    display : flex;
+                    flex-direction: column; 
+                    justify-content: center; 
+                    align-items: center;     
+                    width : 180px;
+                    height : 180px;
+                    background : white;
+                    border-radius : 15px;
+                    margin : 15px 10px 10px 10px;
+                    margin-left : 30px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);}
+        .box p{ color : #667EEA; font-size : 35px; font-weight : 700;}
+        .box a{ color : #666666; font-size : 15px;font-weight : 500;}
+        .dashboard h3{font-size : 23px; text-align : center; margin : 20px; }
+        table{ margin-left : 75px; width : 85%; text-align : center; height : 350px;
+                margin-top : 50px;
+                border-radius: 25px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-collapse: collapse; border: none}
+        thead {
+                display: table-header-group;
+                vertical-align: middle;
+                unicode-bidi: isolate;
+                border-color: inherit;
+                background :linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color : rgba(245, 246, 250, 0.95);
+            }
+        tbody {
+            display: table-row-group;
+            vertical-align: middle;
+            unicode-bidi: isolate;
+            border-color: inherit;
+        }
+        .menu li:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: rgba(255, 255, 255, 0.95);
+            cursor: pointer; 
+            }
+
+        .pagination {
+            margin-top : 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            }
+
+            .pagination a,
+            .pagination strong {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            }
+
+            .pagination strong {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            }
+
+            .pagination a:hover {
+            background: #f0f0f0;
+            }
+    </style>
+        <script>
+        // 모든 메뉴 li 요소 가져오기
+        const menuItems = document.querySelectorAll('.menu ul li');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+            // 먼저 모든 li에서 'board' 클래스 제거
+            menuItems.forEach(i => i.classList.remove('board'));
+            // 클릭한 항목에만 'board' 클래스 추가
+            item.classList.add('board');
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <div class = "banner">
+            <strong><h2>PO-PIN</h2></strong>
+            <div class="banner-center">
+                <div class = "menu">
+                    <ul>
+                        <li class = "board">대시보드</li>
+                        <li>공지사항</li>
+                        <li>게시글 관리</li>
+                        <li>사용자 관리</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="banner-right">
+                <a href="#" class="home">
+                    <i class="fi fi-rr-home"></i>홈으로
+                </a>
+            </div>
+        </div>
+        <div class = "table">
+            <div class = "dashboard">
+                <div class = "dash-top">
+                    <h2>관리자 대시보드</h2>
+                    <hr>
+                </div>
+                <div class = "box">
+                    <div>
+                        <p>1,234</p>
+                        <a>전체 사용자</a>
+                    </div>
+                    <div>
+                        <p>5,678</p>
+                        <a>전체 게시글</a>
+                    </div>
+                    <div>
+                        <p>12</p>
+                        <a>대기중인 신고</a>
+                    </div>
+                    <div>
+                        <p>8</p>
+                        <a>차단 사용자</a>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr style = "height : 55px;">
+                            <th>시간</th>
+                            <th>활동</th>
+                            <th>사용자</th>
+                            <th>상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>신규 회원가입</td>
+                            <td>user123</td>
+                            <td>활성</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>게시글 신고</td>
+                            <td>user123</td>
+                            <td>대기</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25 14:30</td>
+                            <td>사용자 차단</td>
+                            <td>user123</td>
+                            <td>차단</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="bottom-bar">
+                <div class="pagination">
+                    <a href="#">«</a>
+                    <a href="#">‹</a>
+                    <strong>1</strong>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#">4</a>
+                    <a href="#">5</a>
+                    <a href="#">›</a>
+                    <a href="#">»</a>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>대리구매</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      width: 250px;
+    }
+
+    .logo img {
+      margin-right: 10px;
+      width: 45px;
+      height: 45px;
+      vertical-align: middle;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      width: 400px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-menu a:hover {
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      width: 250px;
+    }
+
+    .btn {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-outline {
+      border: 2px solid #667eea;
+      color: #667eea;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 20px 50px;
+    }
+
+    .top h3 {
+      font-size: 30px;
+      margin: 0;
+      grid-column: 2;
+      justify-self: center;
+    }
+
+    .top input {
+      border: none;
+      width: 130px;
+      height: 40px;
+      border-radius: 15px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      grid-column: 3;
+      justify-self: end;
+    }
+
+    .list {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .menu {
+      width: 220px;
+      height: 620px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      color: rgb(86, 85, 88);
+    }
+
+    .menu h3 {
+      font-size: 18px;
+      margin: 18px 0 5px 20px;
+      padding: 10px 0;
+    }
+
+    .menu ul {
+      margin-left: 25px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: rgb(86, 85, 88);
+    }
+
+    .menu li {
+      font-size: 13px;
+      text-align: center;
+      padding: 5px;
+      list-style: none;
+      font-weight: 420;
+      margin-bottom: 10px;
+      width: 170px;
+      height: 40px;
+      line-height: 2.2;
+      border-radius: 15px;
+      cursor: pointer;
+      border: 1px solid rgba(160, 152, 152, 0.71);
+      transition: all 0.3s ease;
+      background : white;
+    }
+
+    .menu li:hover {
+      color: white;
+      background:rgba(153, 172, 241, 0.35);
+    }
+
+    .dashboard {
+      width: 47%;
+      min-height: 550px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      margin-left: 20px;
+    }
+
+    .line {
+        margin: 5px 50px;
+        border: 0.5px solid rgba(68, 68, 68, 0.3); /* 얇고 은은한 선 */
+        }
+    .top button{line-height : 4;}
+
+    .comment {
+      position: relative;
+      margin: 25px auto;
+      width: 88%;
+      height: 50px;
+      background: rgba(188, 227, 253, 0.34);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border : 2px solid rgb(118, 193, 243);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      color : rgb(68, 174, 245);
+      text-align : left;
+    }
+
+    .filter {
+      position: relative;
+      margin: 25px auto;
+      width: 88%;
+      height: 80px;
+      background: rgb(255, 255, 255);
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .filt {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width : 80%;
+      height: 100%;
+      gap: 10px;
+    }
+    .filter select {
+      width: 120px;
+      height: 40px;
+      border-radius: 10px;
+      font-size : 15px;
+      text-align : center;
+    }
+    .filter .search {
+        padding-left : 10px;
+      width: 500px;
+      height: 40px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      outline: none;
+    }
+    .filter .searchBtn {
+      height: 40px;
+      width: 60px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .search:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+    .group{text-align : center; margin-top : -5px; margin-right : -15px;} 
+    .group h3{margin : 5px; padding-top : 10px; font-size : 16px; font-weight : 450;}
+    .group .girl{
+      width: 150px;
+      height: 440px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      margin-right : 10px;
+    }
+    .group .girl li{line-height : 1.7;
+      font-weight : 400;
+      font-size: 11px;
+      text-align: center;
+      list-style: none;
+      font-weight: 420;
+      width: 120px;
+      height: 30px;
+      padding : 5px;
+      margin : 5px 0 3px 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      border: 1px solid rgba(160, 152, 152, 0.71);
+      transition: all 0.3s ease;
+      background : white;
+      }
+    .group .boy{
+      margin-top : 13px;
+      width: 150px;
+      height: 440px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      color: rgb(86, 85, 88);
+    }
+    .group .boy li{
+      line-height : 1.7;
+      font-weight : 400;
+      font-size: 11px;
+      text-align: center;
+      list-style: none;
+      font-weight: 420;
+      width: 120px;
+      height: 30px;
+      padding : 5px;
+      margin : 5px 0 3px 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      border: 1px solid rgba(160, 152, 152, 0.71);
+      transition: all 0.3s ease;
+      background : white;
+    }
+
+
+
+    .group ul{list-style : none;}
+
+
+
+    .group a{text-decoration : none; color : rgb(86, 85, 88); }
+
+
+        /* 개선된 게시물 카드 스타일 */
+    .postlist {
+      padding: 0 30px 30px;
+    }
+
+    .post-card {
+        margin : 0 25px;
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .post-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .post-status {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .status-recruiting {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-full {
+      background: #ff9800;
+      color: white;
+    }
+
+    .status-closed {
+      background: #666;
+      color: white;
+    }
+
+    .post-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .post-tag {
+      background: #f0f4ff;
+      color: #667eea;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .post-info {
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .info-icon {
+      width: 20px;
+      margin-right: 12px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .info-text {
+      font-weight: 500;
+    }
+
+    .post-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 15px;
+      background: #fafbff;
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 2px solid #f0f0f0;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .post-meta {
+      font-size: 12px;
+      color: #999;
+      margin-left: 8px;
+    }
+
+    .participants {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      font-size: 14px;
+      color: #667eea;
+      font-weight: 500;
+    }
+
+    .topBtn{
+      position: fixed;
+      right: 300px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .topBtn.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .topBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* Sidebar Content */
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .quick-actions {
+            margin-bottom: 25px;
+        }
+
+        .quick-action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .stats-list {
+            list-style: none;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .stats-label {
+            color: #666;
+        }
+
+        .stats-value {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        /* 참여 버튼 스타일 */
+    .post-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .join-btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      min-width: 120px;
+    }
+
+    .join-btn.active {
+      background: linear-gradient(45deg, #4caf50, #45a049);
+      color: white;
+    }
+
+    .join-btn.active:hover {
+      background: linear-gradient(45deg, #45a049, #3d8b40);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .join-btn.disabled {
+      background: #f0f0f0;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .join-btn.disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .pagination a,
+    .pagination strong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      text-decoration: none;
+      color: #666;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination strong {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .pagination a:hover {
+      background: #f0f0f0;
+    }
+
+    .pagination img {
+      width: 16px;
+      height: 16px;
+    }
+
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="#" class="logo"><img src="/static/images/landing/logo.png">PO-PIN</a>
+      <ul class="nav-menu">
+        <li><a href="#home">홈</a></li>
+        <li><a href="/photocard/list/">포카교환</a></li>
+        <li><a href="#community">커뮤니티</a></li>
+        <li><a href="#decorate">포카꾸미기</a></li>
+        <li><a href="#mypage">마이페이지</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <a href="#login" class="btn btn-outline">로그인</a>
+        <a href="#signup" class="btn btn-primary">회원가입</a>
+      </div>
+    </nav>
+  </header>
+  <div class="list">
+    <div class = 'group'>
+
+    <div class="girl">
+      <h3>걸그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="">BLACKPINK</a></li>
+        <li><a href="">aespa</a></li>
+        <li><a href="">IVE</a></li>
+        <li><a href="">(G)I-DLE</a></li>
+        <li><a href="">TWICE</a></li>
+        <li><a href="">NewJeans</a></li>
+        <li><a href="">Red Velvet</a></li>
+        <li><a href="">LE SSERAFIM</a></li>
+        <li><a href="">ILLIT</a></li>
+        <li><a href="">KISS OF LIFE</a></li>
+        <li><a href="">Hearts2Hearts</a></li>
+      </ul>
+    </div>
+    <div class="boy">
+      <h3>보이그룹</h3>
+      <div class="line"></div>
+      <ul>
+        <li><a href="">NCT</a></li>
+        <li><a href="">SEVENTEEN</a></li>
+        <li><a href="">BOYNEXTDOOR</a></li>
+        <li><a href="">RIIZE</a></li>
+        <li><a href="">ENHYPEN</a></li>
+        <li><a href="">&TEAM</a></li>
+        <li><a href="">PLAVE</a></li>
+        <li><a href="">TWS</a></li>
+        <li><a href="">EXO</a></li>
+        <li><a href="">BTS</a></li>
+        <li><a href="">기타</a></li>
+      </ul>
+    </div>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>대리구매</h3>
+        <input type="button" value="대리구매글 등록">
+      </div>
+      <div class="line"></div>
+      <div class = "comment">
+        대리구매는 신뢰할 수 있는 사용자와 진행하시고, 거래 전 충분한 소통을 권장합니다.
+      </div>
+      <div class="filter">
+          <div class="filt">
+            <select class="state">
+              <option value="">전체 상태</option>
+              <option value="">모집중</option>
+              <option value="">긴급모집</option>
+              <option value="">마감임박</option>
+            </select>
+            <select class="category">
+              <option value="">전체 카테고리</option>
+              <option>앨범</option>
+              <option>포토카드</option>
+              <option>굿즈</option>
+              <option>콘서트</option>
+            </select>
+            <input type="text" class="search" placeholder="지역, 아티스트, 이벤트명으로 검색...">
+            <input type="button" class="searchBtn" value="검색">
+          </div>
+        </div>
+        <div class="postlist">
+                    <!-- 동행 카드들 -->
+                    <div class="post-card" data-category="goods">
+                        <div class="post-header">
+                            <div>
+                                <h3 class="post-title">에스파 dirty work 팝업 대리구매</h3>
+                                <div class="post-tags">
+                                    <span class="post-tag">굿즈</span>
+                                    <span class="post-tag">긴급모집</span>
+                                    <span class="post-tag">aespa</span>
+                                </div>
+                            </div>
+                            <span class="post-status status-full">긴급모집</span>
+                        </div>
+                        
+                        <div class="post-info">
+                            <div class="info-item">
+                                <span class="info-date">📅</span>
+                                <span>2024년 7월 25일 (목) 18:00</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-place">📍</span>
+                                <span>성수 언더스탠드에비뉴</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-people">👥</span>
+                                <span>3/5명 (모집중)</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-mon">💰</span>
+                                <span>개당 수고비 0.1</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-description">
+                            에스파 팝업 엠디 댈구합니다 품목당 0.1 인당 3개까지 구매 가능
+                        </div>
+                        
+                        <div class="post-footer">
+                            <div class="post-author">
+                                <span>👤 wintercute</span>
+                                <span class="post-meta">1일 전</span>
+                            </div>
+                            <div class="participants">
+                                <span>👁️ 67</span>
+                                <span>💬 23</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                            <button class="join-btn active">채팅하기</button>
+                        </div>
+                    </div>
+
+                    <div class="post-card" data-category="concert">
+                        <div class="post-header">
+                            <div>
+                                <h3 class="post-title">드사쇼 콘서트 엠디 댈구합니다.</h3>
+                                <div class="post-tags">
+                                    <span class="post-tag">콘서트</span>
+                                    <span class="post-tag">마감임박</span>
+                                    <span class="post-tag">NCT DREAM</span>
+                                </div>
+                            </div>
+                            <span class="post-status status-recruiting">모집중</span>
+                        </div>
+                        
+                        <div class="post-info">
+                            <div class="info-date">
+                                <span class="info-icon">📅</span>
+                                <span>2024년 8월 3일 (토) 10:00</span>
+                            </div>
+                            <div class="info-place">
+                                <span class="info-icon">📍</span>
+                                <span>고척돔</span>
+                            </div>
+                            <div class="info-people">
+                                <span class="info-icon">👥</span>
+                                <span>4/5명 (1명 더 모집)</span>
+                            </div>
+                            <div class="info-mon">
+                                <span class="info-icon">💰</span>
+                                <span>상세 내용 참고</span>
+                            </div>
+                        </div>
+                        
+                        <div class="post-description">
+                            엔드림 드사쇼 엠디 댈구합니다 현장수령 가능 당일 배송해드려요 응원봉 0.3 트레카 0.1 ...
+                        </div>
+                        
+                        <div class="post-footer">
+                            <div class="post-author">
+                                <span>👤 쩗쭓짧</span>
+                                <span class="post-meta">5시간 전</span>
+                            </div>
+                            <div class="participants">
+                                <span>👁️ 28</span>
+                                <span>💬 6</span>
+                            </div>
+                        </div>
+                        <div class="post-actions">
+                          <button class="join-btn active">채팅하기</button>
+                        </div>
+                      </div>
+                <div id="postModal" class="modal">
+                    <div class="modal-content">
+                        <button class="close-btn" onclick="closePostModal()">&times;</button>
+                        <h2 id="modalPostTitle">제목</h2>
+                        <p id="modalPostDate">📅 날짜</p>
+                        <p id="modalPostPlace">📍 장소</p>
+                        <p id="modalPostPeople">👥 인원</p>
+                        <p id="modalPostMoney">💰 비용</p>
+                        <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
+                        설명 내용
+                        </div>
+                    </div>
+                    </div>
+                    <div class="pagination">
+                      <a href="#" title="첫 페이지">«</a>
+                      <a href="#" title="이전 페이지">‹</a>
+                      <strong>1</strong>
+                      <a href="#">2</a>
+                      <a href="#">3</a>
+                      <a href="#">4</a>
+                      <a href="#">5</a>
+                      <a href="#" title="다음 페이지">›</a>
+                      <a href="#" title="마지막 페이지">»</a>
+                    </div>
+                </div>
+              </div>
+              <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+            </body>
+<script>
+  const postModal = document.getElementById("postModal");
+
+  // 모달 열기
+  function openPostModal(title, date, place, people, money, desc) {
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostDate").textContent = `📅 ${date}`;
+    document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
+    document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
+    document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+    postModal.style.display = "block";
+  }
+
+  // 모달 닫기
+  function closePostModal() {
+    postModal.style.display = "none";
+  }
+
+  // 바깥 클릭 시 닫기
+  window.onclick = function(event) {
+    if (event.target === postModal) {
+      postModal.style.display = "none";
+    }
+  }
+
+      document.querySelectorAll(".post-card").forEach(card => {
+      card.addEventListener("click", (event) => {
+        // 클릭한 요소가 버튼이거나, post-actions 내부 요소면 return
+        if (
+          event.target.tagName === 'BUTTON' ||
+          event.target.closest(".post-actions")
+        ) {
+          return; // 클릭 무시 (모달 열지 않음)
+        }
+
+        // 모달 내용 채우기
+        const title = card.querySelector(".post-title")?.textContent.trim();
+        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
+        const desc = card.querySelector(".post-description")?.textContent.trim();
+
+        // 모달 열기 함수 호출
+        openPostModal(title, date, place, people, money, desc);
+      });
+    });
+
+    // Top 버튼 기능
+    const topBtn = document.getElementById('topBtn');
+    
+    // 스크롤 이벤트 리스너
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        topBtn.classList.add('show');
+      } else {
+        topBtn.classList.remove('show');
+      }
+    });
+    
+    // 맨 위로 이동 기능
+    topBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+</script>
+</body>
+</html>

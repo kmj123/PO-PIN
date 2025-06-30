@@ -16,7 +16,8 @@ def send_verification_code(request):
             code = str(random.randint(100000, 999999))
             request.session['verify_code'] = code
             request.session['verify_user'] = user.user_id
-
+            
+            
             send_mail(
                 subject='[PO-PIN] 이메일 인증번호',
                 message=f'인증번호는 다음과 같습니다: {code}',

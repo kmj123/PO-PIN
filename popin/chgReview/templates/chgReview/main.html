@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>교환후기</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      width: 250px;
+    }
+
+    .logo img {
+      margin-right: 10px;
+      width: 45px;
+      height: 45px;
+      vertical-align: middle;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      width: 400px;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-menu a:hover {
+      color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+      width: 250px;
+    }
+
+    .btn {
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .btn-outline {
+      border: 2px solid #667eea;
+      color: #667eea;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 20px 50px;
+    }
+
+    .top h3 {
+      font-size: 30px;
+      margin: 0;
+      grid-column: 2;
+      justify-self: center;
+    }
+
+    .top input {
+      border: none;
+      width: 130px;
+      height: 40px;
+      border-radius: 15px;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      grid-column: 3;
+      justify-self: end;
+    }
+
+    .list {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .menu {
+      width: 220px;
+      height: 250px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      color: rgb(86, 85, 88);
+    }
+
+    .menu h3 {
+      font-size: 18px;
+      margin: 18px 0 5px 20px;
+    }
+
+    .box{margin-left : 18px;  margin-top : 20px; text-align : center ; align-items : center; 
+      font-weight : 550;
+      font-size : 17px;  }
+
+    .box1{
+      padding-top : 15px;
+      line-height : 1.5;
+      background-color : white;
+      border-radius : 15px;
+      width : 90%;
+      height : 80px;
+    }
+
+    .box2{margin-top : 15px;
+      padding-top : 15px;
+      line-height : 1.5;
+      background-color : white;
+      border-radius : 15px;
+      width : 90%;
+      height : 80px;}
+
+    .box p{font-size : 17px;}
+    
+
+
+    .dashboard {
+      width: 47%;
+      min-height: 550px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      margin-left: 20px;
+    }
+
+    .line {
+        margin: 5px 50px;
+        border: 0.5px solid rgba(68, 68, 68, 0.3); /* 얇고 은은한 선 */
+        }
+    .top button{line-height : 4;}
+
+    .filter {
+      position: relative;
+      margin: 25px auto;
+      width: 88%;
+      height: 80px;
+      background: rgb(255, 255, 255);
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    .filt {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width : 80%;
+      height: 100%;
+      gap: 10px;
+    }
+    .filter select {
+      width: 120px;
+      height: 40px;
+      border-radius: 10px;
+      font-size : 15px;
+      text-align : center;
+    }
+    .filter .search {
+        padding-left : 10px;
+      width: 500px;
+      height: 40px;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      outline: none;
+    }
+    .filter .searchBtn {
+      height: 40px;
+      width: 60px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .search:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+
+    .topBtn{
+      position: fixed;
+      right: 300px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .topBtn.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .topBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        /* Sidebar Content */
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .quick-actions {
+            margin-bottom: 25px;
+        }
+
+        .quick-action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .stats-list {
+            list-style: none;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .stats-label {
+            color: #666;
+        }
+
+        .stats-value {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+
+
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding-bottom : 15px;
+    }
+
+    .pagination a,
+    .pagination strong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      text-decoration: none;
+      color: #666;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination strong {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+    }
+
+    .pagination a:hover {
+      background: #f0f0f0;
+    }
+
+    .pagination img {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Board List */
+        .board-list {
+            list-style: none;
+        }
+
+        .board-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            align-items : center;
+            margin-left : 53px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width : 88%;
+        }
+
+        .board-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .board-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .board-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .board-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .board-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .board-preview {
+            color: #666;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .post-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="#" class="logo"><img src="/static/images/landing/logo.png">PO-PIN</a>
+      <ul class="nav-menu">
+        <li><a href="#home">홈</a></li>
+        <li><a href="/photocard/list/">포카교환</a></li>
+        <li><a href="#community">커뮤니티</a></li>
+        <li><a href="#decorate">포카꾸미기</a></li>
+        <li><a href="#mypage">마이페이지</a></li>
+      </ul>
+      <div class="auth-buttons">
+        <a href="#login" class="btn btn-outline">로그인</a>
+        <a href="#signup" class="btn btn-primary">회원가입</a>
+      </div>
+    </nav>
+  </header>
+  <div class="list">
+    <div class="menu">
+      <h3>교환 통계</h3>
+      <div class = "box">
+        <div class = "box1">
+          <p>📊 이번 주 교환</p>
+          127건
+        </div>
+        <div class = "box2">
+          <p>⭐ 평균 평점</p>
+          4.6/5.0
+        </div>
+      </div>
+      </table>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>교환 후기</h3>
+        <input type="button" value="후기글 작성하기">
+      </div>
+      <div class="line"></div>
+      <div class="filter">
+          <div class="filt">
+            <select class="filter-select">
+                <option>전체 평점</option>
+                <option>⭐⭐⭐⭐⭐ 5점</option>
+                <option>⭐⭐⭐⭐ 4점 이상</option>
+                <option>⭐⭐⭐ 3점 이상</option>
+            </select>
+            <select class="filter-select">
+                <option>최신순</option>
+                <option>평점순</option>
+                <option>조회순</option>
+            </select>
+            <input type="text" class="search" placeholder="아이디로 검색...">
+            <input type="button" class="searchBtn" value="검색">
+          </div>
+        </div>  
+        <ul class="board-list">
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 kpop_lover</span>
+                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
+                            <span>📅 2024-06-10</span>
+                            <span>👁️ 124</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">좋은 교환 경험</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            처음 교환해보는 거였는데 상대방이 친절하게 안내해주셔서 수월했습니다. 다음에도 기회가 되면 교환하고 싶어요.
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 newbie_collector</span>
+                            <span>⭐ 4.5 (상태: 5점, 시간: 4점)</span>
+                            <span>📅 2024-06-09</span>
+                            <span>👁️ 89</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            약속 시간에 조금 늦으셨지만 미리 연락주셨고, 포토카드 상태는 설명대로 좋았습니다. 다음엔 더 정확한 시간 약속 부탁드려요.
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 card_collector99</span>
+                            <span>⭐ 4.0 (상태: 5점, 시간: 3점)</span>
+                            <span>📅 2024-06-08</span>
+                            <span>👁️ 156</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 happy_trader</span>
+                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
+                            <span>📅 2024-06-07</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 happy_trader</span>
+                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
+                            <span>📅 2024-06-07</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 happy_trader</span>
+                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
+                            <span>📅 2024-06-07</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <div class="board-item-header">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span>👤 happy_trader</span>
+                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
+                            <span>📅 2024-06-07</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                </ul>
+                <div class="pagination">
+                      <a href="#" title="첫 페이지">«</a>
+                      <a href="#" title="이전 페이지">‹</a>
+                      <strong>1</strong>
+                      <a href="#">2</a>
+                      <a href="#">3</a>
+                      <a href="#">4</a>
+                      <a href="#">5</a>
+                      <a href="#" title="다음 페이지">›</a>
+                      <a href="#" title="마지막 페이지">»</a>
+                    </div>
+              <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+            </body>
+<script>
+  const postModal = document.getElementById("postModal");
+
+  // 모달 열기
+  function openPostModal(title, date, place, people, money, desc) {
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostDate").textContent = `📅 ${date}`;
+    document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
+    document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
+    document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+    postModal.style.display = "block";
+  }
+
+  // 모달 닫기
+  function closePostModal() {
+    postModal.style.display = "none";
+  }
+
+  // 바깥 클릭 시 닫기
+  window.onclick = function(event) {
+    if (event.target === postModal) {
+      postModal.style.display = "none";
+    }
+  }
+
+      document.querySelectorAll(".post-card").forEach(card => {
+      card.addEventListener("click", (event) => {
+
+        // 모달 내용 채우기
+        const title = card.querySelector(".post-title")?.textContent.trim();
+        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
+        const desc = card.querySelector(".post-description")?.textContent.trim();
+
+        // 모달 열기 함수 호출
+        openPostModal(title, date, place, people, money, desc);
+      });
+    });
+
+    // Top 버튼 기능
+    const topBtn = document.getElementById('topBtn');
+    
+    // 스크롤 이벤트 리스너
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        topBtn.classList.add('show');
+      } else {
+        topBtn.classList.remove('show');
+      }
+    });
+    
+    // 맨 위로 이동 기능
+    topBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+</script>
+</body>
+</html>
