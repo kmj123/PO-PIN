@@ -8,6 +8,30 @@ from django.http import JsonResponse  # JsonResponse 사용을 위해
 from django.views.decorators.csrf import csrf_exempt  # POST 요청 허용
 import json  # JSON 파싱용
 from django.core.mail import send_mail  # 이메일 전송용
+import random
+
+def verify_email_code(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            input_code = data.get('code')
+            input_email = data.get('email')
+
+            saved_code = request.session.get('verification_code')
+            saved_email = request.session.get('verification_email')
+            print("입력된 코드:", input_code)
+            print("세션에 저장된 코드:", saved_code)
+            print("입력된 이메일:", input_email)
+            print("세션에 저장된 이메일:", saved_email)
+            if input_code == saved_code and input_email == saved_email:
+                return JsonResponse({'success': True, 'message': '인증 성공'})
+            else:
+                return JsonResponse({'success': False, 'message': '인증 실패'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'POST 요청이 아닙니다.'})
+
 def send_verification_email(request):
     if request.method == 'POST':
         try:
@@ -17,15 +41,25 @@ def send_verification_email(request):
             if not email:
                 return JsonResponse({'success': False, 'error': '이메일이 없습니다.'})
 
-            # 실제 이메일 보내는 코드 (임시용)
+            # 콘솔에 이메일 보내는 코드 (임시용)
+            # send_mail(
+            #            '[PO-PIN] 인증 메일',
+            #            '이메일 인증을 완료해주세요!',
+            #             None,  # None이면 settings.py의 DEFAULT_FROM_EMAIL 사용됨
+            #             [email],
+            #         )
+            #실제로 보내는 코드 
+            code = str(random.randint(100000, 999999))
             send_mail(
-                'PO-PIN 인증 메일',
-                '이메일 인증을 완료해주세요!',
-                'your_email@example.com',  # 보내는 이메일 (settings.py 설정 필요)
-                [email],
-                fail_silently=False,
-            )
-
+                        'PO-PIN 이메일 인증',
+                         f'인증번호는 {code}입니다.',
+                         None,  # settings.py의 DEFAULT_FROM_EMAIL 사용
+                         [email],
+                         fail_silently=False,
+                    )
+            request.session['verification_code'] = code
+            request.session['verification_email'] = email
+            
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
@@ -59,7 +93,7 @@ def signup(request):
         birth_date_str = request.POST.get('birth_date')
         gender = request.POST.get('gender')
         email = request.POST.get('email')
-
+        nickname=request.POST.GET('nickname')
         # 1. 유효성 검사
         if password != confirmPassword:
             messages.error(request, "비밀번호가 일치하지 않습니다.")
@@ -85,12 +119,12 @@ def signup(request):
         # 3. 유저 생성
         user = User(
             user_id=user_id,
-            password=make_password(password),  # ✅ 여기 수정
+            password=make_password(password),  
             name=name,
+            nickname=nickname,
             birth_date=birth_date,
             gender=gender,
             email=email,
-            nickname=user_id,
             agree_marketing=agree_marketing
         )
         user.save()
