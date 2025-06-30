@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Keyword AJAX</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <h2>그룹 & 멤버 키워드</h2>
+  <div id="div_box"></div>
+  <button id="keyword">키워드</button>
+  <button id="mypoca">키워드</button>
+
+  <script>
+    $(document).ready(function() {
+      $("#keyword").click(function() {
+        $.ajax({
+          url: "/mypage/keyword/",
+          type: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}" // CSRF 토큰 포함
+          },
+          dataType: "json",
+          success: function(data) {
+            console.log("그룹:", data.groups);
+            console.log("멤버:", data.members);
+
+            // 기존 내용 비우기
+            $('#div_box').empty();
+
+            // 그룹 추가
+            data.groups.forEach(function(group) {
+              $('#div_box').append('<p>그룹: ' + group.name + '</p>');
+            });
+
+            // 멤버 추가
+            data.members.forEach(function(member) {
+              $('#div_box').append('<p>멤버: ' + member.name + ' (그룹: ' + member.group__name + ')</p>');
+            });
+          },
+          error: function(xhr, status, error) {
+            console.error("에러 발생:", error);
+          }
+        });
+      });
+
+    $("#mypoca").click(function () {
+        $.ajax({
+            url: "/mypage/mypoca/",
+            type: "POST",
+            headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+            },
+            dataType: "json",
+            success: function (data) {
+            $('#div-box').empty();
+
+            // data.my_poca는 객체이므로 for...in 사용
+            for (const album in data.my_poca) {
+                const cards = data.my_poca[album];
+
+                // 앨범 이름 출력
+                $('#div-box').append(`<h3>${album}</h3><div id="album-${album}"></div>`);
+
+                // 각 포토카드 출력
+                cards.forEach(function (card) {
+                const html = `
+                    <div class="poca-card">
+                    <p><strong>제목:</strong> ${card.title}</p>
+                    <p><strong>멤버:</strong> ${card.member}</p>
+                    <p><strong>카테고리:</strong> ${card.category}</p>
+                    <p><strong>상태:</strong> ${card.poca_state}</p>
+                    <p><strong>거래 방식:</strong> ${card.trade_type}</p>
+                    <p><strong>장소:</strong> ${card.place}</p>
+                    <img src="${card.image_url}" alt="포토카드 이미지" style="max-width: 100px;">
+                    <hr>
+                    </div>
+                `;
+                $(`#album-${album}`).append(html);
+                });
+            }
+        },
+    error: function (xhr, status, error) {
+      console.error("에러 발생:", error);
+    }
+  });
+});
+
+    });
+  </script>
+
+</body>
+</html>
