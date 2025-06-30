@@ -1,3 +1,4 @@
+{%include 'header2.html'%}
 {% load static %}
 <!DOCTYPE html>
 <html lang="ko">
@@ -9,15 +10,10 @@
 </head>
 
 <body>
-    <header class="header">
-        <div class="logo"></div>
-        <nav class="nav">
-            <a href="#">홈</a>
-            <a href="#">포카교환</a>
-            <a href="#">커뮤니티</a>
-            <a href="#">마이페이지</a>
-        </nav>
-    </header>
+<!--상단 헤더더-->
+    {%block content%}
+    {%endblock%}
+<!--//상단헤더-->
 
     <!--프로필-->
     <main class="main">
@@ -113,7 +109,7 @@
 
             <div id="cards" class="tab-content">
                 <div class="cards-header">
-                    <h2>마이 포카교환</h2>
+                    <h2>마이 포카</h2>
                     <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
                 </div>
                 

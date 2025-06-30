@@ -1,21 +1,9 @@
 from django.db import models
 from django.conf import settings
 from datetime import date
+
 from idols.models import Member
-
-class TempUser(models.Model):
-    user_id = models.CharField(max_length=50)
-    
-    def __str__(self):
-        return f'{self.user_id}'
-
-class TempIdol(models.Model):
-    group = models.CharField(max_length=50)
-    member = models.CharField(max_length=50)
-    
-    def __str__(self):
-        return f'{self.group} | {self.member}'
-
+from signupFT.models import User
     
 class Photocard(models.Model):
     CATEGORY_CHOICES = [
@@ -56,8 +44,8 @@ class Photocard(models.Model):
     # models.py
 
     pno = models.AutoField(primary_key=True)
-    seller = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='selling_photocards')
-    buyer = models.ForeignKey(TempUser, on_delete=models.SET_NULL, null=True, blank=True, related_name='buying_photocards')
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='selling_photocards')
+    buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='buying_photocards')
 
     title = models.CharField(max_length=100, default='title')
     image = models.ImageField(upload_to='photocards/')
@@ -84,7 +72,7 @@ class Photocard(models.Model):
         return f'{self.title} ({self.member})'
 
 class TempWish(models.Model):
-    user = models.ForeignKey(TempUser, on_delete=models.CASCADE, related_name='wished_photocards')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='wished_photocards')
     photocard = models.ForeignKey(Photocard, on_delete=models.CASCADE, related_name='wished_by_users')
     class Meta:
         unique_together = ('user', 'photocard')

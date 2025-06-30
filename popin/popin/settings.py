@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     'signupFT',
     'photocard',
     'idols',
+    'adpage',
+    'companion',
     'home',
+    'chgReview',
+    'proxy',
+    'sharing',
 ]
 
 MIDDLEWARE = [
