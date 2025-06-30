@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% for album_name, poca_list in album_dict.items %}
+        <h3>{{ album_name }} (총 {{ poca_list|length }}개)</h3>
+        <ul>
+            {% for poca in poca_list %}
+                <img src="/media/{{poca.image}}" alt="">
+                <li>{{ poca.title }} - {{ poca.member }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</body>
+</html>

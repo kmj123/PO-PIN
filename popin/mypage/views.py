@@ -7,7 +7,6 @@ from signupFT.models import User
 from photocard.models import Photocard
 from photocard.models import TempWish
 
-
 def pchange(request):
     return render(request,'mypage/pchange.html')
 
@@ -57,38 +56,29 @@ def keyword(request):
 
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
-# 사용자 보유 포토카드 (수정중)
+# 사용자 보유 포토카드
 def my_poca(request):
-    if request.method == 'POST':
-        user_id = request.session.get('user_id')
-        if not user_id:
-            return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+    user_id = request.session.get('user_id')
+    user = User.objects.get(user_id=user_id)
+    if not user_id:
+        return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+    
+    try:
+        my_poca_qs = Photocard.objects.filter(seller=user)
         
-        try:
-            user = User.objects.get(user_id=user_id)
-            my_poca_qs = user.selling_photocards.select_related('member__group').all()
-            print(my_poca_qs)
+        # 앨범 기준으로 묶기
+        album_dict = defaultdict(list)
+        for poca in my_poca_qs:
+            album_dict[poca.album].append(poca)
 
-            album_dict = defaultdict(list)
-            for card in my_poca_qs:
-                print(card)
-                album_dict[card.album].append({
-                    'title': card.title,
-                    'member': str(card.member),  # 예: "BTS - 정국"
-                    'category': card.category,
-                    'image_url': card.image.url if card.image else '',
-                    'poca_state': card.poca_state,
-                    'trade_type': card.trade_type,
-                    'place': card.place,
-                })
-                print(album_dict)
-
-            return JsonResponse({'my_poca': album_dict})
+        context = {
+            'album_dict': dict(album_dict),
+        }
         
-        except User.DoesNotExist:
-            return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
-
-    return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
+    except  User.DoesNotExist:
+        return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
+    
+    return render(request, 'mypage/mypoca.html', context)
 
 # 사용자 위시리스트 
 def wishlist(request):
@@ -117,3 +107,51 @@ def trade(request):
         "buy_poca":buy_poca,
     }
     return render(request, 'mypage/trade.html', context)
+
+# 최근 본 글 
+def latest_post(request):
+    latest_poca = request.session.get('latest_poca')
+    
+    photocards = []
+    
+    if not latest_poca:
+        context = {
+            'count': 0,
+            'photocards': photocards
+        }
+    else:
+        latestList = request.session['latest_poca']
+        for pno in latestList[:10]:
+            photocard = Photocard.objects.get(pno=pno)
+            photocards.append(photocard)
+        
+        context = {
+            'count': len(photocards),
+            'photocards' : photocards
+        }
+    return render(request, 'mypage/latest.html', context)
+    
+
+# 프로필 수정 (수정중)
+def update(request):
+    user_id = request.session['user_id']
+    user = User.objects.get(user_id=user_id)
+    
+    context = {
+        'user':user
+    }
+    return render(request, 'mypage/update.html', context)
+
+# 차단 유저 관리
+def block_list(request):
+    user_id = request.session['user_id']
+    
+    user = User.objects.get(user_id=user_id)
+    
+    block_user = user.initiated_relations.filter(relation_type='BLOCK')
+    print(block_user)
+    
+    context = {'list':block_user}
+    
+    return render(request, 'mypage/blockuser.html', context)
+    
