@@ -31,9 +31,11 @@ def profile(request):
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
     
+# 기능 테스트 html 페이지 > 기능 구현 완료 시 삭제
 def test(request):
     return render(request, 'mypage/test.html')
 
+# 키워드
 def keyword(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
@@ -41,6 +43,7 @@ def keyword(request):
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
         
         try:
+            # 유저가 설정한 최애 그룹, 멤버 키워드 확인
             user = User.objects.get(user_id=user_id)
             groups = list(user.bias_group.values('id', 'name'))
             members = list(user.bias_member.values('id', 'name', 'group__name'))
@@ -54,6 +57,7 @@ def keyword(request):
 
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
+# 사용자 보유 포토카드 (수정중)
 def my_poca(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
@@ -86,6 +90,7 @@ def my_poca(request):
 
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
+# 사용자 위시리스트 
 def wishlist(request):
     user_id = request.session.get('user_id')
     user = User.objects.get(user_id=user_id)
@@ -95,6 +100,7 @@ def wishlist(request):
     context = {'wishlist':qs}
     return render(request, 'mypage/wishlist.html', context)
 
+# 사용자 교환거래(내역)
 def trade(request):
     user_id = request.session.get('user_id')
     user = User.objects.get(user_id=user_id)
