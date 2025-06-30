@@ -23,7 +23,7 @@ class User(models.Model):
     user_id = models.CharField(max_length=50, primary_key=True, verbose_name="사용자 ID")
     password = models.CharField(max_length=255, verbose_name="비밀번호")
     name = models.CharField(max_length=100, verbose_name="이름")
-    birth_date = models.DateField(verbose_name="생년월일")
+    birth_date = models.DateField(null=True, blank=True ,verbose_name="생년월일")
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="성별")
     email = models.EmailField(unique=True, verbose_name="이메일")
     

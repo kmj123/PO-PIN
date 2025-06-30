@@ -25,7 +25,7 @@
       background: rgba(255, 255, 255, 0.1);
       border-radius: 25px;
       padding: 1rem 1rem 0.5rem;
-      transform: scale(0.85);
+      transform: scale(0.86);
       backdrop-filter: blur(6px);
       box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
       max-width: 500px;
@@ -291,9 +291,15 @@
           <div class="error-message" id="confirmPasswordError">비밀번호가 일치하지 않습니다.</div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group"> signupFT
           <label for="name">닉네임</label>
-          <input id="name" name="name" placeholder="※특수문자 입력 금지" required type="text" />
+          <input id="name" name="name" placeholder="실명을 입력해주세요" required type="text" />
+          <label for="name">이름</label>
+          <input id="name" name="name" placeholder="실명을 입력하세요" required type="text" />
+        </div>
+        <div class="form-group">
+          <label for="nickname">닉네임</label>
+          <input id="nickname" name="nickname" placeholder="※특수문자 입력 금지" required type="text" />main
         </div>
 
         <div class="form-row">
@@ -319,15 +325,9 @@
   </div>
   <small id="emailStatus" style="color: green;"></small>
 </div>
+<input type="text" id="verify-code" placeholder="인증번호 입력">
+<button type="button" onclick="checkVerificationCode()">인증 확인</button>
 
-        <div class="form-group" id="verificationGroup" style="display: none;">
-          <label for="verificationCode">인증번호</label>
-          <div class="email-verification">
-            <input id="verificationCode" name="verificationCode" placeholder="인증번호 6자리" type="text" />
-            <button class="btn-verify" onclick="verifyCode()" type="button">확인</button>
-          </div>
-          <div class="success-message" id="verificationSuccess">이메일 인증이 완료되었습니다.</div>
-        </div>
 
         <button id="submitBtn" class="btn btn-primary" onclick="goToPage('location', event)" type="submit">다음</button>
       </form>
@@ -335,6 +335,56 @@
   </div>
 
   <script>
+ function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // 쿠키 이름과 일치하는지 확인
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    let isEmailVerified = false;
+
+function checkVerificationCode() {
+    const code = document.getElementById("verify-code").value;
+    const email = document.getElementById("email").value;
+
+    fetch("/signup/verify_email_code/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ email: email, code: code })
+    })
+    .then(res => res.json())
+    .then(data => {
+       console.log("서버 응답:", data);  //  서버에서 온 응답 확인
+        
+       if (data.success) {
+            alert(" 인증 성공!");
+            isEmailVerified = true;
+            console.log("✅ isEmailVerified = true 로 설정됨!");
+        } else {
+            alert("인증 실패: " + data.message);
+             isEmailVerified = false;
+        }
+    })
+      .catch(error => {
+        console.error("서버 통신 에러:", error);
+    });
+}
+
+
+
+
   function sendVerificationEmail() {
   const email = document.getElementById('email').value;
 
@@ -342,7 +392,7 @@
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-CSRFToken': '{{ csrf_token }}'
+      'X-CSRFToken': getCookie('csrftoken')  // 🔥 getCookie 함수 필요함
     },
     body: JSON.stringify({ email: email })
   })
@@ -353,44 +403,40 @@
     } else {
       document.getElementById('emailStatus').innerText = '실패: ' + data.error;
     }
-  })
 
-      document.getElementById('emailSuccess').style.display = 'block';
-      document.getElementById('verificationGroup').style.display = 'block';
-
+    document.getElementById('verificationGroup').style.display = 'block';
+  });
 }
-    function verifyCode() {
-      const code = document.getElementById('verificationCode').value;
-      if (!code) {
-        alert('인증번호를 입력해주세요.');
-        return;
-      }
-      
-      document.getElementById('verificationSuccess').style.display = 'block';
-    }
 
     function goToPage(page, event) {
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      event.target.classList.add('active');
+  if (page === 'location' && !isEmailVerified) {
+    event.preventDefault();  // 이동 막기
+    alert('이메일 인증을 먼저 완료해주세요.');
+    return;
+  }
 
-      switch(page) {
-        case 'terms':
-          alert('약관 동의 페이지로 이동합니다.');
-          break;
-        case 'info':
-          alert('현재 회원 정보 페이지입니다.');
-          break;
-        case 'location':
-          alert('장소 선택 페이지로 이동합니다.');
-          break;
-        case 'member':
-          alert('멤버 선택 페이지로 이동합니다.');
-          break;
-      }
-    }
+  // 기존 버튼 스타일 처리
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
 
+  // 페이지 이동 안내 (실제 이동 코드 대신 알림인 상태로 보임)
+  switch(page) {
+    case 'terms':
+      alert('약관 동의 페이지로 이동합니다.');
+      break;
+    case 'info':
+      alert('현재 회원 정보 페이지입니다.');
+      break;
+    case 'location':
+      alert('장소 선택 페이지로 이동합니다.');
+      break;
+    case 'member':
+      alert('멤버 선택 페이지로 이동합니다.');
+      break;
+  }
+}
     // 폼 유효성 검사
     document.getElementById('username').addEventListener('input', function() {
       const username = this.value;

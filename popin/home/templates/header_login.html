@@ -1,10 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
-    <title>Document</title>
+    <title>header login</title>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -40,6 +41,7 @@
             background-clip: text;
             display:block;
             width:250px;
+            margin-left:35px;
         }
 
         .logo img{
@@ -95,6 +97,8 @@
             display: flex;
             align-items: center;
             margin-right:15px;
+            width:180px;
+            padding-right:0;
         }
 
         .user-info > .username{
@@ -210,6 +214,7 @@
             .nav-menu{
                 display: none;
             }
+            .logo{width:50%; margin-left:0;}
             
             .mobile-menu-btn {
                 display: block;

@@ -44,7 +44,12 @@ INSTALLED_APPS = [
     'signupFT',
     'photocard',
     'idols',
+    'adpage',
+    'companion',
     'home',
+    'chgReview',
+    'proxy',
+    'sharing',
 ]
 
 MIDDLEWARE = [
@@ -140,13 +145,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 이메일 백엔드 설정 (개발용)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# DEFAULT_FROM_EMAIL = 'no-reply@popin.com'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # ← 콘솔 말고 실제 전송
+
 # 이메일 서버
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # 본인 Gmail 계정
-EMAIL_HOST_USER = 'aaa@gmail.com'
-EMAIL_HOST_PASSWORD = 'qwer1234'  # 앱 비밀번호
+EMAIL_HOST_USER = 'aaa @gmail.com'
+EMAIL_HOST_PASSWORD = ''  # 앱 비밀번호 발급받아야됨..
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+

@@ -6,17 +6,75 @@ from django.core.mail import send_mail
 from django.http import JsonResponse 
 from django.conf import settings
 import random
-# 이메일 인증번호 전송 
+import requests
+
+def kakao_login(request):
+    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
+    return redirect(
+        f"https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
+    )
+
+def kakao_callback(request):
+    code = request.GET.get('code')
+    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
+
+    # 1. 토큰 요청
+    token_url = "https://kauth.kakao.com/oauth/token"
+    token_data = {
+        "grant_type": "authorization_code",
+        "client_id": client_id,
+        "redirect_uri": redirect_uri,
+        "code": code,
+    }
+    token_res = requests.post(token_url, data=token_data)
+    token_json = token_res.json()
+    access_token = token_json.get("access_token")
+
+    # 2. 사용자 정보 요청
+    profile_url = "https://kapi.kakao.com/v2/user/me"
+    headers = {"Authorization": f"Bearer {access_token}"}
+    profile_res = requests.get(profile_url, headers=headers)
+    profile_json = profile_res.json()
+
+    kakao_id = profile_json.get("id")
+    email = profile_json.get("kakao_account", {}).get("email")
+    nickname = profile_json.get("properties", {}).get("nickname")
+
+    # 3. DB 저장 또는 로그인 처리 (예시)
+    from signupFT.models import User
+    user, created = User.objects.get_or_create(
+        user_id=f'kakao_{kakao_id}',
+        defaults={'email': email or '', 'nickname': nickname or '', 'password': '카카오계정'},  # 임시 비번
+    )
+    request.session['user_id'] = user.user_id
+    return redirect('home:main')
+
+
+
+
+
+
+
+
+
+
 def send_verification_code(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         name = request.POST.get('name')
+
         try:
             user = User.objects.get(email=email, name=name)
             code = str(random.randint(100000, 999999))
-            request.session['verify_code'] = code
-            request.session['verify_user'] = user.user_id
 
+            request.session['verify_code'] = code
+            request.session['verify_user_email'] = email
+
+            # request.session['verify_user'] = user.user_id
+            
+           
             send_mail(
                 subject='[PO-PIN] 이메일 인증번호',
                 message=f'인증번호는 다음과 같습니다: {code}',
@@ -26,7 +84,8 @@ def send_verification_code(request):
             )
             return JsonResponse({'success': True})
         except User.DoesNotExist:
-            return JsonResponse({'success': False, 'message': '회원 정보가 일치하지 않습니다.'})
+            return JsonResponse({'success': False, 'message': '일치하는 사용자가 없습니다.'})
+
 # 로그인
 def loginp(request):
     if request.method == 'POST':
@@ -45,21 +104,29 @@ def loginp(request):
 
     return render(request, 'login.html')
 
-
-# 아이디 찾기
+# 아이디 찾기 처리
 def loginID(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
+        code = request.POST.get('code')
+
+        # 세션에서 인증정보 가져오기
+        session_code = request.session.get('verify_code')
+        session_email = request.session.get('verify_user_email')
+
+        if code != session_code or email != session_email:
+            messages.error(request, '인증번호가 일치하지 않거나 이메일 인증이 완료되지 않았습니다.')
+            return render(request, 'login-findID.html')
+
         try:
             user = User.objects.get(name=name, email=email)
-            return render(request, "login-findID.html", {'found_id': user.user_id})
+            return render(request, 'login-findID.html', {'found_id': user.user_id})
         except User.DoesNotExist:
             messages.error(request, '일치하는 회원이 없습니다.')
-    return render(request, "login-findID.html")
 
+    return render(request, 'login-findID.html')
 
-# 비밀번호 찾기 (세션에 user_id 저장)
 
 def loginPW(request):
     if request.method == 'POST':

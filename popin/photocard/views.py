@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 
+from signupFT.models import User
 from photocard.models import Photocard
 from idols.models import Member
-from photocard.models import TempUser
 from photocard.models import TempWish
 
 from django.db.models import Count
@@ -55,134 +55,180 @@ def detail(request):
 
 # 포토카드 거래글 작성
 def write(request):
-    if request.method == "GET" :
-        # choices : select options 반환 >> PHOTOCARD model.py 참고!!
-        # ex) Photocard.CATEGORY_CHOICES
-        # > ('앨범', '앨범'),('특전', '특전'),('MD', 'MD'),('공방', '공방'),('기타', '기타'),
-        # member : idol의 member 반환
-        context = {
-        'category_choices': Photocard.CATEGORY_CHOICES,
-        'poca_state_choices': Photocard.P_STATE_CHOICES,
-        'trade_type_choices': Photocard.TRADE_CHOICES,
-        'place_choices': Photocard.PLACE_CHOICES,
-        'member': Member.objects.all(),
-        }
-        return render(request, 'write.html', context)
-        
-    elif request.method == 'POST':
-        # 작성 버튼 클릭 시 필요한 필드 정보
-        # 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
-        # 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
 
-        title = request.POST.get('title')
-        image = request.FILES.get('image')
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
         
-        seller=TempUser.objects.first() ## 로그인 구현 시 자동 지정 수정 필요 
-        
-        category=request.POST.get('category')
-        album=request.POST.get('album')
-        
-        member=request.POST.get('member')
-        group_name, member_name = member.split(' - ')
-        member_obj = Member.objects.get(name=member_name, group__name=group_name)
-        
-        poca_state=request.POST.get('poca_state')
-        tag=request.POST.get('tag', None)
-        
-        trade_type=request.POST.get('trade_type')
-        place=request.POST.get('place')
-        
-        sell_state = '중' # 등록 시 default
-        
-        if request.POST.get('available_at') == "" :
-            available_at = str(date.today())
-        else:
-            available_at = request.POST.get('available_at')
-        
-        latitude=request.POST.get('latitude')
-        longitude=request.POST.get('longitude')
-        
-        print('-------------------------')
-        print(title, image, seller, category, album, member, poca_state, tag, trade_type, place, sell_state, available_at, latitude, longitude)
-        print('-------------------------')
-        
-        # Photocard 객체 생성
-        Photocard.objects.create(
-            title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
-        )
-        
-        # redirect로 이동
-        return redirect('/photocard/list')
-
-# 포토카드 거래글 수정
-def update(request, pno):
-    # 포토카드 상세정보 불러오기 (context 작성 참고)
-    photo_qs = Photocard.objects.get(pno=pno)
-    if request.method == "GET":
-        
-        member_qs = Member.objects.all()
-        context = {
+    try:
+        user = User.objects.get(user_id=user_id)
+        if request.method == "GET" :
+            # choices : select options 반환 >> PHOTOCARD model.py 참고!!
+            # ex) Photocard.CATEGORY_CHOICES
+            # > ('앨범', '앨범'),('특전', '특전'),('MD', 'MD'),('공방', '공방'),('기타', '기타'),
+            # member : idol의 member 반환
+            context = {
             'category_choices': Photocard.CATEGORY_CHOICES,
             'poca_state_choices': Photocard.P_STATE_CHOICES,
             'trade_type_choices': Photocard.TRADE_CHOICES,
             'place_choices': Photocard.PLACE_CHOICES,
-            'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
-            'member': member_qs,
-            'photocard': photo_qs
-        }
-        return render(request, 'update.html', context)
+            'member': Member.objects.all(),
+            }
+            return render(request, 'write.html', context)
+            
+        elif request.method == 'POST':
+            # 작성 버튼 클릭 시 필요한 필드 정보
+            # 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
+            # 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
+
+            title = request.POST.get('title')
+            image = request.FILES.get('image')
+            
+            seller = user
+            
+            category=request.POST.get('category')
+            album=request.POST.get('album')
+            
+            member=request.POST.get('member')
+            group_name, member_name = member.split(' - ')
+            member_obj = Member.objects.get(name=member_name, group__name=group_name)
+            
+            poca_state=request.POST.get('poca_state')
+            tag=request.POST.get('tag', None)
+            
+            trade_type=request.POST.get('trade_type')
+            place=request.POST.get('place')
+            
+            sell_state = '중' # 등록 시 default
+            
+            if request.POST.get('available_at') == "" :
+                available_at = str(date.today())
+            else:
+                available_at = request.POST.get('available_at')
+            
+            latitude=request.POST.get('latitude')
+            longitude=request.POST.get('longitude')
+            
+            # Photocard 객체 생성
+            Photocard.objects.create(
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+            )
+            
+            # redirect로 이동
+            return redirect('/photocard/list')
+            
+    except User.DoesNotExist:
+        return redirect('login:main')  # 예외 상황 대비
+
+# 포토카드 거래글 수정
+def update(request, pno):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
-    # 포토카드 상세정보 수정
-    elif request.method == "POST":
-        photo_qs.title = request.POST.get('title')
-        photo_qs.image = request.FILES.get('image')
-        
-        photo_qs.category=request.POST.get('category')
-        photo_qs.album=request.POST.get('album')
-        
-        member_id=request.POST.get('member')
-        member_obj = Member.objects.get(pk=int(member_id))
-        photo_qs.member = member_obj
-        
-        photo_qs.poca_state=request.POST.get('poca_state')
-        photo_qs.tag=request.POST.get('tag', None)
-        
-        photo_qs.trade_type=request.POST.get('trade_type')
-        photo_qs.place=request.POST.get('place')
-        
-        photo_qs.sell_state = request.POST.get('sell_state')
-        
-        if request.POST.get('available_at') == "" :
-            available_at = str(date.today())
-        else:
-            available_at = request.POST.get('available_at')
-        
-        photo_qs.available_at = available_at
-        
-        photo_qs.latitude=request.POST.get('latitude')
-        photo_qs.longitude=request.POST.get('longitude')
-        
-        photo_qs.save()
-        
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = User.objects.get(user_id=user_id) # 사용자
+    photo_qs = Photocard.objects.get(pno=pno) # 수정 포토카드 게시글
+    
+    # 사용자 아이디와 수정 포토카드 게시글의 판매자가 같을 시 True
+    if user.user_id == photo_qs.seller.user_id :
+        try:
+            if request.method == "GET":
+                member_qs = Member.objects.all() # DB 내 아이돌 전체
+                context = {
+                    'category_choices': Photocard.CATEGORY_CHOICES,
+                    'poca_state_choices': Photocard.P_STATE_CHOICES,
+                    'trade_type_choices': Photocard.TRADE_CHOICES,
+                    'place_choices': Photocard.PLACE_CHOICES,
+                    'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
+                    'member': member_qs,
+                    'photocard': photo_qs
+                }
+                return render(request, 'update.html', context)
+            
+            # 포토카드 상세정보 수정
+            elif request.method == "POST":
+                photo_qs.title = request.POST.get('title') # 제목
+                photo_qs.image = request.FILES.get('image') # 이미지
+                
+                photo_qs.category=request.POST.get('category') # 카테고리 (공방, 앨범)
+                photo_qs.album=request.POST.get('album') # 활동 시기 앨범 (1집, 2집)
+                
+                member_id=request.POST.get('member') # 아이돌
+                member_obj = Member.objects.get(pk=int(member_id))
+                photo_qs.member = member_obj
+                
+                photo_qs.poca_state=request.POST.get('poca_state') # 포카 하자 상태
+                photo_qs.tag=request.POST.get('tag', None) # 태그
+                
+                photo_qs.trade_type=request.POST.get('trade_type') # 거래 방식
+                photo_qs.place=request.POST.get('place') # 장소 (올공, 더현대)
+                
+                photo_qs.sell_state = request.POST.get('sell_state') # 판매자 거래 상태
+                
+                # 거래 가능일
+                if request.POST.get('available_at') == "" :
+                    available_at = str(date.today())
+                else:
+                    available_at = request.POST.get('available_at')
+                
+                photo_qs.available_at = available_at 
+                
+                #거래 위치 위도 경도
+                photo_qs.latitude=request.POST.get('latitude')
+                photo_qs.longitude=request.POST.get('longitude')
+                
+                # 새로 설정한 값 수정
+                photo_qs.save()
+                
+                # 수정 완료 후 리다이렉트
+                return redirect('/photocard/list')
+        except User.DoesNotExist:
+            return redirect('login:main')  # 예외 상황 대비
+    else: 
+        # 사용자 아이디와 판매자 아이디가 일치하지 않을 경우 리다이렉트
         return redirect('/photocard/list')
+                
+        
 
 # 포토카드 거래글 삭제
 def delete(request, pno):
-    Photocard.objects.get(pno=pno).delete()
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = User.objects.get(user_id=user_id) # 사용자
+    photo_qs = Photocard.objects.get(pno=pno) # 수정 포토카드 게시글
+    
+    # 사용자 아이디와 수정 포토카드 게시글의 판매자가 같을 시 True
+    if user.user_id == photo_qs.seller.user_id :
+        Photocard.objects.get(pno=pno).delete()
+        
     return redirect('/photocard/list/')
 
 # 포토카드 위시 등록 & 삭제
 def wish(request, pno):
-    user = TempUser.objects.first() # 로그인 구현 후 수정
-    photocard = Photocard.objects.get(pno=pno)
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+
+    try:
+        user = User.objects.get(user_id=user_id)
+        photocard = Photocard.objects.get(pno=pno)
+        
+        try: 
+            # 테이블에 해당 유저가 해당 포토카드를 위시 했는지 조회
+            qs = TempWish.objects.get(user=user, photocard=photocard)
+            # 이미 존재할 경우 삭제
+            qs.delete()
+        except:
+            # 존재하지 않을 경우 추가
+            TempWish.objects.create(user=user, photocard=photocard)
+        
+        return redirect('/photocard/list')
     
-    try: 
-        # 테이블에 해당 유저가 해당 포토카드를 위시 했는지 조회
-        qs = TempWish.objects.get(user=user, photocard=photocard)
-        # 이미 존재할 경우 삭제
-        qs.delete()
-    except:
-        # 존재하지 않을 경우 추가
-        TempWish.objects.create(user=user, photocard=photocard)
-    
-    return redirect('/photocard/list')
+    except User.DoesNotExist:
+        return redirect('login:main')  # 예외 상황 대비
+

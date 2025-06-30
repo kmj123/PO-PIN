@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
     <title>PO-PIN - 포토카드 커뮤니티</title>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
     <style>
@@ -26,24 +27,16 @@
             padding: 20px;
         }
 
-        /* Header */
+        /* 헤더 */
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 1000;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
         }
 
         .logo {
@@ -53,111 +46,173 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            display:block;
+            width:250px;
+            margin-left:35px;
         }
 
         .logo img{
             margin-right:10px; 
             width:45px; height:45px;
             vertical-align: middle;}
+            
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
         .nav-menu {
             display: flex;
-            gap: 20px;
+            gap: 1.5rem;
             list-style: none;
+            width:400px;
         }
 
-        .nav-menu a{
+        .nav-menu a {
             text-decoration: none;
-            color:#333;
-        }
-
-        .nav-item {
-            cursor: pointer;
-            padding: 10px 20px;
-            border-radius: 25px;
-            /*transition: all 0.3s ease;*/
+            color: #333;
             font-weight: 500;
+            transition: all 0.3s ease;
             position: relative;
-            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        .nav-item:hover{
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
+        .nav-menu a:hover {
+            color: #667eea;
             transform: translateY(-2px);
         }
 
-        .nav-item:hover > a{
-            color:white;
-        }
-
-        .nav-item .dropdown {
-            display: none;
+        .nav-menu a::after {
+            content: '';
             position: absolute;
-            top: 100%;
-            left: 0;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            min-width: 200px;
-            z-index: 1100;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
 
-        .nav-item .dropdown:hover{display:block;}
-
-        .dropdown-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            color: #333;
-        }
-
-        .dropdown-item:hover {
-            background: #f8f9ff;
-            color: #667eea;
+        .nav-menu a:hover::after {
+            width: 100%;
         }
 
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
             margin-right:15px;
+            width:180px;
+            padding-right:0;
         }
 
-        .alarm {
+        .user-info > .username{
+            margin:0 10px 0 5px;
+        }
+
+        /* 모바일 메뉴 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            z-index: 102;
+            position: relative;
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 100%;
+            width: 300px;
+            height: 100%;
+            min-height: 100vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            padding: 5rem 0 2rem 0;
+            z-index: 101;
+            transition: left 0.3s ease; /* 슬라이딩 효과 */
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mobile-menu-list li {
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .mobile-menu-list li:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu-list a {
+            display: block;
+            padding: 1.2rem 2rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .mobile-menu-list a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .mobile-user-info {
+            display:flex;
+            position:fixed;
+            top:27px;
+            left:32px;
+            font-weight:600;
+            font-size:20px;
+        }
+
+        .mobile-user-info > .username {
+            margin:0 10px 0 5px;
+        }
+
+        .mobile-user-info > .alarm {
+            line-height: 30px;
+        }
+
+        .mobile-user-info > .logout {
+            line-height: 30px;
+        }
+
+        .alarm{
             font-size:18px;
         }
 
-        .login-btn, .register-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .logout{
+            font-size:20px;
         }
 
-        .login-btn {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
+        .user-info a, .mobile-user-info a{color:#333; text-decoration: none;}
 
-        .login-btn a{
-            text-decoration: none;
-            color:#667eea;
-        }
-
-        .register-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .register-btn a{
-            text-decoration: none;
-            color: white;
-        }
-
-        /* Main Layout - Updated to center content */
+        /* 메인컨텐츠 */
         .main-content {
             display: flex;
             justify-content: center;
@@ -189,7 +244,7 @@
             z-index: 10;
         }
 
-        /* Page Content */
+        /* 공지사항 */
         .page-header {
             display: flex;
             justify-content: space-between;
@@ -199,124 +254,46 @@
             border-bottom: 2px solid #f0f0f0;
         }
 
-        .page-title {
-            font-size: 32px;
+        .page-notice {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            font-size: 1rem;
             font-weight: bold;
+            width:100%; height:50px;
+            padding:20px;
             color: #333;
-        }
-
-        .write-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .write-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Search & Filter */
-        .search-filter {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 25px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        /* Board List */
-        .board-list {
-            list-style: none;
-        }
-
-        .board-item {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .board-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .board-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .board-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .board-tag {
-            background: #667eea;
-            color: white;
-            padding: 5px 12px;
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
-        .board-meta {
+        .page-notice a{text-decoration: none;}
+
+        .notice-content{
             display: flex;
-            gap: 20px;
-            color: #666;
-            font-size: 14px;
+            align-items: center;
         }
 
-        .board-preview {
-            color: #666;
-            margin-top: 10px;
-            line-height: 1.4;
+        .notice-content a{color:#333;}
+
+        .noticetag{
+            color: red;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            margin-right:10px;
+            font-weight: 700;
         }
 
-        /* Photo Grid */
+        .noticeall{
+            color:#666;
+            font-size:0.9rem;
+            font-weight:500;
+        }
+
+        /* 인기 포토카드 */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -348,6 +325,8 @@
             font-size: 48px;
             color: #666;
         }
+
+        .photo-image img{width:256px; height:284px; object-fit: cover;}
 
         .photo-info {
             padding: 20px;
@@ -381,7 +360,7 @@
             font-size: 14px;
         }
 
-        /* Latest Posts Section */
+        /* 최신 게시글 */
         .latest-posts {
             background: white;
             border-radius: 20px;
@@ -460,267 +439,7 @@
             font-weight: 500;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 25px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal h2 {
-            margin-bottom: 25px;
-            text-align: center;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        /* Rating System */
-        .rating-group {
-            display: flex;
-            gap: 30px;
-            margin: 20px 0;
-        }
-
-        .rating-item {
-            text-align: center;
-        }
-
-        .rating-item label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .stars {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .star {
-            font-size: 24px;
-            color: #ddd;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .star:hover, .star.active {
-            color: #ffd700;
-        }
-
-        /* Photo Editor */
-        .photo-editor {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .editor-canvas {
-            width: 100%;
-            height: 400px;
-            background: #f8f9ff;
-            border: 2px dashed #ddd;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .editor-canvas:hover {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        .editor-tools {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .tool-btn {
-            padding: 10px 20px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tool-btn:hover, .tool-btn.active {
-            border-color: #667eea;
-            background: #f0f4ff;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        /* 회원가입 버튼 */
-        /*
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        */
-
-        /* 로그인 버튼 */
-        /*
-        .btn-outline {
-            border: 2px solid #667eea;
-            color: #667eea;
-            background: transparent;
-        }
-
-        .btn-outline:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        */
-
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .btn-success {
-            background: #4caf50;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .login-btn{
-            border: 2px solid #667eea;
-            color: #667eea;
-        }
-
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Hide/Show Pages */
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Quick Stats */
+        /* 게시글 수 */
         .quick-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -748,168 +467,25 @@
             font-size: 14px;
         }
 
-        /* 모바일 사이드메뉴 */
-        .mobile-sidebar-menu{
-            position: fixed;
-            top: 0;
-            right: -100%; /* 메뉴가 오른쪽 밖에 숨겨짐 */
-            width: 300px;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.98);
-            transition: right 0.3s ease; /* 슬라이딩 효과 */
-            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
-            z-index: 9998;
-            padding: 5rem 0 2rem 0;
-        }
-        .mobile-sidebar-menu.active {right:0;}
-
-        .mobile-sidebar-menu ul{list-style: none; padding:0;}
-
-        .mobile-menu-btn{display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #333;
-            padding: 0.5rem;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-            z-index: 9999;
-            position: fixed;
-            top:35px; right:35px;}
-
-        .mobile-menu-btn:hover{background-color: rgba(102, 126, 234, 0.1);}
-
-        .mobile-user-info{
-            display:flex;
-            font-weight:600;
-            font-size:22px;
-            position: relative;
-            top:-35px; left:30px;
-        }
-
-        .mobile-user-info > .username {
-            margin-right:10px;
-        }
-
-        .mobile-user-info > .alarm {
-            line-height: 33px;
-        }
-
-        .mobile-nav-item{
-            display: block;
-            padding: 1.2rem 2rem;
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-        }
-        
-        .mobile-nav-item:hover{
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            border-left-color: #667eea;
-            transform: translateX(5px);
-        }
-
-        .mobile-nav-item:hover > a{
-            color:#667eea;
-        }
-
-        .mobile-submenu{display:none;}
-
-        .mobile-has-submenu:hover .mobile-submenu {
-            display: block;
-        }
-        
-        .mobile-has-submenu > .mobile-submenu a{
-            display:block;
-            margin-top:15px;
-            margin-left:15px;
-        }
-
-        .mobile-submenu a:hover{
-            background: none;
-            color: #667eea;}
-
-        .mobile-nav-item a{
-            text-decoration: none;
-            color:#333;
-        }
-
-        
-        /* 모바일 로그인 회원가입
-        .mobile-user-info{
-            position: sticky;
-            bottom: 0;
-            left: 2rem;
-            right: 2rem;
-            margin: 2rem 2rem 0 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border-top: 1px solid rgba(102, 126, 234, 0.1);
-            padding: 2rem 0;
-        }
-
-        .mobile-user-info .btn{
-            width: 100%;
-            text-align: center;
-            justify-self: stretch;
-        }
-        */
-
-        /* 최근 인기 포토카드 이미지 영역 사이즈 조정 */
-        .photo-image img{width:256px; height:284px; object-fit: cover;}
-
-
         /* 반응형 */
-        @media (max-width: 1024px) {
-            .main-content {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .sidebar-right {
-                display: none;
-            }
-            
-            .photo-grid {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-        }
 
         @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display:block;
-                /* display:block; */
-                /* display: block !important; */
+            .nav {
+                position: relative;
             }
 
-            .mobile-sidebar-menu{
-                display:none;   /* 기본은 닫힘 */
-            }
-
-            .mobile-sidebar-menu.active {
-                display:block;
-            }
-
-            .nav-menu, .user-info {
+            .nav-menu{
                 display: none;
+            }
+
+            .logo{width:50%; margin-left:0;}
+            
+            .mobile-menu-btn {
+                display: block;
             }
 
             .photo-grid {
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-            
-            .form-row {
-                flex-direction: column;
-            }
-            
-            .rating-group {
-                flex-direction: column;
-                gap: 20px;
             }
 
             .content-area {
@@ -917,298 +493,232 @@
             }
         }
         
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+        
     </style>
 
     <script>
         $(document).ready(function(){
-            // 드롭다운 //
-            // 드롭다운 메뉴 열기
-            // stop() : Queue 제거
-            $(".has-submenu").hover(function(){
-                $(this).children(".dropdown").stop(true, true).slideDown(500);
-            }, function(){
-                $(this).children(".dropdown").stop(true, true).slideUp(500);
-            });
-            // 현재 드롭다운 메뉴만 열리게
-            $(".has-submenu").mouseenter(function(){
-                $(".dropdown").stop(true, true).slideUp(500);  // 다른 드롭다운 메뉴 닫기
-                $(this).children(".dropdown").stop(true, true).slideDown(500); // 현재 드롭다운 메뉴 열기
-            });
-            // 마우스 떼면 드롭다운 메뉴 닫기
-            $(".has-submenu").mouseleave(function(){
-                $(this).childeren(".dropdown").stop(true, true).slideUp(500);
-            });
+            // 모바일 메뉴 토글 기능
+            const $mobileMenuBtn = $('#mobileMenuBtn');
+            const $mobileMenu = $('#mobileMenu');
 
+            function toggleMobileMenu() {
+                $mobileMenu.toggleClass('active');
+                $mobileMenuBtn.html($mobileMenu.hasClass('active') ? '✕' : '☰');
 
-            // 사이드메뉴 //
-            // 햄버거 버튼 클릭 시 사이드메뉴 열림
-            $("#mobileMenuBtn").click(function(){
-                $(".mobile-sidebar-menu").toggleClass("active");
-                // 사이드 메뉴 열림 : ✕ 버튼, 사이드 메뉴 닫힘 : ☰ 버튼
-                if($(".mobile-sidebar-menu").hasClass("active")){
-                    $("#mobileMenuBtn").html("✕");
-                }else{$("#mobileMenuBtn").html("☰");}
-            });
-            // 모바일이 아닐때는 사이드메뉴 사라짐
-            $(window).resize(function(){
-                if ($(window).width() > 768){
-                    $(".mobile-sidebar-menu").removeClass("active");
-                    $("#mobileMenuBtn").html("☰");
+                // 모바일 메뉴가 열릴 때 전체 페이지 높이에 맞게 조정
+                if ($mobileMenu.hasClass('active')) {
+                    const documentHeight = Math.max(
+                        $(document).height(),
+                        $(window).height()
+                    );
+                    $mobileMenu.css('height', documentHeight);
+                } else {
+                    $mobileMenu.css('height', '');
+                }
+            }
+
+            $mobileMenuBtn.on('click', toggleMobileMenu);
+
+            // 모바일 메뉴 링크 클릭 시 메뉴 닫기
+            $('.mobile-menu-list a').on('click', toggleMobileMenu);
+
+            // 윈도우 리사이즈 시 모바일 메뉴 닫기
+            $(window).on('resize', function() {
+                if ($(window).width() > 768) {
+                    $mobileMenu.removeClass('active');
+                    $mobileMenuBtn.html('☰');
                 }
             });
-
-            // 사이드메뉴 링크 클릭 시 사이드메뉴 닫힘
-            $(".mobile-nav-menu a").click(function(){
-                $(".mobile-sidebar-menu").removeClass("active");
-                $("#mobileMenuBtn").html("☰");
-            })
         }); //document
     </script>
 </head>
 
 <body>
-    <!-- 햄버거 버튼 -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+    <!-- 헤더 -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo"><img src='/static/images/landing/logo.png'>PO-PIN</a>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="#community">커뮤니티</a></li>
+                <li><a href="#decorate">포카꾸미기</a></li>
+                <li><a href="#customer">고객지원</a></li>
+            </ul>
+            <div class="user-info">
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            
+            <!-- 모바일 메뉴 -->
+            <div class="mobile-menu" id="mobileMenu">
+                <div class="mobile-user-info">
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <ul class="mobile-menu-list">
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#exchange">포카교환</a></li>
+                    <li><a href="#community">커뮤니티</a></li>
+                    <li><a href="#decorate">포카꾸미기</a></li>
+                    <li><a href="#customer">고객지원</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <nav class="nav">
-                <a href="#" class="logo"><img src="/static/images/landing/logo.png">PO-PIN</a>
-                <ul class="nav-menu">
-                    <li class="nav-item"><a href="#">홈</a></li>
-                    <li class="nav-item has-submenu">
-                        게시판
-                        <div class="dropdown">
-                            <div class="dropdown-item"><a href="#">교환후기</a></div>
-                            <div class="dropdown-item"><a href="#">나눔</a></div>
-                            <div class="dropdown-item"><a href="#">대리구매</a></div>
-                            <div class="dropdown-item"><a href="#">현황공유</a></div>
-                            <div class="dropdown-item"><a href="#">동행</a></div>
-                        </div>
-                    </li>
-                    <li class="nav-item has-submenu">
-                        포카꾸미기
-                        <div class="dropdown">
-                            <div class="dropdown-item"><a href="#">꾸미기</a></div>
-                            <div class="dropdown-item"><a href="#">내 포꾸</a></div>
-                            <div class="dropdown-item"><a href="#">포꾸 피드</a></div>
-                        </div>
-                    </li>
-                    <li class="nav-item has-submenu">
-                        고객지원
-                        <div class="dropdown">
-                            <div class="dropdown-item"><a href="#">Q&A</a></div>
-                            <div class="dropdown-item"><a href="#">공지사항</a></div>
-                            <div class="dropdown-item"><a href="#">이용안내</a></div>
-                        </div>
-                    </li>
-                </ul>
-                <div class="user-info">
-                    <div class="username"><span>{{username}}</span>님</div>
-                    <div class="alarm">🔔</div>
-                    <!-- <a href="#" class="btn btn-outline">로그인</a>
-                    <a href="#" class="btn btn-primary">회원가입</a> -->
-                </div>
-            </nav>
-        </div>
-
-
-        <!-- 모바일 사이드메뉴 -->
-        <div class="mobile-sidebar-menu" id="mobileSidebarMenu">
-            <div class="mobile-user-info">
-                <div class="username"><span>포카러버123</span>님</div>
-                <div class="alarm">🔔</div>
-            </div>
-            <ul class="mobile-nav-menu">
-                <li class="mobile-nav-item"><a href="#">홈</a></li>
-                <li class="mobile-nav-item mobile-has-submenu">
-                    게시판
-                    <div class="mobile-submenu">
-                        <a href="#">교환후기</a>
-                        <a href="#">나눔</a>
-                        <a href="#">대리구매</a>
-                        <a href="#">현황공유</a>
-                        <a href="#">동행</a>
-                    </div>
-                </li>
-                <li class="mobile-nav-item mobile-has-submenu">
-                    포카꾸미기
-                    <div class="mobile-submenu">
-                        <a href="#">꾸미기</a>
-                        <a href="#">내 포꾸</a>
-                        <a href="#">포꾸 피드</a>
-                    </div>
-                </li>
-                <li class="mobile-nav-item mobile-has-submenu">
-                    고객지원
-                    <div class="mobile-submenu">
-                        <a href="#">Q&A</a>
-                        <a href="#">공지사항</a>
-                        <a href="#">이용안내</a>
-                    </div>
-                </li>
-                <!-- <li>
-                    <div class="mobile-user-info">
-                        <a href="#" class="btn btn-outline">로그인</a>
-                        <a href="#" class="btn btn-primary">회원가입</a>
-                    </div>
-                </li> -->
-            </ul>
-        </div>
-        
-        <!-- 검색 영역 -->
 
         <!-- 메인 콘텐츠 -->
         <div class="main-content">
             <!-- 콘텐츠 영역 -->
             <div class="content-area">
                 <!-- 홈페이지 -->
-                <div class="page active" id="home">
+                <div class="page" id="home">
                     <div class="page-header">
-                        <h1 class="page-title">PO-PIN에 오신 것을 환영합니다</h1>
+                        <div class="page-notice">
+                            <div class="notice-content"><div class="noticetag">NOTICE</div><a href="#notice" class="noticetitle">올바른 포카교환 생활</a></div>
+                            <a href="#noticeAll" class="noticeall">전체보기</a>
+                        </div>
                     </div>
+                </div>
                     
-                    <div class="quick-stats">
-                        <div class="stat-card">
-                            <div class="stat-number">1,234</div>
-                            <div class="stat-label">전체 게시글</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">567</div>
-                            <div class="stat-label">활성 사용자</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">890</div>
-                            <div class="stat-label">교환 완료</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number">345</div>
-                            <div class="stat-label">포카 꾸미기</div>
-                        </div>
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">1,234</div>
+                        <div class="stat-label">전체 게시글</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-number">567</div>
+                        <div class="stat-label">활성 사용자</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">890</div>
+                        <div class="stat-label">교환 완료</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">345</div>
+                        <div class="stat-label">포카 꾸미기</div>
+                    </div>
+                </div>
 
-                    <h2 style="margin-bottom: 20px;">최근 인기 포토카드</h2>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">NewJeans 하니</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">NewJeans</span>
-                                    <span class="photo-tag">하니</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 42</span>
-                                    <span>💬 8</span>
-                                </div>
+                <h2 style="margin-bottom: 20px;">최근 인기 포토카드</h2>
+                <div class="photo-grid">
+                    <div class="photo-card">
+                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                        <div class="photo-info">
+                            <div class="photo-title">NewJeans 하니</div>
+                            <div class="photo-tags">
+                                <span class="photo-tag">NewJeans</span>
+                                <span class="photo-tag">하니</span>
                             </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">BLACKPINK 리사</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">BLACKPINK</span>
-                                    <span class="photo-tag">리사</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 35</span>
-                                    <span>💬 12</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">BTS 정국</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">BTS</span>
-                                    <span class="photo-tag">정국</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 58</span>
-                                    <span>💬 15</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="photo-card">
-                            <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                            <div class="photo-info">
-                                <div class="photo-title">IVE 안유진</div>
-                                <div class="photo-tags">
-                                    <span class="photo-tag">IVE</span>
-                                    <span class="photo-tag">안유진</span>
-                                </div>
-                                <div class="photo-stats">
-                                    <span>❤️ 47</span>
-                                    <span>💬 9</span>
-                                </div>
+                            <div class="photo-stats">
+                                <span>❤️ 42</span>
+                                <span>💬 8</span>
                             </div>
                         </div>
                     </div>
-
-                    <!-- 최신 게시글 -->
-                    <div class="latest-posts">
-                        <div class="section-header">
-                            <h2 class="section-title">최신 게시글</h2>
-                            <a href="#" class="more-btn">더보기</a>
-                        </div>
-                        <div class="post-item">
-                            <div class="post-content">
-                                <div class="post-title">NewJeans 하니 포토카드 교환해요!</div>
-                                <div class="post-meta">kpop_lover • 5분 전 • 조회 23</div>
+                    <div class="photo-card">
+                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                        <div class="photo-info">
+                            <div class="photo-title">BLACKPINK 리사</div>
+                            <div class="photo-tags">
+                                <span class="photo-tag">BLACKPINK</span>
+                                <span class="photo-tag">리사</span>
                             </div>
-                            <div class="post-category">교환</div>
-                        </div>
-                        <div class="post-item">
-                            <div class="post-content">
-                                <div class="post-title">BLACKPINK 리사 포토카드 나눔합니다</div>
-                                <div class="post-meta">generous_fan • 12분 전 • 조회 45</div>
+                            <div class="photo-stats">
+                                <span>❤️ 35</span>
+                                <span>💬 12</span>
                             </div>
-                            <div class="post-category">나눔</div>
                         </div>
-                        <div class="post-item">
-                            <div class="post-content">
-                                <div class="post-title">BTS 정국 포토카드 대리구매 가능하신분?</div>
-                                <div class="post-meta">army_collector • 23분 전 • 조회 67</div>
+                        {%endfor%}
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                        <div class="photo-info">
+                            <div class="photo-title">BTS 정국</div>
+                            <div class="photo-tags">
+                                <span class="photo-tag">BTS</span>
+                                <span class="photo-tag">정국</span>
                             </div>
-                            <div class="post-category">대리구매</div>
+                            <div class="photo-stats">
+                                <span>❤️ 58</span>
+                                <span>💬 15</span>
+                            </div>
                         </div>
-                        <div class="post-item">
-                            <div class="post-content">
-                                <div class="post-title">IVE 안유진 포토카드 꾸미기 완성!</div>
-                                <div class="post-meta">creative_diver • 35분 전 • 조회 89</div>
+                    </div>
+                    <div class="photo-card">
+                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                        <div class="photo-info">
+                            <div class="photo-title">IVE 안유진</div>
+                            <div class="photo-tags">
+                                <span class="photo-tag">IVE</span>
+                                <span class="photo-tag">안유진</span>
                             </div>
-                            <div class="post-category">포꾸</div>
-                        </div>
-                        <div class="post-item">
-                            <div class="post-content">
-                                <div class="post-title">오늘 교환 후기 - 정말 만족스러워요!</div>
-                                <div class="post-meta">happy_trader • 1시간 전 • 조회 112</div>
+                            <div class="photo-stats">
+                                <span>❤️ 47</span>
+                                <span>💬 9</span>
                             </div>
-                            <div class="post-category">후기</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 교환후기 -->
-                <div class="page" id="exchange-review">
-                    <div class="page-header">
-                        <h1 class="page-title">교환 후기</h1>
-                        <button class="write-btn" onclick="openModal('reviewModal')">후기 작성</button>
+                <!-- 최신 게시글 -->
+                <div class="latest-posts">
+                    <div class="section-header">
+                        <h2 class="section-title">최신 게시글</h2>
+                        <a href="#" class="more-btn">더보기</a>
                     </div>
-                    
-                    <div class="search-filter">
-                        <input type="text" class="search-bar" placeholder="후기 검색...">
-                        <div class="filter-section">
-                            <select class="filter-select">
-                                <option>전체 평점</option>
-                                <option>⭐⭐⭐⭐⭐ 5점</option>
-                                <option>⭐⭐⭐⭐ 4점 이상</option>
-                                <option>⭐⭐⭐ 3점 이상</option>
-                            </select>
-                            <select class="filter-select">
-                                <option>최신순</option>
-                                <option>평점순</option>
-                                <option>조회순
+                    <div class="post-item">
+                        <div class="post-content">
+                            <div class="post-title">NewJeans 하니 포토카드 교환해요!</div>
+                            <div class="post-meta">kpop_lover • 5분 전 • 조회 23</div>
+                        </div>
+                        <div class="post-category">교환</div>
+                    </div>
+                    <div class="post-item">
+                        <div class="post-content">
+                            <div class="post-title">BLACKPINK 리사 포토카드 나눔합니다</div>
+                            <div class="post-meta">generous_fan • 12분 전 • 조회 45</div>
+                        </div>
+                        <div class="post-category">나눔</div>
+                    </div>
+                    <div class="post-item">
+                        <div class="post-content">
+                            <div class="post-title">BTS 정국 포토카드 대리구매 가능하신분?</div>
+                            <div class="post-meta">army_collector • 23분 전 • 조회 67</div>
+                        </div>
+                        <div class="post-category">대리구매</div>
+                    </div>
+                    <div class="post-item">
+                        <div class="post-content">
+                            <div class="post-title">IVE 안유진 포토카드 꾸미기 완성!</div>
+                            <div class="post-meta">creative_diver • 35분 전 • 조회 89</div>
+                        </div>
+                        <div class="post-category">포꾸</div>
+                    </div>
+                    <div class="post-item">
+                        <div class="post-content">
+                            <div class="post-title">오늘 교환 후기 - 정말 만족스러워요!</div>
+                            <div class="post-meta">happy_trader • 1시간 전 • 조회 112</div>
+                        </div>
+                        <div class="post-category">후기</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
