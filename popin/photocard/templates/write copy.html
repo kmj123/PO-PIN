@@ -1,0 +1,215 @@
+
+{% include 'header2.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포토카드 업로드</title>
+</head>
+<style>
+.Upload-Container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(2555,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    background-filter: blur(10px);
+    overflow: hidden;
+}
+.Upload-header {
+    background: linear-gradient(153deg, #bbc8ff, #9c42a0);
+    padding: 30px;
+    text-align: center;
+    color: #ffff;
+    margin-bottom: 29px;
+}
+.Upload-header h2{
+    font-size:2.5rem;
+    margin-bottom:10px;
+    font-weight: 700;
+}
+.Upload-header p{
+    opacity: 0.9;
+    font-size: 1rem;
+}
+.Upload-Form{
+    padding: 20px;
+}
+.form-content{
+    margin-bottom: 25px;
+    border:1px solid black;
+}
+
+</style>
+<body>
+<!--상단 헤더더-->
+    {%block content%}
+    {%endblock%}
+<!--//상단헤더-->
+
+<div class="Upload-Container">
+    <div class="Upload-header">
+        <h1>✨포토카드 업로드</h1>
+        <p>소중한 포토카드를 등록하고 다른 팬들과 교환해보세요!</p>
+    </div>
+
+    <div class="Upload-Form">
+        <form action="/photocard/write/" method="POST" enctype='multipart/form-data'>
+        {% csrf_token %}
+        
+            <!-- 기본정보 섹션 -->
+            <div class="form-section">
+                <h3 class="section-title">📋 기본 정보</h3>
+
+                <!--제목-->
+                <div class="form-content">
+                    <label for="title">제목 <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" required placeholder="포토카드 제목을 입력해주세요">
+                </div>
+
+                <!--이미지업로드-->
+                <div class="form-content">
+                    <label>사진<span class="requuired">*</span></label>
+                    <div class="file-upload-icon">📷</div>
+                        <h4>이미지를 드래그하거나 클릭하여 업로드</h4>
+                        <p>JPG, PNG, GIF 파일을 지원합니다 (최대 10MB)</p>
+                        <input type="file" name="image" id="imageInput" class="fileType" accept="image/*" style="display: none;" required>
+                    </div>
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="previewImage" class="preview-image" alt="미리보기">
+                    </div>
+                </div>
+
+                <!-- 그룹 - 멤버 -->
+                <div class="form-content">
+                    <label>그룹 - 멤버 <span class="required">*</span></label>
+                    <div class="member-grid">
+                        <select name="group" id="group" required>
+                            <option value="">그룹 선택</option>
+                            {% for group in groups %}
+                            <option value="{{ group }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="member" id="member" required>
+                            <option value="">멤버 선택</option>
+                            {% for mem in member %}
+                            <option value="{{ mem }}">{{ mem }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 앨범 정보 -->
+                <div class="form-content">
+                    <label>앨범</label>
+                    <div class="album-type-selector">
+                        <button type="button" class="album-type-btn" data-type="album_name">앨범명</button>
+                        <button type="button" class="album-type-btn" data-type="lucky_draw">럭드</button>
+                        <button type="button" class="album-type-btn" data-type="unreleased">미공포</button>
+                    </div>
+                    <div class="album-input">
+                        <input type="text" name="album" id="albumInput" placeholder="앨범 정보를 입력해주세요">
+                        <input type="hidden" name="album_type" id="albumType">
+                    </div>
+                </div>
+            </div>
+            <!--//기본정보섹션-->
+
+            <!--거래유형섹션-->
+            <div class="form-section">
+                <h3 class="section-title">💰 거래 유형</h3>
+                
+                <div class="form-content">
+                    <label>거래 유형 선택 <span class="required">*</span></label>
+                    <div class="trade-type-selector">
+                        <div class="trade-option" data-type="sale">
+                            <h4>💰 판매글</h4>
+                            <p>가격을 설정하여 판매</p>
+                        </div>
+                        <div class="trade-option" data-type="exchange">
+                            <h4>🔄 교환글</h4>
+                            <p>다른 포토카드와 교환</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="trade_type" id="tradeType" required>
+                    
+                    <div class="price-input" id="priceInput">
+                        <label for="price">가격 (원) <span class="required">*</span></label>
+                        <input type="number" id="price" name="price" placeholder="판매 가격을 입력해주세요" min="0">
+                    </div>
+
+                    <div class="blocked-notice" id="blockedNotice">
+                        <strong>⚠️ 알림:</strong> 교환글은 가격 설정이 불가능합니다.
+                    </div>
+                </div>
+            </div>
+            <!--//거래유형섹션-->
+
+            <!--상세설명섹션-->
+            <div class="form-section">
+                <h3 class="section-title">📝 상세 설명</h3>
+                
+                <div class="form-content">
+                    <label for="description">상세설명</label>
+                    <textarea id="description" name="description" placeholder="포토카드의 상태, 교환 희망 사항 등을 자세히 설명해주세요"></textarea>
+                </div>
+
+                <div class="form-content">
+                    <label for="tag">태그</label>
+                    <input type="text" id="tag" name="tag" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                </div>
+            </div>
+            <!--//상세설명섹션-->
+
+            <!--위치정보섹션-->
+            <div class="form-section">
+                <h3 class="section-title">📍 거래 위치</h3>
+                
+                <div class="form-content">
+                    <label>위치 선택 방법</label>
+                    <div class="location-toggle">
+                        <button type="button" class="location-btn" data-location="db">DB 장소</button>
+                        <button type="button" class="location-btn" data-location="current">내 위치</button>
+                    </div>
+
+                    <div id="dbLocationContainer">
+                        <select name="db_location" id="dbLocation">
+                            <option value="">장소를 선택해주세요</option>
+                            {% for key, label in place_choices %}
+                            <option value="{{ key }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="mapContainer">
+                        <div id="map" class="map-container"></div>
+                        <div class="location-info" id="locationInfo">
+                            지도를 클릭하여 거래 장소를 선택해주세요
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="location_type" id="locationType">
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                </div>
+            </div>
+            <!--//위치정보섹션-->
+
+            <!-- 버튼 -->
+            <div class="button-container">
+                <button type="button" class="btn btn-secondary" onclick="history.back()">
+                    취소하기
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    등록하기
+                </button>
+            </div>
+        </form>
+    </div>
+</div>  
+<!--//Upload-Container-->
+
+</body>
+</html>
