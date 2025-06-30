@@ -655,6 +655,25 @@ body {
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
 }
+.community-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.community-tab {
+    background: rgba(248, 249, 250, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.community-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
 
 .view-all-container {
     text-align: center;

@@ -355,19 +355,61 @@
 
             <div id="community" class="tab-content">
                 <h2 style="margin-bottom: 1.5rem;">커뮤니티 작성글</h2>
+                <div class="community-tabs">
+                    <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
+                    <button class="community-tab " onclick="showCommunityTab('share')">나눔</button>
+                    <button class="community-tab " onclick="showCommunityTab('InsteadBuying')">대리구매</button>
+                </div>
+                <!--동행글-->
                 <div class="section-content">
-                    <div class="item">
-                        <h3>BTS 신규 포토카드 정보 공유</h3>
-                        <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
-                    </div>
-                    <div class="item">
-                        <h3>포카 보관 팁 알려드려요!</h3>
-                        <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
-                    </div>
-                    <div class="item">
-                        <h3>이번주 포카 교환 후기</h3>
-                        <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
-                    </div>
+                    <div id="WithU" class="community-content">
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>BTS 동행</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+                <!--나눔글-->
+                <div class="section-content">
+                    <div id="share" class="community-content">
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 나눔</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+                <!--대리구매-->
+                <div class="section-content">
+                    <div id="InsteadBuying" class="community-content">
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>앨범 대리구매</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
                 </div>
             </div>
 
@@ -520,6 +562,36 @@
                 document.getElementById('written-reviews').style.display = 'block';
             }
         }
+
+        // 커뮤니티 게시글 카테고리 버튼
+        function showCommunityTab(type){
+            const communityTabs = document.querySelectorAll('.community-tab');
+            const WithU = document.getElementById('WithU');
+            const share = document.getElementById('share');
+            const InsteadBuying = document.getElementById('InsteadBuying');
+
+            communityTabs.forEach(tab=>{
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            if (type === "WithU"){
+                WithU.style.display="block";
+                share.style.display="none";
+                InsteadBuying.style.display="none";
+            } else if(type === "share"){
+                share.style.display="block";
+                WithU.style.display = "none";
+                InsteadBuying.style.display = "none";
+            } else if(type === "InsteadBuying"){
+                InsteadBuying.style.display="block";
+                WithU.style.display = "none";
+                share.style.display="none";
+            }
+        }
+        share.style.display='none';
+        InsteadBuying.style.display='none';
+        
 
         // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
         const photocardData = {
