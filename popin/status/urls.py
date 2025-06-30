@@ -1,8 +1,7 @@
 from django.urls import path, include
 from.import views
 
-app_name = 'chgReview'
+app_name = 'status'
 urlpatterns = [
     path('',views.main,name='main'),
-    path('view/',views.view,name='view'),
 ]
