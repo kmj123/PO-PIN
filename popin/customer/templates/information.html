@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -19,6 +18,8 @@
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       color: #333;
+      display: flex;
+      flex-direction: column;
     }
 
     /* 헤더 */
@@ -151,10 +152,18 @@
       align-items: center;
     }
 
-    /* 메인 컨텐츠 */
+    /* 메인 컨텐츠 컨테이너 - 중앙 정렬 */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
     .about-container {
       max-width: 900px;
-      margin: 40px auto;
+      width: 100%;
       background: rgba(255, 255, 255, 0.95);
       padding: 60px 40px;
       border-radius: 25px;
@@ -178,6 +187,7 @@
       line-height: 1.8;
       margin-bottom: 20px;
       color: #555;
+      text-align:center;
     }
 
     .feature {
@@ -207,9 +217,9 @@
       font-size: 18px;
       margin-bottom: 15px;
       color: #5c4ca6;
-      display: flex;
       align-items: center;
       gap: 10px;
+      text-align:center;
     }
 
     .feature-box h4 i {
@@ -256,7 +266,6 @@
       }
 
       .about-container {
-        margin: 20px;
         padding: 40px 20px;
       }
 
@@ -288,32 +297,34 @@
     </nav>
   </header>
 
-  <div class="about-container">
-    <h2>PO-PIN 앱 소개</h2>
-    <p>
-      PO-PIN은 K-POP 팬들을 위한 포토카드 교환 및 커뮤니티 플랫폼입니다.
-      팬들이 원하는 포토카드를 쉽게 찾고, 믿을 수 있는 사용자들과 거래하며,
-      함께 모여 정보를 공유하고 소통할 수 있도록 설계되었습니다.
-    </p>
+  <main class="main-content">
+    <div class="about-container">
+      <h2>PO-PIN 앱 소개</h2>
+      <p>
+        PO-PIN은 K-POP 팬들을 위한 포토카드 위치기반 교환 및 커뮤니티 플랫폼입니다.
+        <br>팬들이 원하는 포토카드를 쉽게 찾고, 믿을 수 있는 사용자들과 거래하며,
+        <br>함께 모여 정보를 공유하고 소통할 수 있도록 설계되었습니다.
+      </p>
 
-    <div class="feature">
-      <div class="feature-box">
-        <h4><i class="fi fi-sr-id-badge"></i> 사용자 인증</h4>
-        <p>신뢰할 수 있는 교환을 위해 닉네임, 위치, 활동 이력을 확인할 수 있습니다.</p>
+      <div class="feature">
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-id-badge"></i> 사용자 인증</h4>
+          <p>신뢰할 수 있는 교환을 위해 <br> 닉네임, 위치, 활동 이력을 <br>확인할 수 있습니다.</p>
+        </div>
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-gallery"></i> 포토카드 꾸미기</h4>
+          <p>나만의 포토카드를 꾸며 <br> 다른 팬들과 공유해보세요.</p>
+        </div>
+        <div class="feature-box">
+          <h4><i class="fi fi-sr-users-alt"></i> 커뮤니티</h4>
+          <p>나눔, 대리구매, 후기 등 팬들이 모여 소통할 수 있는 게시판이 <br>마련되어 있어요.</p>
+        </div>
       </div>
-      <div class="feature-box">
-        <h4><i class="fi fi-sr-gallery"></i> 포토카드 꾸미기</h4>
-        <p>나만의 포토카드를 꾸며 다른 팬들과 공유해보세요.</p>
-      </div>
-      <div class="feature-box">
-        <h4><i class="fi fi-sr-users-alt"></i> 커뮤니티</h4>
-        <p>나눔, 대리구매, 후기 등 팬들이 모여 소통할 수 있는 게시판이 마련되어 있어요.</p>
+
+      <div class="download">
+        <a href="#">앱 다운로드</a>
       </div>
     </div>
-
-    <div class="download">
-      <a href="#">앱 다운로드</a>
-    </div>
-  </div>
+  </main>
 </body>
 </html>
