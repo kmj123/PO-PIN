@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
+  <title>카뮤니티| 교환후기 작성</title>
+  <style>
+      * { 
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 헤더 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-outline {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .table{display : flex;
+            margin-top : 15px;}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
+        .menu li:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: rgba(255, 255, 255, 0.95);
+            cursor: pointer; 
+            }
+        .menu li{
+            display : flex;
+            text-align : center;
+            align-items : center;
+            justify-content: center;
+            padding: 0 15px;
+            font-weight : 500;
+            width : 115px;
+            height : 40px;
+            border-radius : 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color : #764ba2;
+            border : 2px solid  #764ba2;
+        }
+        .menu .board{
+            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color : rgba(255, 255, 255, 0.95);
+            border : none;
+        }
+        .home {
+            all: unset;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7E6EB0;
+            padding: 10px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .home:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .home i {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+          .Bboard {
+          width: 70%;
+          min-height: 700px;
+          border-radius: 25px;
+          margin: 100px auto;
+          background: rgba(255, 255, 255, 0.95);
+          padding: 40px 30px;
+            display: flex;
+            flex-direction: column; /* 세로 방향으로 아이템 정렬 */
+            align-items: center;   /* 가로 중앙 정렬 */
+        }
+
+
+    table.writebox {
+      width: 100%; /* 부모 요소(Bboard)에 맞춤 */
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin: 0 auto;
+    }
+      @media (max-width: 600px) {
+   
+        
+}
+    .dash-top {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dash-top h2 {
+      font-size: 24px;
+    }
+
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
+    }
+
+    table.writebox {
+        width: 880px; 
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        margin: 0 auto;
+        }
+
+    table.writebox th {
+            width: 120px;
+            text-align: center;
+            vertical-align: middle; /* 또는 top */
+            padding: 10px;
+            font-size: 16px;
+            color: #555;}
+
+    table.writebox td {
+      padding-top: 5px;
+    }
+
+    select.selectB,
+    input.wlong,
+    textarea.tta,
+    input.fileType {
+    width: calc(100% - 10px); 
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    }
+
+
+    select.selectB:focus,
+    input.wlong:focus,
+    textarea.tta:focus,
+    input.fileType:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    textarea.tta {
+      height: 200px;
+      resize: vertical;
+    }
+
+    input.fix {
+      transform: scale(1.2);
+    }
+    .btn {  display: flex;
+            justify-content: center;
+        }
+    .btn button {
+        display: flex; 
+        align-items: center;
+        justify-content: center; 
+        padding: 12px 25px;
+        font-size: 16px;
+        margin: 0 5px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: #7E6EB0;
+        color: white;
+        transition: background-color 0.3s ease;
+        }
+        .fix{margin-left : 10px;}
+  </style>
+</head>
+<body>
+  <header class="header">
+        <nav class="nav">
+            <div class="logo">PO-PIN</div>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="#community">커뮤니티</a></li>
+                <li><a href="#decorate">포카꾸미기</a></li>
+                <li><a href="#customer">고객지원</a></li>
+            </ul>
+          <div class="banner-right">
+      <a href="#" class="home">
+        <i class="fi-rr-caret-left"></i>이전으로
+      </a>
+      </div>
+      </div>
+        </nav>
+    </header>
+
+
+    <div class="Bboard">
+      <div class="notice">
+        <div class="dash-top">
+          <h2>교환후기 글 작성</h2>
+          <div class="line"></div>
+        </div>
+      </div>
+
+      <table class="writebox">
+        <tbody>
+          <tr>
+            <th scope="row"><label for="title">제목</label></th>
+            <td><input type="text" class="wlong" id="title"/></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="username">아이디</label></th>
+            <td><input type="text" class="wlong" id="username"/></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="content">상세 내용</label></th>
+            <td><textarea class="tta" id="content"></textarea></td>
+          </tr>
+          <tr>
+            <th scope="row"><label for="file">첨부파일</label></th>
+            <td><input type="file" class="fileType" id="file"/></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class = "btn">
+          <button type = "button" value = "write">확인</button>
+          <button type = "button" value = "cancel">취소</button>
+        </div>
+    </div>
+  </div>
+</body>
+</html>
