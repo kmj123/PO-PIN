@@ -93,52 +93,14 @@
             width: 100%;
         }
 
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-            width:250px;
-        }
-
-        .btn {
-            padding: 0.5rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-outline {
-            border: 2px solid #667eea;
-            color: #667eea;
-            background: transparent;
-        }
-
-        .btn-outline:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
         .user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
             margin-right:15px;
+        }
+
+        .user-info > .username{
+            margin:0 10px 0 5px;
         }
 
         /* 모바일 메뉴 */
@@ -213,23 +175,33 @@
         .mobile-user-info {
             display:flex;
             position:fixed;
-            top:25px;
+            top:27px;
             left:32px;
             font-weight:600;
-            font-size:22px;
+            font-size:20px;
         }
 
         .mobile-user-info > .username {
-            margin-right:10px;
+            margin:0 10px 0 5px;
         }
 
         .mobile-user-info > .alarm {
-            line-height: 33px;
+            line-height: 30px;
         }
 
-        .alarm {
+        .mobile-user-info > .logout {
+            line-height: 30px;
+        }
+
+        .alarm{
             font-size:18px;
         }
+
+        .logout{
+            font-size:20px;
+        }
+
+        .user-info a, .mobile-user-info a{color:#333; text-decoration: none;}
 
         .content {
             background: rgba(255, 255, 255, 0.95);
@@ -268,11 +240,12 @@
 
         .red{color:red;}
 
-        /* 바텀시트 스타일 */
-        .bottom-sheet {
+        /* 공유하기 바텀시트 */
+        .share-bottom-sheet {
             position: fixed;
-            left:35.5%;
-            right:0;
+            width:100%;
+            left:50%;
+            transform: translateX(-50%);
             justify-content: center;
             bottom: -100%; /* 처음에는 화면 밖에 숨기기 */
             background-color: #ffffff;
@@ -282,12 +255,12 @@
             box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease; /* 애니메이션 */
             width:550px; height:100px;
+            display:flex; justify-content:space-between; align-items:center;
+            z-index:106;
         }
 
-        /* 바텀시트가 올라왔을 때 */
-        .bottom-sheet.show {
+        .share-bottom-sheet.show {
             bottom: 0; /* 바텀시트가 화면에 나타날 때 */
-            display:flex; justify-content:space-between; align-items:center;
         }
         
         .share-button {
@@ -310,7 +283,7 @@
                         color:black; font-size:1rem; text-align: center; line-height:48px;}
 
         /* 바텀시트 외부 영역 */
-        .overlay {
+        .share-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -318,9 +291,10 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.2);
             display: none; /* 기본적으로 숨기기 */
+            z-index:105;
         }
 
-        .overlay.show {
+        .share-overlay.show {
             display: block; /* 바텀시트가 열리면 오버레이가 보이도록 */
         }
 
@@ -378,62 +352,71 @@
             font-weight: 500;
         }
 
-        .recent_price {
-            display:flex;
-            justify-content: space-between;
-            padding:10px;
-            width:550px;
-            background:rgba(255, 255, 255, 0.95);
-            font-size:1rem;
-            color:#666;
+
+        /* 지도 바텀시트 */
+        #map-bottomSheet {
+            position: fixed;
+            width:100%;
+            left:50%;
+            transform: translateX(-50%);
+            justify-content: center;
+            bottom: -100%; /* 처음에는 화면 밖에 숨기기 */
+            background-color: #ffffff;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 20px;
+            box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease; /* 애니메이션 */
+            display:inline-block;
+            align-items:center;
+            width:550px; height:250px;
+            z-index: 106;
         }
 
-        .price {font-size:1.2rem; color:#333; font-weight:600;}
-
-        .post-list{
-            width:550px;
-            background:rgba(255, 255, 255, 0.95);
-            max-height: 300px;
-            overflow-y: auto;
-            cursor:pointer;
+        .map-bottom-sheet .content {
+            padding: 20px;
         }
 
-        .post-list h3{
-            padding:10px;
+        #map-bottomSheet.active {
+            bottom: 0;
         }
 
-        .post-item{
-            padding: 15px 10px;
-            border-bottom: 1px solid #f0f0f0;
+        .map-info{
+            font-size : 0.8rem;
         }
 
-        .post-item:last-child {
-            border-bottom: none;
-        }
+        .map-info > div{padding-bottom:5px;}
 
-        .post-title {
-            font-size: 16px;
+        .map-info .closebutton {padding-bottom:15px;}
+
+        .map-info .poca-tag {padding-top:5px;}
+
+        .closebutton {display:flex; justify-content:space-between;}
+
+        .poca-tag span{
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.6rem;
             font-weight: 500;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .post-meta {
-            color: #666;
-            font-size: 14px;
-            display:flex;
-            justify-content: space-between;
-        }
-
-        .post-category {
             width:70px;
-            background: #e8f0fe;
-            color: #667eea;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
+            text-align:center;
+        }
+
+        .map-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: none; /* 기본적으로 숨기기 */
+            z-index:105;
+        }
+
+        .map-overlay.show {
+            display: block; /* 바텀시트가 열리면 오버레이가 보이도록 */
         }
 
         .pocatrade{
@@ -475,9 +458,10 @@
 
             .content_background{width:90%;}
 
-            .recent_price, .post-list, .pocatrade{width:100%;}
+            .pocatrade{width:100%;}
 
-            .bottom-sheet {left:0; width:100%;}
+            .share-bottom-sheet{max-width:500px;}
+            .map-bottom-sheet{max-width:500px;}
         }
 
         @media (max-width: 480px) {
@@ -545,15 +529,13 @@
             const text = "이 웹사이트를 공유합니다!"; // 공유할 텍스트
             // 바텀시트 토글 (공유하기 아이콘 클릭 시 바텀시트 나타나게)
             $(".share-icon").click(function() {
-                $(".bottom-sheet").toggleClass("show"); // 바텀시트 보이기
-                $(".overlay").toggleClass("show"); // 오버레이 보이기
-                $("body").css("overflow", "hidden"); // 스크롤 숨기기
+                $(".share-bottom-sheet").toggleClass("show"); // 바텀시트 보이기
+                $(".share-overlay").toggleClass("show"); // 오버레이 보이기
             });
             // 바텀시트 외부 클릭 시 바텀시트 닫기
-            $(".overlay").click(function() {
-                $(".bottom-sheet").removeClass("show"); // 바텀시트 숨기기
-                $(".overlay").removeClass("show"); // 오버레이 숨기기
-                $("body").css("overflow", "auto"); // 스크롤 다시 활성화
+            $(".share-overlay").click(function() {
+                $(".share-bottom-sheet").removeClass("show"); // 바텀시트 숨기기
+                $(".share-overlay").removeClass("show"); // 오버레이 숨기기
             });
             // X로 공유하기
             $(".shareToX").click(function(){
@@ -591,26 +573,28 @@
                 <li><a href="#exchange">포카교환</a></li>
                 <li><a href="#community">커뮤니티</a></li>
                 <li><a href="#decorate">포카꾸미기</a></li>
-                <li><a href="#mypage">마이페이지</a></li>
+                <li><a href="#customer">고객지원</a></li>
             </ul>
             <div class="user-info">
-                    <div class="username"><span>포카러버123</span>님</div>
-                    <div class="alarm">🔔</div>
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
             <!-- 모바일 메뉴 -->
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-user-info">
-                    <div class="username"><span>포카러버123</span>님</div>
-                    <div class="alarm">🔔</div>
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
                 <ul class="mobile-menu-list">
                     <li><a href="#home">홈</a></li>
                     <li><a href="#exchange">포카교환</a></li>
                     <li><a href="#community">커뮤니티</a></li>
                     <li><a href="#decorate">포카꾸미기</a></li>
-                    <li><a href="#mypage">마이페이지</a></li>
+                    <li><a href="#customer">고객지원</a></li>
                 </ul>
             </div>
         </nav>
@@ -621,10 +605,10 @@
                 <a href="#"><i class="fal fa-chevron-left"></i></a>
                 <div class="icons"><i class="fal fa-heart" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
                 <!-- 오버레이 (바텀시트 외부) -->
-                <div class="overlay" id="overlay" onclick="toggleBottomSheet()"></div>
+                <div class="share-overlay" id="share-overlay" onclick="toggleBottomSheet()"></div>
 
                 <!-- 바텀시트 내용 -->
-                <div class="bottom-sheet" id="bottomSheet">
+                <div class="share-bottom-sheet" id="share-bottomSheet">
                     <div class="share-button shareToX"><img src="/static/images/share/x_logo.png"></div>
                     <div class="share-button shareToKakao"><img src="/static/images/share/kakao_logo.png"></div>
                     <div class="share-button copyLink"><i class="fal fa-link"></i></div>
@@ -646,46 +630,82 @@
                     <div class="card-location">📍 올림픽공원</div>
                 </div>
             </div>
-            <div class="recent_price">
-                최근 거래가 <div class="price">500원</div>
+            <!-- 지도 -->
+            <div id="map" style="width:100%;height:350px;"></div>
+            <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=685921f3c75dcb3652a49e7cdce9673d"></script>
+            <script>
+            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                mapOption = { 
+                    center: new kakao.maps.LatLng(37.515947, 127.130855), // 지도의 중심좌표 - 올림픽공원역
+                    level: 4 // 지도의 확대 레벨
+                };
+
+            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+            var imageSrc = '/static/images/share/pin.png', // 마커이미지의 주소입니다
+                imageSize = new kakao.maps.Size(50, 50), // 마커이미지의 크기입니다
+                imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                
+            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+                markerPosition = new kakao.maps.LatLng(37.516595, 127.129529); // 마커가 표시될 위치입니다
+
+            // 마커를 생성합니다
+            var marker = new kakao.maps.Marker({
+                position: markerPosition, 
+                image: markerImage // 마커이미지 설정 
+            });
+
+            // 마커가 지도 위에 표시되도록 설정합니다
+            marker.setMap(map);
+            </script>
+
+            <div id="map-bottomSheet" class="map-bottom-sheet">
+                <div class="map-info">
+                    <div class="closebutton"><h3>거래 정보</h3> <button style="background:none; border: none;" onclick="closeMapBottomSheet()">✕</button></div>
+                    <div class="poca-seller">거래자 아이디 : aaa</div>
+                    <div class="poca-place">거래 장소 : 투썸플레이스 올림픽공원역점</div>
+                    <div class="poca-type">거래 방식 : 교환</div>
+                    <div class="poca-available">거래 가능 일자 : 2025-06-27 - 2025-06-29</div>
+                    <div class="poca-created">등록 일자 : 2025-06-20</div>
+                    <div class="poca-state">하자 상태 : 하자없음</div>
+                    <div class="poca-tag">
+                        <span>럭키드로우</span>
+                        <span>사운드웨이브</span>
+                    </div>
+                </div>
             </div>
-            <div class="post-list">
-                <h3>거래 내역</h3>
-                <div class="post-item">
-                    <div class="post-content">
-                        <div class="post-title">IVE 원영 포토카드 교환해요!</div>
-                        <div class="post-meta">kpop_lover • 5분 전 • 조회 23<div class="post-category">교환</div></div>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-content">
-                        <div class="post-title">IVE 원영 포토카드 판매해요!</div>
-                        <div class="post-meta">kpop_lover • 30분 전 • 조회 38<div class="post-category">판매</div></div>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-content">
-                        <div class="post-title">원영 어뮤즈 포토카드 양도</div>
-                        <div class="post-meta">포카러버 • 3일 전 • 조회 50<div class="post-category">거래중</div></div>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-content">
-                        <div class="post-title">원영이 포카 구해요</div>
-                        <div class="post-meta">원영러버 • 한달 전 • 조회 107<div class="post-category">거래완료</div></div>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-content">
-                        <div class="post-title">원영이 포카</div>
-                        <div class="post-meta">원영러버 • 2달 전 • 조회 314<div class="post-category">거래완료</div></div>
-                    </div>
-                </div>
-            </div>
+
+            <div class="map-overlay" id="map-overlay"></div>
+
             <div class="pocatrade">
-                <a href="#">교환</a>
-                <a href="#">구매</a>
+                <a id="detailview">상세보기</a>
+                <a href="#">채팅하기</a>
             </div>
+
+            <script>
+                // 바텀시트를 표시하는 함수
+                function openMapBottomSheet() {
+                    document.getElementById('map-bottomSheet').classList.add('active');
+                    document.getElementById('map-overlay').style.display = 'block'; // 오버레이 보이기
+                }
+
+                // 바텀시트를 닫는 함수
+                function closeMapBottomSheet() {
+                    document.getElementById('map-bottomSheet').classList.remove('active');
+                    document.getElementById('map-overlay').style.display = 'none'; // 오버레이 숨기기
+                }
+
+                // 상세보기 버튼 클릭 이벤트
+                document.getElementById('detailview').addEventListener('click', function() {
+                    openMapBottomSheet();
+                });
+
+                // 오버레이 클릭 시 바텀시트 닫기
+                document.getElementById('map-overlay').addEventListener('click', function() {
+                    closeMapBottomSheet();
+                });
+            </script>
         </div>
     </div>
 </body>

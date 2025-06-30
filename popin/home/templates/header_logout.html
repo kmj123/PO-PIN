@@ -1,11 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
-    <title>header login</title>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>header logout</title>
     <style>
         * {
             margin: 0;
@@ -93,16 +93,45 @@
             width: 100%;
         }
 
-        .user-info {
+        .auth-buttons {
             display: flex;
-            align-items: center;
-            margin-right:15px;
-            width:180px;
-            padding-right:0;
+            gap: 1rem;
+            width:250px;
         }
 
-        .user-info > .username{
-            margin:0 10px 0 5px;
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-outline {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         /* 모바일 메뉴 */
@@ -174,36 +203,24 @@
             transform: translateX(5px);
         }
 
-        .mobile-user-info {
-            display:flex;
-            position:fixed;
-            top:27px;
-            left:32px;
-            font-weight:600;
-            font-size:20px;
+        .mobile-auth-buttons {
+            position: sticky;
+            bottom: 0;
+            left: 2rem;
+            right: 2rem;
+            margin: 2rem 2rem 0 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-top: 1px solid rgba(102, 126, 234, 0.1);
+            padding: 2rem 0;
         }
 
-        .mobile-user-info > .username {
-            margin:0 10px 0 5px;
+        .mobile-auth-buttons .btn {
+            width: 100%;
+            text-align: center;
+            justify-self: stretch;
         }
-
-        .mobile-user-info > .alarm {
-            line-height: 30px;
-        }
-
-        .mobile-user-info > .logout {
-            line-height: 30px;
-        }
-
-        .alarm{
-            font-size:18px;
-        }
-
-        .logout{
-            font-size:20px;
-        }
-
-        .user-info a, .mobile-user-info a{color:#333; text-decoration: none;}
 
         /* 반응형 디자인 */
         @media (max-width: 768px) {
@@ -214,8 +231,11 @@
             .nav-menu{
                 display: none;
             }
-            .logo{width:50%; margin-left:0;}
             
+            .logo{width:50%; margin-left:0;}
+
+            .auth-buttons {display:none;}
+
             .mobile-menu-btn {
                 display: block;
             }
@@ -287,20 +307,14 @@
                 <li><a href="#decorate">포카꾸미기</a></li>
                 <li><a href="#customer">고객지원</a></li>
             </ul>
-            <div class="user-info">
-                    <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+            <div class="auth-buttons">
+                <a href="#login" class="btn btn-outline">로그인</a>
+                <a href="#signup" class="btn btn-primary">회원가입</a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
             <!-- 모바일 메뉴 -->
             <div class="mobile-menu" id="mobileMenu">
-                <div class="mobile-user-info">
-                    <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
-                </div>
                 <ul class="mobile-menu-list">
                     <li><a href="#home">홈</a></li>
                     <li><a href="#exchange">포카교환</a></li>
@@ -308,6 +322,10 @@
                     <li><a href="#decorate">포카꾸미기</a></li>
                     <li><a href="#customer">고객지원</a></li>
                 </ul>
+                <div class="mobile-auth-buttons">
+                    <a href="#login" class="btn btn-outline">로그인</a>
+                    <a href="#signup" class="btn btn-primary">회원가입</a>
+                </div>
             </div>
         </nav>
     </header>
