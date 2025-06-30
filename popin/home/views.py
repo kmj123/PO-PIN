@@ -26,7 +26,7 @@ def main(request):
         wish_count=Count('wished_by_users')).order_by('-wish_count')[:4]
         
         context = {
-            'username': user.name,  # 로그인한 사용자
+            'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
             'photocards': photocards, # 최근 인기 포토카드
             'total_photocard':total_photocard, # 전체 게시글
             'total_user':total_user,  # 활성 사용자
