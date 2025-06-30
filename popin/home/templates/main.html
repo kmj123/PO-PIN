@@ -557,8 +557,8 @@
             </ul>
             <div class="user-info">
                     <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                    <a href="{% url 'mypage:profile' %}" class="username"><span>{{username}}</span>님</a>
+                    <a href="{% url 'landing' %}" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
@@ -566,7 +566,7 @@
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-user-info">
                     <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                    <a href="#mypage" class="username"><span>{{username}}</span>님</a>
                     <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
                 <ul class="mobile-menu-list">
@@ -644,7 +644,7 @@
                                 <span>💬 12</span>
                             </div>
                         </div>
-                        {%endfor%}
+
                     </div>
                     <div class="photo-card">
                         <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
