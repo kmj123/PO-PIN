@@ -105,4 +105,9 @@ def trade(request):
     
     print(sell_poca)
     print(buy_poca)
-    return render(request, 'mypage/trade.html')
+    
+    context = {
+        "sell_poca":sell_poca,
+        "buy_poca":buy_poca,
+    }
+    return render(request, 'mypage/trade.html', context)
