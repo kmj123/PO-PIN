@@ -62,7 +62,7 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일")
     agree_marketing = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True, verbose_name="최근 수정일")
-    
+    about_me = models.TextField(default="", blank=True, verbose_name="자기소개")
     class Meta:
         verbose_name = "사용자"
         verbose_name_plural = "사용자 목록"
