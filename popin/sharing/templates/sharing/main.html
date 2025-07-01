@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+  {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>나눔</title>
   <style>
@@ -145,18 +147,6 @@
       margin: 0;
       grid-column: 2;
       justify-self: center;
-    }
-
-    .top input {
-      margin-top : 10px;
-      border: none;
-      width: 130px;
-      height: 40px;
-      border-radius: 15px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-      grid-column: 3;
-      justify-self: end;
     }
 
     .list {
@@ -489,7 +479,7 @@
       border-top: 2px solid #f0f0f0;
     }
 
-    .post-author {
+    .post-wrtier_id {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -540,7 +530,7 @@
     }
 
 
-        /* Modal */
+    /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -552,7 +542,47 @@
             backdrop-filter: blur(5px);
             z-index: 1000;
         }
+        #imageModal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vw;
+          background: rgba(0,0,0,0.8);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 2000;
+        }
 
+        #imageModal img {
+          max-width: 90vw;
+          max-height: 90vh;
+          width: auto;
+          height: auto;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        #prevBtn, #nextBtn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 3rem;
+          color: white;
+          background: none;
+          border: none;
+          cursor: pointer;
+          z-index: 2001;
+          padding: 0 20px;
+          user-select: none;
+        }
+
+        #prevBtn:hover, #nextBtn:hover {
+          color: #667eea;
+        }
+
+        #prevBtn { left: 30px; }
+        #nextBtn { right: 30px; }
         .modal-content {
             position: absolute;
             top: 50%;
@@ -572,6 +602,17 @@
             margin-bottom: 25px;
             text-align: center;
             color: #333;
+        }
+
+        /* 이미지 확대 모달는 투명 배경에 이미지만 크게 보이도록 */
+        #imageModal {
+          display: none;
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background: rgba(0,0,0,0.8);
+          backdrop-filter: none;
+          z-index: 1100; /* 기존 모달보다 위에 위치 */
         }
 
         .form-group {
@@ -835,7 +876,6 @@
     <div class="dashboard">
       <div class="top">
         <h3>나눔</h3>
-        <input type="button" value="나눔하기">
       </div>
       <div class="line"></div>
       <div class="box">
@@ -863,7 +903,7 @@
         </div>
         <div class="postlist">
                     <!-- 동행 카드들 -->
-                    <div class="post-card" data-category="album">
+                    <div class="post-card" data-category="album" data-imgs="/static/images/test/sharing.jpg">
                         <div class="post-header">
                             <div>
                                 <h3 class="post-title">에스파 dirty work 디지팩 버전 나눔</h3>
@@ -876,16 +916,16 @@
                         </div>
                         
                         <div class="post-info">
-                            <div class="info-item">
-                                <span class="info-date">📅</span>
+                            <div class="info-date">
+                                <span class="info-icon">📅</span>
                                 <span>2024년 7월 25일 (목) 18:00</span>
                             </div>
-                            <div class="info-item">
-                                <span class="info-place">📍</span>
+                            <div class="info-place">
+                                <span class="info-icon">📍</span>
                                 <span>등촌동 SBS홀</span>
                             </div>
-                            <div class="info-item">
-                                <span class="info-place">✅</span>
+                            <div class="info-check">
+                                <span class="info-icon">✅</span>
                                 <span>에스파 위버스 멤버쉽 확인</span>
                             </div>
                         </div>
@@ -895,13 +935,12 @@
                         </div>
                         
                         <div class="post-footer">
-                            <div class="post-author">
+                            <div class="post-wrtier_id">
                                 <span>👤 wintercute</span>
                                 <span class="post-meta">1일 전</span>
                             </div>
                             <div class="participants">
                                 <span>👁️ 67</span>
-                                <span>💬 23</span>
                             </div>
                         </div>
                     </div>
@@ -927,7 +966,7 @@
                                 <span class="info-icon">📍</span>
                                 <span>고척돔</span>
                             </div>
-                            <div class="info-mon">
+                            <div class="info-check">
                                 <span class="info-icon">✅</span>
                                 <span>마크 버블 1년 이상</span>
                             </div>
@@ -938,13 +977,12 @@
                         </div>
                         
                         <div class="post-footer">
-                            <div class="post-author">
+                            <div class="post-wrtier_id">
                                 <span>👤 쩗쭓짧</span>
                                 <span class="post-meta">5시간 전</span>
                             </div>
                             <div class="participants">
                                 <span>👁️ 28</span>
-                                <span>💬 6</span>
                             </div>
                         </div>
                       </div>
@@ -958,6 +996,13 @@
                         <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
                         설명 내용
                         </div>
+                        <div id="modalPostImages" style="display:flex; gap:10px;"></div>
+                        <!-- 이미지 확대 모달 -->
+                    <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
+                      <button id="prevBtn">‹</button>
+                      <img id="modalImage" style="max-width:80%; max-height:80%;" />
+                      <button id="nextBtn">›</button>
+                    </div>
                     </div>
                     </div>
                     <div class="pagination">
@@ -977,44 +1022,119 @@
             </body>
 <script>
   const postModal = document.getElementById("postModal");
+  const modalImage = document.getElementById('modalImage');
+  let currentImageIndex = 0;
+  let imageList = [];
 
-  // 모달 열기
-  function openPostModal(title, date, place, people, money, desc) {
-    document.getElementById("modalPostTitle").textContent = title;
-    document.getElementById("modalPostDate").textContent = `📅 ${date}`;
-    document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
-    document.getElementById("modalPostCheck").textContent = `👥 ${people}`;
-    document.getElementById("modalPostDescription").textContent = desc;
-    postModal.style.display = "block";
-  }
+  const imageModal = document.getElementById('imageModal');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
 
-  // 모달 닫기
-  function closePostModal() {
-    postModal.style.display = "none";
-  }
 
-  // 바깥 클릭 시 닫기
-  window.onclick = function(event) {
-    if (event.target === postModal) {
-      postModal.style.display = "none";
-    }
-  }
-
-      document.querySelectorAll(".post-card").forEach(card => {
-      card.addEventListener("click", (event) => {
-
-        // 모달 내용 채우기
-        const title = card.querySelector(".post-title")?.textContent.trim();
-        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
-        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
-        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
-        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
-        const desc = card.querySelector(".post-description")?.textContent.trim();
-
-        // 모달 열기 함수 호출
-        openPostModal(title, date, place, people, money, desc);
-      });
+  // 이미지 썸네일 클릭 시 모달 띄우기
+    document.getElementById('modalPostImages').addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        const clickedSrc = e.target.src;
+        const images = Array.from(document.querySelectorAll('#modalPostImages img'));
+        imageList = images.map(img => img.src);
+        currentImageIndex = imageList.indexOf(clickedSrc);
+        modalImage.src = clickedSrc;
+        imageModal.style.display = 'flex';
+      }
     });
+
+    // 이미지 모달 닫기
+    imageModal.addEventListener('click', (e) => {
+      if (e.target === modalImage) return; // 이미지를 클릭해도 닫히지 않도록
+      imageModal.style.display = 'none';
+    });
+
+    // 이전 이미지 보기
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
+
+    // 다음 이미지 보기
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex + 1) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
+
+    // 모달 열기
+    function openPostModal(title, date, place, check, desc, imgListStr = "") {
+        document.getElementById("modalPostTitle").textContent = title;
+        document.getElementById("modalPostDate").textContent = `📅 ${date}`;
+        document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
+        document.getElementById("modalPostCheck").textContent = `✅ ${check}`;
+        document.getElementById("modalPostDescription").textContent = desc;
+
+        const imageContainer = document.getElementById("modalPostImages");
+        imageContainer.innerHTML = "";
+
+        if (imgListStr) {
+          const imgUrls = imgListStr.split(",").map(url => url.trim());
+
+          imgUrls.forEach(url => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "첨부 이미지";
+            img.style.width = "100px";
+            img.style.borderRadius = "10px";
+            img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
+            imageContainer.appendChild(img);
+          });
+
+          if (imgUrls.length > 1) {
+              prevBtn.style.display = 'block';
+              nextBtn.style.display = 'block';
+            } else {
+              prevBtn.style.display = 'none';
+              nextBtn.style.display = 'none';
+            }
+
+          imageContainer.style.display = 'flex';
+        } else {
+          imageContainer.style.display = 'none';
+        }
+
+        postModal.style.display = "block";
+      }
+
+          // 모달 닫기
+          function closePostModal() {
+            postModal.style.display = "none";
+          }
+
+          // 바깥 클릭 시 닫기
+          window.onclick = function(event) {
+            if (event.target === postModal) {
+              closePostModal();
+            }
+          }
+
+          // 카드 클릭 시 모달 열기
+          document.querySelectorAll(".post-card").forEach(card => {
+        card.addEventListener("click", (event) => {
+          if (
+            event.target.tagName === 'BUTTON' ||
+            event.target.closest(".post-actions")
+          ) {
+            return;
+          }
+
+          const title = card.querySelector(".post-title")?.textContent.trim();
+          const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+          const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+          const check = card.querySelector(".info-check span:nth-child(2)")?.textContent.trim();
+          const desc = card.querySelector(".post-description")?.textContent.trim();
+          const imgListStr = card.getAttribute("data-imgs") || "";
+
+          openPostModal(title, date, place, check, desc, imgListStr);
+        });
+      });
 
     // Top 버튼 기능
     const topBtn = document.getElementById('topBtn');

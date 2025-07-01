@@ -1,8 +1,21 @@
+<!-- HTML:
+.post-card에 data-imgs="url1,url2,..." 를 설정
+
+CSS:
+.modal 을 display: flex; justify-content:center; align-items:center; 로 중앙 정렬
+
+JS:
+card.dataset.imgs 로 속성 읽기
+openPostModal(title, desc, imgListStr) (파라미터 3개)
+postModal.style.display = 'flex' 로 열기-->
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+  {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>교환후기</title>
   <style>
@@ -146,18 +159,6 @@
       grid-column: 2;
       justify-self: center;
     }
-
-    .top input {
-      border: none;
-      width: 130px;
-      height: 40px;
-      border-radius: 15px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-      grid-column: 3;
-      justify-self: end;
-    }
-
     .list {
       display: flex;
       justify-content: center;
@@ -237,7 +238,7 @@
       gap: 10px;
     }
     .filter select {
-      width: 120px;
+      width: 100px;
       height: 40px;
       border-radius: 10px;
       font-size : 15px;
@@ -293,124 +294,6 @@
     }
 
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border-radius: 25px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal h2 {
-            margin-bottom: 25px;
-            text-align: center;
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
-        }
-
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
-        }
-
-        .form-row {
-            display: flex;
-            gap: 15px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-block;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #666;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-
         /* Sidebar Content */
         .sidebar-title {
             font-size: 18px;
@@ -465,7 +348,49 @@
             font-weight: 500;
         }
 
+        .post-tags {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
 
+    .post-tag {
+      background: #f0f4ff;
+      color: #667eea;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .post-info {
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .info-icon {
+      width: 20px;
+      margin-right: 12px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .info-text {
+      font-weight: 500;
+    }
 
     /* 페이지네이션 */
     .pagination {
@@ -473,7 +398,8 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding-bottom : 15px;
+      margin: 20px 0;
+      padding: 0 53px;
     }
 
     .pagination a,
@@ -508,7 +434,9 @@
         .board-list {
             list-style: none;
         }
-
+        .board-list a{
+          text-decoration : none;
+        }
         .board-item {
             background: white;
             border-radius: 15px;
@@ -551,7 +479,7 @@
 
         .board-meta {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             color: #666;
             font-size: 14px;
         }
@@ -562,6 +490,89 @@
             line-height: 1.4;
         }
 
+        .modal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 999;
+          display: flex; 
+          justify-content: center;
+          align-items: center;
+        }
+
+        .modal-content {
+          background: white;
+          padding: 30px;
+          border-radius: 15px;
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        
+        
+        /* 이미지 모달 스타일 추가 */
+       #imageModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        display: flex;  /* 모달 가운데 배치의 핵심 */
+      }
+
+        #imageModal img {
+          max-width: 80%;
+          max-height: 80%;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        #prevBtn, #nextBtn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 3rem;
+          color: white;
+          background: none;
+          border: none;
+          cursor: pointer;
+          z-index: 2001;
+          padding: 0 20px;
+          user-select: none;
+        }
+
+        #prevBtn:hover, #nextBtn:hover {
+          color: #667eea;
+        }
+
+        #prevBtn { left: 30px; }
+        #nextBtn { right: 30px; }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
         /* Responsive */
         @media (max-width: 1024px) {
             .main-content {
@@ -647,7 +658,6 @@
     <div class="dashboard">
       <div class="top">
         <h3>교환 후기</h3>
-        <input type="button" value="후기글 작성하기">
       </div>
       <div class="line"></div>
       <div class="filter">
@@ -655,8 +665,10 @@
             <select class="filter-select">
                 <option>전체 평점</option>
                 <option>⭐⭐⭐⭐⭐ 5점</option>
-                <option>⭐⭐⭐⭐ 4점 이상</option>
-                <option>⭐⭐⭐ 3점 이상</option>
+                <option>⭐⭐⭐⭐ 4점</option>
+                <option>⭐⭐⭐ 3점</option>
+                <option>⭐⭐ 2점</option>
+                <option>⭐ 1점</option>
             </select>
             <select class="filter-select">
                 <option>최신순</option>
@@ -668,186 +680,301 @@
           </div>
         </div>  
         <ul class="board-list">
-                    <li class="board-item">
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg">
                         <div class="board-item-header">
                             <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
-                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
                         </div>
                         <div class="board-preview">
                             거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!
                         </div>
                         <div class="board-meta">
-                            <span>👤 kpop_lover</span>
-                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>📅 2024-06-10</span>
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 124</span>
                         </div>
                     </li>
-                    <li class="board-item">
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg">
                         <div class="board-item-header">
                             <h3 class="board-title">좋은 교환 경험</h3>
-                            <span class="board-tag">교환완료</span>
                         </div>
                         <div class="board-preview">
                             처음 교환해보는 거였는데 상대방이 친절하게 안내해주셔서 수월했습니다. 다음에도 기회가 되면 교환하고 싶어요.
                         </div>
                         <div class="board-meta">
-                            <span>👤 newbie_collector</span>
-                            <span>⭐ 4.5 (상태: 5점, 시간: 4점)</span>
-                            <span>📅 2024-06-09</span>
+                            <span class = "writer_id">🙋‍♂️ nct_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 4.5 (상태: 5점, 시간: 4점)</span>
                             <span>👁️ 89</span>
                         </div>
                     </li>
-                    <li class="board-item">
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg,/static/images/test/chgR3.jpg">
                         <div class="board-item-header">
                             <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
-                            <span class="board-tag">교환완료</span>
                         </div>
-                        <div class="board-preview">
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
+                        </div>
+                        <div class="board-content">
                             약속 시간에 조금 늦으셨지만 미리 연락주셨고, 포토카드 상태는 설명대로 좋았습니다. 다음엔 더 정확한 시간 약속 부탁드려요.
                         </div>
                         <div class="board-meta">
-                            <span>👤 card_collector99</span>
-                            <span>⭐ 4.0 (상태: 5점, 시간: 3점)</span>
-                            <span>📅 2024-06-08</span>
+                            <span class = "writer_id">🙋‍♂️ riize_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 4.0 (상태: 5점, 시간: 3점)</span>
                             <span>👁️ 156</span>
                         </div>
                     </li>
                     <li class="board-item">
                         <div class="board-item-header">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
-                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
                         </div>
                         <div class="board-preview">
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
                         </div>
                         <div class="board-meta">
-                            <span>👤 happy_trader</span>
-                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>📅 2024-06-07</span>
+                            <span class = "writer_id">🙋‍♂️ happy_trader</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 203</span>
                         </div>
                     </li>
                     <li class="board-item">
                         <div class="board-item-header">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
-                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
                         </div>
                         <div class="board-preview">
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
                         </div>
                         <div class="board-meta">
-                            <span>👤 happy_trader</span>
-                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>📅 2024-06-07</span>
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 203</span>
                         </div>
                     </li>
                     <li class="board-item">
                         <div class="board-item-header">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
-                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
                         </div>
                         <div class="board-preview">
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
                         </div>
                         <div class="board-meta">
-                            <span>👤 happy_trader</span>
-                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>📅 2024-06-07</span>
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 203</span>
                         </div>
                     </li>
                     <li class="board-item">
                         <div class="board-item-header">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
-                            <span class="board-tag">교환완료</span>
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
                         </div>
                         <div class="board-preview">
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
                         </div>
                         <div class="board-meta">
-                            <span>👤 happy_trader</span>
-                            <span>⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>📅 2024-06-07</span>
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 203</span>
                         </div>
                     </li>
                 </ul>
+                
+                <!-- 페이지네이션을 게시글 바로 아래로 이동 -->
                 <div class="pagination">
-                      <a href="#" title="첫 페이지">«</a>
-                      <a href="#" title="이전 페이지">‹</a>
-                      <strong>1</strong>
-                      <a href="#">2</a>
-                      <a href="#">3</a>
-                      <a href="#">4</a>
-                      <a href="#">5</a>
-                      <a href="#" title="다음 페이지">›</a>
-                      <a href="#" title="마지막 페이지">»</a>
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
+                
+                <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative;">
+                    <button class="close-btn" onclick="closePostModal()" style="position:absolute; top:15px; right:20px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <p id="modalPostWriter">작성자</p>
+                    <p id="modalPostPartner">거래자</p>
+                    <p id="modalPostStar">별점</p>
+                    <p id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">설명 내용</p>
+                    <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
                     </div>
-              <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
-            </body>
-<script>
+                  </div>
+                <div id="imageModal" class="modal" style="display:none;">
+                        <button id="prevBtn">‹</button>
+                        <img id="modalImage" />
+                        <button id="nextBtn">›</button>
+                      </div>
+                </div>
+    </div>
+  </div>
+  <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+  <script>
+  const modalImage = document.getElementById('modalImage');
+  let currentImageIndex = 0;
+  let imageList = [];
+
+  const imageModal = document.getElementById('imageModal');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+
   const postModal = document.getElementById("postModal");
 
-  // 모달 열기
-  function openPostModal(title, date, place, people, money, desc) {
-    document.getElementById("modalPostTitle").textContent = title;
-    document.getElementById("modalPostDate").textContent = `📅 ${date}`;
-    document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
-    document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
-    document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
-    document.getElementById("modalPostDescription").textContent = desc;
-    postModal.style.display = "block";
-  }
 
-  // 모달 닫기
-  function closePostModal() {
-    postModal.style.display = "none";
-  }
+  // 이미지 썸네일 클릭 시 모달 띄우기
+    document.getElementById('modalPostImages').addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        const clickedSrc = e.target.src;
+        const images = Array.from(document.querySelectorAll('#modalPostImages img'));
+        imageList = images.map(img => img.src);
+        currentImageIndex = imageList.indexOf(clickedSrc);
+        modalImage.src = clickedSrc;
+        imageModal.style.display = 'flex';
+      }
+    });
 
-  // 바깥 클릭 시 닫기
-  window.onclick = function(event) {
-    if (event.target === postModal) {
-      postModal.style.display = "none";
-    }
-  }
+    // 이미지 모달 닫기
+    imageModal.addEventListener('click', (e) => {
+      if (e.target === modalImage) return; // 이미지를 클릭해도 닫히지 않도록
+      imageModal.style.display = 'none';
+    });
 
-      document.querySelectorAll(".post-card").forEach(card => {
-      card.addEventListener("click", (event) => {
+    // 이전 이미지 보기
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
 
-        // 모달 내용 채우기
-        const title = card.querySelector(".post-title")?.textContent.trim();
-        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
-        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
-        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
-        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
-        const desc = card.querySelector(".post-description")?.textContent.trim();
+    // 다음 이미지 보기
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex + 1) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
 
-        // 모달 열기 함수 호출
-        openPostModal(title, date, place, people, money, desc);
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const postModal = document.getElementById("postModal");
+    const topBtn = document.getElementById("topBtn"); 
+
+    // 후기 카드 클릭 시 모달 열기
+    document.querySelectorAll(".board-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const title = item.querySelector(".board-title")?.textContent.trim();
+        const star = item.querySelector(".star")?.textContent.trim();
+        const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
+        const writer = item.querySelector(".writer_id")?.textContent.trim();
+        const partner = item.querySelector(".partner_id")?.textContent.trim();
+        const images = item.getAttribute("data-images")?.split(",") || [];
+
+        openPostModal(title, `${writer} ⇄ ${partner}`, star, desc, images);
       });
     });
 
-    // Top 버튼 기능
-    const topBtn = document.getElementById('topBtn');
-    
-    // 스크롤 이벤트 리스너
-    window.addEventListener('scroll', function() {
+    // 모달 열기 함수
+    function openPostModal(title, writerPartner, star, desc, imageUrls = []) {
+      const [writer, partner] = writerPartner.split(" ⇄ ");
+
+      document.getElementById("modalPostTitle").textContent = title;
+      document.getElementById("modalPostWriter").textContent = `작성자 : ${writer}`;
+      document.getElementById("modalPostPartner").textContent = `거래자 : ${partner}`;
+      document.getElementById("modalPostStar").textContent = `평점 : ${star}`;
+      document.getElementById("modalPostDescription").textContent = desc;
+
+      const imageContainer = document.getElementById("modalPostImages");
+      imageContainer.innerHTML = ""; // 기존 이미지 초기화
+
+      if (imageUrls.length > 0 && imageUrls[0] !== "") {
+        imageUrls.forEach(url => {
+          const img = document.createElement("img");
+          img.src = url.trim();
+          img.alt = "후기 이미지";
+          img.style.width = "100px";
+          img.style.height = "100px";
+          img.style.objectFit = "cover";
+          img.style.borderRadius = "10px";
+          imageContainer.appendChild(img);
+        });
+
+        imageContainer.style.display = "flex";
+      } else {
+        imageContainer.style.display = "none";
+      }
+
+      postModal.style.display = "flex";
+    }
+
+    // 모달 닫기
+    window.closePostModal = function () {
+      postModal.style.display = "none";
+    }
+
+    // 모달 바깥 클릭 시 닫기
+    window.addEventListener("click", function (event) {
+      if (event.target === postModal) {
+        postModal.style.display = "none";
+      }
+    });
+
+    // ✅ Top 버튼 기능 (중복 제거하고 작동 보장)
+    window.addEventListener('scroll', function () {
       if (window.pageYOffset > 300) {
         topBtn.classList.add('show');
       } else {
         topBtn.classList.remove('show');
       }
     });
-    
-    // 맨 위로 이동 기능
-    topBtn.addEventListener('click', function() {
+
+    topBtn.addEventListener('click', function () {
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
     });
+  });
 </script>
 </body>
 </html>

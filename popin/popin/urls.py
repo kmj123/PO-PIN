@@ -17,6 +17,7 @@ urlpatterns = [
     path('chgReview/', include('chgReview.urls')),
     path('proxy/', include('proxy.urls')),
     path('sharing/', include('sharing.urls')),
+    path('status/', include('status.urls')),
     path('community/', include('community.urls')),
 ]
 
