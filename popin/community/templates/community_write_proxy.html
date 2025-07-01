@@ -1,188 +1,419 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>커뮤니티 | 게시글 작성</title>
+  <title>카뮤니티| 대리구매 작성</title>
   <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body {
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          min-height: 100vh;
-          color: #333;
-      }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
 
-      .header {
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          padding: 1rem 2rem;
-          box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-          position: sticky;
-          top: 0;
-          z-index: 100;
-      }
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: transform 0.3s ease;
+    }
 
-      .nav {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          max-width: 1200px;
-          margin: 0 auto;
-      }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-      .logo {
-          font-size: 1.8rem;
-          font-weight: 800;
-          background: linear-gradient(45deg, #667eea, #764ba2);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-      }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-      .nav-menu {
-          display: flex;
-          gap: 2rem;
-          list-style: none;
-      }
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
 
-      .nav-menu a {
-          text-decoration: none;
-          color: #333;
-          font-weight: 500;
-          position: relative;
-      }
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      position: relative;
+    }
 
-      .nav-menu a:hover {
-          color: #667eea;
-          transform: translateY(-2px);
-      }
+    .nav-menu a:hover {
+      color: #667eea;
+      transform: translateY(-2px);
+    }
 
-      .nav-menu a::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -5px;
-          left: 50%;
-          background: linear-gradient(45deg, #667eea, #764ba2);
-          transition: all 0.3s ease;
-          transform: translateX(-50%);
-      }
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 50%;
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
 
-      .nav-menu a:hover::after {
-          width: 100%;
-      }
+    .nav-menu a:hover::after {
+      width: 100%;
+    }
 
-      .home {
-          all: unset;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          font-weight: 500;
-          color: #7E6EB0;
-          padding: 10px 15px;
-          border-radius: 10px;
-          transition: all 0.3s ease;
-          text-decoration: none;
-      }
+    .home {
+      all: unset;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      color: #7E6EB0;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
 
-      .home:hover {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-      }
+    .home:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
 
-      .Bboard {
-          width: 900px;
-          min-height: 700px;
-          border-radius: 25px;
-          margin: 100px auto;
-          background: rgba(255, 255, 255, 0.95);
-          padding: 40px 30px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-      }
+    .home i {
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
 
-      .dash-top {
-          text-align: center;
-          margin-bottom: 30px;
-      }
+    .Bboard {
+      width: 900px;
+      min-height: 700px;
+      border-radius: 25px;
+      margin: 100px auto;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      .dash-top h2 {
-          font-size: 24px;
-      }
+    .dash-top {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-      .line {
-          border-bottom: 1px solid rgba(185, 180, 190, 0.96);
-          margin: 20px auto 0 auto;
-      }
+    .dash-top h2 {
+      font-size: 24px;
+    }
 
-      table.writebox {
-          width: 880px; 
-          border-collapse: separate;
-          border-spacing: 0 10px;
-          margin: 0 auto;
-      }
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
+    }
 
-      table.writebox th {
-          width: 120px;
-          text-align: center;
-          vertical-align: middle;
-          padding: 10px;
-          font-size: 16px;
-          color: #555;
-      }
+    table.writebox {
+      width: 880px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin: 0 auto;
+    }
 
-      table.writebox td {
-          padding-top: 5px;
-      }
+    table.writebox th {
+      width: 130px;
+      text-align: center;
+      vertical-align: middle;
+      padding: 10px;
+      font-size: 16px;
+      color: #555;
+    }
 
-      input.wlong,
-      textarea.tta,
-      input.fileType {
-          width: calc(80% - 10px);
-          padding: 10px;
-          font-size: 14px;
-          border-radius: 8px;
-          border: 1px solid #ccc;
-          outline: none;
-      }
+    table.writebox td {
+      padding-top: 5px;
+    }
 
-      input.wlong:focus,
-      textarea.tta:focus,
-      input.fileType:focus {
-          border: 2px solid #7E6EB0;
-      }
+    input.wlong, textarea.tta, input.fileType, select.select-box {
+      width: calc(80% - 10px);
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
 
-      textarea.tta {
-          height: 200px;
-          resize: vertical;
-      }
+    input.wlong:focus, textarea.tta:focus, input.fileType:focus, select.select-box:focus {
+      border: 2px solid #7E6EB0;
+    }
 
-      .btn {
-          display: flex;
-          justify-content: center;
-      }
+    textarea.tta {
+      height: 200px;
+      resize: vertical;
+    }
 
-      .btn button {
-          display: flex; 
-          align-items: center;
-          justify-content: center; 
-          padding: 12px 25px;
-          font-size: 16px;
-          margin: 0 5px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          background-color: #7E6EB0;
-          color: white;
-          transition: background-color 0.3s ease;
-      }
+    /* 날짜 및 시간 입력 스타일 */
+    .datetime-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
+    .datetime-group input {
+      width: auto;
+      padding: 8px;
+    }
+
+    /* 모집상태 토글 스위치 스타일 */
+    .status-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .status-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-toggle {
+      position: relative;
+      width: 50px;
+      height: 24px;
+      background: #ddd;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .status-toggle.active {
+      background: #7E6EB0;
+    }
+
+    .status-toggle.urgent.active {
+      background: #ff6b6b;
+    }
+
+    .status-toggle.deadline.active {
+      background: #ffa500;
+    }
+
+    .status-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    .status-toggle.active::after {
+      transform: translateX(26px);
+    }
+
+    .status-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .status-toggle.active + .status-label {
+      color: #7E6EB0;
+    }
+
+    .status-toggle.urgent.active + .status-label {
+      color: #ff6b6b;
+    }
+
+    .status-toggle.deadline.active + .status-label {
+      color: #ffa500;
+    }
+
+    /* 참여자 목록 스타일 */
+    .participant-list {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      width: calc(80% - 10px);
+      min-height: 100px;
+      background: #f9f9f9;
+    }
+
+    .participant-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      background: white;
+      border-radius: 5px;
+      margin: 5px 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .participant-remove {
+      color: #ff4444;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .add-participant {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .add-participant input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .add-participant button {
+      padding: 8px 15px;
+      background: #7E6EB0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .file-upload-area {
+        border: 2px dashed #ccc;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width : 98.5 %;
+        background: #FAFAFA;
+      }
+      .file-upload-area:hover {
+        border-color: #7E6EB0;
+        background: rgba(126, 110, 176, 0.05);
+      }
+      .file-upload-area.dragover {
+        border-color: #7E6EB0;
+        background: rgba(126, 110, 176, 0.1);
+        transform: scale(1.02);
+      }
+      .upload-icon {
+        font-size: 48px;
+        color: #7E6EB0;
+        margin-bottom: 10px;
+      }
+      .file-list {
+        margin-top: 15px;
+        width: 98.5%;
+      }
+      .file-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #F8F9FF 0%, #F0F2FF 100%);
+        border: 1px solid #E0E5FF;
+        border-radius: 8px;
+        margin: 8px 0;
+        transition: all 0.3s ease;
+      }
+      .file-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(126, 110, 176, 0.15);
+      }
+      .file-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .file-icon {
+        width: 32px;
+        height: 32px;
+        background: #7E6EB0;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+      }
+      .file-name {
+        font-weight: 500;
+        color: #333;
+      }
+      .file-size {
+        font-size: 12px;
+        color: #666;
+        margin-left: 5px;
+      }
+      .file-remove {
+        color: #FF4444;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 18px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+      .file-remove:hover {
+        background: #FF4444;
+        color: white;
+      }
+      .file-count {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #7E6EB0;
+        font-weight: 500;
+      }
+    .btn {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .btn button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 25px;
+      font-size: 16px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #7E6EB0;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn button:hover {
+      background-color: #6b5a96;
+    }
   </style>
 </head>
 <body>
@@ -207,7 +438,7 @@
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
-        <h2>대리 구매 글 작성</h2>
+        <h2>대리구매 글 작성</h2>
         <div class="line"></div>
       </div>
     </div>
@@ -216,22 +447,53 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목</label></th>
-          <td><input type="text" class="wlong" id="title"/></td>
+          <td><input type="text" class="wlong" id="title" placeholder="대리구매 제목을 입력해주세요"/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="artist">아티스트</label></th>
+          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력해주세요"/></td>
         </tr>
 
+        <tr>
+          <th scope="row">날짜 및 시간</th>
+          <td>
+            <div class="datetime-group">
+              <input type="date" id="eventDate" required>
+              <input type="time" id="eventTime" required>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="location">장소</label></th>
+          <td><input type="text" class="wlong" id="location" placeholder="대리구매 장소를 입력해주세요"/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="maxParticipants">최대 모집 인원</label></th>
+          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요"/></td>
+        </tr>
+
+        <tr>
+          <th scope="row"><label for="fee">수고비</label></th>
+          <td><input type="text" class="wlong" id="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)"/></td>
+        </tr>
+        <tr>
+          <th scope="row"><label for="content">본문</label></th>
+          <td><textarea class="tta" id="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요."></textarea></td>
+        </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" placeholder="#태그1, #태그2 (쉼표로 구분)"/></td>
+          <td><input type="text" class="wlong" id="tags" placeholder="#대리구매 #아이돌 #콘서트 등"/></td>
         </tr>
-
         <tr>
-          <th scope="row"><label for="content">상세 내용</label></th>
-          <td><textarea class="tta" id="content"></textarea></td>
-        </tr>
-
-        <tr>
-          <th scope="row"><label for="file">첨부파일</label></th>
-          <td><input type="file" class="fileType" id="file"/></td>
+          <th scope="row">사진 첨부</th>
+          <td>
+            <div class="file-upload-area" id="fileUploadArea">
+              <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+              <p>클릭하거나 파일을 드래그하여 여러 장의 사진을 업로드하세요</p>
+              <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능</p>
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -243,27 +505,118 @@
   </div>
 
   <script>
+    let selectedFiles = [];
+
     document.addEventListener("DOMContentLoaded", function () {
-      const writeButton = document.querySelector('button[value="write"]');
+      // 파일 업로드 이벤트
+      setupFileUpload();
       
+      // 버튼 이벤트
+      setupButtons();
+    });
+
+    function setupFileUpload() {
+      const fileUploadArea = document.getElementById('fileUploadArea');
+      const fileInput = document.getElementById('fileInput');
+      const fileList = document.getElementById('fileList');
+
+      fileUploadArea.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+      });
+
+      // 드래그 앤 드롭
+      fileUploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+      });
+
+      fileUploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+      });
+
+      fileUploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+      });
+    }
+
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) {
+          selectedFiles.push(file);
+          displayFile(file);
+        }
+      });
+    }
+
+    function displayFile(file) {
+      const fileList = document.getElementById('fileList');
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+      fileItem.innerHTML = `
+        <span>${file.name}</span>
+        <span class="file-remove" onclick="removeFile('${file.name}')">×</span>
+      `;
+      fileList.appendChild(fileItem);
+    }
+
+    function removeFile(fileName) {
+      selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+      const fileItems = document.querySelectorAll('.file-item');
+      fileItems.forEach(item => {
+        if (item.querySelector('span').textContent === fileName) {
+          item.remove();
+        }
+      });
+    }
+
+    function setupButtons() {
+      const writeButton = document.querySelector('button[value="write"]');
+      const cancelButton = document.querySelector('button[value="cancel"]');
+
       writeButton.addEventListener("click", function () {
         const title = document.getElementById("title").value;
+        const artist = document.getElementById("artist").value;
+        const eventDate = document.getElementById("eventDate").value;
+        const eventTime = document.getElementById("eventTime").value;
+        const location = document.getElementById("location").value;
+        const maxParticipants = document.getElementById("maxParticipants").value;
+        const fee = document.getElementById("fee").value;
         const content = document.getElementById("content").value;
         const tags = document.getElementById("tags").value;
 
-        if (!title || !content) {
-          alert("제목과 상세 내용을 입력해주세요!");
+        if (!title || !artist || !eventDate || !eventTime || !location || !maxParticipants || !content) {
+          alert("필수 항목을 모두 입력해주세요.");
           return;
         }
 
-        console.log("입력된 태그:", tags);
-        alert("게시글이 작성되었습니다!");
+        const purchaseData = {
+          title,
+          artist,
+          eventDate,
+          eventTime,
+          location,
+          maxParticipants: parseInt(maxParticipants),
+          fee,
+          content,
+          tags,
+          photos: selectedFiles.length
+        };
+
+        console.log("작성된 대리구매 글:", purchaseData);
+        alert("대리구매 글 작성이 완료되었습니다!");
       });
-    });
-      const cancelButton = document.querySelector('button[value="cancel"]');
-cancelButton.addEventListener("click", function () {
-  window.location.href = "main.html";
-});
+
+      cancelButton.addEventListener("click", function () {
+        if (confirm("작성 중인 내용이 모두 삭제됩니다. 정말로 취소하시겠습니까?")) {
+          window.location.href = "main.html";
+        }
+      });
+    }
   </script>
 </body>
 </html>
