@@ -62,7 +62,7 @@
                 <button class="tab" onclick="showTab('recent')">최근본글</button>
                 <button class="tab" onclick="showTab('cards')">마이 포카</button>
                 <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
-                <button class="tab" onclick="showTab('transactions')">교환거래</button>
+                <button class="tab" onclick="showTab('transactions')">포토카드</button>
                 <button class="tab" onclick="showTab('reviews')">후기글</button>
                 <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
                 <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
@@ -238,10 +238,12 @@
                     <div class="transaction-tabs">
                         <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
                         <button class="transaction-tab" onclick="showTransactionTab('buying')">구매목록</button>
+                        <button class="transaction-tab" onclick="showTransactionTab('trading')">교환목록</button>
                     </div>
                 </div>
                 
                 <div class="section-content">
+                    <!--판매목록-->
                     <div id="selling-list" class="transaction-content">
                         <div class="item">
                             <h3>BTS 진 포토카드</h3>
@@ -271,6 +273,7 @@
                         </div>
                     </div>
 
+                    <!--구매목록-->
                     <div id="buying-list" class="transaction-content" style="display: none;">
                         <div class="item">
                             <h3>BTS 정국 포토카드 구매</h3>
@@ -285,6 +288,21 @@
                             <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
                         </div>
                         <div class="view-all-container">
+                        </div>
+                    </div>
+                    <!--교환목록-->
+                    <div id="trading-list" class="transaction-content" style="display: none;">
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.18 - 18,000원 | 상태: 거래완료</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.15 - 22,000원 | 상태: 거래완료</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
                         </div>
                     </div>
                 </div>
@@ -355,7 +373,7 @@
                         <button class="community-tab " onclick="showCommunityTab('Insteadbuy')">대리구매</button>
                     </div>
                 </div>
-                
+
                 <!--동행글-->
                 <div class="section-content">
                     <div id="WithU" class="community-content">
@@ -375,7 +393,7 @@
                 </div>
                 <!--나눔글-->
                 <div class="section-content">
-                    <div id="Sharing" class="community-content">
+                    <div id="Sharing" class="community-content" style="display: none;">
                         <div class="item">
                             <h3>포토카드 나눔</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -392,7 +410,7 @@
                 </div>
                 <!--대리구매-->
                 <div class="section-content">
-                    <div id="Insteadbuy" class="community-content">
+                    <div id="Insteadbuy" class="community-content" style="display: none;">
                         <div class="item">
                             <h3>앨범 대리구매</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -409,6 +427,7 @@
                 </div>
             </div>
 
+            <!--블랙리스트-->
             <div id="blocked" class="tab-content">
                 <div class="section-header">
                     <div class="blocked-tabs">
@@ -424,8 +443,6 @@
                             <button class="unblock-btn">차단해제</button>
                             <p>차단 사유: 스팸 메시지 반복 발송</p>
                         </div>
-                    </div>
-                    <div id="blocked-user" class="blocked-content">
                         <div class="item">
                             <h3>사기꾼456</h3>
                             <button class="unblock-btn">차단해제</button>
@@ -435,14 +452,12 @@
                 </div>
 
                 <div class="section-content">
-                    <div id="blocked-post" class="blocked-content">
+                    <div id="blocked-post" class="blocked-content" style="display: none;">
                         <div class="item">
                             <h3>매우매우 안좋은 글</h3>
                             <button class="unblock-btn">차단해제</button>
                             <p>차단 사유: 매우매우 안좋은 글</p>
                         </div>
-                    </div>
-                    <div id="blocked-post" class="blocked-content">
                         <div class="item">
                             <h3>사기꾼의 글</h3>
                             <button class="unblock-btn">차단해제</button>
@@ -451,6 +466,7 @@
                     </div>
                 </div>
             </div>
+            <!--//블랙리스트-->
         </div>
     </main>
     
@@ -522,15 +538,16 @@
         <!--//모달창스크립트-->
 
     <script>
+        // 전체 카테고리
         function showTab(tabName) {
-            // 모든 탭 콘텐츠 숨기기
             const contents = document.querySelectorAll('.tab-content');
+            const tabs = document.querySelectorAll('.tab');
+            // 모든 탭 콘텐츠 숨기기
             contents.forEach(content => {
                 content.classList.remove('active');
             });
 
             // 모든 탭 버튼 비활성화
-            const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -542,15 +559,19 @@
             event.target.classList.add('active');
         }
 
+        // 교환거래 카테고리
         function showTransactionTab(type) {
-            // 교환거래 탭 버튼들 비활성화
             const transactionTabs = document.querySelectorAll('.transaction-tab');
+            const transactionContents = document.querySelectorAll('.transaction-content');
+            const sellingList = document.getElementById('selling-list');
+            const buyingList = document.getElementById('buying-list');
+            const tradingList = document.getElementById('trading-list');
+            // 교환거래 탭 버튼들 비활성화
             transactionTabs.forEach(tab => {
                 tab.classList.remove('active');
             });
 
             // 교환거래 콘텐츠들 숨기기
-            const transactionContents = document.querySelectorAll('.transaction-content');
             transactionContents.forEach(content => {
                 content.style.display = 'none';
             });
@@ -560,21 +581,24 @@
             
             // 선택된 콘텐츠 보이기
             if (type === 'selling') {
-                document.getElementById('selling-list').style.display = 'block';
-            } else {
-                document.getElementById('buying-list').style.display = 'block';
+                sellingList.style.display = 'block';
+            } else if(type==='buying'){
+                buyingList.style.display = 'block';
+            } else if(type==='trading'){
+                tradingList.style.display='block';
             }
         }
 
+        // 후기 카테고리
         function showReviewTab(type) {
-            // 후기 탭 버튼들 비활성화
             const reviewTabs = document.querySelectorAll('.review-tab');
+            const reviewContents = document.querySelectorAll('.review-content');
+            // 후기 탭 버튼들 비활성화
             reviewTabs.forEach(tab => {
                 tab.classList.remove('active');
             });
 
             // 후기 콘텐츠들 숨기기
-            const reviewContents = document.querySelectorAll('.review-content');
             reviewContents.forEach(content => {
                 content.style.display = 'none';
             });
@@ -590,9 +614,10 @@
             }
         }
 
-        // 커뮤니티 게시글 카테고리 버튼
+        // 커뮤니티 카테고리 
         function showCommunityTab(type){
             const communityTabs = document.querySelectorAll('.community-tab');
+            const communityContents = document.querySelectorAll('.community-content');
             const WithU = document.getElementById('WithU');
             const Sharing = document.getElementById('Sharing');
             const Insteadbuy = document.getElementById('Insteadbuy');
@@ -600,28 +625,26 @@
             communityTabs.forEach(tab=>{
                 tab.classList.remove('active');
             });
+
+            communityContents.forEach(content=>{
+                content.style.display="none";
+            })
+
             event.target.classList.add('active');
 
             if (type === "WithU"){
                 WithU.style.display="block";
-                Sharing.style.display="none";
-                Insteadbuy.style.display="none";
             } else if(type === "Sharing"){
                 Sharing.style.display="block";
-                WithU.style.display = "none";
-                Insteadbuy.style.display = "none";
             } else if(type === "Insteadbuy"){
                 Insteadbuy.style.display="block";
-                WithU.style.display = "none";
-                Sharing.style.display="none";
             }
         }
-        Sharing.style.display='none';
-        Insteadbuy.style.display='none';
 
-        // 블랙리스트
+        // 블랙리스트 카테고리
         function showBlockedTab(type){
             const blockedTabs = document.querySelectorAll('.blocked-tab');
+            const blockedContents = document.querySelectorAll('.blocked-content')
             const blockeduser = document.getElementById('blocked-user');
             const blockedpost = document.getElementById('blocked-post');
 
@@ -629,17 +652,22 @@
             blockedTabs.forEach(tab => {
                 tab.classList.remove('active');
             });
+
+            // 블랙리스트 콘텐츠들 숨기기
+            blockedContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
             event.target.classList.add('active');
 
-            if(type === 'blocked-user'){
-                blockeduser.style.display='block';
-                blockedpost.style.display = "none";
-            }
-            else if(type === 'blocked-post'){
-                blockedpost.style.display = "block";
-                blockeduser.style.display="none";
+            // 선택된 콘텐츠 보이기
+            if (type === 'blocked-user') {
+                blockeduser.style.display = 'block';
+            } else {
+                blockedpost.style.display = 'block';
             }
         }
+        
 
         // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
         const photocardData = {
