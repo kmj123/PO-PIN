@@ -30,10 +30,9 @@ class CompanionPostAdmin(admin.ModelAdmin):
 class CompanionCommentAdmin(admin.ModelAdmin):
     list_display = (
         'post',
-        'author',
         'content',
         'created_at',
     )
-    search_fields = ('post__title', 'author__username', 'content')
-    autocomplete_fields = ('post', 'author')
+    search_fields = ('post__title', 'content')
+    autocomplete_fields = ["post"]  
     readonly_fields = ('created_at',)

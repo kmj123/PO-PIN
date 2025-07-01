@@ -38,7 +38,7 @@ class CompanionPost(models.Model):
     status = models.CharField(
         "모집 상태",
         max_length=10,
-        choices=[('모집중', '모집중'), ('모집완료', '모집완료')],
+        choices=[('모집중', '모집중'), ('모집완료', '모집완료'),('진행중', '진행중')],
         default='모집중'
     )
 
@@ -67,9 +67,10 @@ class CompanionPost(models.Model):
 # 댓글 모델 (선택)
 class CompanionComment(models.Model):
     post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name="comments", verbose_name="게시글")
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="작성자")
     content = models.TextField("댓글 내용")
     created_at = models.DateTimeField("작성일", auto_now_add=True)
 
     def __str__(self):
         return f"{self.author} - {self.content[:20]}"
+    
+    
