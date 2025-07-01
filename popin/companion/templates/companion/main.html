@@ -233,53 +233,65 @@
         border: 0.5px solid rgba(68, 68, 68, 0.3); /* 얇고 은은한 선 */
         }
 
-    .filter {
-      position: relative;
-      margin: 25px auto;
-      width: 88%;
-      height: 80px;
-      background: rgb(255, 255, 255);
-      border-radius: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    .search-filter-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+          justify-content: flex-start;
+          margin: 20px 0 10px 54px;
+        }
+
+      .toggle-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #333;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+
+      .toggle-btn.active {
+        background-color: #4e73df;
+        color: white;
+        font-weight: bold;
+        border-color: #4e73df;
+      }
+
+      .search-input {
+        width : 400px;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+    .filter-select {
+      padding: 7px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
     }
-    .filt {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width : 80%;
-      height: 100%;
-      gap: 10px;
-    }
-    .filter select {
-      width: 120px;
-      height: 40px;
-      border-radius: 10px;
-      font-size : 15px;
-      text-align : center;
-    }
-    .filter .search {
-        padding-left : 10px;
-      width: 500px;
-      height: 40px;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      outline: none;
-    }
-    .filter .searchBtn {
-      height: 40px;
-      width: 60px;
-      border-radius: 10px;
+    .toggle-btn {
+      padding: 8px 16px;
       border: none;
+      border-radius: 17px;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
     }
-    .search:focus {
-            outline: none;
-            border-color: #667eea;
-        }
 
         /* 개선된 게시물 카드 스타일 */
     .postlist {
@@ -305,19 +317,40 @@
     }
 
     .post-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
+        display: flex;
+        flex-direction: column; /* 제목 줄과 태그 줄을 위아래로 정렬 */
+        margin-bottom: 20px;
+      }
 
-    .post-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
+      .post-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .post-title {
+        margin: 0;
+        font-size: 20px;
+      }
+
+      .post-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      .post-tags{margin-top : 10px;}
+      
+      .post-header input {
+        border-radius: 10px;
+        border: 0.5px solid #444444;
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+        background: rgba(255, 246, 246, 0.85);
+      }
+
 
     .post-status {
       padding: 8px 16px;
@@ -428,6 +461,11 @@
       font-weight: 500;
     }
 
+    .report-btn{
+      cursor: pointer;
+    }
+
+    
     .topBtn{
       position: fixed;
       right: 300px;
@@ -842,42 +880,49 @@
         <h3>동행 모집</h3>
       </div>
       <div class="line"></div>
-      <div class="filter">
-          <div class="filt">
-            <select class="region">
-              <option value="">전체 지역</option>
+      <div class="search-filter-container">
+          <div class="search-toggle">
+            <button class="toggle-btn active" data-type="general">일반 검색</button>
+            <button class="toggle-btn" data-type="tag">태그 검색</button>
+          </div>
+          <input type="text" id="generalSearch" class="search-input" placeholder="제목, 작성자, 거래자 검색">
+          <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+          <select id="regionFilter" class="filter-select">
+            <option value="">전체 지역</option>
               <option value="">서울</option>
               <option value="">경기</option>
               <option value="">부산</option>
               <option value="">대구</option>
               <option value="">인천</option>
               <option value="">기타</option>
-            </select>
-            <select class="state">
-              <option value="">게시글 상태</option>
+          </select>
+          
+
+          <select id="stateFilter" class="filter-select">
+            <option value="">게시글 상태</option>
               <option>모집중</option>
               <option>모집완료</option>
               <option>진행중</option>
-            </select>
-            <input type="text" class="search" placeholder="지역, 아티스트, 이벤트명으로 검색...">
-            <input type="button" class="searchBtn" value="검색">
-          </div>
+          </select>
         </div>
         <div class="postlist">
                     <!-- 동행 카드들 -->
-                    <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
-                        <div class="post-header">
-                            <div>
-                                <h3 class="post-title">IVE 팬사인회 동행 모집</h3>
-                                <div class="post-tags">
-                                    <span class="post-tag">팬사인회</span>
-                                    <span class="post-tag">IVE</span>
-                                    <span class="post-tag">강남</span>
-                                </div>
-                            </div>
-                            <span class="post-status status-full">모집완료</span>
+                    <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/landing/wonyoung.jpg">
+                    <div class="post-header">
+                      <div class="post-title-row">
+                        <h3 class="post-title">IVE 팬사인회 동행 모집</h3>
+                        <div class="post-right">
+                          <span class="post-status status-full">모집완료</span>
+                          <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
-                        
+                      </div>
+                      <div class="post-tags">
+                        <span class="post-tag">#팬사인회</span>
+                        <span class="post-tag">#IVE</span>
+                        <span class="post-tag">#강남</span>
+                      </div>
+                    </div>
                         <div class="post-info">
                             <div class="info-date">
                                 <span class="info-date">📅</span>
@@ -912,18 +957,21 @@
                         </div>
                     </div>
 
-                    <div class="post-card" data-category="exhibition" data-imgs="/static/images/landing/wonyoung.jpg">
-                        <div class="post-header">
-                            <div>
-                                <h3 class="post-title">BTS 전시회 관람 동행</h3>
-                                <div class="post-tags">
-                                    <span class="post-tag">전시회</span>
-                                    <span class="post-tag">BTS</span>
-                                    <span class="post-tag">용산</span>
-                                </div>
-                            </div>
-                            <span class="post-status status-recruiting">모집중</span>
+                    <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
+                    <div class="post-header">
+                      <div class="post-title-row">
+                        <h3 class="post-title">IVE 장원영 생카 동행모집</h3>
+                        <div class="post-right">
+                          <span class="post-status status-recruiting">모집중</span>
+                          <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
+                      </div>
+                      <div class="post-tags">
+                        <span class="post-tag">#생일카페</span>
+                        <span class="post-tag">#IVE</span>
+                        <span class="post-tag">#홍대</span>
+                      </div>
+                    </div>
                         
                         <div class="post-info">
                             <div class="info-date">
@@ -941,7 +989,7 @@
                         </div>
                         
                         <div class="post-description">
-                            BTS 10주년 특별 전시회 보러 가실 분 모집해요! 오전 일찍 가서 여유롭게 관람하고 점심도 같이 먹어요 💜
+                            원영이 생카 같이 가실 분 모집해요! 오전 일찍 가서 여유롭게 관람하고 점심도 같이 먹어요 💜
                         </div>
                         
                         <div class="post-footer">
@@ -962,6 +1010,7 @@
                     <div class="modal-content">
                         <button class="close-btn" onclick="closePostModal()">&times;</button>
                         <h2 id="modalPostTitle">제목</h2>
+                        <div id="modalPostTags" style="margin: 10px 0;"></div>
                         <p id="modalPostDate">📅 날짜</p>
                         <p id="modalPostPlace">📍 장소</p>
                         <p id="modalPostPeople">👥 인원</p>
@@ -993,6 +1042,15 @@
               <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
             </body>
 <script>
+  // 신고
+  function reportBtn() {
+    if (confirm("신고하시겠습니까?")) {
+      alert("신고되었습니다.");
+    } else {
+      alert("취소");
+    }
+  }
+
   const modalImage = document.getElementById('modalImage');
   let currentImageIndex = 0;
   let imageList = [];
@@ -1000,138 +1058,216 @@
   const imageModal = document.getElementById('imageModal');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
-
-
   const postModal = document.getElementById("postModal");
 
-
   // 이미지 썸네일 클릭 시 모달 띄우기
-    document.getElementById('modalPostImages').addEventListener('click', (e) => {
-      if (e.target.tagName === 'IMG') {
-        const clickedSrc = e.target.src;
-        const images = Array.from(document.querySelectorAll('#modalPostImages img'));
-        imageList = images.map(img => img.src);
-        currentImageIndex = imageList.indexOf(clickedSrc);
-        modalImage.src = clickedSrc;
-        imageModal.style.display = 'flex';
-      }
-    });
+  document.getElementById('modalPostImages').addEventListener('click', (e) => {
+    if (e.target.tagName === 'IMG') {
+      const clickedSrc = e.target.src;
+      const images = Array.from(document.querySelectorAll('#modalPostImages img'));
+      imageList = images.map(img => img.src);
+      currentImageIndex = imageList.indexOf(clickedSrc);
+      modalImage.src = clickedSrc;
+      imageModal.style.display = 'flex';
+    }
+  });
 
-    // 이미지 모달 닫기
-    imageModal.addEventListener('click', (e) => {
-      if (e.target === modalImage) return; // 이미지를 클릭해도 닫히지 않도록
-      imageModal.style.display = 'none';
-    });
+  imageModal.addEventListener('click', (e) => {
+    if (e.target === modalImage) return;
+    imageModal.style.display = 'none';
+  });
 
-    // 이전 이미지 보기
-    prevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
-      modalImage.src = imageList[currentImageIndex];
-    });
+  prevBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
+    modalImage.src = imageList[currentImageIndex];
+  });
 
-    // 다음 이미지 보기
-    nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentImageIndex = (currentImageIndex + 1) % imageList.length;
-      modalImage.src = imageList[currentImageIndex];
-    });
+  nextBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex + 1) % imageList.length;
+    modalImage.src = imageList[currentImageIndex];
+  });
 
   // 모달 열기
-  function openPostModal(title, date, place, people, money, desc, imgListStr = "") {
+  function openPostModal(title, date, place, people, money, desc, imgListStr = "", tags = []) {
     document.getElementById("modalPostTitle").textContent = title;
     document.getElementById("modalPostDate").textContent = `📅 ${date}`;
     document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
     document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
     document.getElementById("modalPostDescription").textContent = desc;
 
-    const imageContainer = document.getElementById("modalPostImages");
-    imageContainer.innerHTML = ""; // 기존 이미지 초기화
+    // 태그 출력
+    const tagsContainer = document.getElementById("modalPostTags");
+    tagsContainer.innerHTML = "";
+    if (tags.length > 0) {
+      tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "post-tag";
+        span.textContent = `#${tag}`;
+        tagsContainer.appendChild(span);
+      });
+      tagsContainer.style.display = "flex";
+      tagsContainer.style.gap = "10px";
+    } else {
+      tagsContainer.style.display = "none";
+    }
 
+    // 이미지 출력
+    const imageContainer = document.getElementById("modalPostImages");
+    imageContainer.innerHTML = "";
     if (imgListStr) {
       const imgUrls = imgListStr.split(",").map(url => url.trim());
+      imageList = imgUrls;
 
       imgUrls.forEach(url => {
         const img = document.createElement("img");
         img.src = url;
         img.alt = "첨부 이미지";
         img.style.width = "100px";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
         img.style.borderRadius = "10px";
-        img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
         imageContainer.appendChild(img);
       });
 
-      
-      if (imgUrls.length > 1) {
-          prevBtn.style.display = 'block';
-          nextBtn.style.display = 'block';
-        } else {
-          prevBtn.style.display = 'none';
-          nextBtn.style.display = 'none';
-        }
-
+      prevBtn.style.display = imgUrls.length > 1 ? 'block' : 'none';
+      nextBtn.style.display = imgUrls.length > 1 ? 'block' : 'none';
       imageContainer.style.display = 'flex';
     } else {
       imageContainer.style.display = 'none';
     }
 
     postModal.style.display = "block";
-}
 
-  // 모달 닫기
+    // Top 버튼 비활성화
+    topBtn.style.pointerEvents = 'none';
+    topBtn.style.opacity = '0.4';
+  }
+
   function closePostModal() {
     postModal.style.display = "none";
+    topBtn.style.pointerEvents = 'auto';
+    topBtn.style.opacity = '1';
   }
 
   // 바깥 클릭 시 닫기
-  window.onclick = function(event) {
+  window.onclick = function (event) {
     if (event.target === postModal) {
       postModal.style.display = "none";
+      topBtn.style.pointerEvents = 'auto';
+      topBtn.style.opacity = '1';
     }
   }
 
-      document.querySelectorAll(".post-card").forEach(card => {
-      card.addEventListener("click", (event) => {
-        // 클릭한 요소가 버튼이거나, post-actions 내부 요소면 return
-        if (
-          event.target.tagName === 'BUTTON' ||
-          event.target.closest(".post-actions")
-        ) {
-          return; // 클릭 무시 (모달 열지 않음)
+document.querySelectorAll(".post-card").forEach(card => {
+  card.addEventListener("click", (e) => {
+    // ✅ report-btn 또는 post-status 클릭 시 모달 열리지 않도록 예외처리
+    if (
+      e.target.closest('.report-btn') || 
+      e.target.closest('.join-btn')
+    ) return;
+
+    const title = card.querySelector(".post-title")?.textContent.trim();
+    const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+    const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+    const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+    const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
+    const desc = card.querySelector(".post-description")?.textContent.trim();
+    const imgListStr = card.getAttribute("data-imgs") || "";
+    const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
+
+    openPostModal(title, date, place, people, money, desc, imgListStr, tags);
+  });
+});
+
+  // Top 버튼 기능
+  const topBtn = document.getElementById('topBtn');
+  window.addEventListener('scroll', function () {
+    if (window.pageYOffset > 300) {
+      topBtn.classList.add('show');
+    } else {
+      topBtn.classList.remove('show');
+    }
+  });
+
+  topBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+  const generalInput = document.getElementById("generalSearch");
+  const tagInput = document.getElementById("tagSearch");
+  const ratingFilter = document.getElementById("ratingFilter");
+  const sortFilter = document.getElementById("sortFilter");
+
+  const postCards = Array.from(document.querySelectorAll(".post-card"));
+
+  // 🎯 검색/필터/정렬 이벤트 바인딩
+  if (generalInput) generalInput.addEventListener("input", applyFilters);
+  if (tagInput) tagInput.addEventListener("input", applyFilters);
+  if (ratingFilter) ratingFilter.addEventListener("change", applyFilters);
+  if (sortFilter) sortFilter.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const searchMode = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
+    const keyword = (searchMode === "general" ? generalInput?.value : tagInput?.value || "").toLowerCase();
+    const selectedRating = ratingFilter?.value;
+    const sortBy = sortFilter?.value;
+
+    let filtered = boardItems.filter(item => {
+      const title = item.querySelector(".board-title")?.textContent.toLowerCase() || "";
+      const writer = item.querySelector(".writer_id")?.textContent.toLowerCase() || "";
+      const partner = item.querySelector(".partner_id")?.textContent.toLowerCase() || "";
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase());
+      const starText = item.querySelector(".star")?.textContent.replace("⭐", "").trim();
+      const star = parseFloat(starText) || 0;
+
+      // 검색 필터
+      let matchSearch = true;
+      if (keyword) {
+        if (searchMode === "general") {
+          matchSearch = title.includes(keyword) || writer.includes(keyword) || partner.includes(keyword);
+        } else {
+          matchSearch = tags.some(tag => tag.includes(keyword));
         }
+      }
 
-        // 모달 내용 채우기
-        const title = card.querySelector(".post-title")?.textContent.trim();
-        const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
-        const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
-        const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
-        const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
-        const desc = card.querySelector(".post-description")?.textContent.trim();
-        const imageList = card.getAttribute("data-imgs") || "";
+      // 평점 필터
+      let matchRating = true;
+      if (selectedRating) {
+        matchRating = star === parseFloat(selectedRating);
+      }
 
-        openPostModal(title, date, place, people, money, desc, imageList);
-      });
+      return matchSearch && matchRating;
     });
 
-    // Top 버튼 기능
-    const topBtn = document.getElementById('topBtn');
-    
-    // 스크롤 이벤트 리스너
-    window.addEventListener('scroll', function() {
-      if (window.pageYOffset > 300) {
-        topBtn.classList.add('show');
-      } else {
-        topBtn.classList.remove('show');
+    // 정렬
+    filtered.sort((a, b) => {
+      if (sortBy === "latest") {
+        return boardItems.indexOf(a) - boardItems.indexOf(b); // 원래 순서
+      } else if (sortBy === "rating") {
+        const aRating = parseFloat(a.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        const bRating = parseFloat(b.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        return bRating - aRating;
+      } else if (sortBy === "views") {
+        const aViewsText = a.querySelector(".board-meta span:last-child")?.textContent || "0";
+        const bViewsText = b.querySelector(".board-meta span:last-child")?.textContent || "0";
+        const aViews = parseInt(aViewsText.replace("👁️", "").trim()) || 0;
+        const bViews = parseInt(bViewsText.replace("👁️", "").trim()) || 0;
+        return bViews - aViews;
       }
     });
-    
-    // 맨 위로 이동 기능
-    topBtn.addEventListener('click', function() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
+
+    // 다시 그리기
+    const container = document.querySelector(".board-list");
+    if (container) {
+      container.innerHTML = "";
+      filtered.forEach(item => container.appendChild(item));
+    }
+  }
+});
 </script>
 </body>
 </html>

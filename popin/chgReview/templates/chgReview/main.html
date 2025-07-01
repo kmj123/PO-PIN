@@ -1,14 +1,3 @@
-<!-- HTML:
-.post-card에 data-imgs="url1,url2,..." 를 설정
-
-CSS:
-.modal 을 display: flex; justify-content:center; align-items:center; 로 중앙 정렬
-
-JS:
-card.dataset.imgs 로 속성 읽기
-openPostModal(title, desc, imgListStr) (파라미터 3개)
-postModal.style.display = 'flex' 로 열기-->
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,7 +6,7 @@ postModal.style.display = 'flex' 로 열기-->
   <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
   {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <title>교환후기</title>
+  <title>교환/판매 후기</title>
   <style>
     * {
       margin: 0;
@@ -215,55 +204,66 @@ postModal.style.display = 'flex' 로 열기-->
         margin: 5px 50px;
         border: 0.5px solid rgba(68, 68, 68, 0.3); /* 얇고 은은한 선 */
         }
-    .top button{line-height : 4;}
 
-    .filter {
-      position: relative;
-      margin: 25px auto;
-      width: 88%;
-      height: 80px;
-      background: rgb(255, 255, 255);
-      border-radius: 25px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      .search-filter-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+          justify-content: flex-start;
+          margin: 20px 0 10px 54px;
+        }
+
+      .toggle-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #333;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+
+      .toggle-btn.active {
+        background-color: #4e73df;
+        color: white;
+        font-weight: bold;
+        border-color: #4e73df;
+      }
+
+      .search-input {
+        width : 400px;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+    .filter-select {
+      padding: 7px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
     }
-    .filt {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width : 80%;
-      height: 100%;
-      gap: 10px;
-    }
-    .filter select {
-      width: 100px;
-      height: 40px;
-      border-radius: 10px;
-      font-size : 15px;
-      text-align : center;
-    }
-    .filter .search {
-        padding-left : 10px;
-      width: 500px;
-      height: 40px;
-      border-radius: 10px;
-      border: 2px solid #ccc;
-      outline: none;
-    }
-    .filter .searchBtn {
-      height: 40px;
-      width: 60px;
-      border-radius: 10px;
+    .toggle-btn {
+      padding: 8px 16px;
       border: none;
+      border-radius: 17px;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .toggle-btn.active {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
     }
-    .search:focus {
-            outline: none;
-            border-color: #667eea;
-        }
 
 
     .topBtn{
@@ -293,6 +293,9 @@ postModal.style.display = 'flex' 로 열기-->
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
+    .report-btn{
+      cursor: pointer;
+    }
 
         /* Sidebar Content */
         .sidebar-title {
@@ -351,6 +354,7 @@ postModal.style.display = 'flex' 로 열기-->
         .post-tags {
       display: flex;
       gap: 8px;
+      margin-top : 10px;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
@@ -459,11 +463,30 @@ postModal.style.display = 'flex' 로 열기-->
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+          }
+
+          .title-star-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* h3와 별점 사이 간격 */
+          }
+
+          .star {
+            font-size: 18px;
+            font-weight : 550;
+          }
+
+        .board-item-header input{ border-radius : 10px; border : 0.5px solid #444444;
+          width : 35px; height : 35px; font-size : 14px; background :rgba(255, 246, 246, 0.85);}
+
+        .vertical-line {
+          width: 1px;
+          height: 18px;
+          background-color: #ccc; /* 선 색상 */
         }
 
         .board-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             color: #333;
         }
@@ -482,6 +505,34 @@ postModal.style.display = 'flex' 로 열기-->
             gap: 10px;
             color: #666;
             font-size: 14px;
+        }
+
+        .post-meta-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+
+        .onoff{
+          background: linear-gradient(135deg,rgb(255, 82, 82) 0%,rgb(255, 133, 239) 100%);
+          color : white;
+          border-radius : 5px;
+          font-weight : 500;
+          padding : 3px;
+          font-size : 12px;
+          width : 60px;
+          text-align : center;
+        }
+        .Tway{
+          background: linear-gradient(135deg, #667eea 0%,rgb(148, 89, 207) 100%);
+          color : white;
+          border-radius : 5px;
+          font-weight : 500;
+          padding : 3px 2px 3px 2px;
+          font-size : 12px;
+          width : 30px;
+          text-align : center;
         }
 
         .board-preview {
@@ -533,7 +584,7 @@ postModal.style.display = 'flex' 로 열기-->
         z-index: 2000;
         justify-content: center;
         align-items: center;
-        display: flex;  /* 모달 가운데 배치의 핵심 */
+        display: flex; 
       }
 
         #imageModal img {
@@ -615,11 +666,7 @@ postModal.style.display = 'flex' 로 열기-->
             .form-row {
                 flex-direction: column;
             }
-            
-            .post-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
+
         }
   </style>
 </head>
@@ -629,7 +676,7 @@ postModal.style.display = 'flex' 로 열기-->
       <a href="#" class="logo"><img src="/static/images/landing/logo.png">PO-PIN</a>
       <ul class="nav-menu">
         <li><a href="#home">홈</a></li>
-        <li><a href="/photocard/list/">포카교환</a></li>
+        <li><a href="/photocard/list/">포토카드</a></li>
         <li><a href="#community">커뮤니티</a></li>
         <li><a href="#decorate">포카꾸미기</a></li>
         <li><a href="#mypage">마이페이지</a></li>
@@ -642,10 +689,10 @@ postModal.style.display = 'flex' 로 열기-->
   </header>
   <div class="list">
     <div class="menu">
-      <h3>교환 통계</h3>
+      <h3>거래 통계</h3>
       <div class = "box">
         <div class = "box1">
-          <p>📊 이번 주 교환</p>
+          <p>📊 이번 주 거래량</p>
           127건
         </div>
         <div class = "box2">
@@ -657,37 +704,49 @@ postModal.style.display = 'flex' 로 열기-->
     </div>
     <div class="dashboard">
       <div class="top">
-        <h3>교환 후기</h3>
+        <h3>교환/판매 후기</h3>
       </div>
       <div class="line"></div>
-      <div class="filter">
-          <div class="filt">
-            <select class="filter-select">
-                <option>전체 평점</option>
-                <option>⭐⭐⭐⭐⭐ 5점</option>
-                <option>⭐⭐⭐⭐ 4점</option>
-                <option>⭐⭐⭐ 3점</option>
-                <option>⭐⭐ 2점</option>
-                <option>⭐ 1점</option>
-            </select>
-            <select class="filter-select">
-                <option>최신순</option>
-                <option>평점순</option>
-                <option>조회순</option>
-            </select>
-            <input type="text" class="search" placeholder="아이디로 검색...">
-            <input type="button" class="searchBtn" value="검색">
-          </div>
-        </div>  
+      <div class="search-filter-container">
+        <div class="search-toggle">
+          <button class="toggle-btn active" data-type="general">일반 검색</button>
+          <button class="toggle-btn" data-type="tag">태그 검색</button>
+        </div>
+        <input type="text" id="generalSearch" class="search-input" placeholder="제목, 작성자, 거래자 검색">
+        <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+        <select id="ratingFilter" class="filter-select">
+          <option value="">전체 평점</option>
+          <option value="5">⭐ 5</option>
+          <option value="4">⭐ 4</option>
+          <option value="3">⭐ 3</option>
+          <option value="2">⭐ 2</option>
+          <option value="1">⭐ 1</option>
+        </select>
+        
+
+        <select id="sortFilter" class="filter-select">
+          <option value="latest">최신순</option>
+          <option value="rating">평점순</option>
+          <option value="views">조회순</option>
+        </select>
+      </div>
         <ul class="board-list">
                     <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg">
-                        <div class="board-item-header">
-                            <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway chg">교환</span>
+                      <div class="board-item-header">
+                        <div class="title-star-wrapper">
+                          <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
+                          <div class="vertical-line"></div>
+                          <span class="star">⭐ 5</span>
+                        </div>
+                        <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
                         <div class="post-tags">
-                            <span class="post-tag">앨범</span>
-                            <span class="post-tag">오프라인</span>
-                            <span class="post-tag">aespa</span>
+                            <span class="post-tag">#앨범</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#aespa</span>
                         </div>
                         <div class="board-preview">
                             거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!
@@ -696,13 +755,19 @@ postModal.style.display = 'flex' 로 열기-->
                             <span class = "writer_id">🙋‍♂️ kpop_lover</span>
                             <span style="font-weight : 500;">⇄</span>
                             <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 124</span>
                         </div>
                     </li>
                     <li class="board-item" data-images="/static/images/test/chgR1.jpg">
+                      <span class = "onoff on">온라인</span>
+                      <span class = "Tway chg">교환</span>
                         <div class="board-item-header">
-                            <h3 class="board-title">좋은 교환 경험</h3>
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">좋은 교환 경험</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 3</span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
                         <div class="board-preview">
                             처음 교환해보는 거였는데 상대방이 친절하게 안내해주셔서 수월했습니다. 다음에도 기회가 되면 교환하고 싶어요.
@@ -711,18 +776,24 @@ postModal.style.display = 'flex' 로 열기-->
                             <span class = "writer_id">🙋‍♂️ nct_lover</span>
                             <span style="font-weight : 500;">⇄</span>
                             <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 4.5 (상태: 5점, 시간: 4점)</span>
                             <span>👁️ 89</span>
                         </div>
                     </li>
                     <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg,/static/images/test/chgR3.jpg">
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway buy">양도</span>
                         <div class="board-item-header">
-                            <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 5</span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
                         <div class="post-tags">
-                            <span class="post-tag">앨범</span>
-                            <span class="post-tag">오프라인</span>
-                            <span class="post-tag">aespa</span>
+                            <span class="post-tag">#럭드</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#NCT WISH</span>
                         </div>
                         <div class="board-content">
                             약속 시간에 조금 늦으셨지만 미리 연락주셨고, 포토카드 상태는 설명대로 좋았습니다. 다음엔 더 정확한 시간 약속 부탁드려요.
@@ -731,18 +802,24 @@ postModal.style.display = 'flex' 로 열기-->
                             <span class = "writer_id">🙋‍♂️ riize_lover</span>
                             <span style="font-weight : 500;">⇄</span>
                             <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 4.0 (상태: 5점, 시간: 3점)</span>
                             <span>👁️ 156</span>
                         </div>
                     </li>
                     <li class="board-item">
+                        <span class = "onoff online">온라인</span>
+                        <span class = "Tway buy">양도</span>
                         <div class="board-item-header">
+                           <div class="title-star-wrapper">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <div class="vertical-line"></div>
+                            <span class="star">⭐ 5 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
                         <div class="post-tags">
-                            <span class="post-tag">앨범</span>
-                            <span class="post-tag">오프라인</span>
-                            <span class="post-tag">aespa</span>
+                            <span class="post-tag">#앨범</span>
+                            <span class="post-tag">#오프라인</span>
+                            <span class="post-tag">#aespa</span>
                         </div>
                         <div class="board-preview">
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
@@ -751,13 +828,71 @@ postModal.style.display = 'flex' 로 열기-->
                             <span class = "writer_id">🙋‍♂️ happy_trader</span>
                             <span style="font-weight : 500;">⇄</span>
                             <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
                             <span>👁️ 203</span>
                         </div>
                     </li>
                     <li class="board-item">
+                        <span class = "onoff off">오프라인</span>
+                        <span class = "Tway buy">양도</span>
                         <div class="board-item-header">
+                          <div class="title-star-wrapper">
                             <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <div class="vertical-line"></div>
+                            <span class="star">⭐ 5 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#교환</span>
+                            <span class="post-tag">#오프라인</span>
+                            <span class="post-tag">#riize</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <span class = "onoff off">오프라인</span>
+                        <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">완벽한 거래였습니다!</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 4 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#집</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#aespa</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">완벽한 거래였습니다!</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 4 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                         </div>
                         <div class="post-tags">
                             <span class="post-tag">앨범</span>
@@ -768,51 +903,11 @@ postModal.style.display = 'flex' 로 열기-->
                             시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
                         </div>
                         <div class="board-meta">
-                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
-                            <span style="font-weight : 500;">⇄</span>
-                            <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>👁️ 203</span>
-                        </div>
-                    </li>
-                    <li class="board-item">
-                        <div class="board-item-header">
-                            <h3 class="board-title">완벽한 거래였습니다!</h3>
-                        </div>
-                        <div class="post-tags">
-                            <span class="post-tag">앨범</span>
-                            <span class="post-tag">오프라인</span>
-                            <span class="post-tag">aespa</span>
-                        </div>
-                        <div class="board-preview">
-                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
-                        </div>
-                        <div class="board-meta">
-                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
-                            <span style="font-weight : 500;">⇄</span>
-                            <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>👁️ 203</span>
-                        </div>
-                    </li>
-                    <li class="board-item">
-                        <div class="board-item-header">
-                            <h3 class="board-title">완벽한 거래였습니다!</h3>
-                        </div>
-                        <div class="post-tags">
-                            <span class="post-tag">앨범</span>
-                            <span class="post-tag">오프라인</span>
-                            <span class="post-tag">aespa</span>
-                        </div>
-                        <div class="board-preview">
-                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
-                        </div>
-                        <div class="board-meta">
-                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
-                            <span style="font-weight : 500;">⇄</span>
-                            <span class = "partner_id">👨‍💼 poca_master</span>
-                            <span class = "star">⭐ 5.0 (상태: 5점, 시간: 5점)</span>
-                            <span>👁️ 203</span>
+                          <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                          <span style="font-weight : 500;">⇄</span>
+                          <span class = "partner_id">👨‍💼 poca_master</span>
+                          <span>👁️ 203</span>
+                          
                         </div>
                     </li>
                 </ul>
@@ -833,10 +928,16 @@ postModal.style.display = 'flex' 로 열기-->
                 <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
                   <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative;">
                     <button class="close-btn" onclick="closePostModal()" style="position:absolute; top:15px; right:20px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostOnoff" class="onoff"></span>
+                      <span id="modalPostTway" class="Tway"></span>
+                    </div>
                     <h2 id="modalPostTitle">제목</h2>
+                    <div id="modalPostTags" class="post-tags"></div>
                     <p id="modalPostWriter">작성자</p>
                     <p id="modalPostPartner">거래자</p>
                     <p id="modalPostStar">별점</p>
+                    <p id="modalPostTrade">거래 유형</p>
                     <p id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">설명 내용</p>
                     <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
                     </div>
@@ -851,130 +952,253 @@ postModal.style.display = 'flex' 로 열기-->
   </div>
   <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
   <script>
+document.addEventListener("DOMContentLoaded", function () {
   const modalImage = document.getElementById('modalImage');
-  let currentImageIndex = 0;
-  let imageList = [];
-
   const imageModal = document.getElementById('imageModal');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
-
-
   const postModal = document.getElementById("postModal");
+  const topBtn = document.getElementById("topBtn");
+  let currentImageIndex = 0;
+  let imageList = [];
 
+  // 후기 카드 클릭 시 모달 열기
+  document.querySelectorAll(".board-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      if (e.target.closest('.report-btn')) return;
 
-  // 이미지 썸네일 클릭 시 모달 띄우기
-    document.getElementById('modalPostImages').addEventListener('click', (e) => {
+      const onoffText = item.querySelector(".onoff")?.textContent.trim();
+      const TwayText = item.querySelector(".Tway")?.textContent.trim();
+      const title = item.querySelector(".board-title")?.textContent.trim();
+      const star = item.querySelector(".star")?.textContent.trim();
+      const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
+      const writer = item.querySelector(".writer_id")?.textContent.trim();
+      const partner = item.querySelector(".partner_id")?.textContent.trim();
+      const images = item.getAttribute("data-images")?.split(",") || [];
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.trim());
+
+      openPostModal(onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags);
+    });
+  });
+
+  function openPostModal(onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = []) {
+    const [writer, partner] = writerPartner.split(" ⇄ ");
+
+    const onoffEl = document.getElementById("modalPostOnoff");
+    const TwayEl = document.getElementById("modalPostTway");
+
+    onoffEl.textContent = onoffText;
+    onoffEl.className = "onoff";
+
+    TwayEl.textContent = TwayText;
+    TwayEl.className = "Tway";
+
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostWriter").textContent = `작성자 : ${writer}`;
+    document.getElementById("modalPostPartner").textContent = `거래자 : ${partner}`;
+    document.getElementById("modalPostStar").textContent = `평점 : ${star}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+
+    const tagsContainer = document.getElementById("modalPostTags");
+    tagsContainer.innerHTML = "";
+
+    if (tags.length > 0) {
+      tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "post-tag";
+        span.textContent = tag;
+        tagsContainer.appendChild(span);
+      });
+      tagsContainer.style.display = "flex";
+      tagsContainer.style.gap = "10px";
+    } else {
+      tagsContainer.style.display = "none";
+    }
+
+    const imageContainer = document.getElementById("modalPostImages");
+    imageContainer.innerHTML = "";
+
+    if (imageUrls.length > 0 && imageUrls[0] !== "") {
+      imageList = imageUrls.map(url => url.trim());
+      imageList.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "후기 이미지";
+        img.style.width = "100px";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "10px";
+        imageContainer.appendChild(img);
+      });
+
+      imageContainer.style.display = "flex";
+
+      if (imageList.length > 1) {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+      } else {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+      }
+
+    } else {
+      imageContainer.style.display = "none";
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+
+    postModal.style.display = "flex";
+
+    topBtn.style.pointerEvents = 'none';
+    topBtn.style.opacity = '0.4';
+  }
+
+  // 모달 닫기
+  window.closePostModal = function () {
+    postModal.style.display = "none";
+    topBtn.style.pointerEvents = 'auto';
+    topBtn.style.opacity = '1';
+  }
+
+  // 바깥 클릭 시 닫기
+  window.addEventListener("click", function (event) {
+    if (event.target === postModal) {
+      closePostModal();
+    }
+  });
+
+  // 이미지 썸네일 클릭 시 전체보기
+  const imageContainer = document.getElementById('modalPostImages');
+  if (imageContainer) {
+    imageContainer.addEventListener('click', (e) => {
       if (e.target.tagName === 'IMG') {
         const clickedSrc = e.target.src;
-        const images = Array.from(document.querySelectorAll('#modalPostImages img'));
+        const images = Array.from(imageContainer.querySelectorAll('img'));
         imageList = images.map(img => img.src);
         currentImageIndex = imageList.indexOf(clickedSrc);
         modalImage.src = clickedSrc;
         imageModal.style.display = 'flex';
       }
     });
+  }
 
-    // 이미지 모달 닫기
+  if (imageModal) {
     imageModal.addEventListener('click', (e) => {
-      if (e.target === modalImage) return; // 이미지를 클릭해도 닫히지 않도록
+      if (e.target === modalImage) return;
       imageModal.style.display = 'none';
     });
 
-    // 이전 이미지 보기
     prevBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
       modalImage.src = imageList[currentImageIndex];
     });
 
-    // 다음 이미지 보기
     nextBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       currentImageIndex = (currentImageIndex + 1) % imageList.length;
       modalImage.src = imageList[currentImageIndex];
     });
+  }
 
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const postModal = document.getElementById("postModal");
-    const topBtn = document.getElementById("topBtn"); 
-
-    // 후기 카드 클릭 시 모달 열기
-    document.querySelectorAll(".board-item").forEach(item => {
-      item.addEventListener("click", () => {
-        const title = item.querySelector(".board-title")?.textContent.trim();
-        const star = item.querySelector(".star")?.textContent.trim();
-        const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
-        const writer = item.querySelector(".writer_id")?.textContent.trim();
-        const partner = item.querySelector(".partner_id")?.textContent.trim();
-        const images = item.getAttribute("data-images")?.split(",") || [];
-
-        openPostModal(title, `${writer} ⇄ ${partner}`, star, desc, images);
-      });
-    });
-
-    // 모달 열기 함수
-    function openPostModal(title, writerPartner, star, desc, imageUrls = []) {
-      const [writer, partner] = writerPartner.split(" ⇄ ");
-
-      document.getElementById("modalPostTitle").textContent = title;
-      document.getElementById("modalPostWriter").textContent = `작성자 : ${writer}`;
-      document.getElementById("modalPostPartner").textContent = `거래자 : ${partner}`;
-      document.getElementById("modalPostStar").textContent = `평점 : ${star}`;
-      document.getElementById("modalPostDescription").textContent = desc;
-
-      const imageContainer = document.getElementById("modalPostImages");
-      imageContainer.innerHTML = ""; // 기존 이미지 초기화
-
-      if (imageUrls.length > 0 && imageUrls[0] !== "") {
-        imageUrls.forEach(url => {
-          const img = document.createElement("img");
-          img.src = url.trim();
-          img.alt = "후기 이미지";
-          img.style.width = "100px";
-          img.style.height = "100px";
-          img.style.objectFit = "cover";
-          img.style.borderRadius = "10px";
-          imageContainer.appendChild(img);
-        });
-
-        imageContainer.style.display = "flex";
-      } else {
-        imageContainer.style.display = "none";
-      }
-
-      postModal.style.display = "flex";
+  // Top 버튼 기능
+  window.addEventListener('scroll', function () {
+    if (window.pageYOffset > 300) {
+      topBtn.classList.add('show');
+    } else {
+      topBtn.classList.remove('show');
     }
+  });
 
-    // 모달 닫기
-    window.closePostModal = function () {
-      postModal.style.display = "none";
-    }
+  topBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
 
-    // 모달 바깥 클릭 시 닫기
-    window.addEventListener("click", function (event) {
-      if (event.target === postModal) {
-        postModal.style.display = "none";
-      }
-    });
+document.addEventListener("DOMContentLoaded", function () {
+  const generalInput = document.getElementById("generalSearch");
+  const tagInput = document.getElementById("tagSearch");
+  const ratingFilter = document.getElementById("ratingFilter");
+  const sortFilter = document.getElementById("sortFilter");
+  const toggleBtns = document.querySelectorAll(".toggle-btn");
+  const boardItems = Array.from(document.querySelectorAll(".board-item"));
 
-    // ✅ Top 버튼 기능 (중복 제거하고 작동 보장)
-    window.addEventListener('scroll', function () {
-      if (window.pageYOffset > 300) {
-        topBtn.classList.add('show');
+  // 🔁 토글 버튼 클릭 시 검색 입력창 전환
+  toggleBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      toggleBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const type = btn.dataset.type;
+      if (type === "general") {
+        generalInput.style.display = "inline-block";
+        tagInput.style.display = "none";
       } else {
-        topBtn.classList.remove('show');
+        generalInput.style.display = "none";
+        tagInput.style.display = "inline-block";
       }
-    });
-
-    topBtn.addEventListener('click', function () {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
+      applyFilters(); // 즉시 반영
     });
   });
+
+  // 🎯 검색/필터/정렬 이벤트 바인딩
+  generalInput.addEventListener("input", applyFilters);
+  tagInput.addEventListener("input", applyFilters);
+  ratingFilter.addEventListener("change", applyFilters);
+  sortFilter.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const searchMode = document.querySelector(".toggle-btn.active").dataset.type;
+    const keyword = (searchMode === "general" ? generalInput.value : tagInput.value).toLowerCase();
+    const selectedRating = ratingFilter.value;
+    const sortBy = sortFilter.value;
+
+    let filtered = boardItems.filter(item => {
+      const title = item.querySelector(".board-title")?.textContent.toLowerCase() || "";
+      const writer = item.querySelector(".writer_id")?.textContent.toLowerCase() || "";
+      const partner = item.querySelector(".partner_id")?.textContent.toLowerCase() || "";
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase());
+      const star = item.querySelector(".star")?.textContent.replace("⭐", "").trim();
+
+      // 검색 필터
+      let matchSearch = true;
+      if (keyword) {
+        if (searchMode === "general") {
+          matchSearch = title.includes(keyword) || writer.includes(keyword) || partner.includes(keyword);
+        } else {
+          matchSearch = tags.some(tag => tag.includes(keyword));
+        }
+      }
+
+      // 평점 필터
+      let matchRating = true;
+      if (selectedRating) {
+        matchRating = star === selectedRating;
+      }
+
+      return matchSearch && matchRating;
+    });
+
+    // 정렬
+    filtered.sort((a, b) => {
+      if (sortBy === "latest") {
+        return boardItems.indexOf(a) - boardItems.indexOf(b);
+      } else if (sortBy === "rating") {
+        const aRating = parseFloat(a.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        const bRating = parseFloat(b.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        return bRating - aRating;
+      } else if (sortBy === "views") {
+        const aViews = parseInt(a.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+        const bViews = parseInt(b.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+        return bViews - aViews;
+      }
+    });
+
+    // 다시 그리기
+    const container = document.querySelector(".board-list");
+    container.innerHTML = "";
+    filtered.forEach(item => container.appendChild(item));
+  }
+});
 </script>
 </body>
 </html>
