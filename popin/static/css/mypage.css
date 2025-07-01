@@ -50,7 +50,6 @@ body {
 .profile-card,
 .content {
   max-width: 100%;
-  margin: 0 auto;
   padding: 2rem;
 }
 
@@ -79,6 +78,8 @@ body {
     display: flex;
     gap: 2rem;
     padding: 0 1rem;
+    justify-content: center;
+    margin-top: 4em;
 }
 
 
@@ -217,7 +218,6 @@ body {
     border-radius: 20px;
     padding: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin-left: 0;
     min-width: 0
 }
 
@@ -652,6 +652,25 @@ body {
 }
 
 .review-tab.active {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+.community-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.community-tab {
+    background: rgba(248, 249, 250, 0.8);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.community-tab.active {
     background: linear-gradient(45deg, #667eea, #764ba2);
     color: white;
 }
