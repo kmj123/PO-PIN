@@ -1,11 +1,11 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <title>header logout</title>
+    <title>{% block title %}header logout{% endblock %}</title>
     <style>
         * {
             margin: 0;
@@ -24,7 +24,7 @@
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 1rem 3rem;
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
@@ -40,8 +40,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             display:block;
-            width:250px;
-            margin-left:35px;
+            width:230px;
         }
 
         .logo img{
@@ -53,12 +52,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            width:1100px;
             margin: 0 auto;
         }
 
         .nav-menu {
             display: flex;
+            justify-content: center;
             gap: 1.5rem;
             list-style: none;
             width:400px;
@@ -96,7 +96,7 @@
         .auth-buttons {
             display: flex;
             gap: 1rem;
-            width:250px;
+            width:230px;
         }
 
         .btn {
@@ -226,13 +226,12 @@
         @media (max-width: 768px) {
             .nav {
                 position: relative;
+                width:100%;
             }
             
             .nav-menu{
                 display: none;
             }
-            
-            .logo{width:50%; margin-left:0;}
 
             .auth-buttons {display:none;}
 
@@ -329,5 +328,7 @@
             </div>
         </nav>
     </header>
+    {% block content %}
+    {% endblock content %}
 </body>
 </html>

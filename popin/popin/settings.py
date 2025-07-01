@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'proxy',
     'sharing',
     'status',
+    'community',
 ]
 
 MIDDLEWARE = [
@@ -158,7 +159,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 # 본인 Gmail 계정
-EMAIL_HOST_USER = 'aaa @gmail.com'
-EMAIL_HOST_PASSWORD = ''  # 앱 비밀번호 발급받아야됨..
+EMAIL_HOST_USER = ' popinproject123@gmail.com'
+EMAIL_HOST_PASSWORD = 'puyz isul hqyi igdf'  # 앱 비밀번호 발급받아야됨..
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 

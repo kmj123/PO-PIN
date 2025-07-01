@@ -6,21 +6,24 @@ from django.core.mail import send_mail
 from django.http import JsonResponse 
 from django.conf import settings
 import random
-import requests
+import requests 
+from datetime import datetime
+
 
 def kakao_login(request):
-    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    client_id = '5266ddb28bc841325f4d4e639f6ef9be'
     redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
     return redirect(
         f"https://kauth.kakao.com/oauth/authorize?response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
     )
 
+
 def kakao_callback(request):
     code = request.GET.get('code')
-    client_id = '0dcf1cca4660907f7c369dbbc4ce49d2'
+    client_id = '5266ddb28bc841325f4d4e639f6ef9be'
     redirect_uri = 'http://localhost:8000/login/kakao/oauth/'
 
-    # 1. 토큰 요청
+    # 1. 액세스 토큰 요청
     token_url = "https://kauth.kakao.com/oauth/token"
     token_data = {
         "grant_type": "authorization_code",
@@ -31,24 +34,61 @@ def kakao_callback(request):
     token_res = requests.post(token_url, data=token_data)
     token_json = token_res.json()
     access_token = token_json.get("access_token")
-
-    # 2. 사용자 정보 요청
     profile_url = "https://kapi.kakao.com/v2/user/me"
     headers = {"Authorization": f"Bearer {access_token}"}
     profile_res = requests.get(profile_url, headers=headers)
-    profile_json = profile_res.json()
+    profile_json = profile_res.json()  # ✅ 이 줄이 반드시 있어야 profile_json을 쓸 수 있음
 
+   
+    # 카카오 정보 가져오기
     kakao_id = profile_json.get("id")
-    email = profile_json.get("kakao_account", {}).get("email")
-    nickname = profile_json.get("properties", {}).get("nickname")
+    account = profile_json.get("kakao_account", {})
+    profile = account.get("profile", {})
 
-    # 3. DB 저장 또는 로그인 처리 (예시)
-    from signupFT.models import User
+    email = account.get("email", "")
+    nickname = profile.get("nickname")
+    if not nickname:
+        nickname = f"카카오유저_{kakao_id}"
+
+    name = nickname  # name도 동일하게 지정
+    gender_raw = account.get("gender", None)
+    birthyear = account.get("birthyear", "")
+    birthday = account.get("birthday", "")
+
+    birth_date = None
+    if birthyear and birthday and len(birthday) == 4:
+        try:
+            birth_date = datetime.strptime(birthyear + birthday, "%Y%m%d").date()
+        except:
+            pass
+
+    gender = "M" if gender_raw == "male" else "F" if gender_raw == "female" else None
+
+    user_id = f'kakao_{kakao_id}'
+
+    # 신규 유저 생성 or 기존 유저 불러오기
     user, created = User.objects.get_or_create(
-        user_id=f'kakao_{kakao_id}',
-        defaults={'email': email or '', 'nickname': nickname or '', 'password': '카카오계정'},  # 임시 비번
+        user_id=user_id,
+        defaults={
+            'password': '카카오계정',
+            'email': email,
+            'nickname': nickname or user_id,
+            'name': name,
+            'gender': gender,
+            'birth_date': birth_date,
+        }
     )
+
+    # 세션 저장
     request.session['user_id'] = user.user_id
+
+    # ✅ 가입 진행 여부 판단 (주소, 최애 멤버 여부)
+    if not user.address or user.bias_member.count() == 0:
+        # 회원가입 완료되지 않음 → 회원가입 flow 이어가기
+        request.session['temp_kakao_user'] = user.user_id
+        return redirect('signup:location_select')  
+
+    # 이미 가입된 기존 유저면 메인으로
     return redirect('home:main')
 
 
