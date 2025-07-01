@@ -17,6 +17,7 @@ urlpatterns = [
     path('chgReview/', include('chgReview.urls')),
     path('proxy/', include('proxy.urls')),
     path('sharing/', include('sharing.urls')),
+    path('community/', include('community.urls')),
 ]
 
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.
