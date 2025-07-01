@@ -1,11 +1,11 @@
-{% load static %}
 <!DOCTYPE html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" />
-    <title>header login</title>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <title>{% block title %}header login{% endblock %}</title>
     <style>
         * {
             margin: 0;
@@ -24,7 +24,7 @@
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 1rem 3rem;
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
@@ -40,8 +40,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             display:block;
-            width:250px;
-            margin-left:35px;
+            width:230px;
         }
 
         .logo img{
@@ -53,12 +52,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
+            width:1100px;
             margin: 0 auto;
         }
 
         .nav-menu {
             display: flex;
+            justify-content: center;
             gap: 1.5rem;
             list-style: none;
             width:400px;
@@ -96,8 +96,8 @@
         .user-info {
             display: flex;
             align-items: center;
-            margin-right:15px;
-            width:180px;
+            justify-content: flex-end;
+            width:230px;
             padding-right:0;
         }
 
@@ -209,16 +209,18 @@
         @media (max-width: 768px) {
             .nav {
                 position: relative;
+                width:100%;
             }
             
             .nav-menu{
                 display: none;
             }
-            .logo{width:50%; margin-left:0;}
             
             .mobile-menu-btn {
                 display: block;
             }
+
+            .user-info{display:none;}
         }
 
         @media (max-width: 480px) {
@@ -288,9 +290,9 @@
                 <li><a href="#customer">고객지원</a></li>
             </ul>
             <div class="user-info">
-                    <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>포카러버123</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                <a href="#alarm" class="alarm">🔔</a>
+                <a href="#mypage" class="username"><span>포카러버123</span>님</a>
+                <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
@@ -311,7 +313,7 @@
             </div>
         </nav>
     </header>
-    {%block content%}
-    {%endblock content%}
+    {% block content %}
+    {% endblock content %}
 </body>
 </html>
