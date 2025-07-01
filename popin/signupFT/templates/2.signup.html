@@ -244,7 +244,11 @@
         gap: 1rem;
       }
     }
+
+
+
   </style>
+
 </head>
 <body>
   <div class="signup-wrapper">
@@ -325,10 +329,10 @@
   </div>
   <small id="emailStatus" style="color: green;"></small>
 </div>
-<input type="text" id="verify-code" placeholder="인증번호 입력">
-<button type="button" onclick="checkVerificationCode()">인증 확인</button>
-
-
+<div style="display: flex; gap: 10px; margin-top: 10px;">
+  <input type="text" id="verify-code" placeholder="인증번호 입력" class="form-control" />
+  <button type="button" class="btn btn-outline-primary" onclick="checkVerificationCode()">인증 확인</button>
+</div>
         <button id="submitBtn" class="btn btn-primary" onclick="goToPage('location', event)" type="submit">다음</button>
       </form>
     </div>

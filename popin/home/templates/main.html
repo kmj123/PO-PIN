@@ -303,6 +303,41 @@
 </style>
 
 <body>
+    <!-- 헤더 -->
+    <header class="header">
+        <nav class="nav">
+            <a href="#" class="logo"><img src='/static/images/landing/logo.png'>PO-PIN</a>
+            <ul class="nav-menu">
+                <li><a href="#home">홈</a></li>
+                <li><a href="#exchange">포카교환</a></li>
+                <li><a href="#community">커뮤니티</a></li>
+                <li><a href="#decorate">포카꾸미기</a></li>
+                <li><a href="#customer">고객지원</a></li>
+            </ul>
+            <div class="user-info">
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="{% url 'mypage:profile' %}" class="username"><span>{{username}}</span>님</a>
+                    <a href="{% url 'landing' %}" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            
+            <!-- 모바일 메뉴 -->
+            <div class="mobile-menu" id="mobileMenu">
+                <div class="mobile-user-info">
+                    <a href="#alarm" class="alarm">🔔</a>
+                    <a href="#mypage" class="username"><span>{{username}}</span>님</a>
+                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <ul class="mobile-menu-list">
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#exchange">포카교환</a></li>
+                    <li><a href="#community">커뮤니티</a></li>
+                    <li><a href="#decorate">포카꾸미기</a></li>
+                    <li><a href="#customer">고객지원</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
     <div class="container">
         <!-- 메인 콘텐츠 -->
         <div class="main-content">
