@@ -40,6 +40,20 @@ def list(request):
 
 # 선택 포토카드 거래글 상세정보
 def view(request, pno):
+    user_id = request.session.get('user_id')
+    
+    if user_id: # 유저 정보가 있는 경우
+        latest_list = request.session.get('latest_poca', []) # 세선 안에 latest_poca 있으면 리스트 불러오기 or []
+        
+        if pno in latest_list: # 리스트 안에 해당 게시글 pno가 있을 때
+            if latest_list[0] != pno: # pno가 리스트 안에 존재하지만 가장 최근이 아닐 때
+                latest_list.remove(pno) # 리스트 내 pno 제거
+                latest_list.insert(0,pno) # 가장 최근으로 insert
+        else:
+            latest_list.insert(0,pno) # 가장 최근으로 insert
+            
+        request.session['latest_poca'] = latest_list
+            
     # pno 포토카드 불러오기
     qs = Photocard.objects.get(pno=pno)
     
