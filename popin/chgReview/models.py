@@ -12,7 +12,7 @@ class ReviewTag(models.Model):
 class ExchangeReview(models.Model):
     title = models.CharField("제목", max_length=100)
     content = models.TextField("후기 내용")
-
+    
     # 작성자와 교환 상대방
     writer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="written_reviews", verbose_name="작성자")
     partner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_reviews", verbose_name="교환 상대방")
@@ -20,6 +20,7 @@ class ExchangeReview(models.Model):
     tags = models.ManyToManyField(ReviewTag, blank=True, related_name="reviews", verbose_name="태그")
     artist = models.CharField("아티스트", max_length=50,default="기타")
     method = models.CharField("교환 방식", max_length=20, choices=[("온라인", "온라인"), ("오프라인", "오프라인")])
+    transaction_type = models.CharField("거래 방식", max_length=10, choices=[("교환", "교환"), ("양도", "양도")], default="교환")
 
     overall_score = models.PositiveSmallIntegerField("총 평점 (1~5)", choices=[(i, f"{i}점") for i in range(1, 6)])
 
