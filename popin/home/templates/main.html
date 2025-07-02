@@ -187,11 +187,7 @@
         font-weight: 500;
         transition: all 0.3s ease;
     }
-
-    .more-btn:hover {
-        color: #764ba2;
-    }
-
+    
     .post-item {
         display: flex;
         justify-content: space-between;
@@ -303,41 +299,6 @@
 </style>
 
 <body>
-    <!-- 헤더 -->
-    <header class="header">
-        <nav class="nav">
-            <a href="#" class="logo"><img src='/static/images/landing/logo.png'>PO-PIN</a>
-            <ul class="nav-menu">
-                <li><a href="#home">홈</a></li>
-                <li><a href="#exchange">포카교환</a></li>
-                <li><a href="#community">커뮤니티</a></li>
-                <li><a href="#decorate">포카꾸미기</a></li>
-                <li><a href="#customer">고객지원</a></li>
-            </ul>
-            <div class="user-info">
-                    <a href="#alarm" class="alarm">🔔</a>
-                    <a href="{% url 'mypage:profile' %}" class="username"><span>{{username}}</span>님</a>
-                    <a href="{% url 'landing' %}" class="logout"><i class="fas fa-sign-out-alt"></i></a>
-            </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
-            
-            <!-- 모바일 메뉴 -->
-            <div class="mobile-menu" id="mobileMenu">
-                <div class="mobile-user-info">
-                    <a href="#alarm" class="alarm">🔔</a>
-                    <a href="#mypage" class="username"><span>{{username}}</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
-                </div>
-                <ul class="mobile-menu-list">
-                    <li><a href="#home">홈</a></li>
-                    <li><a href="#exchange">포카교환</a></li>
-                    <li><a href="#community">커뮤니티</a></li>
-                    <li><a href="#decorate">포카꾸미기</a></li>
-                    <li><a href="#customer">고객지원</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
     <div class="container">
         <!-- 메인 콘텐츠 -->
         <div class="main-content">
@@ -374,69 +335,30 @@
 
                 <h2 style="margin-bottom: 20px;">최근 인기 포토카드</h2>
                 <div class="photo-grid">
+                    {% for photocard in photocards %}
                     <div class="photo-card">
-                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
+                        <div class="photo-image"><img src="/media/{{photocard.image}}"></div>
                         <div class="photo-info">
-                            <div class="photo-title">NewJeans 하니</div>
+                            <div class="photo-title">{{photocard.member.group.name}} {{photocard.member.name}}</div>
                             <div class="photo-tags">
-                                <span class="photo-tag">NewJeans</span>
-                                <span class="photo-tag">하니</span>
+                                <span class="photo-tag">{{photocard.trade_type}}</span>
+                                <span class="photo-tag">{{photocard.category}}</span>
                             </div>
                             <div class="photo-stats">
-                                <span>❤️ 42</span>
-                                <span>💬 8</span>
+                                <span>❤️ {{photocard.wish_count}}</span>
+                                <span>📍 {{photocard.place}}</span>
+                                <!-- <span>💬 8</span> -->
                             </div>
                         </div>
                     </div>
-                    <div class="photo-card">
-                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                        <div class="photo-info">
-                            <div class="photo-title">BLACKPINK 리사</div>
-                            <div class="photo-tags">
-                                <span class="photo-tag">BLACKPINK</span>
-                                <span class="photo-tag">리사</span>
-                            </div>
-                            <div class="photo-stats">
-                                <span>❤️ 35</span>
-                                <span>💬 12</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                        <div class="photo-info">
-                            <div class="photo-title">BTS 정국</div>
-                            <div class="photo-tags">
-                                <span class="photo-tag">BTS</span>
-                                <span class="photo-tag">정국</span>
-                            </div>
-                            <div class="photo-stats">
-                                <span>❤️ 58</span>
-                                <span>💬 15</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="photo-card">
-                        <div class="photo-image"><img src='/static/images/landing/wonyoung.jpg'></div>
-                        <div class="photo-info">
-                            <div class="photo-title">IVE 안유진</div>
-                            <div class="photo-tags">
-                                <span class="photo-tag">IVE</span>
-                                <span class="photo-tag">안유진</span>
-                            </div>
-                            <div class="photo-stats">
-                                <span>❤️ 47</span>
-                                <span>💬 9</span>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
 
                 <!-- 최신 게시글 -->
                 <div class="latest-posts">
                     <div class="section-header">
                         <h2 class="section-title">최신 게시글</h2>
-                        <a href="#" class="more-btn">더보기</a>
+                        <a href="/home/recent/" class="more-btn">더보기</a>
                     </div>
                     <div class="post-item">
                         <div class="post-content">
@@ -447,31 +369,31 @@
                     </div>
                     <div class="post-item">
                         <div class="post-content">
-                            <div class="post-title">BLACKPINK 리사 포토카드 나눔합니다</div>
+                            <div class="post-title">BLACKPINK 리사 포토카드 판매합니다</div>
                             <div class="post-meta">generous_fan • 12분 전 • 조회 45</div>
                         </div>
-                        <div class="post-category">나눔</div>
+                        <div class="post-category">판매</div>
                     </div>
                     <div class="post-item">
                         <div class="post-content">
-                            <div class="post-title">BTS 정국 포토카드 대리구매 가능하신분?</div>
+                            <div class="post-title">BTS 정국 포토카드 판매</div>
                             <div class="post-meta">army_collector • 23분 전 • 조회 67</div>
                         </div>
-                        <div class="post-category">대리구매</div>
+                        <div class="post-category">판매</div>
                     </div>
                     <div class="post-item">
                         <div class="post-content">
-                            <div class="post-title">IVE 안유진 포토카드 꾸미기 완성!</div>
+                            <div class="post-title">IVE 안유진 포카 교환 구해요</div>
                             <div class="post-meta">creative_diver • 35분 전 • 조회 89</div>
                         </div>
-                        <div class="post-category">포꾸</div>
+                        <div class="post-category">교환</div>
                     </div>
                     <div class="post-item">
                         <div class="post-content">
-                            <div class="post-title">오늘 교환 후기 - 정말 만족스러워요!</div>
+                            <div class="post-title">포카 정리합니다</div>
                             <div class="post-meta">happy_trader • 1시간 전 • 조회 112</div>
                         </div>
-                        <div class="post-category">후기</div>
+                        <div class="post-category">판매</div>
                     </div>
                 </div>
             </div>
