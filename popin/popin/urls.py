@@ -19,6 +19,7 @@ urlpatterns = [
     path('sharing/', include('sharing.urls')),
     path('status/', include('status.urls')),
     path('community/', include('community.urls')),
+    path('pocadeco/', include('pocadeco.urls')),
 ]
 
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.

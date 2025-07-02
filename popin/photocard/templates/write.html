@@ -968,10 +968,11 @@ textarea {
     <!--//Upload-Form-->
 </div>  
 <!--//Upload-Container-->
+
 <script>
     //파일 업로드 관련
     const fileUploadArea = document.getElementById('fileUploadArea');
-    const imageinput = document.getElementById('imageinput');
+    const imageinput = document.getElementById('imageInput');
     const previewContainer = document.getElementById('previewContainer');
     const previewImage = document.getElementById('previewImage');
 
@@ -988,7 +989,7 @@ textarea {
 
     fileUploadArea.addEventListener('drop',(e)=>{
         e.preventDefault();
-        fileUploadArea.ClassList.remove('dragover');
+        fileUploadArea.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length>0){
             handleFile(files[0]);
@@ -1010,7 +1011,9 @@ textarea {
                 previewContainer.style.display = "block";
                 console.log(e)
             };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+        } else {
+            alert("이미지 파일만 업로드할 수 있습니다.");
         }
     }
     
