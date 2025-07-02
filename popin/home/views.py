@@ -44,18 +44,18 @@ def main(request):
 
 # 임시 게시글 데이터 (카테고리별로 구분된 예시)
 posts = [
-    {'title': 'IVE 원영 포토카드 교환해요!', 'category': '교환', 'author': 'kpop_lover', 'created_at': '5분 전', 'views': 23},
-    {'title': 'IVE 원영 포토카드 판매해요!', 'category': '판매', 'author': 'kpop_lover', 'created_at': '30분 전', 'views': 38},
-    {'title': 'BLACKPINK 리사 포토카드 나눔합니다', 'category': '나눔', 'author': 'generous_fan', 'created_at': '12분 전', 'views': 45},
-    {'title': 'BTS 정국 포토카드 대리구매 가능하신분?', 'category': '대리구매', 'author': 'army_collector', 'created_at': '23분 전', 'views': 67},
-    {'title': '오늘 교환 후기 - 정말 만족스러워요!', 'category': '후기', 'author': 'happy_trader', 'created_at': '1시간 전', 'views': 112},
-    {'title': 'IVE 안유진 포토카드 꾸미기 완성!', 'category': '포꾸', 'author': 'creative_diver', 'created_at': '35분 전', 'views': 89},
-    {'title': 'NCT 포토카드 교환해요!', 'category': '교환', 'author': 'kpop_lover', 'created_at': '50분 전', 'views': 50},
-    {'title': '뷔 포카 판매', 'category': '판매', 'author': 'kpop_lover', 'created_at': '1달 전', 'views': 40},
-    {'title': '트와이스 첫콘 나눔', 'category': '나눔', 'author': 'generous_fan', 'created_at': '2일 전', 'views': 145},
-    {'title': '댈구 구해요', 'category': '대리구매', 'author': 'army_collector', 'created_at': '55분 전', 'views': 67},
-    {'title': '포카 교환 후기', 'category': '후기', 'author': 'happy_trader', 'created_at': '4시간 전', 'views': 112},
-    {'title': '제가 한 포꾸 구경하실분', 'category': '포꾸', 'author': 'creative_diver', 'created_at': '1시간 전', 'views': 89},
+    {'title': 'IVE 원영 포토카드 교환해요!', 'category': '교환', 'writer_id': 'kpop_lover', 'createDate': '5분 전', 'hit': 23},
+    {'title': 'IVE 원영 포토카드 판매해요!', 'category': '판매', 'writer_id': 'kpop_lover', 'createDate': '30분 전', 'hit': 38},
+    {'title': 'BLACKPINK 리사 포토카드 판매합니다', 'category': '판매', 'writer_id': 'generous_fan', 'createDate': '12분 전', 'hit': 45},
+    {'title': 'BTS 정국 포토카드 판매', 'category': '판매', 'writer_id': 'army_collector', 'createDate': '23분 전', 'hit': 67},
+    {'title': '교환 구해요', 'category': '교환', 'writer_id': 'happy_trader', 'createDate': '1시간 전', 'hit': 112},
+    {'title': 'IVE 안유진 포카 판매', 'category': '판매', 'writer_id': 'creative_diver', 'createDate': '35분 전', 'hit': 89},
+    {'title': 'NCT 포토카드 교환해요!', 'category': '교환', 'writer_id': 'kpop_lover', 'createDate': '50분 전', 'hit': 50},
+    {'title': '뷔 포카 판매', 'category': '판매', 'writer_id': 'kpop_lover', 'createDate': '1달 전', 'hit': 40},
+    {'title': '트와이스 나연 포카 판매', 'category': '판매', 'writer_id': 'generous_fan', 'createDate': '2일 전', 'hit': 145},
+    {'title': '포카 정리합니다', 'category': '판매', 'writer_id': 'army_collector', 'createDate': '55분 전', 'hit': 67},
+    {'title': '포카 교환', 'category': '교환', 'writer_id': 'happy_trader', 'createDate': '4시간 전', 'hit': 112},
+    {'title': '정연 포카 팔아요', 'category': '판매', 'writer_id': 'creative_diver', 'createDate': '1시간 전', 'hit': 89},
 ]
 
 def recent(request):

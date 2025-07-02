@@ -403,6 +403,31 @@
       text-align: right;
     }
 
+    /* 더보기 버튼 스타일 */
+    .more-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top:10px;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      text-align: center;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+
+    .more-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
     /* 반응형 디자인 */
     @media (max-width: 768px) {
       .header {
@@ -687,7 +712,7 @@
             </div>
             <div class="activity-time">15분 전</div>
           </li>
-           <li class="activity-item">
+          <li class="activity-item">
             <div class="activity-icon">🛒</div>
             <div class="activity-content">
               <div class="activity-title">위시 전시회 MD 대리구매</div>
@@ -696,22 +721,15 @@
             <div class="activity-time">3시간 전</div>
           </li>
           <li class="activity-item">
-            <div class="activity-icon">📊</div>
-            <div class="activity-content">
-              <div class="activity-title">스테디 팝업 대기 50명 현황</div>
-              <div class="activity-meta">현황 공유 · 실시간</div>
-            </div>
-            <div class="activity-time">23분 전</div>
-          </li>
-          <li class="activity-item">
             <div class="activity-icon">👥</div>
             <div class="activity-content">
               <div class="activity-title">7/15 라이즈 콘서트 동행 구함</div>
               <div class="activity-meta">동행 모집 · 여 · 20대</div>
             </div>
             <div class="activity-time">1시간 전</div>
-              <li class="activity-item">
+          </li>
         </ul>
+        <a href="community_recent_activity.html" class="more-btn">더보기 →</a>
       </div>
     </div>
   </div>

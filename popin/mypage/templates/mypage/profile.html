@@ -8,9 +8,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
-        <title>마이페이지</title>
+        <title>{%block title%}마이페이지{%endblock%}</title>
     </head>
-    
+   
     <body>
     <!--프로필-->
     <main class="main">
@@ -31,21 +31,21 @@
                         </button>
                     </div>
                     <div class="profile-info">
-                        <h1 style="text-align:center;">포카러버123</h1>
+                        <h1 style="text-align:center;">{{user.name}}</h1>
                         <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
                         <br>
                         
                         <div class="stats">
                             <div class="stat">
-                                <div class="stat-number">156</div>
+                                <div class="stat-number">{{user.selling_photocards.count}}</div>
                                 <div>보유 포카</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">23</div>
+                                <div class="stat-number">{{completed}}</div>
                                 <div>교환 완료</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">4.8</div>
+                                <div class="stat-number">{{user.manners_score}}</div>
                                 <div>평점</div>
                             </div>
                         </div>
@@ -62,16 +62,13 @@
                 <button class="tab" onclick="showTab('recent')">최근본글</button>
                 <button class="tab" onclick="showTab('cards')">마이 포카</button>
                 <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
-                <button class="tab" onclick="showTab('transactions')">교환거래</button>
+                <button class="tab" onclick="showTab('transactions')">포토카드</button>
                 <button class="tab" onclick="showTab('reviews')">후기글</button>
                 <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
-                <button class="tab" onclick="showTab('blocked')">내가 차단한 사용자</button>
+                <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
             </div>
             <!--키워드 리스트-->
             <div id="keywords" class="tab-content active">
-                <div class="section-header">
-                    <h2>키워드</h2>
-                </div>
                 <div class="section-content">
                     <div class="item">
                         <h3>관심 키워드</h3>
@@ -85,9 +82,6 @@
             </div>
 
             <div id="recent" class="tab-content">
-                <div class="section-header">
-                    <h2>최근본글</h2>
-                </div>
                 <div class="section-content">
                     <div class="item">
                         <h3>BTS 정국 포토카드 교환해요</h3>
@@ -106,7 +100,6 @@
 
             <div id="cards" class="tab-content">
                 <div class="cards-header">
-                    <h2>마이 포카</h2>
                     <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
                 </div>
                 
@@ -192,7 +185,6 @@
 
             <!--위시리스트-->
             <div id="wishlist" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">위시리스트</h2>
                 <div class="section-content">
                     <a href="/photocard/view/">
                         <div class="item">
@@ -242,13 +234,16 @@
             </div>
 
             <div id="transactions" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">교환거래</h2>
-                <div class="transaction-tabs">
-                    <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
-                    <button class="transaction-tab" onclick="showTransactionTab('buying')">구매목록</button>
+                <div class="section-header">
+                    <div class="transaction-tabs">
+                        <button class="transaction-tab active" onclick="showTransactionTab('selling')">판매목록</button>
+                        <button class="transaction-tab" onclick="showTransactionTab('buying')">구매목록</button>
+                        <button class="transaction-tab" onclick="showTransactionTab('trading')">교환목록</button>
+                    </div>
                 </div>
                 
                 <div class="section-content">
+                    <!--판매목록-->
                     <div id="selling-list" class="transaction-content">
                         <div class="item">
                             <h3>BTS 진 포토카드</h3>
@@ -278,6 +273,7 @@
                         </div>
                     </div>
 
+                    <!--구매목록-->
                     <div id="buying-list" class="transaction-content" style="display: none;">
                         <div class="item">
                             <h3>BTS 정국 포토카드 구매</h3>
@@ -294,29 +290,45 @@
                         <div class="view-all-container">
                         </div>
                     </div>
+                    <!--교환목록-->
+                    <div id="trading-list" class="transaction-content" style="display: none;">
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.18 - 18,000원 | 상태: 거래완료</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.15 - 22,000원 | 상태: 거래완료</p>
+                        </div>
+                        <div class="item">
+                            <h3>포토카드 교환거래글</h3>
+                            <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div id="reviews" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">후기글</h2>
-                <div class="review-tabs">
-                    <button class="review-tab active" onclick="showReviewTab('received')">내가 받은 후기</button>
-                    <button class="review-tab" onclick="showReviewTab('written')">내가 쓴 후기</button>
+                <div class="section-header">
+                    <div class="review-tabs">
+                        <button class="review-tab active" onclick="showReviewTab('received')">내가 받은 후기</button>
+                        <button class="review-tab" onclick="showReviewTab('written')">내가 쓴 후기</button>
+                    </div>
                 </div>
                 
                 <!--내가 받은 거래 후기-->
                 <div class="section-content">
                     <div id="received-reviews" class="review-content">
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐⭐</span>친절하고 빠른 거래</h3>
+                            <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐⭐</span>신뢰할 수 있는 거래</h3>
+                            <h3>신뢰할 수 있는 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>설명과 동일한 상태의 포카를 받았어요. 추천합니다! - 카드수집러님</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐</span>좋은 거래였습니다</h3>
+                            <h3>좋은 거래였습니다<span class="rating">⭐⭐⭐⭐</span></h3>
                             <p>소통이 원활하고 약속 시간도 잘 지켜주셨어요. - 포카러님</p>
                         </div>
                         <div class="view-all-container">
@@ -328,23 +340,23 @@
                 <div class="section-content">
                     <div id="written-reviews" class="review-content" style="display: none;">
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐⭐</span>완벽한 거래였어요</h3>
+                            <h3>완벽한 거래였어요<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>포카매니아님과의 거래 - 포장 상태 완벽하고 소통도 좋았습니다!</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐⭐</span>믿고 거래할 수 있는 분</h3>
+                            <h3>믿고 거래할 수 있는 분<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>카드수집러님과의 거래 - 시간 약속 잘 지키시고 친절하세요</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐</span>만족스러운 거래</h3>
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
                             <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐</span>만족스러운 거래</h3>
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
                             <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
                         </div>
                         <div class="item review-item">
-                            <h3><span class="rating">⭐⭐⭐⭐</span>만족스러운 거래</h3>
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
                             <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
                         </div>
                         <div class="view-all-container">
@@ -354,12 +366,14 @@
             </div>
 
             <div id="community" class="tab-content">
-                <h2 style="margin-bottom: 1.5rem;">커뮤니티 작성글</h2>
-                <div class="community-tabs">
-                    <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
-                    <button class="community-tab " onclick="showCommunityTab('share')">나눔</button>
-                    <button class="community-tab " onclick="showCommunityTab('InsteadBuying')">대리구매</button>
+                <div class="section-header">
+                    <div class="community-tabs">
+                        <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
+                        <button class="community-tab " onclick="showCommunityTab('Sharing')">나눔</button>
+                        <button class="community-tab " onclick="showCommunityTab('Insteadbuy')">대리구매</button>
+                    </div>
                 </div>
+
                 <!--동행글-->
                 <div class="section-content">
                     <div id="WithU" class="community-content">
@@ -379,7 +393,7 @@
                 </div>
                 <!--나눔글-->
                 <div class="section-content">
-                    <div id="share" class="community-content">
+                    <div id="Sharing" class="community-content" style="display: none;">
                         <div class="item">
                             <h3>포토카드 나눔</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -396,7 +410,7 @@
                 </div>
                 <!--대리구매-->
                 <div class="section-content">
-                    <div id="InsteadBuying" class="community-content">
+                    <div id="Insteadbuy" class="community-content" style="display: none;">
                         <div class="item">
                             <h3>앨범 대리구매</h3>
                             <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
@@ -413,26 +427,48 @@
                 </div>
             </div>
 
+            <!--블랙리스트-->
             <div id="blocked" class="tab-content">
                 <div class="section-header">
-                    <h2>내가 차단한 사용자</h2>
-                </div>
-                <div class="section-content">
-                    <div class="item blocked-user">
-                        <h3>스팸유저123</h3>
-                        <button class="unblock-btn">차단해제</button>
-                        <p>차단 사유: 스팸 메시지 반복 발송</p>
+                    <div class="blocked-tabs">
+                        <button class="blocked-tab active" onclick="showBlockedTab('blocked-user')">내가 차단한 사용자</button>
+                        <button class="blocked-tab" onclick="showBlockedTab('blocked-post')">내가 신고한 글</button>
                     </div>
-                    <div class="item blocked-user">
-                        <h3>사기꾼456</h3>
-                        <button class="unblock-btn">차단해제</button>
-                        <p>차단 사유: 거래 약속 불이행</p>
+                </div>
+
+                <div class="section-content">
+                    <div id="blocked-user" class="blocked-content">
+                        <div class="item">
+                            <h3>스팸유저123</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 스팸 메시지 반복 발송</p>
+                        </div>
+                        <div class="item">
+                            <h3>사기꾼456</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 거래 약속 불이행</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-content">
+                    <div id="blocked-post" class="blocked-content" style="display: none;">
+                        <div class="item">
+                            <h3>매우매우 안좋은 글</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 매우매우 안좋은 글</p>
+                        </div>
+                        <div class="item">
+                            <h3>사기꾼의 글</h3>
+                            <button class="unblock-btn">차단해제</button>
+                            <p>차단 사유: 사기꾼의 글</p>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!--//블랙리스트-->
         </div>
     </main>
-
     
         <!--프로필 수정 모달창 구현-->
         <form action="/mypage/profileupdate/" method="post" name="profileFrm" enctype="multipart/form-data">
@@ -491,19 +527,27 @@
                 modalCloseButton.addEventListener('click',() => {
                     modal.classList.add('hidden');
                 });
+                // 바깥 클릭 시 닫기
+                window.addEventListener('click', e => {
+                    if (e.target === modal) {
+                     modal.classList.add('hidden');
+                    }
+                });
             });
         </script>
+        <!--//모달창스크립트-->
 
     <script>
+        // 전체 카테고리
         function showTab(tabName) {
-            // 모든 탭 콘텐츠 숨기기
             const contents = document.querySelectorAll('.tab-content');
+            const tabs = document.querySelectorAll('.tab');
+            // 모든 탭 콘텐츠 숨기기
             contents.forEach(content => {
                 content.classList.remove('active');
             });
 
             // 모든 탭 버튼 비활성화
-            const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -515,15 +559,19 @@
             event.target.classList.add('active');
         }
 
+        // 교환거래 카테고리
         function showTransactionTab(type) {
-            // 교환거래 탭 버튼들 비활성화
             const transactionTabs = document.querySelectorAll('.transaction-tab');
+            const transactionContents = document.querySelectorAll('.transaction-content');
+            const sellingList = document.getElementById('selling-list');
+            const buyingList = document.getElementById('buying-list');
+            const tradingList = document.getElementById('trading-list');
+            // 교환거래 탭 버튼들 비활성화
             transactionTabs.forEach(tab => {
                 tab.classList.remove('active');
             });
 
             // 교환거래 콘텐츠들 숨기기
-            const transactionContents = document.querySelectorAll('.transaction-content');
             transactionContents.forEach(content => {
                 content.style.display = 'none';
             });
@@ -533,21 +581,24 @@
             
             // 선택된 콘텐츠 보이기
             if (type === 'selling') {
-                document.getElementById('selling-list').style.display = 'block';
-            } else {
-                document.getElementById('buying-list').style.display = 'block';
+                sellingList.style.display = 'block';
+            } else if(type==='buying'){
+                buyingList.style.display = 'block';
+            } else if(type==='trading'){
+                tradingList.style.display='block';
             }
         }
 
+        // 후기 카테고리
         function showReviewTab(type) {
-            // 후기 탭 버튼들 비활성화
             const reviewTabs = document.querySelectorAll('.review-tab');
+            const reviewContents = document.querySelectorAll('.review-content');
+            // 후기 탭 버튼들 비활성화
             reviewTabs.forEach(tab => {
                 tab.classList.remove('active');
             });
 
             // 후기 콘텐츠들 숨기기
-            const reviewContents = document.querySelectorAll('.review-content');
             reviewContents.forEach(content => {
                 content.style.display = 'none';
             });
@@ -563,34 +614,59 @@
             }
         }
 
-        // 커뮤니티 게시글 카테고리 버튼
+        // 커뮤니티 카테고리 
         function showCommunityTab(type){
             const communityTabs = document.querySelectorAll('.community-tab');
+            const communityContents = document.querySelectorAll('.community-content');
             const WithU = document.getElementById('WithU');
-            const share = document.getElementById('share');
-            const InsteadBuying = document.getElementById('InsteadBuying');
+            const Sharing = document.getElementById('Sharing');
+            const Insteadbuy = document.getElementById('Insteadbuy');
 
             communityTabs.forEach(tab=>{
                 tab.classList.remove('active');
             });
+
+            communityContents.forEach(content=>{
+                content.style.display="none";
+            })
+
             event.target.classList.add('active');
 
             if (type === "WithU"){
                 WithU.style.display="block";
-                share.style.display="none";
-                InsteadBuying.style.display="none";
-            } else if(type === "share"){
-                share.style.display="block";
-                WithU.style.display = "none";
-                InsteadBuying.style.display = "none";
-            } else if(type === "InsteadBuying"){
-                InsteadBuying.style.display="block";
-                WithU.style.display = "none";
-                share.style.display="none";
+            } else if(type === "Sharing"){
+                Sharing.style.display="block";
+            } else if(type === "Insteadbuy"){
+                Insteadbuy.style.display="block";
             }
         }
-        share.style.display='none';
-        InsteadBuying.style.display='none';
+
+        // 블랙리스트 카테고리
+        function showBlockedTab(type){
+            const blockedTabs = document.querySelectorAll('.blocked-tab');
+            const blockedContents = document.querySelectorAll('.blocked-content')
+            const blockeduser = document.getElementById('blocked-user');
+            const blockedpost = document.getElementById('blocked-post');
+
+            // 블랙리스트 탭 버튼들 비활성화
+            blockedTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 블랙리스트 콘텐츠들 숨기기
+            blockedContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            event.target.classList.add('active');
+
+            // 선택된 콘텐츠 보이기
+            if (type === 'blocked-user') {
+                blockeduser.style.display = 'block';
+            } else {
+                blockedpost.style.display = 'block';
+            }
+        }
         
 
         // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)

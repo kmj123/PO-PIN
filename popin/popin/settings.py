@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'sharing',
     'status',
     'community',
+    'pocadeco',
 ]
 
 MIDDLEWARE = [
