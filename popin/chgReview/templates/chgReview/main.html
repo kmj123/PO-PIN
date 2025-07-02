@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
-  <title>커뮤니티 | PO-PIN</title>
+  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
+  {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>교환/판매 후기</title>
   <style>
     * {
       margin: 0;
@@ -20,12 +21,11 @@
       color: #333;
     }
 
-    /* 헤더 */
     .header {
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       padding: 1rem 2rem;
-      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -47,12 +47,22 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      display: block;
+      width: 250px;
+    }
+
+    .logo img {
+      margin-right: 10px;
+      width: 45px;
+      height: 45px;
+      vertical-align: middle;
     }
 
     .nav-menu {
       display: flex;
-      gap: 2rem;
+      gap: 1.5rem;
       list-style: none;
+      width: 400px;
     }
 
     .nav-menu a {
@@ -87,6 +97,7 @@
     .auth-buttons {
       display: flex;
       gap: 1rem;
+      width: 250px;
     }
 
     .btn {
@@ -124,789 +135,1070 @@
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
 
-    /* 메인 컨테이너 */
-    .community-container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .page-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .page-header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      background: white;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: 800;
-    }
-
-    .page-header p {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.9);
-      font-weight: 500;
-    }
-
-    /* 게시판 그리드 */
-    .board-grid {
+    .top {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px;
-      margin-bottom: 40px;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 20px 50px;
     }
 
-    .board-card {
+    .top h3 {
+      font-size: 30px;
+      margin: 0;
+      grid-column: 2;
+      justify-self: center;
+    }
+    .list {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .menu {
+      width: 220px;
+      height: 250px;
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      height: 480px;
-      display: flex;
-      flex-direction: column;
+      color: rgb(86, 85, 88);
     }
 
-    .board-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
+    .menu h3 {
+      font-size: 18px;
+      margin: 18px 0 5px 20px;
     }
 
-    .board-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    .box{margin-left : 18px;  margin-top : 20px; text-align : center ; align-items : center; 
+      font-weight : 550;
+      font-size : 17px;  }
+
+    .box1{
+      padding-top : 15px;
+      line-height : 1.5;
+      background-color : white;
+      border-radius : 15px;
+      width : 90%;
+      height : 80px;
     }
 
-    .board-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 18px;
+    .box2{margin-top : 15px;
+      padding-top : 15px;
+      line-height : 1.5;
+      background-color : white;
+      border-radius : 15px;
+      width : 90%;
+      height : 80px;}
+
+    .box p{font-size : 17px;}
+    
+
+
+    .dashboard {
+      width: 47%;
+      min-height: 550px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      margin-left: 20px;
     }
 
-    .board-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 15px;
-      font-size: 22px;
-      color: white;
-    }
+    .line {
+        margin: 5px 50px;
+        border: 0.5px solid rgba(68, 68, 68, 0.3); /* 얇고 은은한 선 */
+        }
 
-    .exchange-review .board-icon {
-      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-    }
+      .search-filter-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          align-items: center;
+          justify-content: flex-start;
+          margin: 20px 0 10px 54px;
+        }
 
-    .offline-sharing .board-icon {
-      background: linear-gradient(135deg, #4ecdc4, #44a08d);
-    }
+      .toggle-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        color: #333;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s, color 0.2s;
+      }
 
-    .offline-proxy .board-icon {
-      background: linear-gradient(135deg, #45b7d1, #96c93d);
-    }
+      .toggle-btn.active {
+        background-color: #4e73df;
+        color: white;
+        font-weight: bold;
+        border-color: #4e73df;
+      }
 
-    .offline-status .board-icon {
-      background: linear-gradient(135deg, #f093fb, #f5576c);
-    }
+      .search-input {
+        width : 400px;
+        padding: 8px 12px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
 
-    .offline-companion .board-icon {
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
-    }
-
-    .recent-activity .board-icon {
-      background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-    }
-
-    .board-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #333;
-      margin-bottom: 3px;
-    }
-
-    .board-subtitle {
-      font-size: 0.85rem;
-      color: #666;
-      font-weight: 500;
-    }
-
-    .board-description {
-      color: #555;
-      line-height: 1.5;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-    }
-
-    .board-features {
-      list-style: none;
-      margin-bottom: 20px;
-    }
-
-    .board-features li {
-      padding: 6px 0;
-      font-size: 0.85rem;
-      color: #666;
-      display: flex;
-      align-items: center;
-    }
-
-    .board-features li::before {
-      content: '✓';
-      color: #667eea;
-      font-weight: bold;
-      margin-right: 8px;
-      font-size: 13px;
-    }
-
-    .board-stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      padding: 12px;
-      background: #f8f9ff;
-      border-radius: 10px;
-    }
-
-    .stat-item {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #667eea;
-      display: block;
-    }
-
-    .stat-label {
-      font-size: 0.75rem;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .board-action {
-      display: flex;
-      gap: 8px;
-      margin-top: auto;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      text-align: center;
-      font-size: 0.85rem;
-    }
-
-    .btn-write {
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-    }
-
-    .btn-view {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
-      border: 1px solid rgba(102, 126, 234, 0.3);
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .btn-write:hover {
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .btn-view:hover {
-      background: rgba(102, 126, 234, 0.2);
-    }
-
-    /* 최근 활동 카드 스타일 */
-    .activity-list {
-      list-style: none;
-      margin-bottom: 20px;
-    }
-
-    .activity-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #f0f0f0;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .activity-item:hover {
-      background: #f8f9ff;
-      margin: 0 -12px;
-      padding: 12px;
-      border-radius: 8px;
-      transform: scale(1.02);
-    }
-
-    .activity-item:last-child {
-      border-bottom: none;
-    }
-
-    .activity-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 12px;
+    .filter-select {
+      padding: 7px 10px;
       font-size: 14px;
-      color: white;
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: white;
+      cursor: pointer;
     }
-
-    .activity-content {
-      flex: 1;
-    }
-
-    .activity-title {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 2px;
-      font-size: 0.85rem;
-      line-height: 1.3;
-    }
-
-    .activity-meta {
-      font-size: 0.75rem;
+    .toggle-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 17px;
+      background: transparent;
       color: #666;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
     }
 
-    .activity-time {
-      font-size: 0.75rem;
-      color: #999;
-      min-width: 50px;
-      text-align: right;
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
     }
 
-    /* 모달 스타일 */
-    .modal-overlay {
+
+    .topBtn{
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      right: 300px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
       z-index: 1000;
       opacity: 0;
       visibility: hidden;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(5px);
     }
 
-    .modal-overlay.active {
+    .topBtn.show {
       opacity: 1;
       visibility: visible;
     }
 
-    .modal {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      transform: scale(0.7) translateY(50px);
-      transition: all 0.3s ease;
-      position: relative;
+    .topBtn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
-    .modal-overlay.active .modal {
-      transform: scale(1) translateY(0);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 2px solid #f0f0f0;
-    }
-
-    .modal-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #333;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-icon {
-      width: 35px;
-      height: 35px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 16px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 24px;
+    .report-btn{
       cursor: pointer;
-      color: #666;
-      padding: 5px;
-      border-radius: 50%;
-      transition: all 0.3s ease;
     }
 
-    .modal-close:hover {
-      background: #f0f0f0;
-      color: #333;
-    }
+        /* Sidebar Content */
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
 
-    .modal-content {
-      line-height: 1.6;
-    }
+        .quick-actions {
+            margin-bottom: 25px;
+        }
 
-    .modal-meta {
+        .quick-action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            text-decoration: none;
+            color: #666;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            color: #667eea;
+        }
+
+        .stats-list {
+            list-style: none;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .stats-label {
+            color: #666;
+        }
+
+        .stats-value {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .post-tags {
       display: flex;
-      gap: 15px;
+      gap: 8px;
+      margin-top : 10px;
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
-    .meta-item {
+    .post-tag {
+      background: #f0f4ff;
+      color: #667eea;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .post-info {
       background: #f8f9ff;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      color: #667eea;
-      font-weight: 600;
-    }
-
-    .modal-description {
-      background: #f9f9f9;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 15px;
       margin-bottom: 20px;
-      color: #555;
-      line-height: 1.6;
-    }
-
-    .modal-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
     }
 
-    .modal-stat {
-      text-align: center;
-      padding: 15px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      border-radius: 12px;
-    }
-
-    .modal-stat-number {
-      font-size: 1.3rem;
-      font-weight: 700;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .modal-stat-label {
-      font-size: 0.8rem;
-      opacity: 0.9;
-    }
-
-    .modal-actions {
+    .info-item {
       display: flex;
-      gap: 10px;
-      margin-top: 25px;
+      align-items: center;
+      font-size: 14px;
+      color: #555;
     }
 
-    .modal-btn {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
+    .info-icon {
+      width: 20px;
+      margin-right: 12px;
       text-align: center;
+      font-size: 16px;
     }
 
-    .modal-btn-primary {
-      background: linear-gradient(45deg, #667eea, #764ba2);
+    .info-text {
+      font-weight: 500;
+    }
+
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 20px 0;
+      padding: 0 53px;
+    }
+
+    .pagination a,
+    .pagination strong {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      text-decoration: none;
+      color: #666;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .pagination strong {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      font-weight: 600;
     }
 
-    .modal-btn-secondary {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
-      border: 1px solid rgba(102, 126, 234, 0.3);
+    .pagination a:hover {
+      background: #f0f0f0;
     }
 
-    .modal-btn:hover {
-      transform: translateY(-2px);
+    .pagination img {
+      width: 16px;
+      height: 16px;
     }
 
-    .modal-btn-primary:hover {
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
+    /* Board List */
+        .board-list {
+            list-style: none;
+        }
+        .board-list a{
+          text-decoration : none;
+        }
+        .board-item {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            align-items : center;
+            margin-left : 53px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width : 88%;
+        }
 
-    .modal-btn-secondary:hover {
-      background: rgba(102, 126, 234, 0.2);
-    }
+        .board-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
 
-    /* 반응형 디자인 */
-    @media (max-width: 768px) {
-      .header {
-        padding: 1rem;
-      }
-      
-      .nav {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .nav-menu {
-        gap: 1rem;
-      }
-      
-      .board-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-      
-      .board-card {
-        padding: 20px;
-        height: auto;
-        min-height: 450px;
-      }
-      
-      .page-header h1 {
-        font-size: 2rem;
-      }
-      
-      .board-stats {
-        padding: 10px;
-      }
-      
-      .stat-number {
-        font-size: 1rem;
+        .board-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .title-star-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* h3와 별점 사이 간격 */
+          }
+
+          .star {
+            font-size: 18px;
+            font-weight : 550;
+          }
+
+        .board-item-header input{ border-radius : 10px; border : 0.5px solid #444444;
+          width : 35px; height : 35px; font-size : 14px; background :rgba(255, 246, 246, 0.85);}
+
+        .vertical-line {
+          width: 1px;
+          height: 18px;
+          background-color: #ccc; /* 선 색상 */
+        }
+
+        .board-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .board-tag {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .board-meta {
+            display: flex;
+            gap: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .post-meta-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+          }
+
+        .onoff{
+          background: linear-gradient(135deg,rgb(255, 82, 82) 0%,rgb(255, 133, 239) 100%);
+          color : white;
+          border-radius : 5px;
+          font-weight : 500;
+          padding : 3px;
+          font-size : 12px;
+          width : 60px;
+          text-align : center;
+        }
+        .Tway{
+          background: linear-gradient(135deg, #667eea 0%,rgb(148, 89, 207) 100%);
+          color : white;
+          border-radius : 5px;
+          font-weight : 500;
+          padding : 3px 2px 3px 2px;
+          font-size : 12px;
+          width : 30px;
+          text-align : center;
+        }
+
+        .board-preview {
+            color: #666;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+
+        .modal {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.6);
+          z-index: 999;
+          display: flex; 
+          justify-content: center;
+          align-items: center;
+        }
+
+        .modal-content {
+          background: white;
+          padding: 30px;
+          border-radius: 15px;
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        
+        
+        /* 이미지 모달 스타일 추가 */
+       #imageModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        display: flex; 
       }
 
-      .modal {
-        padding: 20px;
-        margin: 20px;
-      }
+        #imageModal img {
+          max-width: 80%;
+          max-height: 80%;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
 
-      .modal-stats {
-        grid-template-columns: 1fr 1fr;
-      }
+        #prevBtn, #nextBtn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 3rem;
+          color: white;
+          background: none;
+          border: none;
+          cursor: pointer;
+          z-index: 2001;
+          padding: 0 20px;
+          user-select: none;
+        }
 
-      .modal-actions {
-        flex-direction: column;
-      }
-    }
+        #prevBtn:hover, #nextBtn:hover {
+          color: #667eea;
+        }
+
+        #prevBtn { left: 30px; }
+        #nextBtn { right: 30px; }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar-left, .sidebar-right {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .post-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+
+        }
   </style>
 </head>
 <body>
   <header class="header">
     <nav class="nav">
-      <div class="logo">PO-PIN</div>
+      <a href="#" class="logo"><img src="/static/images/landing/logo.png">PO-PIN</a>
       <ul class="nav-menu">
         <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community" style="color: #667eea;">커뮤니티</a></li>
+        <li><a href="/photocard/list/">포토카드</a></li>
+        <li><a href="#community">커뮤니티</a></li>
         <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
+        <li><a href="#mypage">마이페이지</a></li>
       </ul>
       <div class="auth-buttons">
-        <a href="#" class="btn btn-outline">로그인</a>
-        <a href="#" class="btn btn-primary">회원가입</a>
+        <a href="#login" class="btn btn-outline">로그인</a>
+        <a href="#signup" class="btn btn-primary">회원가입</a>
       </div>
     </nav>
   </header>
-
-  <div class="community-container">
-    <div class="page-header">
-      <h1>커뮤니티</h1>
-      <p>팬들과 함께 소통하고, 정보를 공유해보세요</p>
+  <div class="list">
+    <div class="menu">
+      <h3>거래 통계</h3>
+      <div class = "box">
+        <div class = "box1">
+          <p>📊 이번 주 거래량</p>
+          127건
+        </div>
+        <div class = "box2">
+          <p>⭐ 평균 평점</p>
+          4.6/5.0
+        </div>
+      </div>
+      </table>
     </div>
-
-    <div class="board-grid">
-      <!-- 교환후기 게시판 -->
-      <div class="board-card exchange-review">
-        <div class="board-header">
-          <div class="board-icon">⭐</div>
-          <div>
-            <div class="board-title">교환후기</div>
-            <div class="board-subtitle">Exchange Review</div>
-          </div>
-        </div>
-        <p class="board-description">
-          교환 후기를 남기고 평점으로 신뢰도를 쌓아보세요.
-        </p>
-        <ul class="board-features">
-          <li>글/이미지 첨부 가능</li>
-          <li>하자, 시간 준수 각각 별점 평가</li>
-          <li>대상자 기재 시스템</li>
-          <li>신뢰도 향상에 기여</li>
-        </ul>
-        <div class="board-stats">
-          <div class="stat-item">
-            <span class="stat-number">1,247</span>
-            <span class="stat-label">총 후기</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">4.8</span>
-            <span class="stat-label">평균 평점</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">32</span>
-            <span class="stat-label">오늘 작성</span>
-          </div>
-        </div>
-        <div class="board-action">
-          <a href="community_write_review.html" class="action-btn btn-write">후기 작성</a>
-          <a href="#" class="action-btn btn-view">후기 보기</a>
-        </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>교환/판매 후기</h3>
       </div>
+      <div class="line"></div>
+      <div class="search-filter-container">
+        <div class="search-toggle">
+          <button class="toggle-btn active" data-type="general">일반 검색</button>
+          <button class="toggle-btn" data-type="tag">태그 검색</button>
+        </div>
+        <input type="text" id="generalSearch" class="search-input" placeholder="제목, 작성자, 거래자 검색">
+        <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
 
-      <!-- 오프라인 나눔 게시판 -->
-      <div class="board-card offline-sharing">
-        <div class="board-header">
-          <div class="board-icon">🎁</div>
-          <div>
-            <div class="board-title">나눔</div>
-            <div class="board-subtitle">Offline Sharing</div>
-          </div>
-        </div>
-        <p class="board-description">
-          무료 나눔 이벤트를 개최하고 참여해보세요.
-        </p>
-        <ul class="board-features">
-          <li>일정 및 수령 장소/시간 설정</li>
-          <li>나눔 수량 및 팬 인증 수단</li>
-          <li>마감 버튼으로 간편 관리</li>
-          <li>이미지 첨부 가능</li>
-        </ul>
-        <div class="board-stats">
-          <div class="stat-item">
-            <span class="stat-number">89</span>
-            <span class="stat-label">진행중 나눔</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">543</span>
-            <span class="stat-label">완료된 나눔</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">15</span>
-            <span class="stat-label">오늘 등록</span>
-          </div>
-        </div>
-        <div class="board-action">
-        <a href="community_write_sharing.html" class="action-btn btn-write">나눔 작성</a>
-          <a href="#" class="action-btn btn-view">나눔 찾기</a>
-        </div>
+        <select id="ratingFilter" class="filter-select">
+          <option value="">전체 평점</option>
+          <option value="5">⭐ 5</option>
+          <option value="4">⭐ 4</option>
+          <option value="3">⭐ 3</option>
+          <option value="2">⭐ 2</option>
+          <option value="1">⭐ 1</option>
+        </select>
+        
+
+        <select id="sortFilter" class="filter-select">
+          <option value="latest">최신순</option>
+          <option value="rating">평점순</option>
+          <option value="views">조회순</option>
+        </select>
       </div>
+        <ul class="board-list">
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg">
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway chg">교환</span>
+                      <div class="board-item-header">
+                        <div class="title-star-wrapper">
+                          <h3 class="board-title">신속하고 깔끔한 교환이었어요!</h3>
+                          <div class="vertical-line"></div>
+                          <span class="star">⭐ 5</span>
+                        </div>
+                        <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#앨범</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#aespa</span>
+                        </div>
+                        <div class="board-preview">
+                            거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 124</span>
+                        </div>
+                    </li>
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg">
+                      <span class = "onoff on">온라인</span>
+                      <span class = "Tway chg">교환</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">좋은 교환 경험</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 3</span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="board-preview">
+                            처음 교환해보는 거였는데 상대방이 친절하게 안내해주셔서 수월했습니다. 다음에도 기회가 되면 교환하고 싶어요.
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ nct_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 89</span>
+                        </div>
+                    </li>
+                    <li class="board-item" data-images="/static/images/test/chgR1.jpg,/static/images/test/chgR2.jpg,/static/images/test/chgR3.jpg">
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">아쉬운 점이 있었지만 전반적으로 만족</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 5</span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#럭드</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#NCT WISH</span>
+                        </div>
+                        <div class="board-content">
+                            약속 시간에 조금 늦으셨지만 미리 연락주셨고, 포토카드 상태는 설명대로 좋았습니다. 다음엔 더 정확한 시간 약속 부탁드려요.
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ riize_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 156</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <span class = "onoff online">온라인</span>
+                        <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                           <div class="title-star-wrapper">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <div class="vertical-line"></div>
+                            <span class="star">⭐ 5 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#앨범</span>
+                            <span class="post-tag">#오프라인</span>
+                            <span class="post-tag">#aespa</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ happy_trader</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <span class = "onoff off">오프라인</span>
+                        <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                          <div class="title-star-wrapper">
+                            <h3 class="board-title">완벽한 거래였습니다!</h3>
+                            <div class="vertical-line"></div>
+                            <span class="star">⭐ 5 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#교환</span>
+                            <span class="post-tag">#오프라인</span>
+                            <span class="post-tag">#riize</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                        <span class = "onoff off">오프라인</span>
+                        <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">완벽한 거래였습니다!</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 4 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">#집</span>
+                            <span class="post-tag">#온라인</span>
+                            <span class="post-tag">#aespa</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                            <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                            <span style="font-weight : 500;">⇄</span>
+                            <span class = "partner_id">👨‍💼 poca_master</span>
+                            <span>👁️ 203</span>
+                        </div>
+                    </li>
+                    <li class="board-item">
+                      <span class = "onoff off">오프라인</span>
+                      <span class = "Tway buy">양도</span>
+                        <div class="board-item-header">
+                            <div class="title-star-wrapper">
+                              <h3 class="board-title">완벽한 거래였습니다!</h3>
+                              <div class="vertical-line"></div>
+                              <span class="star">⭐ 4 </span>
+                            </div>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                        </div>
+                        <div class="post-tags">
+                            <span class="post-tag">앨범</span>
+                            <span class="post-tag">오프라인</span>
+                            <span class="post-tag">aespa</span>
+                        </div>
+                        <div class="board-preview">
+                            시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+                        </div>
+                        <div class="board-meta">
+                          <span class = "writer_id">🙋‍♂️ kpop_lover</span>
+                          <span style="font-weight : 500;">⇄</span>
+                          <span class = "partner_id">👨‍💼 poca_master</span>
+                          <span>👁️ 203</span>
+                          
+                        </div>
+                    </li>
+                </ul>
+                
+                <!-- 페이지네이션을 게시글 바로 아래로 이동 -->
+                <div class="pagination">
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
+                
+                <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
+                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative;">
+                    <button class="close-btn" onclick="closePostModal()" style="position:absolute; top:15px; right:20px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostOnoff" class="onoff"></span>
+                      <span id="modalPostTway" class="Tway"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div id="modalPostTags" class="post-tags"></div>
+                    <p id="modalPostWriter">작성자</p>
+                    <p id="modalPostPartner">거래자</p>
+                    <p id="modalPostStar">별점</p>
+                    <p id="modalPostTrade">거래 유형</p>
+                    <p id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">설명 내용</p>
+                    <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
+                    </div>
+                  </div>
+                <div id="imageModal" class="modal" style="display:none;">
+                        <button id="prevBtn">‹</button>
+                        <img id="modalImage" />
+                        <button id="nextBtn">›</button>
+                      </div>
+                </div>
+    </div>
+  </div>
+  <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+  <script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modalImage = document.getElementById('modalImage');
+  const imageModal = document.getElementById('imageModal');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const postModal = document.getElementById("postModal");
+  const topBtn = document.getElementById("topBtn");
+  let currentImageIndex = 0;
+  let imageList = [];
 
-      <!-- 오프라인 대리구매 게시판 -->
-      <div class="board-card offline-proxy">
-        <div class="board-header">
-          <div class="board-icon">🛒</div>
-          <div>
-            <div class="board-title">대리구매</div>
-            <div class="board-subtitle">Proxy Purchase</div>
-          </div>
-        </div>
-        <p class="board-description">
-          대리 구매 서비스를 제공하거나 이용해보세요.
-        </p>
-        <ul class="board-features">
-          <li>수고비 및 굿즈 정보 입력</li>
-          <li>최대 구매 수량 설정</li>
-          <li>배송/현장수령 선택 가능</li>
-          <li>인원 마감 버튼 제공</li>
-        </ul>
-        <div class="board-stats">
-          <div class="stat-item">
-            <span class="stat-number">156</span>
-            <span class="stat-label">모집중</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">892</span>
-            <span class="stat-label">완료</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">23</span>
-            <span class="stat-label">오늘 등록</span>
-          </div>
-        </div>
-        <div class="board-action">
-          <a href="#" class="action-btn btn-write">대리구매 등록</a>
-          <a href="#" class="action-btn btn-view">대리구매 찾기</a>
-        </div>
-      </div>
+  // 후기 카드 클릭 시 모달 열기
+  document.querySelectorAll(".board-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      if (e.target.closest('.report-btn')) return;
 
-      <!-- 오프라인 현황 공유 게시판 -->
-      <div class="board-card offline-status">
-        <div class="board-header">
-          <div class="board-icon">📊</div>
-          <div>
-            <div class="board-title">오프라인 현황 공유</div>
-            <div class="board-subtitle">Status Sharing</div>
-          </div>
-        </div>
-        <p class="board-description">
-          MD 판매, 럭드 등 현장 상황을 실시간으로 공유해요.
-        </p>
-        <ul class="board-features">
-          <li>팝업/럭키드로우 일정 공유</li>
-          <li>현장 재고 및 품목별 구매 수량</li>
-          <li>현재 인원 수 실시간 업데이트</li>
-          <li>기타 유용한 현장 정보</li>
-        </ul>
-        <div class="board-stats">
-          <div class="stat-item">
-            <span class="stat-number">67</span>
-            <span class="stat-label">실시간 현황</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">234</span>
-            <span class="stat-label">총 현황</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">18</span>
-            <span class="stat-label">오늘 업데이트</span>
-          </div>
-        </div>
-        <div class="board-action">
-          <a href="#" class="action-btn btn-write">현황 공유</a>
-          <a href="#" class="action-btn btn-view">현황 보기</a>
-        </div>
-      </div>
+      const onoffText = item.querySelector(".onoff")?.textContent.trim();
+      const TwayText = item.querySelector(".Tway")?.textContent.trim();
+      const title = item.querySelector(".board-title")?.textContent.trim();
+      const star = item.querySelector(".star")?.textContent.trim();
+      const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
+      const writer = item.querySelector(".writer_id")?.textContent.trim();
+      const partner = item.querySelector(".partner_id")?.textContent.trim();
+      const images = item.getAttribute("data-images")?.split(",") || [];
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.trim());
 
-      <!-- 오프라인 동행 게시판 -->
-      <div class="board-card offline-companion">
-        <div class="board-header">
-          <div class="board-icon">👥</div>
-          <div>
-            <div class="board-title"> 동행</div>
-            <div class="board-subtitle">Companion</div>
-          </div>
-        </div>
-        <p class="board-description">
-          콘서트, 팬사인회 등에 함께 갈 동행을 찾아보세요.
-        </p>
-        <ul class="board-features">
-          <li>콘서트/팬사인회/공방 일정</li>
-          <li>성별, 나이 등 선호 조건</li>
-          <li>만날 시간 및 장소 설정</li>
-          <li>기타 사항 자유 작성</li>
-        </ul>
-        <div class="board-stats">
-          <div class="stat-item">
-            <span class="stat-number">78</span>
-            <span class="stat-label">모집중</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">456</span>
-            <span class="stat-label">매칭 완료</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-number">12</span>
-            <span class="stat-label">오늘 등록</span>
-          </div>
-        </div>
-        <div class="board-action">
-          <a href="#" class="action-btn btn-write">동행 모집</a>
-          <a href="#" class="action-btn btn-view">동행 찾기</a>
-        </div>
-      </div>
+      openPostModal(onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags);
+    });
+  });
 
-      <!-- 최근 커뮤니티 활동 카드 -->
-      <div class="board-card recent-activity">
-        <div class="board-header">
-          <div class="board-icon">🔥</div>
-          <div>
-            <div class="board-title">최근 커뮤니티 활동</div>
-            <div class="board-subtitle">Recent Activity</div>
-          </div>
-        </div>
-        <p class="board-description">
-          실시간 커뮤니티 활동을 한눈에 확인해보세요.
-        </p>
-        <ul class="activity-list">
-          <li class="activity-item" data-type="review" data-id="1">
-            <div class="activity-icon">⭐</div>
-            <div class="activity-content">
-              <div class="activity-title">윳냥이님과의 교환 후기 등록</div>
-              <div class="activity-meta">교환후기 · 별점 5.0</div>
-            </div>
-            <div class="activity-time">2분 전</div>
-          </li>
-                     <li class="activity-item" data-type="sharing" data-id="2">
-            <div class="activity-icon">🎁</div>
-            <div class="activity-content">
-              <div class="activity-title">홍대 리쿠 생일 카페 포카 나눔</div>
-              <div class="activity-meta">오프라인 나눔 · 15개 남음</div>
-            </div>
-            <div class="activity-time">15분 전</div>
-          </li>
-          <li class="activity-item" data-type="proxy" data-id="3">
-            <div class="activity-icon">🛒</div>
-            <div class="activity-content">
-              <div class="activity-title">위시 전시회 MD 대리구매</div>
-              <div class="activity-meta">인당 2개 제한</div>
-            </div>
-            <div class="activity-time">3시간 전</div>
-          </li>
-          <li class="activity-item" data-type="status" data-id="4">
-            <div class="activity-icon">📊</div>
-            <div class="activity-content">
-              <div class="activity-title">스테디 팝업 대기 50명 현황</div>
-              <div class="activity-meta">현황 공유 · 실시간</div>
-            </div>
-            <div class="activity-time">23분 전</div>
-          </li>
-          <li class="activity-item" data-type="companion" data-id="5">
-            <div class="activity-icon">👥</div>
-            <div class="activity-content">
-              <div class="activity-title">7/15 라이즈 콘서트 동행 구함</div>
-              <div class="activity-meta">동행 모집 · 여 · 20대</div>
-            </div>
-            <div class="activity-time">1시간 전</div>
-          </li>
+  function openPostModal(onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = []) {
+    const [writer, partner] = writerPartner.split(" ⇄ ");
+
+    const onoffEl = document.getElementById("modalPostOnoff");
+    const TwayEl = document.getElementById("modalPostTway");
+
+    onoffEl.textContent = onoffText;
+    onoffEl.className = "onoff";
+
+    TwayEl.textContent = TwayText;
+    TwayEl.className = "Tway";
+
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostWriter").textContent = `작성자 : ${writer}`;
+    document.getElementById("modalPostPartner").textContent = `거래자 : ${partner}`;
+    document.getElementById("modalPostStar").textContent = `평점 : ${star}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+
+    const tagsContainer = document.getElementById("modalPostTags");
+    tagsContainer.innerHTML = "";
+
+    if (tags.length > 0) {
+      tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "post-tag";
+        span.textContent = tag;
+        tagsContainer.appendChild(span);
+      });
+      tagsContainer.style.display = "flex";
+      tagsContainer.style.gap = "10px";
+    } else {
+      tagsContainer.style.display = "none";
+    }
+
+    const imageContainer = document.getElementById("modalPostImages");
+    imageContainer.innerHTML = "";
+
+    if (imageUrls.length > 0 && imageUrls[0] !== "") {
+      imageList = imageUrls.map(url => url.trim());
+      imageList.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "후기 이미지";
+        img.style.width = "100px";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
+        img.style.borderRadius = "10px";
+        imageContainer.appendChild(img);
+      });
+
+      imageContainer.style.display = "flex";
+
+      if (imageList.length > 1) {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+      } else {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+      }
+
+    } else {
+      imageContainer.style.display = "none";
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+    }
+
+    postModal.style.display = "flex";
+
+    topBtn.style.pointerEvents = 'none';
+    topBtn.style.opacity = '0.4';
+  }
+
+  // 모달 닫기
+  window.closePostModal = function () {
+    postModal.style.display = "none";
+    topBtn.style.pointerEvents = 'auto';
+    topBtn.style.opacity = '1';
+  }
+
+  // 바깥 클릭 시 닫기
+  window.addEventListener("click", function (event) {
+    if (event.target === postModal) {
+      closePostModal();
+    }
+  });
+
+  // 이미지 썸네일 클릭 시 전체보기
+  const imageContainer = document.getElementById('modalPostImages');
+  if (imageContainer) {
+    imageContainer.addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        const clickedSrc = e.target.src;
+        const images = Array.from(imageContainer.querySelectorAll('img'));
+        imageList = images.map(img => img.src);
+        currentImageIndex = imageList.indexOf(clickedSrc);
+        modalImage.src = clickedSrc;
+        imageModal.style.display = 'flex';
+      }
+    });
+  }
+
+  if (imageModal) {
+    imageModal.addEventListener('click', (e) => {
+      if (e.target === modalImage) return;
+      imageModal.style.display = 'none';
+    });
+
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
+
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentImageIndex = (currentImageIndex + 1) % imageList.length;
+      modalImage.src = imageList[currentImageIndex];
+    });
+  }
+
+  // Top 버튼 기능
+  window.addEventListener('scroll', function () {
+    if (window.pageYOffset > 300) {
+      topBtn.classList.add('show');
+    } else {
+      topBtn.classList.remove('show');
+    }
+  });
+
+  topBtn.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const generalInput = document.getElementById("generalSearch");
+  const tagInput = document.getElementById("tagSearch");
+  const ratingFilter = document.getElementById("ratingFilter");
+  const sortFilter = document.getElementById("sortFilter");
+  const toggleBtns = document.querySelectorAll(".toggle-btn");
+  const boardItems = Array.from(document.querySelectorAll(".board-item"));
+
+  // 🔁 토글 버튼 클릭 시 검색 입력창 전환
+  toggleBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      toggleBtns.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const type = btn.dataset.type;
+      if (type === "general") {
+        generalInput.style.display = "inline-block";
+        tagInput.style.display = "none";
+      } else {
+        generalInput.style.display = "none";
+        tagInput.style.display = "inline-block";
+      }
+      applyFilters(); // 즉시 반영
+    });
+  });
+
+  // 🎯 검색/필터/정렬 이벤트 바인딩
+  generalInput.addEventListener("input", applyFilters);
+  tagInput.addEventListener("input", applyFilters);
+  ratingFilter.addEventListener("change", applyFilters);
+  sortFilter.addEventListener("change", applyFilters);
+
+  function applyFilters() {
+    const searchMode = document.querySelector(".toggle-btn.active").dataset.type;
+    const keyword = (searchMode === "general" ? generalInput.value : tagInput.value).toLowerCase();
+    const selectedRating = ratingFilter.value;
+    const sortBy = sortFilter.value;
+
+    let filtered = boardItems.filter(item => {
+      const title = item.querySelector(".board-title")?.textContent.toLowerCase() || "";
+      const writer = item.querySelector(".writer_id")?.textContent.toLowerCase() || "";
+      const partner = item.querySelector(".partner_id")?.textContent.toLowerCase() || "";
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase());
+      const star = item.querySelector(".star")?.textContent.replace("⭐", "").trim();
+
+      // 검색 필터
+      let matchSearch = true;
+      if (keyword) {
+        if (searchMode === "general") {
+          matchSearch = title.includes(keyword) || writer.includes(keyword) || partner.includes(keyword);
+        } else {
+          matchSearch = tags.some(tag => tag.includes(keyword));
+        }
+      }
+
+      // 평점 필터
+      let matchRating = true;
+      if (selectedRating) {
+        matchRating = star === selectedRating;
+      }
+
+      return matchSearch && matchRating;
+    });
+
+    // 정렬
+    filtered.sort((a, b) => {
+      if (sortBy === "latest") {
+        return boardItems.indexOf(a) - boardItems.indexOf(b);
+      } else if (sortBy === "rating") {
+        const aRating = parseFloat(a.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        const bRating = parseFloat(b.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+        return bRating - aRating;
+      } else if (sortBy === "views") {
+        const aViews = parseInt(a.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+        const bViews = parseInt(b.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+        return bViews - aViews;
+      }
+    });
+
+    // 다시 그리기
+    const container = document.querySelector(".board-list");
+    container.innerHTML = "";
+    filtered.forEach(item => container.appendChild(item));
+  }
+});
+</script>
+</body>
+</html>
