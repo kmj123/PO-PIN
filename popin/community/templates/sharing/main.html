@@ -78,8 +78,8 @@
         <option value="기타">기타</option>
       </select>
       <select id = "sortFilter" class="filter-select">
+          <option value="">정렬</option>
           <option value="최신순">최신순</option>
-          <option value="평점순">평점순</option>
           <option value="조회순">조회순</option>
       </select>
     </div>
@@ -126,11 +126,11 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 wintercute</span>
-                      <span class="post-meta">1일 전</span>
-                  </div>
-                  <div class="participants">
+                      <span class="post-meta">2025-01-01</span>
+                    </div>
+                    <div class="participants">
                       <span>👁️ 67</span>
-                  </div>
+                    </div>
               </div>
           </div>
 
@@ -175,7 +175,7 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 쩗쭓짧</span>
-                      <span class="post-meta">5시간 전</span>
+                      <span class="post-meta">2025-02-28</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 28</span>
@@ -190,7 +190,10 @@
                       <span id="modalPostStype" class="stype"></span>
                     </div>
                     <h2 id="modalPostTitle">제목</h2>
-                    <div id="modalPostTags" style="margin: 10px 0;"></div>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostCreated"></p>
+                    </div>
                     <p id="modalPostDate">📅 날짜</p>
                     <p id="modalPostPlace">📍 장소</p>
                     <p id="modalPostCheck">✅ 인증수단</p>

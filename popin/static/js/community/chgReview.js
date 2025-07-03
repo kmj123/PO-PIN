@@ -29,14 +29,15 @@ item.addEventListener("click", (e) => {
     const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
     const writer = item.querySelector(".writer_id")?.textContent.trim();
     const partner = item.querySelector(".partner_id")?.textContent.trim();
+    const date = item.querySelector(".post-date")?.textContent.trim(); // 날짜 추가
     const images = item.getAttribute("data-images")?.split(",") || [];
     const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.trim());
 
-    openPostModal(artistText, onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags);
+    openPostModal(artistText, onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags, date);
 });
 });
 
-function openPostModal(artistText, onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = []) {
+function openPostModal(artistText, onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = [], date = "") {
 const [writer, partner] = writerPartner.split(" ⇄ ");
 
 const artistEl = document.getElementById("modalPostArtist");
@@ -57,6 +58,7 @@ document.getElementById("modalPostWriter").textContent = `${writer}`;
 document.getElementById("modalPostPartner").textContent = `🔄 ${partner}`;
 document.getElementById("modalPostStar").textContent = `${star}`;
 document.getElementById("modalPostDescription").textContent = desc;
+document.getElementById("modalPostDate").textContent = date; // 날짜 설정
 
 const tagsContainer = document.getElementById("modalPostTags");
 tagsContainer.innerHTML = "";
@@ -217,6 +219,66 @@ document.addEventListener("DOMContentLoaded", function () {
       const partner = item.querySelector(".partner_id")?.textContent.toLowerCase() || "";
       const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase());
       const star = item.querySelector(".star")?.textContent.replace("⭐", "").trim();
+
+      document.getElementById('sortFilter').addEventListener('change', function() {
+    const sortType = this.value;
+    sortPosts(sortType);
+});
+
+    // 정렬 필터 이벤트 리스너 추가
+document.getElementById('sortFilter').addEventListener('change', function() {
+    const sortType = this.value;
+    sortPosts(sortType);
+});
+
+// 게시글 정렬 함수
+function sortPosts(sortType) {
+    const boardList = document.querySelector('.board-list');
+    const boardItems = Array.from(boardList.querySelectorAll('.board-item'));
+    
+    let sortedItems;
+    
+    switch(sortType) {
+        case 'latest':
+            // 최신순 정렬 (날짜 기준 내림차순)
+            sortedItems = boardItems.sort((a, b) => {
+                const dateA = new Date(a.querySelector('.post-date').textContent);
+                const dateB = new Date(b.querySelector('.post-date').textContent);
+                return dateB - dateA; // 내림차순
+            });
+            break;
+            
+        case 'rating':
+            // 평점순 정렬 (별점 기준 내림차순)
+            sortedItems = boardItems.sort((a, b) => {
+                const ratingA = parseInt(a.querySelector('.star').textContent.match(/\d+/)[0]);
+                const ratingB = parseInt(b.querySelector('.star').textContent.match(/\d+/)[0]);
+                return ratingB - ratingA; // 내림차순
+            });
+            break;
+            
+        case 'views':
+            // 조회순 정렬 (조회수 기준 내림차순)
+            sortedItems = boardItems.sort((a, b) => {
+                const viewsA = parseInt(a.querySelector('.board-meta span:last-child').textContent.match(/\d+/)[0]);
+                const viewsB = parseInt(b.querySelector('.board-meta span:last-child').textContent.match(/\d+/)[0]);
+                return viewsB - viewsA; // 내림차순
+            });
+            break;
+            
+        case '':
+        default:
+            // 기본 정렬 (원래 순서 유지)
+            sortedItems = boardItems;
+            return; // 빈 값일 때는 정렬하지 않음
+    }
+    
+    // 기존 게시글들 제거
+    boardItems.forEach(item => item.remove());
+    
+    // 정렬된 게시글들 다시 추가
+    sortedItems.forEach(item => boardList.appendChild(item));
+}
 
       // 검색 필터
       let matchSearch = true;

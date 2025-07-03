@@ -63,14 +63,15 @@ const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.tri
 const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
 const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
 const desc = card.querySelector(".post-description")?.textContent.trim();
+const wdate = card.querySelector(".post-meta")?.textContent.trim(); // 날짜 추가
 const imgListStr = card.getAttribute("data-imgs") || "";
 const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
 
-openPostModal(artistText, regionText, title, date, place, people, desc, imgListStr, tags);
+openPostModal(artistText, regionText, title, date, place, people, desc, imgListStr, tags, wdate);
 });
 
 // 모달 열기
-function openPostModal(artistText, regionText, title, date, place, people, desc, imgListStr = "", tags = []) {
+function openPostModal(artistText, regionText, title, date, place, people, desc, imgListStr = "", tags = [], wdate = "") {
 const artistEl = document.getElementById("modalPostArtist");
 const regionEl = document.getElementById("modalPostRegion");
 
@@ -85,6 +86,7 @@ document.getElementById("modalPostDate").textContent = `📅 ${date}`;
 document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
 document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
 document.getElementById("modalPostDescription").textContent = desc;
+document.getElementById("modalPostCreated").textContent = wdate; // 날짜 설정
 
 // 태그 출력
 const tagsContainer = document.getElementById("modalPostTags");

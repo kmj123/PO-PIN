@@ -74,6 +74,7 @@
           <option value="마감임박">마감임박</option>
         </select>
         <select id = "sortFilter" class="filter-select">
+            <option value ="">정렬</option>
             <option value ="최신순">최신순</option>
             <option value = "조회순">조회순</option>
         </select>
@@ -128,10 +129,10 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 wintercute</span>
-                      <span class="post-meta">1일 전</span>
+                      <span class="post-meta">2024-07-05</span>
                   </div>
                   <div class="participants">
-                      <span>👁️ 67</span>
+                      <span>👁️ 100</span>
                       <span>💬 23</span>
                   </div>
               </div>
@@ -186,10 +187,10 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 쩗쭓짧</span>
-                      <span class="post-meta">5시간 전</span>
+                      <span class="post-meta">2025-07-05</span>
                   </div>
                   <div class="participants">
-                      <span>👁️ 28</span>
+                      <span>👁️ 150</span>
                       <span>💬 6</span>
                   </div>
               </div>
@@ -243,7 +244,7 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 쩗쭓짧</span>
-                      <span class="post-meta">5시간 전</span>
+                      <span class="post-meta">2025-07-07</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 28</span>
@@ -274,11 +275,14 @@
                   <span id="modalPostPtype" class="ptype"></span>
                 </div>
                 <h2 id="modalPostTitle"></h2>
-                <div id="modalPostTags" style="margin: 10px 0;"></div>
-                <p id="modalPostDate"></p>
-                <p id="modalPostPlace"></p>
-                <p id="modalPostPeople"></p>
-                <p id="modalPostMoney"></p>
+                <div class = "modall">
+                  <div id="modalPostTags" class="post-tags"></div>
+                  <p id="modalPostCreated"></p>
+                </div>
+                <p id="modalPostDate">📅 날짜</p>
+                <p id="modalPostPlace">📍 장소</p>
+                <p id="modalPostPeople">👥 인원</p>
+                <p id="modalPostMoney">💰 수고비</p>
                 <p id="modalPostDescription"></p>
                 <div id="modalPostImages" style="display:flex; gap:10px;"></div>
               </div>

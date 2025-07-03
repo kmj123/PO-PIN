@@ -17,6 +17,12 @@ const nextBtn = document.getElementById('nextBtn');
 const postModal = document.getElementById("postModal");
 const topBtn = document.getElementById('topBtn');
 
+// 페이지네이션 관련 변수 추가
+let currentPage = 1;
+let itemsPerPage = 2; // 페이지당 게시글 수
+let totalItems = 0;
+let filteredCards = [];
+
 // 이미지 썸네일 클릭 시 모달
 document.getElementById('modalPostImages').addEventListener('click', (e) => {
   if (e.target.tagName === 'IMG') {
@@ -47,7 +53,7 @@ nextBtn.addEventListener('click', (e) => {
 });
 
 // 모달 열기
-function openPostModal(artistText, ptypeText, title, date, place, people, money, desc, imgListStr = "", tags = []) {
+function openPostModal(artistText, ptypeText, title, date, place, people, money, desc, imgListStr = "", tags = [], wdate = "") {
   const artistEl = document.getElementById("modalPostArtist");
   const ptypeEl = document.getElementById("modalPostPtype");
 
@@ -63,6 +69,7 @@ function openPostModal(artistText, ptypeText, title, date, place, people, money,
   document.getElementById("modalPostPeople").textContent = `👥 ${people}`;
   document.getElementById("modalPostMoney").textContent = `💰 ${money}`;
   document.getElementById("modalPostDescription").textContent = desc;
+  document.getElementById("modalPostCreated").textContent = wdate; // 날짜 설정
 
   const tagsContainer = document.getElementById("modalPostTags");
   tagsContainer.innerHTML = "";
@@ -137,10 +144,11 @@ document.querySelectorAll(".post-card").forEach(card => {
     const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
     const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim();
     const desc = card.querySelector(".post-description")?.textContent.trim();
+    const wdate = card.querySelector(".post-meta")?.textContent.trim(); // 날짜 추가
     const imgListStr = card.getAttribute("data-imgs") || "";
     const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
 
-    openPostModal(artistText, ptypeText, title, date, place, people, money, desc, imgListStr, tags);
+    openPostModal(artistText, ptypeText, title, date, place, people, money, desc, imgListStr, tags, wdate);
   });
 });
 
@@ -157,13 +165,14 @@ topBtn.addEventListener('click', function () {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// 검색/필터 기능
+// 검색/필터/정렬/페이지네이션 기능
 document.addEventListener("DOMContentLoaded", function () {
   const toggleBtns = document.querySelectorAll(".toggle-btn");
   const generalInput = document.getElementById("generalSearch");
   const tagInput = document.getElementById("tagSearch");
   const regionFilter = document.getElementById("regionFilter");
   const stateFilter = document.getElementById("stateFilter");
+  const sortFilter = document.getElementById("sortFilter");
 
   toggleBtns.forEach(btn => {
     btn.addEventListener("click", function () {
@@ -188,14 +197,17 @@ document.addEventListener("DOMContentLoaded", function () {
   if (tagInput) tagInput.addEventListener("input", applyFilters);
   if (regionFilter) regionFilter.addEventListener("change", applyFilters);
   if (stateFilter) stateFilter.addEventListener("change", applyFilters);
+  if (sortFilter) sortFilter.addEventListener("change", applyFilters);
 
   function applyFilters() {
     const searchType = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
     const keyword = (searchType === "general" ? generalInput?.value : tagInput?.value || "").toLowerCase().trim();
     const selectedRegion = regionFilter?.value;
     const selectedState = stateFilter?.value;
+    const selectedSort = sortFilter?.value;
 
     const postCards = document.querySelectorAll(".post-card");
+    let visibleCards = [];
 
     postCards.forEach(card => {
       let showCard = true;
@@ -224,7 +236,181 @@ document.addEventListener("DOMContentLoaded", function () {
         showCard = state === selectedState.toLowerCase();
       }
 
-      card.style.display = showCard ? "block" : "none";
+      if (showCard) {
+        visibleCards.push(card);
+      }
     });
+
+    // 현재 페이지를 1로 리셋
+    currentPage = 1;
+
+    // 정렬 기능 적용
+    if (selectedSort && selectedSort !== "") {
+      applySorting(visibleCards, selectedSort);
+    } else {
+      filteredCards = visibleCards;
+      applyPagination();
+    }
   }
+
+  function applySorting(cards, sortType) {
+    // 날짜 파싱 함수
+    function parseDate(dateString) {
+      const parts = dateString.split('-');
+      if (parts.length === 3) {
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+      }
+      return new Date();
+    }
+
+    // 조회수 파싱 함수
+    function parseViews(viewString) {
+      const match = viewString.match(/(\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    }
+
+    // 카드 정렬
+    cards.sort((a, b) => {
+      if (sortType === "최신순") {
+        const dateA = parseDate(a.querySelector(".post-meta")?.textContent.trim() || "");
+        const dateB = parseDate(b.querySelector(".post-meta")?.textContent.trim() || "");
+        return dateB - dateA; // 최신순 (내림차순)
+      } else if (sortType === "조회순") {
+        const viewsA = parseViews(a.querySelector(".participants span:first-child")?.textContent.trim() || "");
+        const viewsB = parseViews(b.querySelector(".participants span:first-child")?.textContent.trim() || "");
+        return viewsB - viewsA; // 조회수 높은 순 (내림차순)
+      }
+      return 0;
+    });
+
+    // 정렬된 카드들을 전역 변수에 저장
+    filteredCards = cards;
+    
+    // 페이지네이션 적용
+    applyPagination();
+  }
+
+  // 페이지네이션 함수
+  function applyPagination() {
+    const container = document.querySelector(".postlist");
+    const allCards = document.querySelectorAll(".post-card");
+    
+    // 모든 카드 숨기기
+    allCards.forEach(card => {
+      card.style.display = "none";
+    });
+
+    // 총 아이템 수 업데이트
+    totalItems = filteredCards.length;
+    
+    // 현재 페이지에 표시할 카드들 계산
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const cardsToShow = filteredCards.slice(startIndex, endIndex);
+
+    // 현재 페이지 카드들만 표시하고 올바른 순서로 배치
+    cardsToShow.forEach((card, index) => {
+      card.style.display = "block";
+      // 페이지네이션 요소 바로 앞에 삽입
+      const pagination = container.querySelector(".pagination");
+      container.insertBefore(card, pagination);
+    });
+
+    // 페이지네이션 UI 업데이트
+    updatePaginationUI();
+  }
+
+  // 페이지네이션 UI 업데이트 함수
+  function updatePaginationUI() {
+    const pagination = document.querySelector(".pagination");
+    if (!pagination) return;
+
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    // 기존 페이지네이션 내용 제거
+    pagination.innerHTML = "";
+
+    // 첫 페이지 버튼
+    const firstBtn = document.createElement("a");
+    firstBtn.href = "#";
+    firstBtn.title = "첫 페이지";
+    firstBtn.textContent = "«";
+    firstBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (currentPage > 1) {
+        currentPage = 1;
+        applyPagination();
+      }
+    });
+    pagination.appendChild(firstBtn);
+
+    // 이전 페이지 버튼
+    const prevBtn = document.createElement("a");
+    prevBtn.href = "#";
+    prevBtn.title = "이전 페이지";
+    prevBtn.textContent = "‹";
+    prevBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        applyPagination();
+      }
+    });
+    pagination.appendChild(prevBtn);
+
+    // 페이지 번호 버튼들
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    for (let i = startPage; i <= endPage; i++) {
+      const pageBtn = document.createElement(i === currentPage ? "strong" : "a");
+      pageBtn.textContent = i;
+      
+      if (i === currentPage) {
+        // 현재 페이지는 strong 태그
+        pagination.appendChild(pageBtn);
+      } else {
+        // 다른 페이지는 링크
+        pageBtn.href = "#";
+        pageBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          currentPage = i;
+          applyPagination();
+        });
+        pagination.appendChild(pageBtn);
+      }
+    }
+
+    // 다음 페이지 버튼
+    const nextBtn = document.createElement("a");
+    nextBtn.href = "#";
+    nextBtn.title = "다음 페이지";
+    nextBtn.textContent = "›";
+    nextBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        applyPagination();
+      }
+    });
+    pagination.appendChild(nextBtn);
+
+    // 마지막 페이지 버튼
+    const lastBtn = document.createElement("a");
+    lastBtn.href = "#";
+    lastBtn.title = "마지막 페이지";
+    lastBtn.textContent = "»";
+    lastBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage = totalPages;
+        applyPagination();
+      }
+    });
+    pagination.appendChild(lastBtn);
+  }
+
+  // 초기 로드 시 모든 카드를 filteredCards에 설정
+  filteredCards = Array.from(document.querySelectorAll(".post-card"));
+  applyPagination();
 });
