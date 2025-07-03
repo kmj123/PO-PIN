@@ -697,7 +697,7 @@
     }
 
 </style>
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=16b7fa3fde4aebba2a5972919f45a4f1"></script>
+<script type="text/javascript" src="http://dapi.kakao.com/v2/maps/sdk.js?appkey=16b7fa3fde4aebba2a5972919f45a4f1"></script>
 <body>
 
 <div class="Upload-Container">
@@ -719,17 +719,17 @@
                 <!--제목-->
                 <div class="form-content">
                     <label for="title">게시글 제목 <span class="required">*</span></label>
-                    <input type="text" id="title" name="title" required placeholder="포토카드 제목을 입력해주세요">
+                    <input type="text" id="title" name="title" placeholder="포토카드 제목을 입력해주세요" required>
                 </div>
 
                 <!-- 이미지 업로드 -->
                 <div class="form-content">
                     <label>사진 <span class="required">*</span></label>
-                    <div class="file-upload-area" id="fileUploadArea">
+                    <div class="file-upload-area" id="fileUploadArea" >
                         <div class="file-upload-icon">📷</div>
                         <h4>이미지를 드래그하거나 클릭하여 업로드</h4>
                         <p>JPG, PNG, GIF 파일을 지원합니다 (최대 10MB)</p>
-                        <input type="file" name="image" id="imageInput" class="fileType" accept="image/*" style="display: none;" required>
+                        <input type="file" name="image" id="imageInput" class="fileType" accept="image/*" style="display: none;">
                     </div>
                     <div class="preview-container" id="previewContainer" style="display: none;">
                         <img id="previewImage" class="preview-image" alt="미리보기">
@@ -756,12 +756,13 @@
                         <div class="search-container">
                             <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
                             <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">전체</button>
-                            <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
-                            <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+                                <button type="button" class="filter-btn active" data-filter="all">전체</button>
+                                <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                                <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
                             </div>
                         </div>
 
+                        <!--아티스트 검색-->
                         <div class="search-noticeBox" id="searchNotice">
                             <span class="icon">🔍</span>
                             <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
@@ -769,8 +770,12 @@
                         </div>
                         
                         <div class="groups-container" id="groupsContainer"></div>
-                        <div id="hiddenInputsContainer"></div>
-                        <button id="completeBtn" class="btn btn-primary" onclick="completeMemberSelection()" type="button" >완료</button>
+                        <div id="hiddenInputsContainer">
+                        </div>
+                        <button id="completeBtn" class="btn btn-primary" type="button">완료</button>
+                        <input type="hidden" name="group_name" id="groupInput">
+                        <input type="hidden" name="member_name" id="groupInput">
+                        <input type="hidden" name="{{memberName}}" id="groupInput">
                     </div>
                 </div>
 
@@ -782,12 +787,11 @@
                         <input type="hidden" name="album_type" id="albumType">
                     </div>
                     <div class="album-type-selector">
-                        <button type="button" name="category" class="album-type-btn" data-type="album_name">앨범</button>
-                        <button type="button" name="category" class="album-type-btn" data-type="lucky_draw">특전</button>
-                        <button type="button" name="category" class="album-type-btn" data-type="unreleased">MD</button>
-                        <button type="button" name="category" class="album-type-btn" data-type="broadcasting">공방</button>
-                        <button type="button" name="category" class="album-type-btn" data-type="album_etc">기타</button>
+                        {%for value, label in category_choices%}
+                        <button type="button" class="album-type-btn" data-type="{{value}}">{{label}}</button>
+                        {%endfor%}
                     </div>
+                    <input type="hidden" name="category" id="categoryInput">
                 </div>
             <!--//기본정보섹션-->
 
@@ -798,11 +802,11 @@
                 <div class="form-content">
                     <label for="tradeType">거래 유형 선택 <span class="required">*</span></label>
                     <div class="trade-type-selector">
-                        <div class="trade-option" data-type="sale">
+                        <div class="trade-option" data-type="구매" name="trade_type">
                             <h4>💰 판매글</h4>
                             <p>가격을 설정하여 판매</p>
                         </div>
-                        <div class="trade-option" data-type="exchange">
+                        <div class="trade-option" data-type="교환" name="trade_type">
                             <h4>🔄 교환글</h4>
                             <p>다른 포토카드와 교환</p>
                         </div>
@@ -822,10 +826,10 @@
                     </div>
                     <br>
                     <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
-                    <select style="color: #757575;" id="photo_state">
-                        <option name="poca_state" value="best">상: 미개봉상태 하자 없음</option>
-                        <option name="poca_state" value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
-                        <option name="poca_state" value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
+                    <select style="color: #757575;" name="poca_state" required>
+                        <option value="best">상: 미개봉상태 하자 없음</option>
+                        <option value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
+                        <option value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
                     </select>
                 </div>
             </div>
@@ -841,16 +845,15 @@
                 </div>
 
                 <div class="form-content">
-                    <label for="tag" style="display:flex;"> 태그 <span class="required">*</span>
-                    </label>
+                    <label for="tag" style="display:flex;"> 태그 <span class="required">*</span></label>
                     <div class="tag-input-container">
-                        <input type="text" id="tagInput" name="tag" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
+                        <input type="text" id="tagInput" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
                         <div id="tagList" class="tag-list"></div>
                         <small class="tag-limit-msg">최대 5개까지 등록할 수 있어요.</small>
                     </div>
                 </div>
                 <!-- 선택된 태그를 서버에 전송할 hidden input -->
-                <input type="hidden" name="tags" id="hiddenTags">
+                <input type="hidden" name="tag" id="hiddenTags" >
             </div>
             <!--//상세설명섹션-->
 
@@ -864,8 +867,8 @@
                         <!--오프라인 장소-->
                         <button type="button" class="location-btn active" data-location="db">오프라인 장소</button>
                         <div id="dbLocationContainer" style="display:block;">
-                            <select name="db_location" id="dbLocation" required>
-                                <option value="">장소를 선택해주세요</option>
+                            <select name="place" id="dbLocation" required>
+                                <option value="location">장소를 선택해주세요</option>
                                 {% for key, label in place_choices %}
                                 <option value="{{ key }}">{{ label }}</option>
                                 {% endfor %}
@@ -875,12 +878,12 @@
                     <div class="location-toggle">
                         <!--내위치-->
                         <div class="current-map">
-                            <button type="button" class="location-btn" data-location="current">내 위치</button>
+                            <div class="location-info" id="locationInfo">
+                                <button type="button" class="location-btn" data-location="current">내 위치</button>
+                                * 내위치에서 거래를 원할경우 선택해주세요
+                            </div>
                             <div id="mapContainer">
-                                <div class="location-info" id="locationInfo">
-                                    지도를 클릭하여 거래 장소를 선택해주세요
-                                </div>
-                                <div id="map" style="width:100%;height:350px;"></div>
+                                <div id="map" style="width:100%;height:350px;" name="available_at"></div>
                             </div>
                         </div>
                     </div>
@@ -912,11 +915,10 @@
                             lon = position.coords.longitude; // 경도
                         
                         var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                            message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
+                            message = '<div style="padding:3px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
                         
                         // 마커와 인포윈도우를 표시합니다
-                        displayMarker(locPosition, message);
-                            
+                        displayMarker(locPosition, message,lat,lon);
                     });
                     
                 } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
@@ -951,20 +953,41 @@
                     // 지도 중심좌표를 접속위치로 변경합니다
                     map.setCenter(locPosition);      
                 }    
+
+                kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                    const latlng = mouseEvent.latLng;
+
+                    selectedLat = latlng.getLat();
+                    selectedLng = latlng.getLng();
+
+                    // 마커 표시
+                    const marker = new kakao.maps.Marker({
+                        position: latlng,
+                        map: map
+                    });
+
+                    // 인포윈도우로 위치 안내
+                    const infowindow = new kakao.maps.InfoWindow({
+                        content: '<div style="padding:5px;">선택한 위치입니다</div>'
+                    });
+                    infowindow.open(map, marker);
+
+                    // 위경도 값 input에 저장
+                    document.getElementById('latitude').value = selectedLat;
+                    document.getElementById('longitude').value = selectedLng;
+
+                    // 텍스트 안내 변경
+                    document.getElementById('locationInfo').textContent = '선택한 위치: ' + selectedLat.toFixed(5) + ', ' + selectedLng.toFixed(5);
+                });
             </script>
             <!--//Current Location-->
-            <script>
-                function saveBtn(){
-                    UploadFrm.submit();
-                }
-            </script>
 
             <!-- 버튼 -->
             <div class="button-container">
                 <button type="button" class="btn btn-secondary" onclick="history.back()">
                     취소하기
                 </button>
-                <button type="submit" class="btn btn-primary" onclick="saveBtn()">
+                <button type="submit" class="btn btn-primary">
                     등록하기
                 </button>
             </div>
@@ -1024,13 +1047,18 @@
     
     // 앨범 타입 선택
     const albumtypeBtns = document.querySelectorAll('.album-type-btn');
-    const albumTypeInput = document.getElementById('albumType');
+    const albumTypeInput = document.getElementById('categoryInput');
 
     albumtypeBtns.forEach(btn => {
         btn.addEventListener('click',()=>{
             albumtypeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             albumTypeInput.value = btn.dataset.type;
+
+            
+            // 한글 텍스트 저장
+            const koreanLabel = btn.textContent.trim();  
+            albumTypeInput.value = koreanLabel; // 예: "앨범", "특전" 등
         });
     });
 
@@ -1311,14 +1339,11 @@
             } else {
                 completeBtn.disabled = false;
             }
+            console.log(selectedMembers)
         }
 
         // 멤버 선택 완료 함수
         function completeMemberSelection() {
-            if (selectedMembers.size === 0) {
-                return;
-            }
-
             // hidden input 생성
             hiddenInputsContainer.innerHTML = '';
             
@@ -1359,6 +1384,7 @@
                 searchNotice.innerHTML = `
                     <span style="color: #667eea; font-weight: 600;">${selectedList}</span>
                 `;
+                console.log(selectedList);
             }
         }
 
@@ -1399,12 +1425,12 @@
 
 
         // 폼제출 검증
-        document.getElementById('uploadForm').addEventListener('submit',function(e){
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
             const locationType = document.getElementById('dbLocation').value;
 
             if(!locationType){
                 e.preventDefault();
-                alert("위치 선택 방법을 선택해주세요!");
+                alert("오프라인 장소를 선택해주세요!");
                 return false;
             }
             if(locationType === 'current' && (!selectedLat || !selectedLng)) {
@@ -1413,21 +1439,31 @@
                 return false;
             }
 
+            const place = document.getElementById('dbLocation').value;
+            if (locationType === 'db' && (!place || place === 'location')) {
+                e.preventDefault();
+                alert("거래 장소를 선택해주세요!");
+                return false;
+            }
+
             const tradeType = document.getElementById('tradeType').value;
-            if (!tradeType){
+            if (!tradeType) {
                 e.preventDefault();
                 alert('거래 유형을 선택해주세요!');
                 return false;
             }
 
-            if (tradeType === 'sale' && !document.getElementById('price').value){
-                e.preventDefault();
-                alert('판매가격을 입력해주세요!');
-                return false;
+            if (tradeType === 'sale') {
+                const price = document.getElementById('price').value;
+                if (!price) {
+                    e.preventDefault();
+                    alert('판매가격을 입력해주세요!');
+                    return false;
+                }
             }
 
-            const photoState = document.getElementById('photo_state');
-            if(!photoState){
+            const photoState = document.querySelector('select[name="poca_state"]');
+            if (!photoState || !photoState.value) {
                 e.preventDefault();
                 alert('포토카드 상태를 선택해주세요!');
                 return false;
