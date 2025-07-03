@@ -720,7 +720,7 @@
                 <!--제목-->
                 <div class="form-content">
                     <label for="title">게시글 제목 <span class="required">*</span></label>
-                    <input type="text" id="title" name="title" placeholder="포토카드 제목을 입력해주세요" required>
+                    <input type="text" id="title" name="title" placeholder="포토카드 제목을 입력해주세요">
                 </div>
 
                 <!-- 이미지 업로드 -->
@@ -744,7 +744,7 @@
                         <div class="member-grid">
                             <div class="search-notice" id="searchNotice">
                                 <img src="/static/images/search.svg/">
-                                <span class="artist-search">아티스트 검색</span>
+                                <span class="artist-search" name="member">아티스트 검색</span>
                             </div>
                         </div>
                     </div>
@@ -771,12 +771,8 @@
                         </div>
                         
                         <div class="groups-container" id="groupsContainer"></div>
-                        <div id="hiddenInputsContainer">
-                        </div>
+                        <div id="hiddenInputsContainer"></div>
                         <button id="completeBtn" class="btn btn-primary" type="button">완료</button>
-                        <input type="hidden" name="group_name" id="groupInput">
-                        <input type="hidden" name="member_name" id="groupInput">
-                        <input type="hidden" name="{{memberName}}" id="groupInput">
                     </div>
                 </div>
 
@@ -812,7 +808,7 @@
                             <p>다른 포토카드와 교환</p>
                         </div>
                     </div>
-                    <input type="hidden" name="trade_type" id="tradeType" required>
+                    <input type="hidden" name="trade_type" id="tradeType">
                     
                     <div class="price-input" id="priceInput">
                         <label for="price">가격 (원) <span class="required">*</span></label>
@@ -827,7 +823,7 @@
                     </div>
                     <br>
                     <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
-                    <select style="color: #757575;" name="poca_state" required>
+                    <select style="color: #757575;" name="poca_state">
                         <option value="best">상: 미개봉상태 하자 없음</option>
                         <option value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
                         <option value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
@@ -868,7 +864,7 @@
                         <!--오프라인 장소-->
                         <button type="button" class="location-btn active" data-location="db">오프라인 장소</button>
                         <div id="dbLocationContainer" style="display:block;">
-                            <select name="place" id="dbLocation" required>
+                            <select name="place" id="dbLocation">
                                 <option value="location">장소를 선택해주세요</option>
                                 {% for key, label in place_choices %}
                                 <option value="{{ key }}">{{ label }}</option>
@@ -1377,15 +1373,23 @@
             const searchNotice = document.querySelector('#searchNotice');
             
             if (selectedMembers.size > 0) {
-                const selectedList = Array.from(selectedMembers).map(item => {
+                /*const selectedList = Array.from(selectedMembers).map(item => {
                     const [group, member] = item.split('-');
                     return `${group} - ${member}`;
                 }).join(', ');
                 
                 searchNotice.innerHTML = `
-                    <span style="color: #667eea; font-weight: 600;">${selectedList}</span>
+                    <span name="member" style="color: #667eea; font-weight: 600; ">${selectedMembers}</span>
                 `;
-                console.log(selectedList);
+                console.log(selectedMembers);*/
+
+                const selectedList = Array.from(selectedMembers).map(item => {
+                    const [group, member] = item.split('-');
+                    searchNotice.innerHTML = `
+                    <input type="text" name="member" id="member" value="${group} - ${member}" style="color: #667eea; font-weight: 600; border: none;">
+                    `;
+                    console.log(item);
+                })
             }
         }
 
@@ -1407,7 +1411,7 @@
                         selectedMembers.add(key);
                         e.target.classList.add('selected');
                     } else {
-                        alert('최대 2명까지만 선택할 수 있습니다.');
+                        alert('최대 1명까지만 선택할 수 있습니다.');
                         return;
                     }
                 }
@@ -1425,50 +1429,87 @@
         updateSelectedDisplay();
 
 
-        // 폼제출 검증
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            const locationType = document.getElementById('dbLocation').value;
-
-            if(!locationType){
-                e.preventDefault();
-                alert("오프라인 장소를 선택해주세요!");
-                return false;
-            }
-            if(locationType === 'current' && (!selectedLat || !selectedLng)) {
-                e.preventDefault();
-                alert('지도에서 거래장소를 선택해주세요!');
-                return false;
-            }
-
+            const title = document.getElementById('title').value.trim();
+            const imageInput = document.getElementById('imageInput');
+            const albumInput = document.getElementById('albumInput').value.trim();
+            const albumType = document.getElementById('categoryInput').value;
+            const tradeType = document.getElementById('tradeType').value.trim();
+            const pocaStateSelect = document.querySelector('select[name="poca_state"]');
+            const pocaState = pocaStateSelect ? pocaStateSelect.value : '';
+            const locationType = document.getElementById('locationType').value.trim();
             const place = document.getElementById('dbLocation').value;
-            if (locationType === 'db' && (!place || place === 'location')) {
+            const latitude = document.getElementById('latitude').value.trim();
+            const longitude = document.getElementById('longitude').value.trim();
+        
+            if (!title) {
                 e.preventDefault();
-                alert("거래 장소를 선택해주세요!");
+                alert("제목을 입력해주세요!");
                 return false;
             }
-
-            const tradeType = document.getElementById('tradeType').value;
+        
+            if (!imageInput.files || imageInput.files.length === 0) {
+                e.preventDefault();
+                alert("이미지를 넣어주세요!");
+                return false;
+            }
+        
+            if (!albumInput) {
+                e.preventDefault();
+                alert("앨범명을 입력해주세요!");
+                return false;
+            }
+        
+            if (!albumType) {
+                e.preventDefault();
+                alert("앨범 타입을 선택해주세요!");
+                return false;
+            }
+        
             if (!tradeType) {
                 e.preventDefault();
-                alert('거래 유형을 선택해주세요!');
+                alert("거래 유형을 선택해주세요!");
                 return false;
             }
-
-            if (tradeType === 'sale') {
-                const price = document.getElementById('price').value;
-                if (!price) {
+        
+            if (tradeType === '구매') {
+                const price = document.getElementById('price').value.trim();
+                if (!price || Number(price) < 0) {
                     e.preventDefault();
-                    alert('판매가격을 입력해주세요!');
+                    alert("판매가격을 입력해주세요!");
                     return false;
                 }
             }
-
-            const photoState = document.querySelector('select[name="poca_state"]');
-            if (!photoState || !photoState.value) {
+        
+            if (!pocaState) {
                 e.preventDefault();
-                alert('포토카드 상태를 선택해주세요!');
+                alert("포토카드 상태를 선택해주세요!");
                 return false;
             }
+        
+            if (!locationType) {
+                e.preventDefault();
+                alert("거래 위치를 선택해주세요!");
+                return false;
+            }
+        
+            if (locationType === 'current') {
+                if (!latitude || !longitude) {
+                    e.preventDefault();
+                    alert("지도에서 거래장소를 선택해주세요!");
+                    return false;
+                }
+            }
+        
+            if (locationType === 'db') {
+                if (!place || place === 'location') {
+                    e.preventDefault();
+                    alert("거래 장소를 선택해주세요!");
+                    return false;
+                }
+            }
+        
+            // 여기까지 오면 검증 통과
         });
     });
 

@@ -104,8 +104,8 @@ def write(request):
             album=request.POST.get('album')
             
             member=request.POST.get('member')
-            # group_name, member_name = member.split(' - ')
-            # member_obj = Member.objects.get(name=member_name, group__name=group_name)
+            group_name, member_name = member.split(' - ')
+            member_obj = Member.objects.get(name=member_name, group__name=group_name)
             
             poca_state=request.POST.get('poca_state')
             # 태그 문자리스트로 get
@@ -130,7 +130,7 @@ def write(request):
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
             print(title, image,seller,category, album, member, poca_state,tag,trade_type,place,sell_state,available_at)
             # redirect로 이동
