@@ -70,12 +70,50 @@
 
     .page-notice a{text-decoration: none;}
 
+    /* 애니메이션 효과 */
+    @keyframes slideUp {
+        0% {
+            transform: translateY(100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideDown {
+        0% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+    }
+
     .notice-content{
         display: flex;
         align-items: center;
+        position: relative;
+        overflow: hidden;
+        height: 50px;
     }
 
     .notice-content a{color:#333;}
+
+    .noticetitle {
+        animation: slideUp 0.5s forwards;
+        width:905px;
+        white-space: nowrap;         /* 한 줄로 제한 */
+        overflow: hidden;            /* 넘치는 부분 숨기기 */
+        text-overflow: ellipsis;     /* 넘치는 부분에 말줄임표(...) 표시 */
+    }
+
+    .noticetitle-out {
+        animation: slideDown 0.5s forwards;
+    }
 
     .noticetag{
         color: red;
@@ -284,14 +322,20 @@
 
         .content-area {
             max-width: 100%;
+            padding:10px;
         }
+
+        .page-notice {padding:5px;}
+        .noticetag {margin:0;}
+        .noticetitle {width:220px;}
+        .noticeall {width:69px;}
     }
     
     @media (max-width: 480px) {
         .header {
             padding: 1rem;
         }
-        
+
         .logo {
             font-size: 1.5rem;
         }
@@ -308,11 +352,55 @@
                 <div class="page" id="home">
                     <div class="page-header">
                         <div class="page-notice">
-                            <div class="notice-content"><div class="noticetag">NOTICE</div><a href="#notice" class="noticetitle">올바른 포카교환 생활</a></div>
+                            <div class="notice-content">
+                                <div class="noticetag">NOTICE</div>
+                                <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
+                            </div>
                             <a href="#noticeAll" class="noticeall">전체보기</a>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    // 공지사항 제목 애니메이션
+                    const noticeContent = document.querySelector('.notice-content');
+                    const noticeTitle = document.querySelector('.noticetitle');
+                    const titles = [
+                        "올바른 포카교환 생활",
+                        "말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목",
+                        "포카 교환은 즐거운 경험입니다",
+                        "새로운 포토카드 교환 기회!",
+                    ];
+                    let currentIndex = 0;
+
+                    // 제목 변경 함수
+                    function changeTitle() {
+                        const currentTitle = noticeTitle;
+
+                        // 기존 제목을 애니메이션으로 내리기
+                        currentTitle.classList.add('noticetitle-out');
+
+                        // 애니메이션 종료 후 제목 변경
+                        setTimeout(() => {
+                            // 제목을 새로운 텍스트로 업데이트
+                            noticeTitle.textContent = titles[currentIndex];
+                            currentIndex = (currentIndex + 1) % titles.length;
+
+                            // 새 제목을 애니메이션으로 올리기
+                            currentTitle.classList.remove('noticetitle-out');
+                            currentTitle.classList.add('noticetitle');
+
+                        }, 500);  // 애니메이션이 끝날 때까지 기다림 (500ms)
+                    }
+
+                    // 5초마다 제목을 변경
+                    setInterval(changeTitle, 5000);
+
+                    // 페이지가 로드될 때 첫 번째 제목을 초기화
+                    window.onload = () => {
+                        changeTitle();  // 첫 번째 제목 표시
+                    };
+                </script>
                     
                 <div class="quick-stats">
                     <div class="stat-card">
