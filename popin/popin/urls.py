@@ -19,6 +19,7 @@ urlpatterns = [
     path('sharing/', include('sharing.urls')),
     path('status/', include('status.urls')),
     path('community/', include('community.urls')),
+    path('pocadeco/', include('pocadeco.urls')),
     path("api/idols/", include("idols.urls")),
 ]
 
