@@ -10,385 +10,385 @@
     <title>{%block title%}포토카드 업로드{%endblock%}</title>
 </head>
 <style>
-.Upload-Container {
-    max-width: 900px;
-    margin: 20px auto;
-    background: rgba(2555,255,255,0.95);
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    background-filter: blur(10px);
-    overflow: hidden;
-}
-.Upload-header {
-    background: linear-gradient(153deg, #bbc8ff, #9c42a0);
-    padding: 30px;
-    text-align: center;
-    color: #ffff;
-    margin-bottom: 29px;
-}
-.Upload-header h2{
-    font-size:2.5rem;
-    margin-bottom:10px;
-    font-weight: 700;
-}
-.Upload-header p{
-    opacity: 0.9;
-    font-size: 1rem;
-}
-.Upload-Form{
-    padding: 20px;
-}
-.form-section h3{
-    margin-bottom: 10px;
-}
-.form-content{
-    margin-bottom: 25px;
-}
+    .Upload-Container {
+        max-width: 900px;
+        margin: 20px auto;
+        background: rgba(2555,255,255,0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        background-filter: blur(10px);
+        overflow: hidden;
+    }
+    .Upload-header {
+        background: linear-gradient(153deg, #bbc8ff, #9c42a0);
+        padding: 30px;
+        text-align: center;
+        color: #ffff;
+        margin-bottom: 29px;
+    }
+    .Upload-header h2{
+        font-size:2.5rem;
+        margin-bottom:10px;
+        font-weight: 700;
+    }
+    .Upload-header p{
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+    .Upload-Form{
+        padding: 20px;
+    }
+    .form-section h3{
+        margin-bottom: 10px;
+    }
+    .form-content{
+        margin-bottom: 25px;
+    }
 
-label {
-    display: block;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 8px;
-    font-size: 1.2em;
-}
+    label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 1.2em;
+    }
 
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-    width: 100%;
-    padding: 15px;
-    border: 2px solid #e1e5e9;
-    border-radius: 12px;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background: white;
-}
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: white;
+    }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    transform: translateY(-2px);
-}
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-2px);
+    }
 
-textarea {
-    min-height: 120px;
-    resize: vertical;
-}
+    textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
 
-.file-upload-area {
-    border: 3px dashed #e1e5e9;
-    border-radius: 15px;
-    padding: 40px;
-    text-align: center;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    background: #f8f9fa;
-}
+    .file-upload-area {
+        border: 3px dashed #e1e5e9;
+        border-radius: 15px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: #f8f9fa;
+    }
 
-.file-upload-area:hover,
-.file-upload-area.dragover {
-    border-color: #667eea;
-    background: #f0f4ff;
-    transform: scale(1.02);
-}
+    .file-upload-area:hover,
+    .file-upload-area.dragover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: scale(1.02);
+    }
 
-.file-upload-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 15px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-}
+    .file-upload-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+    }
 
-.preview-container {
-    margin-top: 20px;
-    text-align: center;
-}
+    .preview-container {
+        margin-top: 20px;
+        text-align: center;
+    }
 
-.preview-image {
-    max-width: 250px;
-    max-height: 300px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    object-fit: cover;
-}
+    .preview-image {
+        max-width: 250px;
+        max-height: 300px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        object-fit: cover;
+    }
 
-.trade-type-selector {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 10px;
-}
-
-.trade-option {
-    padding: 20px;
-    border: 2px solid #e1e5e9;
-    border-radius: 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.trade-option:hover {
-    border-color: #667eea;
-    transform: translateY(-2px);
-}
-
-.trade-option.active {
-    border-color: #667eea;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.trade-option h4 {
-    margin-bottom: 8px;
-    font-size: 1.1em;
-}
-
-.trade-option p {
-    font-size: 0.9em;
-    opacity: 0.8;
-}
-
-.price-input {
-    display: none;
-    margin-top: 15px;
-}
-
-.price-input.active {
-    display: block;
-}
-
-.location-options {
-    margin-top: 15px;
-}
-
-.location-toggle {
-    display: block;
-    gap: 15px;
-    margin-bottom: 15px;
-}
-
-.location-btn {
-    padding: 10px 20px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.location-btn.active {
-    border-color: #667eea;
-    background: #667eea;
-    color: white;
-    margin-bottom: 3.5px;
-}
-
-.map-container {
-    height: 300px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 2px solid #e1e5e9;
-    margin-top: 10px;
-    display: none;
-}
-
-.map-container.active {
-    display: block;
-}
-
-.location-info {
-    background: #f8f9fa;
-    padding: 0.5rem;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #666;
-}
-
-.button-container {
-    display: flex;
-    gap: 20px;
-    margin-top: 40px;
-    justify-content: center;
-}
-
-.btn {
-    padding: 18px 40px;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 150px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-}
-
-.btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
-}
-
-.required {
-    color: #ff4757;
-}
-
-.form-section {
-    background: #f8f9fa;
-    padding: 5px;
-    border-radius: 12px;
-    margin-bottom: 30px;
-}
-
-.section-title {
-    font-size: 1.3em;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #e1e5e9;
-}
-
-.member-grid {
-    display: block;
-    grid-template-columns: 1fr 2fr;
-    gap: 15px;
-    align-items: end;
-}
-
-.album-type-selector {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.album-type-btn {
-    padding: 8px 16px;
-    border: 2px solid #e1e5e9;
-    border-radius: 8px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 14px;
-}
-
-.album-type-btn.active {
-    border-color: #667eea;
-    background: #667eea;
-    color: white;
-}
-
-.album-input {
-    margin-top: 15px;
-}
-
-.blocked-notice {
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    color: #856404;
-    display: none;
-}
-
-.blocked-notice.active {
-    display: block;
-}
-
-@media (max-width: 768px) {
     .trade-type-selector {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .trade-option {
+        padding: 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .trade-option:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+
+    .trade-option.active {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .trade-option h4 {
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+
+    .trade-option p {
+        font-size: 0.9em;
+        opacity: 0.8;
+    }
+
+    .price-input {
+        display: none;
+        margin-top: 15px;
+    }
+
+    .price-input.active {
+        display: block;
+    }
+
+    .location-options {
+        margin-top: 15px;
+    }
+
+    .location-toggle {
+        display: block;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+
+    .location-btn {
+        padding: 10px 20px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .location-btn.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+        margin-bottom: 3.5px;
+    }
+
+    .map-container {
+        height: 300px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid #e1e5e9;
+        margin-top: 10px;
+        display: none;
+    }
+
+    .map-container.active {
+        display: block;
+    }
+
+    .location-info {
+        background: #f8f9fa;
+        padding: 0.5rem;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #666;
     }
 
     .button-container {
-        flex-direction: column;
-        align-items: center;
+        display: flex;
+        gap: 20px;
+        margin-top: 40px;
+        justify-content: center;
     }
 
-    .form-container {
-        padding: 20px;
+    .btn {
+        padding: 18px 40px;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
     }
 
-    .header h1 {
-        font-size: 2em;
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    .required {
+        color: #ff4757;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 5px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e1e5e9;
     }
 
     .member-grid {
-        grid-template-columns: 1fr;
+        display: block;
+        grid-template-columns: 1fr 2fr;
+        gap: 15px;
+        align-items: end;
     }
-}
 
-.search-notice{
-    display: flex;
-    background-color: #ffff;
-    width: 100%;
-    padding: 7px;
-    border: 2px solid #e1e5e9;
-    border-radius: 12px;
-}
+    .album-type-selector {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
 
-.search-notice span{
-    color: #6f767d;
-}
-.modal{
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
+    .album-type-btn {
+        padding: 8px 16px;
+        border: 2px solid #e1e5e9;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+    }
 
-.modal-content{
-    border-radius: 8px;
-    width: 90%;
-    max-width: 850px;
-    background-color: #ffff;
-    FONT-WEIGHT: 200;
-    margin: 20px auto;
-    padding: 20px;
-}
+    .album-type-btn.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+    }
 
-.close {
-  position: block;
-  top: 10px;
-  right: 16px;
-  font-size: 28px;
-  cursor: pointer;
-}
+    .album-input {
+        margin-top: 15px;
+    }
 
-{% comment %} 검색css {% endcomment %}
+    .blocked-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+        color: #856404;
+        display: none;
+    }
+
+    .blocked-notice.active {
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .trade-type-selector {
+            grid-template-columns: 1fr;
+        }
+
+        .button-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-container {
+            padding: 20px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+        }
+
+        .member-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .search-notice{
+        display: flex;
+        background-color: #ffff;
+        width: 100%;
+        padding: 7px;
+        border: 2px solid #e1e5e9;
+        border-radius: 12px;
+    }
+
+    .search-notice span{
+        color: #6f767d;
+    }
+    .modal{
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content{
+        border-radius: 8px;
+        width: 90%;
+        max-width: 850px;
+        background-color: #ffff;
+        FONT-WEIGHT: 200;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .close {
+    position: block;
+    top: 10px;
+    right: 16px;
+    font-size: 28px;
+    cursor: pointer;
+    }
+    /*검색css*/
+
     .search-container {
       margin-bottom: 1.5rem;
       display: flex;
@@ -710,7 +710,7 @@ textarea {
 
     <!--Upload-Form-->
     <div class="Upload-Form">
-        <form action="/photocard/write/" method="POST" enctype='multipart/form-data' id="uploadForm">
+        <form action="{%url 'photocard:write' %}" method="POST" name="UploadFrm" enctype='multipart/form-data' id="uploadForm">
         {% csrf_token %}
             <!-- 기본정보 섹션 -->
             <div class="form-section">
@@ -782,11 +782,11 @@ textarea {
                         <input type="hidden" name="album_type" id="albumType">
                     </div>
                     <div class="album-type-selector">
-                        <button type="button" id="category" class="album-type-btn" data-type="album_name">앨범</button>
-                        <button type="button" id="category" class="album-type-btn" data-type="lucky_draw">특전</button>
-                        <button type="button" id="category" class="album-type-btn" data-type="unreleased">MD</button>
-                        <button type="button" id="category" class="album-type-btn" data-type="broadcasting">공방</button>
-                        <button type="button" id="category" class="album-type-btn" data-type="album_etc">기타</button>
+                        <button type="button" name="category" class="album-type-btn" data-type="album_name">앨범</button>
+                        <button type="button" name="category" class="album-type-btn" data-type="lucky_draw">특전</button>
+                        <button type="button" name="category" class="album-type-btn" data-type="unreleased">MD</button>
+                        <button type="button" name="category" class="album-type-btn" data-type="broadcasting">공방</button>
+                        <button type="button" name="category" class="album-type-btn" data-type="album_etc">기타</button>
                     </div>
                 </div>
             <!--//기본정보섹션-->
@@ -823,9 +823,9 @@ textarea {
                     <br>
                     <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
                     <select style="color: #757575;" id="photo_state">
-                        <option id="poca_state" value="best">상: 미개봉상태 하자 없음</option>
-                        <option id="poca_state" value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
-                        <option id="poca_state" value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
+                        <option name="poca_state" value="best">상: 미개봉상태 하자 없음</option>
+                        <option name="poca_state" value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
+                        <option name="poca_state" value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
                     </select>
                 </div>
             </div>
@@ -894,72 +894,77 @@ textarea {
 
             <!--Current Location-->
             <script>
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                mapOption = { 
-                    center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                    level: 3 // 지도의 확대 레벨 
-                }; 
+                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = { 
+                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+                        level: 3 // 지도의 확대 레벨 
+                    }; 
 
-            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-            // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
-            if (navigator.geolocation) {
-                
-                // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-                navigator.geolocation.getCurrentPosition(function(position) {
+                // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+                if (navigator.geolocation) {
                     
-                    var lat = position.coords.latitude, // 위도
-                        lon = position.coords.longitude; // 경도
-                    
-                    var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                        message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
-                    
-                    // 마커와 인포윈도우를 표시합니다
-                    displayMarker(locPosition, message);
+                    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+                    navigator.geolocation.getCurrentPosition(function(position) {
                         
-                });
-                
-            } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-                
-                var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
-                    message = 'geolocation을 사용할수 없어요..'
+                        var lat = position.coords.latitude, // 위도
+                            lon = position.coords.longitude; // 경도
+                        
+                        var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+                            message = '<div style="padding:5px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
+                        
+                        // 마커와 인포윈도우를 표시합니다
+                        displayMarker(locPosition, message);
+                            
+                    });
                     
-                displayMarker(locPosition, message);
-            }
+                } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+                    
+                    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
+                        message = 'geolocation을 사용할수 없어요..'
+                        
+                    displayMarker(locPosition, message);
+                }
 
-            // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-            function displayMarker(locPosition, message) {
+                // 지도에 마커와 인포윈도우를 표시하는 함수입니다
+                function displayMarker(locPosition, message) {
 
-                // 마커를 생성합니다
-                var marker = new kakao.maps.Marker({  
-                    map: map, 
-                    position: locPosition
-                }); 
-                
-                var iwContent = message, // 인포윈도우에 표시할 내용
-                    iwRemoveable = true;
+                    // 마커를 생성합니다
+                    var marker = new kakao.maps.Marker({  
+                        map: map, 
+                        position: locPosition
+                    }); 
+                    
+                    var iwContent = message, // 인포윈도우에 표시할 내용
+                        iwRemoveable = true;
 
-                // 인포윈도우를 생성합니다
-                var infowindow = new kakao.maps.InfoWindow({
-                    content : iwContent,
-                    removable : iwRemoveable
-                });
-                
-                // 인포윈도우를 마커위에 표시합니다 
-                infowindow.open(map, marker);
-                
-                // 지도 중심좌표를 접속위치로 변경합니다
-                map.setCenter(locPosition);      
-            }    
+                    // 인포윈도우를 생성합니다
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content : iwContent,
+                        removable : iwRemoveable
+                    });
+                    
+                    // 인포윈도우를 마커위에 표시합니다 
+                    infowindow.open(map, marker);
+                    
+                    // 지도 중심좌표를 접속위치로 변경합니다
+                    map.setCenter(locPosition);      
+                }    
             </script>
             <!--//Current Location-->
+            <script>
+                function saveBtn(){
+                    UploadFrm.submit();
+                }
+            </script>
 
             <!-- 버튼 -->
             <div class="button-container">
                 <button type="button" class="btn btn-secondary" onclick="history.back()">
                     취소하기
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" onclick="saveBtn()">
                     등록하기
                 </button>
             </div>
