@@ -5,38 +5,55 @@
 <style>
     .fb{
         position:fixed;
-        bottom:38px; right:300px;
-        background-color: rgba(255, 255, 255, 0.95);
-        font-size:1.4rem;
-        text-align: center;
+        bottom:25px; right:310px;
+        width:55px; height:55px;
+        justify-content:center;
+        background-color: white;
         border:1px solid white;
         padding:1rem;
         border-radius: 50%;
     }
 
-    .fb a{color:#333;
-        text-decoration: none;}
+    .fb a{
+        color:#333;
+        text-decoration: none;
+        font-size:1.2rem;
+    }
 
     .content{
         width:1200px;
         display:flex;
         margin:0 auto;
+        box-sizing: border-box;
     }
 
     /* 검색 필터 영역 */
     .sfilter{
         width:330px;
-        height:800px;
+        height:835px;
         background: rgba(255, 255, 255, 0.95);
-        margin: 40px 25px;
+        margin: 20px 10px 20px 25px;
         padding:20px;
         border-radius: 20px;
+        transition: all 0.3s ease;  /* 크기나 상태 변화 시 부드럽게 전환 */
+        display: block; /* 기본적으로 보임 */
     }
 
     .sfilter h4{color:#666666;}
 
     .sfilter > div{padding-top:20px;}
 
+    /* 그룹 검색 */
+    .groupsearch{
+        display:flex; justify-content: space-between; gap:3px; width:100%; box-sizing: border-box;
+    }
+
+    #searchinput {width:100%; box-sizing:border-box;}
+    
+    .groupsearch button, #searchinput{
+        border:2px solid #ddd; background-color:white; color:#333; font-size:16px;
+        padding:10px; border-radius: 5px; cursor:pointer; margin-top:10px;
+    }
 
     /* 멤버 선택 토글 */
     .memberToggle{display:none;}
@@ -47,6 +64,11 @@
         grid-template-columns: repeat(2, 124px);
         gap:10px;
         margin-top:10px;
+        max-height:190px;
+        overflow-y: auto;
+        max-width:280px;
+        overflow-x: hidden;
+        box-sizing: border-box;
     }
     .members label {
         font-size: 15px;
@@ -58,12 +80,15 @@
         line-height: 35px;
         cursor:pointer;
         user-select: none;
+        width:100%; height:100%;
+        box-sizing: border-box;
     }
     .memberToggle:checked + label {
         background: linear-gradient(45deg, #667eea, #764ba2);
         color: white;
         border: none;
         padding-top:2px;
+        box-sizing: border-box;
     }
 
 
@@ -77,12 +102,17 @@
         display: none;
         position: absolute;
         background-color: #f9f9f9;
-        min-width: 254px;
+        min-width: 257px;
         box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
         z-index: 1;
-        max-height: 150px; /* 드롭다운 최대 높이 설정 */
+        width:100%;
+    }
+
+    .last-dropdown .dropdown-content {
+        max-height: 100px; /* 드롭다운 최대 높이 설정 */
         overflow-y: auto;  /* 세로 스크롤 활성화 */
     }
+
     .dropdown-content a {
         color: black;
         padding: 12px 16px;
@@ -115,13 +145,25 @@
 
     .clocation a{color:#333;}
 
+    #searchBtn{
+        width:258px; height:50px; width:100%;
+        font-weight:600; font-size:18px;
+        border: 2px solid #667eea;
+        color: #667eea;
+        background: transparent;
+        border-radius:5px;
+        cursor:pointer;
+    }
+
+    #searchBtn:hover {background: #667eea; color: white;}
+
 
     /* 포토카드 리스트 영역 */
     .photocardList {
         width:870px;
-        height:800px;
+        height:835px;
         background: rgba(255, 255, 255, 0.95);
-        margin: 40px 25px 0 25px;
+        margin: 20px 25px 20px 10px;
         padding:20px;
         border-radius: 20px;
     }
@@ -131,9 +173,29 @@
         grid-template-rows: repeat(3, 245px);
         grid-template-columns: repeat(4, 183px);
         gap:10px;
+        max-height:755px;
+        overflow-y: auto;
+        width:100%; height:100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+
+    .no-results {
+        font-size: 1rem;
+        color: #888;
+        text-align: center;
+        display: none;  /* 기본적으로 숨기기 */
+    }
+
+    .no-members {
+        font-size: 1rem;
+        color: #888;
+        text-align: center;
+        display: block;  /* 기본적으로 멤버 선택 메시지 보이기 */
     }
 
     .cardItem img{width:100%; height:100%; object-fit:cover;}
+
 
     /* 반응형 디자인 */
     @media (max-width: 768px) {
@@ -159,20 +221,51 @@
         }
 
         .content{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            overflow: hidden;
-        }
-
-        .photoGrid{
+            display:inline-block;
             width:90%;
-            overflow:hidden;
         }
 
-        .sfilter{margin:20px 5px;}
+        .sfilter {
+            width:100%;
+            height: 65px;  /* 모바일에서는 접힌 상태로 높이를 줄임 */
+            overflow: hidden;  /* 접힌 부분이 잘리도록 설정 */
+            cursor: pointer;  /* 클릭 시 펼쳐지도록 포인터 커서 설정 */
+            box-sizing: border-box;
+            margin-left:20px;
+        }
 
-        .photocardList {margin-left:0; margin-top:20px; padding-left:5px;}
+        /* sfilter가 펼쳐질 때 */
+        .sfilter.active {
+            height: 835px;  /* 펼쳐졌을 때 원래 높이로 설정 */
+            overflow: visible;  /* 펼쳐졌을 때 내용이 다 보이도록 */
+        }
+
+        .members {
+            display: grid;
+            grid-template-columns: repeat(2, 48%);
+            max-width: 100%;
+        }
+
+        .photocardList{width:100%; overflow:hidden; box-sizing: border-box; margin-left:20px;}
+
+        .photoGrid {
+            display:grid;
+            grid-template-rows: repeat(3, 245px);
+            grid-template-columns: 183px;
+            gap:10px;
+            justify-content: center;
+            max-height:755px;
+            overflow-y: auto;
+            width:100%; height:100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        .fb {
+            position:fixed;
+            left:35px;
+            bottom:35px;
+        }
     }
 
     @media (max-width: 480px) {
@@ -193,30 +286,12 @@
 </style>
 <script>
     $(document).ready(function() {
-        // 멤버 선택 토글 //
-        // 전체 체크박스를 선택/해제하는 이벤트
-        $('#memberAll').change(function() {
-            const isChecked = $(this).prop('checked');
-            // 옵션들이 전체 선택되거나 해제됨
-            $('.memberToggle').prop('checked', isChecked);
+        // "검색 필터" 텍스트를 클릭했을 때만 펼치거나 접기
+        $('.filter-label').click(function () {
+            $(this).closest('.sfilter').toggleClass('active'); // sfilter 전체에 active 클래스 토글
         });
-
-        // 각 옵션 체크박스가 선택되었을 때
-        $('.memberToggle').change(function() {
-            const totalOptions = $('.memberToggle').not('#memberAll').length;
-            const selectedOptions = $('.memberToggle:checked').not('#memberAll').length;
-
-            // 모든 옵션이 선택되면 전체 체크박스를 체크
-            if (selectedOptions == totalOptions) {
-                $('#memberAll').prop('checked', true);
-            } else {
-                $('#memberAll').prop('checked', false);
-            }
-        });
-
 
         // 드롭다운 //
-        // 텍스트 클릭 시 드롭다운 메뉴 토글
         $('.dropdown-text').click(function() {
             var dropdownContent = $(this).next('.dropdown-content');
             dropdownContent.toggle();
@@ -224,10 +299,10 @@
 
         // 메뉴 항목 클릭 시 텍스트 변경
         $('.dropdown-content a').click(function(e) {
-            e.preventDefault(); // 링크 기본 동작 방지
+            e.preventDefault();
             var selectedOption = $(this).data('option');
             $(this).closest('.dropdown').find('.dropdown-text').text(selectedOption);
-            $(this).closest('.dropdown').find('.dropdown-content').hide(); // 해당 드롭다운 숨기기
+            $(this).closest('.dropdown').find('.dropdown-content').hide();
         });
 
         // 메뉴 외부 클릭 시 드롭다운 닫기
@@ -236,38 +311,176 @@
                 $('.dropdown-content').hide();
             }
         });
+
+        // 그룹 검색
+        const groupMembers = {
+            "RIIZE": ["성찬", "원빈", "쇼타로", "은석", "소희", "앤톤"],
+                "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
+                "SEVENTEEN": ["에스쿱스", "정한", "조슈아", "준", "호시", "원우", "우지", "디에잇", "민규", "도겸", "승관", "버논", "디노"],
+                "TWS": ["신유", "도훈", "영재", "한진", "지훈", "경민"],
+                "THE BOYZ": ["상연", "제이콥", "영훈", "현재", "주연", "케빈", "뉴", "큐", "선우", "에릭"],
+                "EXO": ["수호", "시우민", "디오", "백현", "찬열", "카이", "세훈"],
+                "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
+                "NCT DREAM": ["마크", "런쥔", "제노", "해찬", "재민", "천러", "지성"],
+                "ENHYPEN": ["정원", "희승", "제이", "제이크", "성훈", "선우", "니키"],
+                "NCT 127": ["쟈니", "태용", "유타", "도영", "재현", "윈윈", "정우", "마크", "해찬"],
+                "Stray Kids": ["방찬", "리노", "창빈", "현진", "한", "필릭스", "승민", "아이엔"],
+                "TOMORROW X TOGETHER": ["연준", "수빈", "범규", "태현", "휴닝카이"],
+                "ZEROBASEONE": ["성한빈", "김지웅", "장하오", "석매튜", "김태래", "리키", "김규빈", "박건욱", "한유진"],
+                "ATEEZ": ["성화", "홍중", "윤호", "여상", "산", "민기", "우영", "종호"],
+                "ASTRO": ["MJ", "진진", "차은우", "문빈", "라키", "윤산하"],
+                "N.Flying": ["이승협", "차훈", "김재현", "유회승", "서동성"],
+                "BOYNEXTDOOR": ["성호", "리우", "명재현", "태산", "이한", "운학"],
+                "MONSTA X": ["셔누", "민혁", "기현", "형원", "주헌", "아이엠"],
+                "82MAJOR": ["조성일", "윤예찬", "남성모", "황성빈", "박석준", "김도균"],
+                "&TEAM": ["케이", "후마", "니콜라스", "의주", "유마", "조", "하루아", "타키", "마키"],
+                "KickFlip": ["계훈", "아마루", "동화", "주왕", "민제", "케이주", "동현"],
+                "PLAVE": ["예준", "노아", "밤비", "은호", "하민"],
+                "BLACKPINK": ["지수", "제니", "로제", "리사"],
+                "aespa": ["카리나", "지젤", "윈터", "닝닝"],
+                "IVE": ["안유진", "가을", "레이", "원영", "리즈", "이서"],
+                "(G)I-DLE": ["미연", "민니", "소연", "우기", "슈화"],
+                "TWICE": ["나연", "정연", "모모", "사나", "지효", "미나", "다현", "채영", "쯔위"],
+                "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
+                "Red Velvet": ["아이린", "슬기", "웬디", "조이", "예리"],
+                "LE SSERAFIM": ["사쿠라", "채원", "윤진", "카즈하", "은채"],
+                "ILLIT": ["윤아", "민주", "모카", "원희", "이로하"],
+                "KISS OF LIFE": ["쥴리", "나띠", "벨", "하늘"],
+                "Hearts2Hearts": ["지우", "카르멘", "유하", "스텔라", "주은", "에이나", "이안", "예온"]
+        };
+
+        // 그룹 검색 입력 시 동작
+        $('#searchinput').on('input', function() {
+            const searchText = $(this).val().toLowerCase();
+            $('.members').empty(); // 멤버 목록 초기화
+
+            if (searchText) {
+                $('.fchoice').show(); // 검색 결과 영역 보이기
+
+                for (const group in groupMembers) {
+                    if (group.toLowerCase().includes(searchText)) {
+                        // 해당 그룹에 속한 멤버들 추가
+                        $('.members').append(`
+                            <input type="checkbox" id="memberAll" class="memberToggle">
+                            <label for="memberAll">전체</label>
+                        `);  // 전체 선택 체크박스 추가
+
+                        groupMembers[group].forEach(function(member, index) {
+                            const memberId = 'member' + group + (index + 1); // 고유 ID 생성
+                            $('.members').append(`
+                                <input type="checkbox" id="${memberId}" class="memberToggle">
+                                <label for="${memberId}">${member}</label>
+                            `);
+                        });
+                    }
+                }
+            } else {
+                $('.fchoice').hide(); // 검색어가 없으면 멤버 목록 숨김
+            }
+        });
+
+        // 멤버 선택 토글 //
+        // 전체 선택 / 해제 처리
+        $(document).on('change', '#memberAll', function() {
+            const isChecked = $(this).prop('checked');  // 전체 체크박스 상태
+            // 모든 멤버 체크박스 상태를 전체 체크박스 상태에 맞춰 변경
+            $('.memberToggle').prop('checked', isChecked);
+        });
+
+        // 각 멤버 선택 박스가 선택되었을 때
+        $(document).on('change', '.memberToggle', function() {
+            const totalOptions = $('.memberToggle').not('#memberAll').length;  // 전체 멤버 개수
+            const selectedOptions = $('.memberToggle:checked').not('#memberAll').length;  // 선택된 멤버 개수
+
+            // 모든 멤버가 선택되면 '전체 선택' 체크박스를 체크
+            if (selectedOptions === totalOptions) {
+                $('#memberAll').prop('checked', true);
+            } else {
+                $('#memberAll').prop('checked', false);  // 아니면 '전체 선택' 체크박스를 해제
+            }
+        });
+
+        // 검색 버튼 클릭 시 동작
+        $('#searchBtn').on('click', function() {
+            // 그룹, 거래 방식, 거래 상태, 자주 거래되는 장소에 대한 선택값을 가져옴
+            const selectedGroup = $('#searchinput').val().toLowerCase();
+            const selectedTransactionType = $('.fcategory .dropdown-text').text().toLowerCase();
+            const selectedTradeStatus = $('.ftrade .dropdown-text').text().toLowerCase();
+            const selectedLocation = $('.flocation .dropdown-text').text().toLowerCase();
+
+            // 멤버 선택 여부 체크
+            const selectedMembers = $('.memberToggle:checked').map(function() {
+                return $(this).next('label').text().toLowerCase();
+            }).get();
+
+            if (selectedMembers.length === 0) {
+                $(".no-members").show();  // 멤버를 선택하지 않았다면 멤버 선택 메시지 보이기
+                $(".photoGrid").empty();  // 기존 포토카드 목록 비우기
+                $(".no-results").hide();  // "검색 결과가 없습니다" 메시지 숨기기
+            } else {
+                $(".no-members").hide();  // 멤버를 선택했으면 멤버 선택 메시지 숨기기
+
+                // 여기에 실제로 검색된 결과가 있을 경우, 해당 이미지 목록을 보여줄 수 있도록 처리
+                const results = fetchPhotocardResults(selectedGroup, selectedTransactionType, selectedTradeStatus, selectedLocation, selectedMembers);
+
+                // 결과가 없으면 "검색 결과가 없습니다" 메시지를 표시
+                if (results.length === 0) {
+                    $('.no-results').show();  // "검색 결과가 없습니다" 메시지 보이기
+                    $('.photoGrid').empty();  // 기존 이미지 목록 비우기
+                } else {
+                    $('.no-results').hide();  // 결과가 있으면 "검색 결과가 없습니다" 메시지 숨기기
+                    $('.photoGrid').empty();  // 기존 이미지 목록 비우기
+                    results.forEach(function(item) {
+                        $('.photoGrid').append(`
+                            <div class="cardItem">
+                                <img src="${item.image}" alt="${item.name}">
+                            </div>
+                        `);
+                    });
+                }
+            }
+        });
+
+        // 포토카드 거래글 결과를 가져오는 함수 (예시 데이터)
+        function fetchPhotocardResults(group, transactionType, tradeStatus, location, selectedMembers) {
+            // 이 부분에 실제 서버와의 연동이나 필터링을 구현하면 됩니다.
+            // 예시로 더미 데이터를 반환
+            const photocardData = [
+                { image: "/static/images/landing/wonyoung.jpg", name: "원영 포토카드", group: "IVE", transactionType: "교환", tradeStatus: "거래중", location: "상암", members: ["원영"] },
+                { image: "/static/images/landing/wonbin.jpg", name: "원빈 포토카드", group: "RIIZE", transactionType: "판매", tradeStatus: "거래완료", location: "더현대", members: ["원빈"] }
+            ];
+
+            return photocardData.filter(item => {
+                return (group ? item.group.toLowerCase().includes(group) : true) &&
+                    (transactionType !== '전체' ? item.transactionType.toLowerCase() === transactionType : true) &&
+                    (tradeStatus !== '전체' ? item.tradeStatus.toLowerCase() === tradeStatus : true) &&
+                    (location !== '전체' ? item.location.toLowerCase().includes(location) : true) &&
+                    (selectedMembers.length > 0 ? selectedMembers.some(member => item.members.includes(member)) : true);
+            });
+        }
+
     });
 </script>
 <body>
-    <button class="fb"><a href="#write"><i class="fas fa-pencil"></i></a></button>
+    <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
 
     <div class="content">
         <section class="sfilter">
-            <h3>🔍 검색필터</h3>
-            <div class="fchoice">
+            <h3 class="filter-label">🔍 검색필터</h3>
+            <div class="fgroup">
+                <h4>그룹 검색</h4>
+                <div class="groupsearch">
+                    <input type="text" name="searhgroup" id="searchinput" placeholder="그룹 검색 후 멤버 선택 가능">
+                </div>
+            </div>
+            <div class="fchoice" style="display: none;">
                 <h4>멤버 선택</h4>
                 <div class="members">
-                    <input type="checkbox" id="memberAll" class="memberToggle">
-                    <label for="memberAll">전체</label>
-
-                    <input type="checkbox" id="member1" class="memberToggle">
-                    <label for="member1">멤버 1</label>
-
-                    <input type="checkbox" id="member2" class="memberToggle">
-                    <label for="member2">멤버 2</label>
-
-                    <input type="checkbox" id="member3" class="memberToggle">
-                    <label for="member3">멤버 3</label>
-
-                    <input type="checkbox" id="member4" class="memberToggle">
-                    <label for="member4">멤버 4</label>
-
-                    <input type="checkbox" id="member5" class="memberToggle">
-                    <label for="member5">멤버 5</label>
+                    
                 </div>
             </div>
             <div class="fcategory">
-                <h4>카테고리</h4>
+                <h4>거래 방식</h4>
                 <div class="dropdown">
                     <div class="dropdown-text" id="dropdownText">전체</div>
                     <div class="dropdown-content">
@@ -278,9 +491,9 @@
                 </div>
             </div>
             <div class="ftrade">
-                <h4>거래 유형</h4>
+                <h4>거래 상태</h4>
                 <div class="dropdown">
-                    <div class="dropdown-text" id="dropdownText2">전체</div>
+                    <div class="dropdown-text" id="dropdownText">전체</div>
                     <div class="dropdown-content">
                         <a href="#" data-option="전체">전체</a>
                         <a href="#" data-option="거래중">거래중</a>
@@ -292,49 +505,31 @@
                 <h4>📍 위치 설정</h4>
                 <div class="clocation">강남구 (현재 위치)<a href="#"><i class="fas fa-map"></i></a></div>
                 <div class="dropdown">
-                    <div class="dropdown-text" id="dropdownText3">자주 거래되는 장소</div>
-                    <div class="dropdown-content">
-                        <a href="#" data-option="상암">상암</a>
-                        <a href="#" data-option="더현대">더현대</a>
-                        <a href="#" data-option="인스파이어">인스파이어</a>
-                        <a href="#" data-option="홍대입구">홍대입구</a>
-                        <a href="#" data-option="올림픽공원">올림픽공원</a>
+                    <div class="last-dropdown">
+                        <div class="dropdown-text" id="dropdownText">자주 거래되는 장소 선택</div>
+                        <div class="dropdown-content">
+                            <a href="#" data-option="상암">상암</a>
+                            <a href="#" data-option="더현대">더현대</a>
+                            <a href="#" data-option="인스파이어">인스파이어</a>
+                            <a href="#" data-option="홍대입구">홍대입구</a>
+                            <a href="#" data-option="올림픽공원">올림픽공원</a>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="searchBtn">
+                <button type="button" id="searchBtn">검색</button>
             </div>
         </section>
 
         <section class="photocardList">
+            <!-- 검색 결과가 없을 경우 메시지 표시 -->
+            <div class="no-results">검색 결과가 없습니다</div>
+            <!-- 멤버를 선택해주세요 메시지 -->
+            <div class="no-members">검색 필터에서 멤버를 선택해주세요</div>
             <div class="photoGrid">
-                <div class="cardItem"><a href="/photocard/detail/">
-                    <img src="/static/images/landing/wonyoung.jpg"></a>
-                </div>
                 <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
-                </div>
-                <div class="cardItem">
-                    <img src="/static/images/landing/wonyoung.jpg">
+                
                 </div>
             </div>
         </section>
