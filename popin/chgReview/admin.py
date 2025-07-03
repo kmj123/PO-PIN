@@ -1,11 +1,25 @@
 from django.contrib import admin
 from .models import ExchangeReview, ReviewImage, ReviewTag
+from django.forms import BaseInlineFormSet, ValidationError
+### 이미지 개수 제한용 FormSet
+class LimitedImageInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        total_forms = len([
+            form for form in self.forms
+            if not form.cleaned_data.get('DELETE', False) and form.cleaned_data
+        ])
+        if self.instance.images.count() + total_forms > 5:
+            raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
+
 
 # 이미지 인라인
 class ReviewImageInline(admin.TabularInline):
     model = ReviewImage
     extra = 1
-
+    readonly_fields = ['uploaded_at']
+    formset = LimitedImageInlineFormSet
+    
 # 후기 리뷰 어드민
 @admin.register(ExchangeReview)
 class ExchangeReviewAdmin(admin.ModelAdmin):
