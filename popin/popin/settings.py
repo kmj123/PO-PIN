@@ -139,7 +139,8 @@ STATICFILES_DIRS = (
 
 ### 파일업로드 위치
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+#MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # MEDIA_ROOT = 'c:/aaa' # 로컬드라이브 설정
 
 # Default primary key field type
