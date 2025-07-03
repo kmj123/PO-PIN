@@ -22,7 +22,6 @@ urlpatterns = [
     path('pocadeco/', include('pocadeco.urls')),
     path("api/idols/", include("idols.urls")),
 ]
-
 # 파일업로드시 url구성 , urlpatterns 에 추가로 설정이 들어감.
 urlpatterns += static(settings.MEDIA_URL, 
                       document_root=settings.MEDIA_ROOT)
