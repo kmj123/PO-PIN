@@ -31,21 +31,21 @@
                         </button>
                     </div>
                     <div class="profile-info">
-                        <h1 style="text-align:center;">포카러버123</h1>
+                        <h1 style="text-align:center;">{{user.name}}</h1>
                         <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
                         <br>
                         
                         <div class="stats">
                             <div class="stat">
-                                <div class="stat-number">156</div>
+                                <div class="stat-number">{{user.selling_photocards.count}}</div>
                                 <div>보유 포카</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">23</div>
+                                <div class="stat-number">{{completed}}</div>
                                 <div>교환 완료</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">4.8</div>
+                                <div class="stat-number">{{user.manners_score}}</div>
                                 <div>평점</div>
                             </div>
                         </div>

@@ -31,7 +31,7 @@ class User(models.Model):
     bias_group = models.ManyToManyField(
         Group, 
         blank=True, 
-        null=True, 
+       
         related_name='fans_group', # 역참조 이름
         verbose_name="최애 그룹"
     )
@@ -40,7 +40,7 @@ class User(models.Model):
     bias_member = models.ManyToManyField(
         Member, 
         blank=True, 
-        null=True, 
+    
         related_name='fans_member', # 역참조 이름
         verbose_name="최애 멤버"
     )

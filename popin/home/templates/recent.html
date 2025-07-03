@@ -64,11 +64,33 @@
         font-weight: 500;
     }
 
-    .page-num {list-style: none; display:flex; justify-content: center; gap:5px; margin-top:30px;}
+    .page-num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top:20px;
+    }
 
-    .page-num li{border: 1px solid #ddd; border-radius:10px; color:#333; padding:10px; cursor:pointer;}
+    .page-num li{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        text-decoration: none;
+        color: #666;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
 
-    .page-num li:hover, .page-num li.active{background:#667eea; color:white; font-weight:600;}
+    .page-num li.active, .page-num li.active:hover{
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+    }
+
+    .page-num li:hover{background: #f0f0f0;}
 
     .page-num a{text-decoration:none; color:#333;}
 
@@ -118,10 +140,6 @@
                                 <option value="전체" {% if request.GET.category == '전체'%}selected{%endif%}>전체</option>
                                 <option value="교환" {% if request.GET.category == '교환'%}selected{%endif%}>교환</option>
                                 <option value="판매" {% if request.GET.category == '판매'%}selected{%endif%}>판매</option>
-                                <option value="나눔" {% if request.GET.category == '나눔'%}selected{%endif%}>나눔</option>
-                                <option value="대리구매" {% if request.GET.category == '대리구매'%}selected{%endif%}>대리구매</option>
-                                <option value="후기" {% if request.GET.category == '후기'%}selected{%endif%}>후기</option>
-                                <option value="포꾸" {% if request.GET.category == '포꾸'%}selected{%endif%}>포꾸</option>
                             </select>
                             <div class="searchtitle">
                                 <input type="text" size="16" name="searchinput" id="searchinput" value="{{ request.GET.searchinput }}">
@@ -134,7 +152,7 @@
                     <div class="post-item">
                         <div class="post-content" data-category="{{ post.category }}">
                             <div class="post-title">{{ post.title }}</div>
-                            <div class="post-meta">{{ post.author }} • {{ post.created_at }} • 조회 {{ post.views }}
+                            <div class="post-meta">{{ post.writer_id }} • {{ post.createDate }} • 조회 {{ post.hit }}
                                 <div class="post-category">{{ post.category }}</div>
                             </div>
                         </div>
@@ -146,11 +164,11 @@
 
             <ul class="page-num">
                 {% if page_num.has_previous %}
-                    <a href="?page=1&category={{category}}&search={{searchinput}}"><li><i class="far fa-angle-double-left"></i></li></a>
-                    <a href="?page={{page_num.previous_page_number}}&category={{category}}&search={{searchinput}}"><li><i class="far fa-angle-left"></i></li></a>
+                    <a href="?page=1&category={{category}}&search={{searchinput}}"><li>«</li></a>
+                    <a href="?page={{page_num.previous_page_number}}&category={{category}}&search={{searchinput}}"><li>‹</i></li></a>
                 {% else %}
-                    <li><i class="far fa-angle-double-left"></i></li>
-                    <li><i class="far fa-angle-left"></i></li>
+                    <li>«</li>
+                    <li>‹</i></li>
                 {% endif %}
 
                 {% for num in page_num.paginator.page_range%}
@@ -162,11 +180,11 @@
                 {% endfor %}
                 
                 {% if page_num.has_next %}
-                    <a href="?page={{page_num.next_page_number}}&category={{category}}&search={{searchinput}}"><li><i class="far fa-angle-right"></i></li></a>
-                    <a href="?page={{page_num.paginator.num_pages}}&category={{category}}&search={{searchinput}}"><li><i class="far fa-angle-double-right"></i></li></a>
+                    <a href="?page={{page_num.next_page_number}}&category={{category}}&search={{searchinput}}"><li>›</i></li></a>
+                    <a href="?page={{page_num.paginator.num_pages}}&category={{category}}&search={{searchinput}}"><li>»</i></li></a>
                 {% else %}
-                    <li><i class="far fa-angle-right"></i></li>
-                    <li><i class="far fa-angle-double-right"></i></li>
+                    <li>›</li>
+                    <li>»</li>
                 {% endif %}
             </ul>
         </div>
