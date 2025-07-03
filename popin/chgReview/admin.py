@@ -9,9 +9,9 @@ class LimitedImageInlineFormSet(BaseInlineFormSet):
             form for form in self.forms
             if not form.cleaned_data.get('DELETE', False) and form.cleaned_data
         ])
-        if self.instance.images.count() + total_forms > 5:
+        #  pk 존재할 때만 이미지 개수 체크
+        if self.instance.pk and self.instance.images.count() + total_forms > 5:
             raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
-
 
 # 이미지 인라인
 class ReviewImageInline(admin.TabularInline):

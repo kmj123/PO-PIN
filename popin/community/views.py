@@ -12,7 +12,7 @@ def write_review(request):
         print("📥 요청 방식:", request.method)
         print("📥 POST 데이터:", request.POST)
         print("📥 FILES:", request.FILES)
-
+        
    # 1. 입력값 받기
         user = request.user
         title = request.POST.get('title', '').strip()
@@ -24,7 +24,7 @@ def write_review(request):
         transaction_type = request.POST.get('transaction_type', '').strip() or "교환"
         overall_score = request.POST.get('overall_score')
         images = request.FILES.getlist('images')
-      
+        print("✅ 저장 직전: ", title, content, overall_score, user.username)
         # 2. 필수값 체크
         required_fields = {
             "제목": title,
@@ -41,10 +41,10 @@ def write_review(request):
 
         # 3. 유효한 파트너 유저 찾기
         try:
-            partner_user = User.objects.get(username=partner_username)
-            print("✅ 파트너 유저 확인:", partner_user.username)
+            partner_user = User.objects.get(user_id=partner_username)
+            print("파트너 유저 확인:", partner_user.username)
         except User.DoesNotExist:
-            print("❌ 파트너 유저 없음:", partner_username)  # ← 이거 찍히면 문제
+            print(" 파트너 유저 없음:", partner_username)  # ← 이거 찍히면 문제
             return render(request, 'community_write_review.html', {
                 "error": "입력한 교환 상대방 아이디가 존재하지 않습니다.",
                 "form_data": request.POST
