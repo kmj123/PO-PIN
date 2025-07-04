@@ -3,12 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from chgReview.models import ExchangeReview, ReviewImage, ReviewTag
 
-<<<<<<< HEAD
 ##### 커뮤니티
 # 메인페이지
 def main(request):
     return render(request, 'community/main.html')
-=======
 User = get_user_model()
 
 
@@ -112,7 +110,6 @@ def write_review(request):
 
     # GET 요청일 경우
     return render(request, 'community_write_review.html')
->>>>>>> 9a9e73e2ef30d995d960c856f16f63ba3070274a
 
 # 최근게시글
 def recent(request):

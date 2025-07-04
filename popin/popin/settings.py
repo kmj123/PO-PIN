@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'adpage',
     'home',
     'community',
+    'chgReview',
     'pocadeco',
 ]
 
