@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from chgReview.models import ExchangeReview, ReviewImage, ReviewTag
-
+from sharing.models import SharingPost, SharingTag, SharingImage
 User = get_user_model()
 
 
@@ -16,15 +16,16 @@ def write_review(request):
    # 1. 입력값 받기
         user = request.user
         title = request.POST.get('title', '').strip()
-        artist = request.POST.get('artist', '').strip() or "기타"
+        artist = request.POST.get('artist', '').strip()
         content = request.POST.get('content', '').strip()
         partner_username = request.POST.get('partner', '').strip()
         tag_string = request.POST.get('tags', '').strip()
         method = request.POST.get('method', '').strip()
-        transaction_type = request.POST.get('transaction_type', '').strip() or "교환"
+        transaction_type = request.POST.get('transaction_type', '').strip() 
         overall_score = request.POST.get('overall_score')
         images = request.FILES.getlist('images')
         print("✅ 저장 직전: ", title, content, overall_score, user.username)
+        
         # 2. 필수값 체크
         required_fields = {
             "제목": title,
@@ -107,5 +108,81 @@ def write_review(request):
     # GET 요청일 경우
     return render(request, 'community_write_review.html')
 
+
+
+
+
+
 def write_sharing(request):
-    return render(request, 'community_write_sharing.html')
+     if request.method == "POST":
+        user = request.user
+        title = request.POST.get('title', '').strip()
+        artist = request.POST.get('artist', '').strip()
+        category =request.POST.get('category', '').strip()
+        location= request.POST.get('location','').strip()
+        share_date=request.POST.get('share_date','').strip()
+        requirement=request.POST.get('requirement','').strip()
+        content = request.POST.get('content', '').strip()
+        tag_string = request.POST.get('tags', '').strip()
+        images = request.FILES.getlist('images')
+        # 2. 필수값 체크
+        required_fields = {
+            "제목": title,
+            "내용": content,
+            "장소": location,
+            "필수사항": requirement,
+        }
+        for label, value in required_fields.items():
+            if not value:
+                return render(request, 'community_write_sharing.html', {
+                    "error": f"{label}은(는) 필수 항목입니다.",
+                    "form_data": request.POST
+                })
+
+
+        # 3. 나눔글 저장
+        try:
+            post = SharingPost.objects.create(
+                title=title,
+                artist=artist,
+                category =category,
+                location=location,
+                share_date =share_date ,
+                content=content,
+                author=user,
+               
+            )
+            print(" 리뷰 생성 완료:", post.id)
+        except Exception as e:
+            print(" 리뷰 저장 실패:", e)
+            return render(request, 'community_write_sharing.html', {
+                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
+                "form_data": request.POST
+            })
+
+        # 4. 태그 저장
+        if tag_string:
+            tag_names = tag_string.replace(",", " ").split()
+            for tag_name in tag_names:
+                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag_obj)
+            print(" 태그 추가:", tag_names)
+
+        # 5. 이미지 수 제한 확인
+        if len(images) > 5:
+            return render(request, 'community_write_sharing.html', {
+                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
+                "form_data": request.POST
+            })
+
+        # 6. 이미지 저장
+        for img in images: 
+            try:
+                 SharingImage.objects.create(post=post, image=img)
+                 print(" 이미지 저장됨:", img.name)
+            except Exception as e: 
+                print(" 이미지 저장 실패 :" ,  e)
+
+        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
+    
+     return render(request, 'community_write_sharing.html')
