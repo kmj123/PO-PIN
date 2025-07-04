@@ -56,6 +56,9 @@ class Photocard(models.Model):
     poca_state = models.CharField(max_length=20, choices=P_STATE_CHOICES, default='상')
     tag = models.CharField(max_length=20, null=True, blank=True)  # choices 생략됨
     trade_type = models.CharField(max_length=20, choices=TRADE_CHOICES, null=True)
+    price = models.IntegerField(default=0, null=True, blank=True)
+    description = models.TextField(blank=True)
+
     place = models.CharField(max_length=20, choices=PLACE_CHOICES, null=True)
 
     sell_state = models.CharField(max_length=20, choices=TRADE_STATE_CHOICES, default='전')
