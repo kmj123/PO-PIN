@@ -97,19 +97,48 @@ a{text-decoration: none;}
 
 .findPW {
     margin-top: 25px; 
-    padding: 12px;
     width: 100%;
     border: none;
     border-radius: 6px;
     font-size: 14px;
+    background : #8A79AF;
+    border :none ;
+    color : white;
 }
 
 .back {
-    margin-top: 12px; 
-    padding: 12px;
+    margin-top : -10px;
     width: 100%;
     border: none;
     border-radius: 6px;
     font-size: 13px;
     color : #8A79AF;
+}
+
+@media (max-width: 480px) {
+ body {
+   padding: 15px;
+ }}
+
+@media (max-width: 375px) {
+ .login-form {
+   padding: 25px 30px;
+ }
+
+ .login-form .top h2 {
+   font-size: 28px;
+ }
+
+ .login-form h3 {
+   font-size: 17px;
+ }
+
+
+ .login-form .subtitle {
+   font-size: 11px;
+ }
+
+ .login-form input{
+    font-size : 13px;
+ }
 }

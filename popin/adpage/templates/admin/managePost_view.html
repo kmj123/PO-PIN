@@ -25,16 +25,13 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 25px;
+            margin-top : 5px;
         }
         .banner h2{ 
             font-size : 30px; 
             color : #7E6EB0;
             align-items : center; 
             margin-left: 15px;
-        }
-        .banner-center {
-            display: flex;
-            align-items: center;
         }
         .banner-right {
             display: flex;
@@ -45,11 +42,6 @@
             display: flex;
             align-items: center;
         }
-        .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
         .menu ul {
             display: flex;
             list-style: none;
@@ -71,11 +63,6 @@
             transition: all 0.3s ease;
             color : #764ba2;
             border : 2px solid  #764ba2;
-        }
-        .menu .board{
-            background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color : rgba(255, 255, 255, 0.95);
-            border : none;
         }
         .home {
             all: unset;
@@ -166,6 +153,7 @@
       position: relative;
       
     }
+    a{color : #764ba2; }
 
     table.writebox th::after {
       content: '';
@@ -224,6 +212,8 @@
             color: #667eea;
         }
 
+        a{text-decoration : none;}
+
     select.selectB,
     input.wlong,
     textarea.tta,
@@ -276,35 +266,22 @@
         border-radius : 25px;}
         
   </style>
-  <script>
-        // 모든 메뉴 li 요소 가져오기
-        const menuItems = document.querySelectorAll('.menu ul li');
-
-        menuItems.forEach(item => {
-            item.addEventListener('click', () => {
-            // 먼저 모든 li에서 'board' 클래스 제거
-            menuItems.forEach(i => i.classList.remove('board'));
-            // 클릭한 항목에만 'board' 클래스 추가
-            item.classList.add('board');
-            });
-        });
-    </script>
 </head>
 <body>
   <div>
     <div class="banner">
-      <strong><h2>PO-PIN</h2></strong>
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
       <div class = "menu">
                 <ul>
-                    <li>대시보드</li>
-                    <li>공지사항</li>
-                    <li  class = "board">게시글 관리</li>
-                    <li>사용자 관리</li>
+                    <li><a href="{% url 'adpage:main' %}">메인</a></li>
+                    <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+                    <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+                    <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
                 </ul>
             </div>
       <div class="banner-right">
 
-        <a href="#" class="home">
+        <a href="{% url 'home:main' %}" class="home">
             <i class="fi fi-rr-home"></i>홈으로
         </a>
       </div>
@@ -375,7 +352,7 @@
         </table>
         <div class = "btn">
             <button type = "button" value = "delete">삭제</button>
-            <button type = "button" value = "back">이전</button>
+            <a href = "{% url 'adpage:post' %}"><button type = "button" value = "back">이전</button></a>
           </div>
       </div>
         </div>
