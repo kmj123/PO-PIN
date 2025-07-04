@@ -22,11 +22,7 @@ class Migration(migrations.Migration):
                 ('album', models.CharField(default='1집', max_length=50)),
                 ('poca_state', models.CharField(choices=[('상', '상'), ('중', '중'), ('하', '하')], default='상', max_length=20)),
                 ('tag', models.CharField(blank=True, max_length=20, null=True)),
-<<<<<<< HEAD
-                ('trade_type', models.CharField(choices=[('판매', '판매'), ('교환', '교환')], max_length=20, null=True)),
-=======
-                ('trade_type', models.CharField(choices=[('교환', '교환'), ('구매', '구매')], max_length=20, null=True)),
->>>>>>> bb61e2ab0f039878fb55794fff7ffba4e1fbe4d3
+                ('trade_type', models.CharField(choices=[('교환', '교환'), ('판매', '판매')], max_length=20, null=True)),
                 ('price', models.IntegerField(blank=True, default=0, null=True)),
                 ('description', models.TextField(blank=True)),
                 ('place', models.CharField(choices=[('올림픽공원', '올림픽공원'), ('상암', '상암'), ('더현대', '더현대'), ('고척', '고척'), ('인스파이어', '인스파이어'), ('홍대', '홍대')], max_length=20, null=True)),
