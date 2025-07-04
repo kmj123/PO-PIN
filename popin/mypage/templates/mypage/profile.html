@@ -2,6 +2,7 @@
 {% load static %}
 <!--상단 헤더-->
 {%block content%}
+
 <!DOCTYPE html>
 <html lang="ko">
     <head>
@@ -10,7 +11,7 @@
         <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
         <title>{%block title%}마이페이지{%endblock%}</title>
     </head>
-   
+
     <body>
     <!--프로필-->
     <main class="main">
@@ -20,7 +21,7 @@
                     <div class="polaroid">
                         <div class="polaroid-image">
                             <!--클릭시 프로필변경페이지 이동-->
-                            <a href="/mypage/pchange/">
+                            <a href="/mypage/profileUpdate/">
                                 <img src='/static/images/mypage/도영.jfif/'>
                             </a>
                         </div>
@@ -57,15 +58,17 @@
 
 
         <div class="content">
-            <div class="tabs">
-                <button class="tab active " onclick="showTab('keywords')">키워드</button>
-                <button class="tab" onclick="showTab('recent')">최근본글</button>
-                <button class="tab" onclick="showTab('cards')">마이 포카</button>
-                <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
-                <button class="tab" onclick="showTab('transactions')">포토카드</button>
-                <button class="tab" onclick="showTab('reviews')">후기글</button>
-                <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
-                <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
+            <div class="tabs-wrapper">
+                <div class="tabs">
+                    <button class="tab active " onclick="showTab('keywords')">키워드</button>
+                    <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    <button class="tab" onclick="showTab('cards')">마이 포카</button>
+                    <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
+                    <button class="tab" onclick="showTab('transactions')">포토카드</button>
+                    <button class="tab" onclick="showTab('reviews')">후기글</button>
+                    <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                    <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
+                </div>
             </div>
             <!--키워드 리스트-->
             <div id="keywords" class="tab-content active">
@@ -485,20 +488,31 @@
                         <label for="profile_image">프로필 이미지</label>
                         <div class="profile_img_container">
                             <div class="profile_img_wrapper">
-                                <img src="/static/images/mypage/도영.jfif/" class="profile_image" alt="프로필 이미지">
-                                <div class="ImgUploadBtn" onclick="ImgUploadBtn()">
-                                    <input type="file" id="profile-img-input" name="profile_image">
+                                <div class="previous_container" id="previous_container" style="cursor:pointer;">
+                                    <img id="previousImage" src="/static/images/mypage/도영.jfif/" class="profile_image" alt="프로필 이미지">
                                 </div>
+                                <input type="file" id="profile-img-input" name="profile_image" class="fileType" accept="image/*" style="display:none;">
                             </div>
+                                <div class="preview-container" id="previewContainer" style="display:none;">
+                                    <img id="previewImage" class="preview-image" alt="미리보기">
+                                </div>
                         </div>
-                        <label for="nickname">닉네임</label>
-                            <input type="text" id="nickname" name="nickname">
-                        <label for="mybias">최애변경</label>
-                            <input type="text" id="mybias" name="mybias">
-                        <label for="myself">자기소개</label>
-                            <input type="text" id="myself" name="myself">
-                        <div class="profileButton">
-                            <button id="favorite-btnSave" type="button">변경사항 저장</button>
+                        <div class="myinfo">
+                            <div class="myinfo-profile">
+                                <label for="nickname">닉네임</label>
+                                <input type="text" id="nickname" name="nickname">
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="mybias">최애변경</label>
+                                <input type="text" id="mybias" name="mybias">
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="myself">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="button">변경사항 저장</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -538,6 +552,56 @@
         <!--//모달창스크립트-->
 
     <script>
+        // 파일업로드 관련
+        const imageuploadContainer = document.getElementById('previous_container');
+        const imageInput = document.getElementById('profile-img-input');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const previousImage = document.getElementById('previousImage');
+
+        imageuploadContainer.addEventListener('click',()=>imageInput.click());
+
+        imageuploadContainer.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.add('dragover');
+        });
+
+        imageuploadContainer.addEventListener('dragleave',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+        });
+
+        imageuploadContainer.addEventListener('drop',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if(files.length > 0 ){
+                handleFile(files[0]);
+            }
+        });
+
+        imageInput.addEventListener('change',(e)=>{
+            if(e.target.files.length>0){
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // 이미지 미리보기 함수
+        function handleFile(file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = "block";
+                    previousImage.style.display = "none"; // 기존 이미지 숨김
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("이미지 파일만 업로드할 수 있습니다.");
+            }
+        }
+
+
         // 전체 카테고리
         function showTab(tabName) {
             const contents = document.querySelectorAll('.tab-content');
@@ -796,6 +860,7 @@
                 }
             });
         });
+
     </script>
 
 {%endblock%}

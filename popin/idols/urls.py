@@ -1,7 +1,9 @@
-from django.urls import path, include
+
+from django.urls import path
 from . import views
 
 app_name = 'idols'
+
 urlpatterns = [
-   # path('login/', views.login, name='login'),
+    path("search/", views.idol_search_api, name="idol_search"), 
 ]

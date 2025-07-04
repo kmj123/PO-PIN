@@ -261,7 +261,7 @@
       text-align : center;
     }
     .filter .search {
-        padding-left : 10px;
+      padding-left : 10px;
       width: 500px;
       height: 40px;
       border-radius: 10px;
@@ -270,7 +270,7 @@
     }
     .filter .searchBtn {
       height: 40px;
-      width: 60px;
+      width: 70px;
       border-radius: 10px;
       border: none;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -305,19 +305,34 @@
     }
 
     .post-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 20px;
-    }
+        display: flex;
+        flex-direction: column; /* 위아래로 배치 */
+        gap: 8px; /* 간격 */
+        margin-bottom: 20px;
+      }
 
-    .post-title {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
+      .post-title-row {
+        display: flex;
+        justify-content: space-between; /* 제목 왼쪽, 버튼 오른쪽 */
+        align-items: center;
+      }
+
+      .post-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+        line-height: 1.3;
+      }
+
+      .post-header input[type="button"] {
+        border-radius: 10px;
+        border: 0.5px solid #444;
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+        background: rgba(255, 246, 246, 0.85);
+      }
 
     .post-status {
       padding: 8px 16px;
@@ -427,6 +442,11 @@
       color: #667eea;
       font-weight: 500;
     }
+
+    .report-btn{
+      cursor: pointer;
+    }
+
 
     .topBtn{
       position: fixed;
@@ -843,14 +863,15 @@
         <div class="postlist">
                     <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
                         <div class="post-header">
-                            <div>
-                                <h3 class="post-title">IVE 공개팬사인회 사람</h3>
-                                <div class="post-tags">
-                                    <span class="post-tag">팬사인회</span>
-                                    <span class="post-tag">IVE</span>
-                                    <span class="post-tag">강남</span>
-                                </div>
-                            </div>
+                          <div class="post-title-row">
+                            <h3 class="post-title">IVE 공개팬사인회 사람</h3>
+                            <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                          </div>
+                          <div class="post-tags">
+                            <span class="post-tag">#팬사인회</span>
+                            <span class="post-tag">#IVE</span>
+                            <span class="post-tag">#강남</span>
+                          </div>
                         </div>
                         
                         <div class="post-info">
@@ -881,16 +902,53 @@
 
                     <div class="post-card" data-category="exhibition" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/test/chgR3.jpg">
                         <div class="post-header">
-                            <div>
-                                <h3 class="post-title">BTS 전시회 엠디 줄</h3>
+                            <div class="post-title-row">
+                                <h3 class="post-title">BTS 전시회 엠디줄 현황</h3>
+                                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                              </div>
                                 <div class="post-tags">
-                                    <span class="post-tag">전시회</span>
-                                    <span class="post-tag">BTS</span>
-                                    <span class="post-tag">용산</span>
+                                    <span class="post-tag">#전시회</span>
+                                    <span class="post-tag">#BTS</span>
+                                    <span class="post-tag">#용산</span>
                                 </div>
+                            </div>
+                        <div class="post-info">
+                            <div class="info-date">
+                                <span class="info-icon">📅</span>
+                                <span>2024년 8월 3일 (토) 10:00</span>
+                            </div>
+                            <div class="info-place">
+                                <span class="info-icon">📍</span>
+                                <span>용산 아이파크몰</span>
                             </div>
                         </div>
                         
+                        <div class="post-description">
+                            엠디 지금 트레카 품절됐어욤 ㅜㅜ 그리고 앨범 럭드는 일인당 최대 7번 가능하고 30분 정도 웨이팅 있어요
+                        </div>
+                        
+                        <div class="post-footer">
+                            <div class="post-wrtier_id">
+                                <span>👤 army_purple</span>
+                                <span class="post-meta">5시간 전</span>
+                            </div>
+                            <div class="participants">
+                                <span>👁️ 28</span>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="post-card" data-category="exhibition" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/test/chgR3.jpg">
+                        <div class="post-header">
+                            <div class="post-title-row">
+                                <h3 class="post-title">BTS 전시회 엠디줄 현황</h3>
+                                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                              </div>
+                                <div class="post-tags">
+                                    <span class="post-tag">#전시회</span>
+                                    <span class="post-tag">#BTS</span>
+                                    <span class="post-tag">#용산</span>
+                                </div>
+                            </div>
                         <div class="post-info">
                             <div class="info-date">
                                 <span class="info-icon">📅</span>
@@ -920,6 +978,7 @@
                     <div class="modal-content">
                         <button class="close-btn" onclick="closePostModal()">&times;</button>
                         <h2 id="modalPostTitle">제목</h2>
+                        <div id="modalPostTags" style="margin: 10px 0;"></div>
                         <p id="modalPostDate">📅 날짜</p>
                         <p id="modalPostPlace">📍 장소</p>
                         <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
@@ -950,6 +1009,15 @@
               <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
             </body>
 <script>
+  // 신고 함수
+  function reportBtn(){
+    if(confirm("신고하시겠습니까?")){
+      alert("신고되었습니다.");
+    }else{
+      alert("취소");
+    }
+  }
+
   const modalImage = document.getElementById('modalImage');
   let currentImageIndex = 0;
   let imageList = [];
@@ -958,8 +1026,9 @@
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
   const postModal = document.getElementById("postModal");
+  const topBtn = document.getElementById('topBtn');
 
-  // 이미지 썸네일 클릭 시 모달 띄우기
+  // 이미지 썸네일 클릭 시 이미지 확대 모달 띄우기
   document.getElementById('modalPostImages').addEventListener('click', (e) => {
     if (e.target.tagName === 'IMG') {
       const clickedSrc = e.target.src;
@@ -971,9 +1040,9 @@
     }
   });
 
-  // 이미지 모달 닫기
+  // 이미지 확대 모달 닫기 (이미지 클릭은 닫히지 않음)
   imageModal.addEventListener('click', (e) => {
-    if (e.target === modalImage) return; // 이미지를 클릭해도 닫히지 않도록
+    if (e.target === modalImage) return;
     imageModal.style.display = 'none';
   });
 
@@ -991,61 +1060,86 @@
     modalImage.src = imageList[currentImageIndex];
   });
 
-  // ✅ 모달 열기 함수 - 매개변수 순서 수정 완료
-  function openPostModal(title, date, place, desc, imgListStr = "") {
+  // 모달 열기 (매개변수 순서 맞춤)
+  function openPostModal(title, date, place, desc, imgListStr = "", tags = []) {
     document.getElementById("modalPostTitle").textContent = title;
     document.getElementById("modalPostDate").textContent = `📅 ${date}`;
     document.getElementById("modalPostPlace").textContent = `📍 ${place}`;
     document.getElementById("modalPostDescription").textContent = desc;
 
-    const imageContainer = document.getElementById("modalPostImages");
-    imageContainer.innerHTML = ""; // 기존 이미지 초기화
+    // 태그 출력
+    const tagsContainer = document.getElementById("modalPostTags");
+    tagsContainer.innerHTML = "";
+    if (tags.length > 0) {
+      tags.forEach(tag => {
+        const span = document.createElement("span");
+        span.className = "post-tag";
+        span.textContent = `#${tag}`;
+        tagsContainer.appendChild(span);
+      });
+      tagsContainer.style.display = "flex";
+      tagsContainer.style.gap = "10px";
+    } else {
+      tagsContainer.style.display = "none";
+    }
 
+    // 이미지 출력
+    const imageContainer = document.getElementById("modalPostImages");
+    imageContainer.innerHTML = "";
     if (imgListStr) {
       const imgUrls = imgListStr.split(",").map(url => url.trim());
+      imageList = imgUrls;
 
       imgUrls.forEach(url => {
         const img = document.createElement("img");
         img.src = url;
         img.alt = "첨부 이미지";
-        img.style.width = "120px";
+        img.style.width = "100px";
+        img.style.height = "100px";
+        img.style.objectFit = "cover";
         img.style.borderRadius = "10px";
-        img.style.boxShadow = "0 2px 8px rgba(0,0,0,0.15)";
         imageContainer.appendChild(img);
       });
 
-      if (imgUrls.length > 1) {
-        prevBtn.style.display = 'block';
-        nextBtn.style.display = 'block';
-      } else {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-      }
-
+      prevBtn.style.display = imgUrls.length > 1 ? 'block' : 'none';
+      nextBtn.style.display = imgUrls.length > 1 ? 'block' : 'none';
       imageContainer.style.display = 'flex';
     } else {
       imageContainer.style.display = 'none';
     }
 
     postModal.style.display = "block";
+
+    // topBtn 비활성화
+    topBtn.style.pointerEvents = 'none';
+    topBtn.style.opacity = '0.4';
   }
 
   // 모달 닫기
   function closePostModal() {
     postModal.style.display = "none";
+
+    // topBtn 활성화
+    topBtn.style.pointerEvents = 'auto';
+    topBtn.style.opacity = '1';
   }
 
-  // 바깥 클릭 시 닫기
+  // 모달 바깥 클릭 시 닫기
   window.onclick = function(event) {
     if (event.target === postModal) {
-      postModal.style.display = "none";
+      closePostModal();
     }
   }
 
-  // 카드 클릭 시 모달 열기
+  // 후기 카드 클릭 이벤트 등록
   document.querySelectorAll(".post-card").forEach(card => {
     card.addEventListener("click", (event) => {
-      if (event.target.tagName === 'BUTTON' || event.target.closest(".post-actions")) {
+      // 신고 버튼, 참여 버튼 등 클릭 시 모달 열기 막기
+      if (
+        event.target.closest('.report-btn') || 
+        event.target.closest('.join-btn') || 
+        event.target.closest('.post-actions')
+      ) {
         return;
       }
 
@@ -1053,16 +1147,15 @@
       const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
       const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
       const desc = card.querySelector(".post-description")?.textContent.trim();
-      const imageList = card.getAttribute("data-imgs") || "";
+      const imgListStr = card.getAttribute("data-imgs") || "";
+      const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
 
-      openPostModal(title, date, place, desc, imageList);
+      openPostModal(title, date, place, desc, imgListStr, tags);
     });
   });
 
   // Top 버튼 기능
-  const topBtn = document.getElementById('topBtn');
-
-  window.addEventListener('scroll', function() {
+  window.addEventListener('scroll', function () {
     if (window.pageYOffset > 300) {
       topBtn.classList.add('show');
     } else {

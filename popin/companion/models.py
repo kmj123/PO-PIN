@@ -74,3 +74,12 @@ class CompanionComment(models.Model):
         return f"{self.author} - {self.content[:20]}"
     
     
+    
+class CompanionImage(models.Model):
+    post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField("첨부 이미지", upload_to='companion_images/')
+    caption = models.CharField("이미지 설명", max_length=100, blank=True)
+    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.post.title}의 이미지"

@@ -419,7 +419,10 @@
       <form id="memberForm" method="POST" action="{% url 'signup:member_select' %}">
         {% csrf_token %}
       <div class="search-container">
-        <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
+        <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+          <input type="hidden" name="group_name" id="selectedGroup">
+          <input type="hidden" name="member_name" id="selectedMember">
+
         <div class="filter-buttons">
           <button class="filter-btn active" data-filter="all">전체</button>
           <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
@@ -449,209 +452,168 @@
   </div>
 
   <script>
-    const groups = {
-      boyGroups: {
-        "RIIZE": ["성찬", "원빈", "쇼타로", "은석", "소희", "앤톤"],
-        "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
-        "SEVENTEEN": ["에스쿱스", "정한", "조슈아", "준", "호시", "원우", "우지", "디에잇", "민규", "도겸", "승관", "버논", "디노"],
-        "TWS": ["신유", "도훈", "영재", "한진", "지훈", "경민"],
-        "THE BOYZ": ["상연", "제이콥", "영훈", "현재", "주연", "케빈", "뉴", "큐", "선우", "에릭"],
-        "EXO": ["수호", "시우민", "디오", "백현", "찬열", "카이", "세훈"],
-        "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
-        "NCT DREAM": ["마크", "런쥔", "제노", "해찬", "재민", "천러", "지성"],
-        "ENHYPEN": ["정원", "희승", "제이", "제이크", "성훈", "선우", "니키"],
-        "NCT 127": ["쟈니", "태용", "유타", "도영", "재현", "윈윈", "정우", "마크", "해찬"],
-        "Stray Kids": ["방찬", "리노", "창빈", "현진", "한", "필릭스", "승민", "아이엔"],
-        "TOMORROW X TOGETHER": ["연준", "수빈", "범규", "태현", "휴닝카이"],
-        "ZEROBASEONE": ["성한빈", "김지웅", "장하오", "석매튜", "김태래", "리키", "김규빈", "박건욱", "한유진"],
-        "ATEEZ": ["성화", "홍중", "윤호", "여상", "산", "민기", "우영", "종호"],
-        "ASTRO": ["MJ", "진진", "차은우", "문빈", "라키", "윤산하"],
-        "N.Flying": ["이승협", "차훈", "김재현", "유회승", "서동성"],
-        "BOYNEXTDOOR": ["성호", "리우", "명재현", "태산", "이한", "운학"],
-        "MONSTA X": ["셔누", "민혁", "기현", "형원", "주헌", "아이엠"],
-        "82MAJOR": ["조성일", "윤예찬", "남성모", "황성빈", "박석준", "김도균"],
-        "&TEAM": ["케이", "후마", "니콜라스", "의주", "유마", "조", "하루아", "타키", "마키"],
-        "KickFlip": ["계훈", "아마루", "동화", "주왕", "민제", "케이주", "동현"],
-        "PLAVE": ["예준", "노아", "밤비", "은호", "하민"],
-      },
-      girlGroups: {
-        "BLACKPINK": ["지수", "제니", "로제", "리사"],
-        "aespa": ["카리나", "지젤", "윈터", "닝닝"],
-        "IVE": ["안유진", "가을", "레이", "원영", "리즈", "이서"],
-        "(G)I-DLE": ["미연", "민니", "소연", "우기", "슈화"],
-        "TWICE": ["나연", "정연", "모모", "사나", "지효", "미나", "다현", "채영", "쯔위"],
-        "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
-        "Red Velvet": ["아이린", "슬기", "웬디", "조이", "예리"],
-        "LE SSERAFIM": ["사쿠라", "채원", "윤진", "카즈하", "은채"],
-        "ILLIT": ["윤아", "민주", "모카", "원희", "이로하"],
-        "KISS OF LIFE": ["쥴리", "나띠", "벨", "하늘"],
-        "Hearts2Hearts": ["지우", "카르멘", "유하", "스텔라", "주은", "에이나", "이안", "예온"]
-      }
-    };
+   document.addEventListener("DOMContentLoaded", function () {
+  let selectedMembers = new Set();
+  let currentFilter = 'all';
 
-    let selectedMembers = new Set();
-    let currentFilter = 'all';
+  function updateSelectedDisplay() {
+    const count = document.getElementById('selectedCount');
+    const container = document.getElementById('selectedMembers');
+    const list = document.getElementById('selectedList');
+    const completeBtn = document.getElementById('completeBtn');
 
-    function renderGroups() {
-      const container = document.getElementById('groupsContainer');
-      const searchNotice = document.getElementById('searchNotice');
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    count.textContent = selectedMembers.size;
+    if (selectedMembers.size === 0) {
+      container.style.display = 'none';
+      completeBtn.disabled = true;
+    } else {
+      container.style.display = 'block';
+      completeBtn.disabled = false;
+      list.innerHTML = Array.from(selectedMembers).map(item => {
+        const [group, member] = item.split('-');
+        return `
+          <div class="selected-item">
+            <span>${group} - ${member}</span>
+            <button class="remove-btn" data-item="${item}">×</button>
+          </div>
+        `;
+      }).join('');
+    }
+  }
 
-      if (!searchTerm) {
-        container.innerHTML = '';
-        searchNotice.style.display = 'block';
-        return;
-      }
+  document.getElementById("idolSearch").addEventListener("input", function () {
+    const query = this.value.trim();
+    const container = document.getElementById("groupsContainer");
+    const searchNotice = document.getElementById("searchNotice");
 
-      searchNotice.style.display = 'none';
+    if (!query) {
       container.innerHTML = '';
-
-      const renderGroupType = (groupsObj, type) => {
-        Object.entries(groupsObj).forEach(([groupName, members]) => {
-          if (currentFilter !== 'all' && currentFilter !== type) return;
-
-          const groupMatches = groupName.toLowerCase().includes(searchTerm);
-          const memberMatches = members.some(member => member.toLowerCase().includes(searchTerm));
-
-          if (groupMatches || memberMatches) {
-            const groupCard = document.createElement('div');
-            groupCard.className = 'group-card';
-
-            const filteredMembers = members.filter(member => member.toLowerCase().includes(searchTerm) || groupMatches);
-
-            groupCard.innerHTML = `
-              <div class="group-header">
-                <div class="group-name">${groupName}</div>
-                <div class="group-type ${type === 'boy' ? 'boy-group' : 'girl-group'}">
-                  ${type === 'boy' ? '보이그룹' : '걸그룹'}
-                </div>
-              </div>
-              ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
-              <div class="members-grid">
-                ${filteredMembers.map(member => {
-                  const isSelected = selectedMembers.has(`${groupName}-${member}`);
-                  const isDisabled = !isSelected && selectedMembers.size >= 2;
-                  return `
-                    <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
-                            data-group="${groupName}" data-member="${member}">
-                      ${member}
-                    </button>
-                  `;
-                }).join('')}
-              </div>
-            `;
-
-            container.appendChild(groupCard);
-          }
-        });
-      };
-
-      renderGroupType(groups.boyGroups, 'boy');
-      renderGroupType(groups.girlGroups, 'girl');
+      searchNotice.style.display = 'block';
+      return;
     }
 
-    function updateSelectedDisplay() {
-      const count = document.getElementById('selectedCount');
-      const container = document.getElementById('selectedMembers');
-      const list = document.getElementById('selectedList');
-      const completeBtn = document.getElementById('completeBtn');
+    fetch(`/api/idols/search/?q=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        container.innerHTML = "";
+        searchNotice.style.display = 'none';
 
-      count.textContent = selectedMembers.size;
-      if (selectedMembers.size === 0) {
-        container.style.display = 'none';
-        completeBtn.disabled = true;
-      } else {
-        container.style.display = 'block';
-        completeBtn.disabled = false;
-        list.innerHTML = Array.from(selectedMembers).map(item => {
-          const [group, member] = item.split('-');
-          return `
-            <div class="selected-item">
-              <span>${group} - ${member}</span>
-              <button class="remove-btn" data-item="${item}">×</button>
+        const addGroupCard = (name, gender, members) => {
+          const groupCard = document.createElement("div");
+          groupCard.className = "group-card";
+          const typeClass = gender === "M" ? "boy-group" : "girl-group";
+
+          groupCard.innerHTML = `
+            <div class="group-header">
+              <div class="group-name">${name}</div>
+              <div class="group-type ${typeClass}">
+                ${gender === "M" ? "보이그룹" : "걸그룹"}
+              </div>
+            </div>
+            ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
+            <div class="members-grid">
+              ${members.map(member => {
+                const isSelected = selectedMembers.has(`${name}-${member.name}`);
+                const isDisabled = !isSelected && selectedMembers.size >= 2;
+                return `
+                  <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                          data-group="${name}" data-member="${member.name}">
+                    ${member.name}
+                  </button>
+                `;
+              }).join('')}
             </div>
           `;
-        }).join('');
-      }
-    }
+          container.appendChild(groupCard);
+        };
 
-    function completeMemberSelection() {
-      if (selectedMembers.size === 0) {
-        alert('최소 1명 이상의 멤버를 선택해주세요.');
-        return;
-      }
-
-      const container = document.getElementById('hiddenInputsContainer');
-      container.innerHTML = '';
-
-      selectedMembers.forEach(item => {
-        const [group, member] = item.split('-');
-
-        const groupInput = document.createElement('input');
-        groupInput.type = 'hidden';
-        groupInput.name = 'group_name';
-        groupInput.value = group;
-
-        const memberInput = document.createElement('input');
-        memberInput.type = 'hidden';
-        memberInput.name = 'member_name';
-        memberInput.value = member;
-
-        container.appendChild(groupInput);
-        container.appendChild(memberInput);
-      });
-
-      document.getElementById('memberForm').submit();
-    }
-
-    function goToPage(page, event) {
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-    }
-
-    // 이벤트 연결
-    document.getElementById('searchInput').addEventListener('input', renderGroups);
-
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentFilter = e.target.dataset.filter;
-        renderGroups();
-      });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
-        const group = e.target.dataset.group;
-        const member = e.target.dataset.member;
-        const key = `${group}-${member}`;
-
-        if (selectedMembers.has(key)) {
-          selectedMembers.delete(key);
-          e.target.classList.remove('selected');
-        } else {
-          if (selectedMembers.size < 2) {
-            selectedMembers.add(key);
-            e.target.classList.add('selected');
+        const groups = {};
+        data.members.forEach(member => {
+          const groupName = member.group__name;
+          if (!groups[groupName]) {
+            groups[groupName] = {
+              gender: member.group__gender,
+              members: []
+            };
           }
+          groups[groupName].members.push(member);
+        });
+
+        Object.entries(groups).forEach(([groupName, info]) => {
+          addGroupCard(groupName, info.gender, info.members);
+        });
+
+        updateSelectedDisplay();
+      });
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      document.getElementById("idolSearch").dispatchEvent(new Event("input")); // 다시 필터링
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+      const group = e.target.dataset.group;
+      const member = e.target.dataset.member;
+      const key = `${group}-${member}`;
+
+      if (selectedMembers.has(key)) {
+        selectedMembers.delete(key);
+        e.target.classList.remove('selected');
+      } else {
+        if (selectedMembers.size < 2) {
+          selectedMembers.add(key);
+          e.target.classList.add('selected');
         }
-
-        updateSelectedDisplay();
-        renderGroups();
       }
 
-      if (e.target.classList.contains('remove-btn')) {
-        const item = e.target.dataset.item;
-        selectedMembers.delete(item);
-        updateSelectedDisplay();
-        renderGroups();
-      }
+      updateSelectedDisplay();
+    }
+
+    if (e.target.classList.contains('remove-btn')) {
+      const item = e.target.dataset.item;
+      selectedMembers.delete(item);
+      updateSelectedDisplay();
+      document.getElementById("idolSearch").dispatchEvent(new Event("input"));
+    }
+  });
+
+  document.getElementById("completeBtn").addEventListener("click", function () {
+    if (selectedMembers.size === 0) {
+      alert("최소 1명 이상의 멤버를 선택해주세요.");
+      return;
+    }
+
+    const container = document.getElementById("hiddenInputsContainer");
+    container.innerHTML = "";
+
+    selectedMembers.forEach(item => {
+      const [group, member] = item.split('-');
+
+      const groupInput = document.createElement("input");
+      groupInput.type = "hidden";
+      groupInput.name = "group_name";
+      groupInput.value = group;
+
+      const memberInput = document.createElement("input");
+      memberInput.type = "hidden";
+      memberInput.name = "member_name";
+      memberInput.value = member;
+
+      container.appendChild(groupInput);
+      container.appendChild(memberInput);
     });
 
-    // 초기 렌더링
-    renderGroups();
-    updateSelectedDisplay();
-  </script>
+    document.getElementById("memberForm").submit();
+  });
+
+  updateSelectedDisplay();
+});
+</script>
 </body>
 </html>

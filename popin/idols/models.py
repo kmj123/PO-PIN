@@ -3,6 +3,8 @@ from django.db import models
 class Group(models.Model):
     code = models.CharField(max_length=50, unique=True, verbose_name="그룹 코드")
     name = models.CharField(max_length=100, unique=True, verbose_name="그룹명")
+    name_en = models.CharField(max_length=100, verbose_name="그룹영어명", default="")
+    
     GENDER_CHOICES = [
         ('M', '남성'),
         ('F', '여성'),
@@ -17,7 +19,7 @@ class Group(models.Model):
         ordering = ['name'] # 그룹명을 기준으로 정렬
 
     def __str__(self):
-        return self.name # 관리자 페이지 등에서 그룹 이름으로 표시
+        return f"{self.name}/{self.name_en}" # 관리자 페이지 등에서 그룹 이름으로 표시
 
 class Member(models.Model):
     # 멤버의 고유 식별자로 사용할 코드 (선택 사항, 필요하다면)
@@ -25,6 +27,7 @@ class Member(models.Model):
     
     # 멤버의 실제 이름 (사용자에게 보여줄 이름)
     name = models.CharField(max_length=100, verbose_name="멤버 이름")
+    name_en = models.CharField(max_length=100, verbose_name="멤버 영어이름",default="")
     
     # 이 멤버가 속한 그룹 (Group 모델과 N:1 관계)
     # 그룹이 삭제되면 멤버도 삭제되도록 CASCADE 설정

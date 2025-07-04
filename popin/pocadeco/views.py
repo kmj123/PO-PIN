@@ -1,3 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+def decoMain(request):
+    return render(request,'decoMain.html')

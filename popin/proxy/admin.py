@@ -1,7 +1,31 @@
 from django.contrib import admin
 from .models import ProxyPost, ProxyComment
 from .models import ProxyTag
+from .models import ProxyImage
+from django.forms import BaseInlineFormSet, ValidationError
+# 최대 5장 제한용 FormSet
+class LimitedImageInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        total_forms = len([
+            form for form in self.forms
+            if not form.cleaned_data.get('DELETE', False) and form.cleaned_data
+        ])
+        if self.instance.images.count() + total_forms > 5:
+            raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
+# 이미지 인라인
+class ProxyImageInline(admin.TabularInline):
+    model = ProxyImage
+    extra = 1
+    formset = LimitedImageInlineFormSet
+    readonly_fields = ['uploaded_at']
+    from .models import ProxyImage
 
+@admin.register(ProxyImage)
+class ProxyImageAdmin(admin.ModelAdmin):
+    list_display = ("post", "image", "caption", "uploaded_at")
+    readonly_fields = ("uploaded_at",)
+    
 #태그
 @admin.register(ProxyTag)
 class ProxyTagAdmin(admin.ModelAdmin):
