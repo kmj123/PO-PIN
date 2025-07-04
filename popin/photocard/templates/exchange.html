@@ -433,7 +433,9 @@
                     results.forEach(function(item) {
                         $('.photoGrid').append(`
                             <div class="cardItem">
-                                <img src="${item.image}" alt="${item.name}">
+                                <a href="${item.link}">
+                                    <img src="${item.image}" alt="${item.name}">
+                                </a>
                             </div>
                         `);
                     });
@@ -446,7 +448,7 @@
             // 이 부분에 실제 서버와의 연동이나 필터링을 구현하면 됩니다.
             // 예시로 더미 데이터를 반환
             const photocardData = [
-                { image: "/static/images/landing/wonyoung.jpg", name: "원영 포토카드", group: "IVE", transactionType: "교환", tradeStatus: "거래중", location: "상암", members: ["원영"] },
+                { image: "/static/images/landing/wonyoung.jpg", name: "원영 포토카드", group: "IVE", transactionType: "교환", tradeStatus: "거래중", location: "상암", members: ["원영"], link:"/photocard/detail/" },
                 { image: "/static/images/landing/wonbin.jpg", name: "원빈 포토카드", group: "RIIZE", transactionType: "판매", tradeStatus: "거래완료", location: "더현대", members: ["원빈"] }
             ];
 
