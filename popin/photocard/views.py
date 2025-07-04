@@ -86,46 +86,49 @@ def write(request):
             'poca_state_choices': Photocard.P_STATE_CHOICES,
             'trade_type_choices': Photocard.TRADE_CHOICES,
             'place_choices': Photocard.PLACE_CHOICES,
-            'member': Member.objects.all(),
             }
             return render(request, 'write.html', context)
             
         elif request.method == 'POST':
             # 작성 버튼 클릭 시 필요한 필드 정보
-            # 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
+            # 제목, 이미지, 판매자, 카테고리, 앨범, 그룹, 멤버, 하자상태, 태그, 거래 방식, 가격, 상세설명
             # 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
 
-            title = request.POST.get('title')
-            image = request.FILES.get('image')
+            title = request.POST.get('title') # 제목
+            image = request.FILES.get('image') # 이미지
             
-            seller = user
+            seller = user # 판매자
             
-            category=request.POST.get('category')
-            album=request.POST.get('album')
+            category=request.POST.get('category') # 카테고리
+            album=request.POST.get('album') # 앨범
             
-            member=request.POST.get('member')
-            group_name, member_name = member.split(' - ')
-            member_obj = Member.objects.get(name=member_name, group__name=group_name)
+            group=request.POST.get('group') # 그룹
+            member=request.POST.get('member') # 멤버
+            member_obj = Member.objects.get(name=member, group__name=group)
             
-            poca_state=request.POST.get('poca_state')
-            tag=request.POST.get('tag', None)
+            poca_state=request.POST.get('poca_state') # 하자상태
+            tag=request.POST.getList('tag', None) # 태그
             
-            trade_type=request.POST.get('trade_type')
-            place=request.POST.get('place')
+            trade_type=request.POST.get('trade_type') # 거래방식
+            price = request.POST.get('price') # 가격
+            description = request.POST.get('description','') # 상세설명
             
-            sell_state = '중' # 등록 시 default
+            place=request.POST.get('place') # 장소
             
+            sell_state = '중' # 구매자 거래 상태 (등록 시 default)
+            
+            # 거래 날짜
             if request.POST.get('available_at') == "" :
-                available_at = str(date.today())
+                available_at = str(date.today()) # blank로 들어오면 오늘 날짜
             else:
-                available_at = request.POST.get('available_at')
+                available_at = request.POST.get('available_at') # 지정한 경우 지정 날짜
             
-            latitude=request.POST.get('latitude')
-            longitude=request.POST.get('longitude')
+            latitude=request.POST.get('latitude') # 위도
+            longitude=request.POST.get('longitude') # 경도
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, price=price, description=description, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
             
             # redirect로 이동
