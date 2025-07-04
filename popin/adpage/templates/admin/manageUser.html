@@ -16,7 +16,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        padding: 30px;
+        padding: 30px 30px 30px 45px;
     }
         .banner {
           width: 1000px;
@@ -25,9 +25,10 @@
           border-radius: 20px;
           display: flex;
           align-items: center;
+          margin-top : -10px;
           justify-content: space-between;
           padding: 0 25px;
-          margin-bottom: 30px;
+          margin-bottom: 15px;
       }
         .banner h2{ 
             font-size : 30px; 
@@ -46,19 +47,16 @@
         .table{display : flex;
             margin-top : 15px;}
         .menu {
-              display: flex;
-              align-items: center;
-          }
-
-          .menu ul {
-              display: flex;
-              list-style: none;
-              gap: 10px;
-              align-items: center;
-              justify-content: center;
-              margin: 0;
-              padding: 0;
-          }
+            display: flex;
+            align-items: center;
+        }
+        .menu ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 10px;
+        }
         .menu li{
             display : flex;
             text-align : center;
@@ -74,11 +72,26 @@
             color : #764ba2;
             border : 2px solid  #764ba2;
         }
+        .menu li a{color : #764ba2;}
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
             border : none;
         }
+        .menu li.board a {
+          color: rgba(255, 255, 255, 0.95); 
+        }
+
+        .menu li {
+            text-decoration: none;
+        }
+        .menu li a {
+            text-decoration: none;
+            color: #764ba2; 
+          }
+
+        
+        a{text-decoration : none;}
         .home {
             all: unset;
             display: flex;
@@ -120,7 +133,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-radius: 25px;
       padding: 30px 40px;
-      margin-top : 15px;
+      margin-top : 5px;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
       min-height: 800px;
     }
@@ -132,7 +145,7 @@
 
     .page-header h2 {
       text-align : center;
-      font-size: 26px;
+      font-size: 24px;
       color: #333;
       margin-bottom: 15px;
     }
@@ -363,7 +376,7 @@
       font-weight: 500;
       transition: all 0.3s ease;
     }
-
+    
     .btn-delete {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
@@ -410,17 +423,17 @@
   <div class="container">
     <!-- 상단 배너 -->
     <div class="banner">
-      <h2>PO-PIN</h2>
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
       <div class = "menu">
-                <ul>
-                    <li>메인</li>
-                    <li>공지사항</li>
-                    <li>게시글 관리</li>
-                    <li class = "board">사용자 관리</li>
-                </ul>
+        <ul>
+          <li><a href="{% url 'adpage:main' %}">메인</a></li>
+          <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+          <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+          <li class="board"><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
+        </ul>
             </div>
             <div class="banner-right">
-                <a href="#" class="home">
+                <a href="{% url 'home:main' %}" class="home">
                     <i class="fi fi-rr-home"></i>홈으로
                 </a>
             </div>

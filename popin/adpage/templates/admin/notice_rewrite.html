@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>관리자 | 게시글 상세보기</title>
+  <title>관리자 | 공지사항 수정</title>
   <style>
     *{margin : 0; padding : 0;  box-sizing : border-box;}
         body {
@@ -18,7 +18,7 @@
             padding: 20px;
         }
         .banner{
-            margin-top : -100px;
+            margin-top : -28px;
             width : 1000px;
             height : 70px;
             background :rgba(255, 255, 255, 0.95);
@@ -71,11 +71,6 @@
             color : #764ba2;
             border : 2px solid  #764ba2;
         }
-        .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
@@ -147,8 +142,8 @@
       margin: 15px auto 0 auto;
     }
 
-    /* 테이블 스타일 개선 */
-    .table-container {
+    /* 폼 스타일 */
+    .form-container {
       width: 100%;
       max-width: 900px;
       margin: 20px 0;
@@ -215,7 +210,61 @@
       line-height: 1.6;
     }
 
-    /* 체크박스 스타일 개선 */
+    /* 입력 필드 스타일 */
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .form-select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 15px;
+      resize: vertical;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    /* 체크박스 스타일 */
     .custom-checkbox {
       position: relative;
       display: inline-block;
@@ -248,6 +297,35 @@
       font-weight: bold;
     }
 
+    /* 파일 업로드 스타일 */
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .file-input {
+      padding: 8px 15px;
+      border: 2px solid #e8e8e8;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .file-input:hover {
+      border-color: #667eea;
+    }
+
+    .current-file {
+      color: #7E6EB0;
+      font-size: 14px;
+      background: #f8f9ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+    }
+
     a{text-decoration : none;}
 
     .menu li a {
@@ -259,15 +337,7 @@
       color: rgba(255, 255, 255, 0.95);
     }
 
-
-    /* 내용 영역 스타일 개선 */
-    .content-text {
-      padding: 2px;
-      border-radius: 8px;
-      line-height: 1.6;
-    }
-
-    /* 버튼 스타일 개선 */
+    /* 버튼 스타일 */
     .btn {
       display: flex;
       justify-content: center;
@@ -297,12 +367,6 @@
     }
 
     .btn button:nth-child(2) {
-      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-      color: white;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-    }
-
-    .btn button:nth-child(3) {
       background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
       color: white;
       box-shadow: 0 4px 15px rgba(149, 165, 166, 0.3);
@@ -316,33 +380,6 @@
       transform: translateY(0);
     }
 
-    /* 반응형 디자인 */
-    @media (max-width: 768px) {
-      .banner {
-        width: 95%;
-        padding: 0 15px;
-      }
-      
-      .Bboard {
-        padding: 20px 25px;
-      }
-      
-      table.writebox th {
-        width: 120px;
-        padding: 15px;
-        font-size: 14px;
-      }
-      
-      
-      .btn {
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      .btn button {
-        width: 100%;
-      }
-    }
   </style>
 </head>
 <body>
@@ -358,64 +395,113 @@
         </ul>
       </div>
       <div class="banner-right">
-        <a href="{% url 'home:main' %}" class="home">
-          <i class="fi fi-rr-home"></i>홈으로
-        </a>
-      </div>
+            <a href="{% url 'home:main' %}" class="home">
+                <i class="fi fi-rr-home"></i>홈으로
+            </a>
+        </div>
     </div>
 
     <div class="Bboard">
       <div class="dash-top">
-        <h2>공지사항</h2>
+        <h2>공지사항 수정</h2>
         <hr>
       </div>
 
-      <div class="table-container">
+      <form class="form-container">
         <table class="writebox">
           <tbody>
             <tr>
               <th scope="row"><label for="board">공지 유형</label></th>
-              <td>일반</td>
+              <td>
+                <select class="form-select" id="board" name="board">
+                    <option value="general">일반</option>
+                    <option value="notice">점검</option>
+                    <option value="qna">업데이트</option>
+                </select>
+              </td>
             </tr>
             <tr>
               <th scope="row"><label for="title">제목</label></th>
-              <td>포핀 이용 안내</td>
+              <td>
+                <input type="text" class="form-input" id="title" name="title" value="포핀 이용 안내" placeholder="제목을 입력하세요">
+              </td>
             </tr>
             <tr>
               <th scope="row"><label for="fix">상단고정</label></th>
               <td>
                 <div class="custom-checkbox">
-                  <input type="checkbox" id="fix" checked/>
+                  <input type="checkbox" id="fix" name="fix" checked/>
                 </div>
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="content">상세 내용</label></th>
               <td>
-                <div class="content-text">
-                  포핀은 현장교환을 주로 하는 어쩌구입니다.<br>
-                  가나다라마바사
-                </div>
+                <textarea class="form-textarea" id="content" name="content" placeholder="내용을 입력하세요">포핀은 현장교환을 주로 하는 어쩌구입니다.
+가나다라마바사</textarea>
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
-                <div class="file-info">
-                  <span>popin.jpg</span>
+                <div class="file-upload">
+                  <input type="file" class="file-input" id="file" name="file" accept="image/*,.pdf,.doc,.docx">
+                  <div class="current-file">현재 파일: popin.jpg</div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
+      </form>
       
       <div class="btn">
-        <button type="button" onclick="location.href='{% url 'adpage:noticeR' %}'" value="update">수정</button>
-        <button type="button" value="delete">삭제</button>
-        <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
+        <button type="submit">수정 완료</button>
+        <button type="button" onclick="history.back()">취소</button>
       </div>
     </div>
   </div>
+
+  <script>
+    // 폼 제출 처리
+    document.querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 필수 입력 검증
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      
+      if (!title) {
+        alert('제목을 입력해주세요.');
+        document.getElementById('title').focus();
+        return;
+      }
+      
+      if (!content) {
+        alert('내용을 입력해주세요.');
+        document.getElementById('content').focus();
+        return;
+      }
+      
+      // 수정 확인
+      if (confirm('공지사항을 수정하시겠습니까?')) {
+        // 여기서 실제 수정 로직 처리
+        alert('수정이 완료되었습니다.');
+        // 목록 페이지로 이동
+        // window.location.href = '공지사항 목록 페이지 URL';
+      }
+    });
+
+    // 파일 업로드 시 파일명 표시
+    document.getElementById('file').addEventListener('change', function(e) {
+      const fileInput = e.target;
+      const currentFileDiv = document.querySelector('.current-file');
+      
+      if (fileInput.files.length > 0) {
+        currentFileDiv.textContent = `새 파일: ${fileInput.files[0].name}`;
+      } else {
+        currentFileDiv.textContent = '현재 파일: popin.jpg';
+      }
+    });
+  </script>
 </body>
 </html>

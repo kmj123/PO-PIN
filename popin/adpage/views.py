@@ -21,3 +21,6 @@ def noticeV(request) :
 
 def noticeW(request) :
     return render(request,"admin/notice_write.html")
+
+def noticeR(request) :
+    return render(request,"admin/notice_rewrite.html")
