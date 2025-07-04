@@ -56,6 +56,8 @@ def view(request, pno):
             
     # pno 포토카드 불러오기
     qs = Photocard.objects.get(pno=pno)
+    qs.hit += 1
+    qs.save()
     
     # 포토카드 상세정보 반환
     context = {"info":qs}
