@@ -347,11 +347,11 @@
                 </div>
             </div>
             <div class="cardItem">
-                <div class="card-image"><img src="/static/images/landing/wonyoung.jpg"></div>
+                <div class="card-image"><img src="/media/{{info.image}}"></div>
                 <div class="card-info">
-                    <h4>IVE 원영 (WONYOUNG)</h4>
+                    <h4>{{info.member}}</h4>
                     <div class="card-meta">
-                        <span class="card-album">ELEVEN</span>&ensp;
+                        <span class="card-album">{{info.album}}</span>&ensp;
                         <span class="card-likes">❤️ 27</span>
                     </div>
                     <div class="card-tags">
@@ -359,7 +359,7 @@
                         <span class="tag">럭키드로우</span>
                         <span class="tag">하자없음</span>
                     </div>
-                    <div class="card-location">📍 올림픽공원</div>
+                    <div class="card-location">📍 {{info.place}}</div>
                 </div>
             </div>
             <!-- 지도 -->
@@ -368,7 +368,7 @@
             <script>
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
                 mapOption = { 
-                    center: new kakao.maps.LatLng(37.515947, 127.130855), // 지도의 중심좌표 - 올림픽공원역
+                    center: new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}), // 지도의 중심좌표 - 올림픽공원역
                     level: 4 // 지도의 확대 레벨
                 };
 
@@ -380,7 +380,7 @@
                 
             // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
             var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-                markerPosition = new kakao.maps.LatLng(37.516595, 127.129529); // 마커가 표시될 위치입니다
+                markerPosition = new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}); // 마커가 표시될 위치입니다
 
             // 마커를 생성합니다
             var marker = new kakao.maps.Marker({
@@ -395,12 +395,12 @@
             <div id="map-bottomSheet" class="map-bottom-sheet">
                 <div class="map-info">
                     <div class="closebutton"><h3>거래 정보</h3> <button style="background:none; border: none;" onclick="closeMapBottomSheet()">✕</button></div>
-                    <div class="poca-seller">거래자 아이디 : aaa</div>
-                    <div class="poca-place">거래 장소 : 투썸플레이스 올림픽공원역점</div>
-                    <div class="poca-type">거래 방식 : 교환</div>
-                    <div class="poca-available">거래 가능 일자 : 2025-06-27 - 2025-06-29</div>
-                    <div class="poca-created">등록 일자 : 2025-06-20</div>
-                    <div class="poca-state">포토카드 상태 : 상</div>
+                    <div class="poca-seller">거래자 아이디 : {{info.seller.user_id}}</div>
+                    <div class="poca-place">거래 장소 : {{info.place}}</div>
+                    <div class="poca-type">거래 방식 : {{info.trade_type}}</div>
+                    <div class="poca-available">거래 가능 일자 : {{info.available_at}}</div>
+                    <div class="poca-created">등록 일자 : {{info.created_at|date:'Y년 m월 d일 A h:i'}}</div>
+                    <div class="poca-state">포토카드 상태 : {{info.poca_state}}</div>
                     <div class="poca-tag">
                         <span>럭키드로우</span>
                         <span>사운드웨이브</span>

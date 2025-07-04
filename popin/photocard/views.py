@@ -62,10 +62,84 @@ def view(request, pno):
     return render(request, 'view.html', context)
   
 def exchange(request):
-    return render(request, 'exchange.html')
+    # 기본 데이터 로드
+    groupMember = Member.objects.select_related('group').all()
+    
+    # GET 요청에서 필터 값 가져오기
+    selected_trade = request.GET.get('trade_type', '전체')
+    selected_state = request.GET.get('sell_state', '전체')
+    selected_place = request.GET.get('place', '전체')
+    selected_members = request.GET.getlist('members[]')
 
-def detail(request):
-    return render(request, 'pocadetail.html')
+    # 쿼리 파라미터 받아오기
+    idol_names = request.GET.getlist('idol')
+    place = request.GET.get('place')
+    category = request.GET.get('category')
+    sort = request.GET.get('sort')
+
+    # 전체 포토카드 리스트 불러오기
+    photocards = Photocard.objects.select_related('member__group').annotate(
+        wish_count=Count('wished_by_users')
+    )
+
+    # 선택된 필터 값에 따라 포토카드 필터링
+    if selected_trade != '전체':
+        photocards = photocards.filter(trade_type=selected_trade)
+    
+    if selected_state == '거래중':
+        photocards = photocards.filter(sell_state=selected_state)
+    
+    if selected_place != '전체':
+        photocards = photocards.filter(place=selected_place)
+    
+    # 멤버 선택 처리
+    if selected_members and '전체' not in selected_members:
+        photocards = photocards.filter(member__name__in=selected_members)
+
+    # 아이돌, 카테고리 필터링 (필요시 추가)
+    if idol_names:
+        photocards = photocards.filter(member__name__in=idol_names)
+
+    if category:
+        photocards = photocards.filter(category=category)
+
+    # 좋아요 순 정렬 옵션 적용
+    if sort == 'likes':
+        photocards = photocards.order_by('-wish_count')
+
+    # 필터링된 포토카드를 템플릿에 전달
+    context = {
+        'list': groupMember,
+        'photocards': photocards,
+        'trade_choices': Photocard.TRADE_CHOICES,
+        'state_choices': Photocard.TRADE_STATE_CHOICES,
+        'place_choices': Photocard.PLACE_CHOICES,
+    }
+    
+    return render(request, 'exchange.html', context)
+
+def detail(request, pno):
+    user_id = request.session.get('user_id')
+    
+    if user_id: # 유저 정보가 있는 경우
+        latest_list = request.session.get('latest_poca', []) # 세선 안에 latest_poca 있으면 리스트 불러오기 or []
+        
+        if pno in latest_list: # 리스트 안에 해당 게시글 pno가 있을 때
+            if latest_list[0] != pno: # pno가 리스트 안에 존재하지만 가장 최근이 아닐 때
+                latest_list.remove(pno) # 리스트 내 pno 제거
+                latest_list.insert(0,pno) # 가장 최근으로 insert
+        else:
+            latest_list.insert(0,pno) # 가장 최근으로 insert
+            
+        request.session['latest_poca'] = latest_list
+            
+    # pno 포토카드 불러오기
+    qs = Photocard.objects.get(pno=pno)
+    
+    # 포토카드 상세정보 반환
+    context = {"info":qs}
+    
+    return render(request, 'pocadetail.html', context)
 
 # 포토카드 거래글 작성
 def write(request):
