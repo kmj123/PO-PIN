@@ -24,7 +24,8 @@ class SharingPost(models.Model):
 
     title = models.CharField("제목", max_length=100)
     content = models.TextField("내용")
-
+    artist = models.CharField("아티스트", max_length=50,default="기타")
+    requirement=models.TextField("필수사항")
     category = models.CharField("카테고리", max_length=20, choices=CATEGORY_CHOICES)
     type = models.CharField("나눔 형태", max_length=10, choices=TYPE_CHOICES)
 
