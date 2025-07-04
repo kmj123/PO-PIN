@@ -2,6 +2,7 @@
 {% extends 'header_login.html' %}
 {% load static %}
 {% block content %}
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -823,9 +824,9 @@ textarea {
                     <br>
                     <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
                     <select style="color: #757575;" id="photo_state">
-                        <option id="poca_state" value="best">상태: 상</op>
-                        <option id="poca_state" value="mid">상태: 중</op>
-                        <option id="poca_state" value="bad">상태: 하</op>
+                        <option id="poca_state" value="best">상: 미개봉상태 하자 없음</option>
+                        <option id="poca_state" value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
+                        <option id="poca_state" value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
                     </select>
                 </div>
             </div>
@@ -968,10 +969,11 @@ textarea {
     <!--//Upload-Form-->
 </div>  
 <!--//Upload-Container-->
+
 <script>
     //파일 업로드 관련
     const fileUploadArea = document.getElementById('fileUploadArea');
-    const imageinput = document.getElementById('imageinput');
+    const imageinput = document.getElementById('imageInput');
     const previewContainer = document.getElementById('previewContainer');
     const previewImage = document.getElementById('previewImage');
 
@@ -988,7 +990,7 @@ textarea {
 
     fileUploadArea.addEventListener('drop',(e)=>{
         e.preventDefault();
-        fileUploadArea.ClassList.remove('dragover');
+        fileUploadArea.classList.remove('dragover');
         const files = e.dataTransfer.files;
         if (files.length>0){
             handleFile(files[0]);
@@ -1010,7 +1012,9 @@ textarea {
                 previewContainer.style.display = "block";
                 console.log(e)
             };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+        } else {
+            alert("이미지 파일만 업로드할 수 있습니다.");
         }
     }
     
