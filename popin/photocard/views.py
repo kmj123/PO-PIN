@@ -32,8 +32,9 @@ def list(request):
     # 좋아요 순 정렬 옵션 적용
     if sort == 'likes':
         photocards = photocards.annotate(wish_count=Count('wished_by_users')).order_by('-wish_count')
-        
-    
+    # 조회수 순 정렬 옵션 적용
+    elif sort == 'hit':
+        photocards = photocards.order_by('-hit')
     
     context = {'list': photocards}
     return render(request, 'list.html', context)
