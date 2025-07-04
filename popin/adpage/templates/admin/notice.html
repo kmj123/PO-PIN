@@ -23,6 +23,7 @@
             border-radius : 20px;
             display : flex;
             align-items: center;
+            margin-top : 5px;
             justify-content: space-between;
             padding: 0 25px;
         }
@@ -68,11 +69,13 @@
             color : #764ba2;
             border : 2px solid  #764ba2;
         }
+        .menu li a{color : #764ba2;}
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
             border : none;
         }
+        .menu .board a {color : rgba(255, 255, 255, 0.95);}
         .home {
             all: unset;
             display: flex;
@@ -168,17 +171,7 @@
                 tbody tr:last-child td {
                 border-bottom: none;
                 }
-            .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
-        .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
-        button{ width : 150px; height : 40px; margin-left : 750px;
+        button{ width : 150px; height : 40px; margin-left : 750px; cursor : pointer;
         margin-bottom : 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color : white;
         border-radius : 10px; border: none;}
         a{text-decoration : none; color : #333333;}
@@ -215,35 +208,22 @@
             }
 
     </style>
-    <script>
-        // 모든 메뉴 li 요소 가져오기
-        const menuItems = document.querySelectorAll('.menu ul li');
-
-        menuItems.forEach(item => {
-            item.addEventListener('click', () => {
-            // 먼저 모든 li에서 'board' 클래스 제거
-            menuItems.forEach(i => i.classList.remove('board'));
-            // 클릭한 항목에만 'board' 클래스 추가
-            item.classList.add('board');
-            });
-        });
-    </script>
 </head>
 <body>
     <div>
 
         <div class = "banner">
-            <strong><h2>PO-PIN</h2></strong>
+            <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
             <div class = "menu">
                 <ul>
-                    <li>대시보드</li>
-                    <li class = "board">공지사항</li>
-                    <li>게시글 관리</li>
-                    <li>사용자 관리</li>
+                    <li><a href="{% url 'adpage:main' %}">메인</a></li>
+                    <li class = "board"><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+                    <li><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+                    <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
                 </ul>
             </div>
             <div class="banner-right">
-                <a href="#" class="home">
+                <a href="{% url 'home:main' %}" class="home">
                     <i class="fi fi-rr-home"></i>홈으로
                 </a>
             </div>
@@ -270,52 +250,52 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
                         <tr>
-                            <td><a href = "">포카꾸미기 이용 안내</a></td>
+                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
@@ -334,7 +314,7 @@
                     <a href="#">»</a>
                 </div>
                 </div>
-                <button type = "button" name = "write" >게시글 작성하기</button>
+                <a href = "{% url 'adpage:noticeW' %}"><button type = "button" name = "write" >게시글 작성하기</button></a>
             </div>
         </div>
     </div>

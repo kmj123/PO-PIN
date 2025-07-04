@@ -45,13 +45,10 @@ INSTALLED_APPS = [
     'photocard',
     'idols',
     'adpage',
-    'companion',
     'home',
-    'chgReview',
-    'proxy',
     'sharing',
-    'status',
     'community',
+    'chgReview',
     'pocadeco',
 ]
 
