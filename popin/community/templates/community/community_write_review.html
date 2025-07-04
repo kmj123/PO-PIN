@@ -395,6 +395,8 @@
     </nav>
   </header>
 
+  <form method="POST"  action="{% url 'community:write_review' %}" enctype="multipart/form-data">
+    {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
@@ -402,33 +404,36 @@
         <div class="line"></div>
       </div>
     </div>
-
     <table class="writebox">
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목</label></th>
-          <td><input type="text" class="wlong" id="title"/></td>
+          <td><input type="text" class="wlong" name="title" id="title"/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="artist">아티스트</label></th>
-          <td><input type="text" class="wlong" id="artist" placeholder="예: nct wish" /></td>
-        </tr>
+
+        <th scope="row"><label for="artist">아티스트</label></th>
+        <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: nct wish" /></td>
+      </tr>
+
+
         <tr>
           <th scope="row"><label for="content">후기내용</label></th>
-          <td><textarea class="tta" id="content" placeholder="교환 경험에 대한 상세한 후기를 작성해주세요."></textarea></td>
+          <td><textarea class="tta" name="content" id="content" placeholder="교환 경험에 대한 상세한 후기를 작성해주세요."></textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="partner">상대방 아이디</label></th>
-          <td><input type="text" class="wlong" id="partner" placeholder="교환하신 상대방의 아이디를 입력해주세요"/></td>
+          <td><input type="text" class="wlong" name="partner" id="partner" placeholder="교환하신 상대방의 아이디를 입력해주세요"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" placeholder="#친절 #재거래희망 #빠른배송 등"/></td>
+          <td><input type="text" class="wlong" name="tags" id="tags" placeholder="#친절 #재거래희망 #빠른배송 등"/></td>
         </tr>
         <tr>
           <th scope="row">온/오프</th>
           <td>
             <div class="toggle-group">
+            <input type="hidden" name="method" id="methodInput" value="">
               <div class="toggle-option">
                 <div class="toggle-switch" id="onlineToggle"></div>
                 <span class="toggle-label">온라인</span>
@@ -442,6 +447,7 @@
         </tr>
         <tr>
           <th scope="row">거래 방식</th>
+          <input type="hidden" name="transaction_type" id="transactionTypeInput" value="">
           <td>
             <div class="toggle-group">
               <div class="toggle-option">
@@ -457,6 +463,7 @@
         </tr>
         <tr>
           <th scope="row">총평점</th>
+          <input type="hidden" name="overall_score" id="scoreInput" value="">
           <td>
             <div class="rating">
               <span class="star" data-rating="1">★</span>
@@ -467,258 +474,262 @@
               <span class="rating-text">별점을 선택해주세요</span>
             </div>
           </td>
-        </tr>
-        <tr>
-          <th scope="row">사진 첨부</th>
-          <td>
-            <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
-              <div class="upload-icon">📷</div>
-              <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
-              <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
-            </div>
-            <div class="file-list" id="fileList"></div>
-            <div class="file-count" id="fileCount" style="display: none;"></div>
-          </td>
-        </tr>
+
+          </tr>
+            <tr>
+            <th scope="row">사진 첨부</th>
+            <td>
+              <div class="file-upload-area" id="fileUploadArea">
+                <input type="file" name="images" id="fileInput" multiple accept="image/*" style="display: none;">
+                <div class="upload-icon">📷</div>
+                <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
+                <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
+              </div>
+              <div class="file-list" id="fileList"></div>
+              <div class="file-count" id="fileCount" style="display: none;"></div>
+            </td>
+          </tr>
+
       </tbody>
     </table>
 
     <div class="btn">
-      <button type="button" value="write">확인</button>
+      <button type="submit" value="write">확인</button>
       <button type="button" value="cancel">취소</button>
     </div>
   </div>
 
-  <script>
-    let selectedFiles = [];
-    let currentRating = 0;
-    let selectedOnlineMethod = ''; // 온라인/오프라인 선택
-    let selectedTradeMethod = ''; // 판매/교환 선택
+</form>
+  
+<script>
+  let selectedFiles = [];
+  let currentRating = 0;
+  let selectedExchangeMethod = '';
 
-    document.addEventListener("DOMContentLoaded", function () {
-      // 토글 스위치 이벤트
-      setupToggleSwitches();
-      
-      // 별점 이벤트
-      setupRating();
-      
-      // 파일 업로드 이벤트
-      setupFileUpload();
-      
-      // 버튼 이벤트
-      setupButtons();
+  document.addEventListener("DOMContentLoaded", function () {
+    setupToggleSwitches();
+    setupRating();
+    setupFileUpload();
+    setupButtons();
+  });
+
+  // ✅ 파일 크기 포맷 함수 (가장 위에 위치해야 오류 안 남)
+  function formatFileSize(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Byte';
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+  }
+
+  function setupToggleSwitches() {
+    // 온/오프라인
+    const methodMap = {
+      onlineToggle: "온라인",
+      offlineToggle: "오프라인"
+    };
+    const methodInput = document.getElementById("methodInput");
+
+    Object.keys(methodMap).forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("click", () => {
+        Object.keys(methodMap).forEach(k => {
+          document.getElementById(k).classList.remove("active");
+
+
+        });
+        el.classList.add("active");
+        methodInput.value = methodMap[id];
+      });
     });
 
-    function setupToggleSwitches() {
-      // 온라인/오프라인 토글
-      const onlineMethodToggles = ['onlineToggle', 'offlineToggle'];
-      onlineMethodToggles.forEach(toggleId => {
-        document.getElementById(toggleId).addEventListener('click', function() {
-          onlineMethodToggles.forEach(id => {
-            const toggle = document.getElementById(id);
-            if (id === toggleId) {
-              toggle.classList.add('active');
-              selectedOnlineMethod = id.replace('Toggle', '');
-            } else {
-              toggle.classList.remove('active');
-            }
-          });
-        });
-      });
+    // 거래 방식
+    const transactionMap = {
+      saleToggle: "양도",
+      exchangeToggle: "교환"
+    };
+    const transactionInput = document.getElementById("transactionTypeInput");
 
-      // 판매/교환 토글
-      const tradeMethodToggles = ['saleToggle', 'exchangeToggle'];
-      tradeMethodToggles.forEach(toggleId => {
-        document.getElementById(toggleId).addEventListener('click', function() {
-          tradeMethodToggles.forEach(id => {
-            const toggle = document.getElementById(id);
-            if (id === toggleId) {
-              toggle.classList.add('active');
-              selectedTradeMethod = id.replace('Toggle', '');
-            } else {
-              toggle.classList.remove('active');
-            }
-          });
+    Object.keys(transactionMap).forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("click", () => {
+        Object.keys(transactionMap).forEach(k => {
+          document.getElementById(k).classList.remove("active");
         });
+        el.classList.add("active");
+        transactionInput.value = transactionMap[id];
       });
-    }
+    });
+  }
 
-    function setupRating() {
-      const stars = document.querySelectorAll('.star');
-      const ratingText = document.querySelector('.rating-text');
-      
-      stars.forEach(star => {
-        star.addEventListener('click', function() {
-          const rating = parseInt(this.dataset.rating);
-          currentRating = rating;
-          
-          stars.forEach((s, index) => {
-            if (index < rating) {
-              s.classList.add('active');
-            } else {
-              s.classList.remove('active');
-            }
-          });
-          
-          const ratingTexts = ['매우 불만족', '불만족', '보통', '만족', '매우 만족'];
-          ratingText.textContent = `${rating}점 - ${ratingTexts[rating - 1]}`;
-        });
-        
-        star.addEventListener('mouseover', function() {
-          const rating = parseInt(this.dataset.rating);
-          stars.forEach((s, index) => {
-            if (index < rating) {
-              s.style.color = '#FFD700';
-            } else {
-              s.style.color = '#ddd';
-            }
-          });
-        });
-      });
-      
-      document.querySelector('.rating').addEventListener('mouseleave', function() {
+  function setupRating() {
+    const stars = document.querySelectorAll('.star');
+    const ratingText = document.querySelector('.rating-text');
+    const scoreInput = document.getElementById("scoreInput");
+
+    stars.forEach(star => {
+      star.addEventListener('click', function () {
+        const rating = parseInt(this.dataset.rating);
+        currentRating = rating;
+        scoreInput.value = rating;
+
         stars.forEach((s, index) => {
-          if (index < currentRating) {
-            s.style.color = '#FFD700';
-          } else {
-            s.style.color = '#ddd';
-          }
+          s.classList.toggle('active', index < rating);
         });
+
+
+
+        const ratingTexts = ['매우 불만족', '불만족', '보통', '만족', '매우 만족'];
+        ratingText.textContent = `${rating}점 - ${ratingTexts[rating - 1]}`;
       });
+    });
+
+    document.querySelector('.rating').addEventListener('mouseleave', () => {
+      stars.forEach((s, index) => {
+        s.style.color = index < currentRating ? '#FFD700' : '#ddd';
+      });
+    });
+  }
+
+  function setupFileUpload() {
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+
+    fileUploadArea.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', function () {
+      const files = Array.from(fileInput.files);
+
+      if (selectedFiles.length + files.length > 5) {
+        alert("최대 5개까지만 업로드할 수 있습니다.");
+        fileInput.value = '';
+        return;
+      }
+
+      files.forEach(file => {
+        selectedFiles.push(file);
+        displayFile(file);
+      });
+
+      updateFileInput();
+    });
+
+    function updateFileInput() {
+      const dataTransfer = new DataTransfer();
+      selectedFiles.forEach(file => dataTransfer.items.add(file));
+      document.getElementById('fileInput').files = dataTransfer.files;
     }
 
-    function setupFileUpload() {
-      const fileUploadArea = document.getElementById('fileUploadArea');
-      const fileInput = document.getElementById('fileInput');
-      const fileList = document.getElementById('fileList');
+    fileUploadArea.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      this.classList.add('dragover');
+    });
 
-      fileUploadArea.addEventListener('click', () => fileInput.click());
+    fileUploadArea.addEventListener('dragleave', function (e) {
+      e.preventDefault();
+      this.classList.remove('dragover');
+    });
 
-      fileInput.addEventListener('change', function() {
-        handleFiles(this.files);
-      });
-
-      // 드래그 앤 드롭
-      fileUploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        this.classList.add('dragover');
-      });
-
-      fileUploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-      });
-
-      fileUploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        this.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files);
-      });
-    }
+    fileUploadArea.addEventListener('drop', function (e) {
+      e.preventDefault();
+      this.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
 
     function handleFiles(files) {
       Array.from(files).forEach(file => {
         if (file.type.startsWith('image/')) {
-          selectedFiles.push(file);
-          displayFile(file);
+          if (selectedFiles.length < 5) {
+            selectedFiles.push(file);
+            displayFile(file);
+            updateFileInput();
+          } else {
+            alert("최대 5개까지만 업로드할 수 있습니다.");
+          }
         }
       });
     }
+  }
 
-    function displayFile(file) {
-      const fileList = document.getElementById('fileList');
-      const fileItem = document.createElement('div');
-      fileItem.className = 'file-item';
-      
-      const fileSize = formatFileSize(file.size);
 
-      fileItem.innerHTML = `
-        <div class="file-info">
-          <div class="file-icon">📷</div>
-          <div>
-            <div class="file-name">${file.name}</div>
-            <div class="file-size">${fileSize}</div>
-          </div>
+  function displayFile(file) {
+    const fileList = document.getElementById('fileList');
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+
+    fileItem.innerHTML = `
+      <div class="file-info">
+        <div class="file-icon">📷</div>
+        <div>
+          <span class="file-name">${file.name}</span>
+          <span class="file-size">${formatFileSize(file.size)}</span>
         </div>
-        <span class="file-remove" onclick="removeFile('${file.name}')">×</span>
-      `;
+      </div>
+      <div class="file-remove" onclick="removeFile('${file.name}')">×</div>
+    `;
+    fileList.appendChild(fileItem);
+  }
 
-      fileList.appendChild(fileItem);
-    }
+  function removeFile(fileName) {
+    selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+    const fileItems = document.querySelectorAll('.file-item');
+    fileItems.forEach(item => {
+      if (item.querySelector('.file-name').textContent === fileName) {
+        item.remove();
+      }
+    });
 
-    function formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+   
 
-    function removeFile(fileName) {
-      selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-      const fileItems = document.querySelectorAll('.file-item');
-      fileItems.forEach(item => {
-        const fileNameElement = item.querySelector('.file-name');
-        if (fileNameElement && fileNameElement.textContent === fileName) {
-          item.remove();
-        }
-      });
-    }
+    const dataTransfer = new DataTransfer();
+    selectedFiles.forEach(file => dataTransfer.items.add(file));
+    document.getElementById('fileInput').files = dataTransfer.files;
+  }
 
-    function setupButtons() {
-      const writeButton = document.querySelector('button[value="write"]');
-      const cancelButton = document.querySelector('button[value="cancel"]');
 
-      writeButton.addEventListener("click", function () {
-        const title = document.getElementById("title").value;
-        const artist = document.getElementById("artist").value;
-        const content = document.getElementById("content").value;
-        const partner = document.getElementById("partner").value;
-        const tags = document.getElementById("tags").value;
+  function setupButtons() {
+    const writeButton = document.querySelector('button[value="write"]');
+    const cancelButton = document.querySelector('button[value="cancel"]');
 
-        if (!title || !content || !partner) {
-          alert("제목, 후기내용, 교환상대방을 모두 입력해주세요.");
-          return;
-        }
 
-        if (!selectedOnlineMethod) {
-          alert("온라인/오프라인을 선택해주세요.");
-          return;
-        }
+    writeButton.addEventListener("click", function () {
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+      const partner = document.getElementById("partner").value;
 
-        if (!selectedTradeMethod) {
-          alert("거래 방식(판매/교환)을 선택해주세요.");
-          return;
-        }
 
-        if (currentRating === 0) {
-          alert("총평점을 선택해주세요.");
-          return;
-        }
+      if (!title || !content || !partner) {
+        alert("제목, 후기내용, 교환상대방을 모두 입력해주세요.");
+        return;
+      }
 
-        const reviewData = {
-          title,
-          artist,
-          content,
-          partner,
-          tags,
-          onlineMethod: selectedOnlineMethod,
-          tradeMethod: selectedTradeMethod,
-          rating: currentRating,
-          photos: selectedFiles.length
-        };
 
-        console.log("작성된 교환후기:", reviewData);
-        alert("교환후기 작성이 완료되었습니다!");
-      });
+      if (!document.getElementById("methodInput").value) {
+        alert("온/오프라인 방식을 선택해주세요.");
+        return;
+      }
 
-      cancelButton.addEventListener("click", function () {
-        if (confirm("작성 중인 내용이 모두 삭제됩니다. 정말로 취소하시겠습니까?")) {
-          window.location.href = "main.html";
-        }
-      });
-    }
-  </script>
+
+      if (!document.getElementById("transactionTypeInput").value) {
+        alert("거래 방식을 선택해주세요.");
+        return;
+      }
+
+
+      if (!document.getElementById("scoreInput").value) {
+        alert("총 평점을 선택해주세요.");
+        return;
+      }
+
+      document.querySelector("form").submit();
+    });
+
+    cancelButton.addEventListener("click", function () {
+      if (confirm("작성 중인 내용이 모두 삭제됩니다. 정말로 취소하시겠습니까?")) {
+        window.location.href = "main.html";
+      }
+    });
+  }
+</script>
 </body>
 </html>

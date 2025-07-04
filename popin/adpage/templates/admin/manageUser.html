@@ -7,25 +7,28 @@
   <title>관리자 | 사용자관리</title>
   <style>
     *{margin : 0; padding : 0;  box-sizing : border-box;}
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .banner{
-            width : 1000px;
-            height : 70px;
-            background :rgba(255, 255, 255, 0.95);
-            border-radius : 20px;
-            display : flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 25px;
-        }
+    body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 30px;
+    }
+        .banner {
+          width: 1000px;
+          height: 70px;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 25px;
+          margin-bottom: 30px;
+      }
         .banner h2{ 
             font-size : 30px; 
             color : #7E6EB0;
@@ -43,16 +46,19 @@
         .table{display : flex;
             margin-top : 15px;}
         .menu {
-            display: flex;
-            align-items: center;
-        }
-        .menu ul {
-            display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 10px;
-        }
+              display: flex;
+              align-items: center;
+          }
+
+          .menu ul {
+              display: flex;
+              list-style: none;
+              gap: 10px;
+              align-items: center;
+              justify-content: center;
+              margin: 0;
+              padding: 0;
+          }
         .menu li{
             display : flex;
             text-align : center;
@@ -398,35 +404,6 @@
       color: #2ed573;
       font-weight: 600;
     }
-
-    /* 반응형 디자인 */
-    @media (max-width: 768px) {
-      .main-layout {
-        flex-direction: column;
-      }
-      
-      .menu {
-        width: 100%;
-      }
-      
-      .stats-container {
-        grid-template-columns: 1fr;
-      }
-      
-      .filter-section {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .search-input {
-        max-width: none;
-      }
-      
-      .bottom-bar {
-        flex-direction: column;
-        gap: 20px;
-      }
-    }
   </style>
 </head>
 <body>
@@ -436,10 +413,10 @@
       <h2>PO-PIN</h2>
       <div class = "menu">
                 <ul>
-                    <li>대시보드</li>
-                    <li class = "board">공지사항</li>
+                    <li>메인</li>
+                    <li>공지사항</li>
                     <li>게시글 관리</li>
-                    <li>사용자 관리</li>
+                    <li class = "board">사용자 관리</li>
                 </ul>
             </div>
             <div class="banner-right">

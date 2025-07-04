@@ -17,4 +17,6 @@ urlpatterns = [
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
+    path('write_review/', views.write_review, name='write_review'),
+    path('write_sharing/', views.write_sharing, name='write_sharing'),
 ]
