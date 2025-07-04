@@ -32,9 +32,8 @@ def list(request):
     # 좋아요 순 정렬 옵션 적용
     if sort == 'likes':
         photocards = photocards.annotate(wish_count=Count('wished_by_users')).order_by('-wish_count')
-    # 조회수 순 정렬 옵션 적용
-    elif sort == 'hit':
-        photocards = photocards.order_by('-hit')
+        
+    
     
     context = {'list': photocards}
     return render(request, 'list.html', context)
@@ -57,8 +56,6 @@ def view(request, pno):
             
     # pno 포토카드 불러오기
     qs = Photocard.objects.get(pno=pno)
-    qs.hit += 1
-    qs.save()
     
     # 포토카드 상세정보 반환
     context = {"info":qs}
@@ -89,51 +86,53 @@ def write(request):
             'poca_state_choices': Photocard.P_STATE_CHOICES,
             'trade_type_choices': Photocard.TRADE_CHOICES,
             'place_choices': Photocard.PLACE_CHOICES,
+            'member': Member.objects.all(),
             }
             return render(request, 'write.html', context)
             
         elif request.method == 'POST':
             # 작성 버튼 클릭 시 필요한 필드 정보
-            # 제목, 이미지, 판매자, 카테고리, 앨범, 그룹, 멤버, 하자상태, 태그, 거래 방식, 가격, 상세설명
+            # 제목, 이미지, 판매자, 카테고리, 앨범, 멤버, 하자상태, 태그, 거래 방식, 
             # 장소, 구매자 거래 상태(게시글 등록 시 거래중 설정), 거래날짜, 위도, 경도
 
-            title = request.POST.get('title') # 제목
-            image = request.FILES.get('image') # 이미지
+            title = request.POST.get('title')
+            image = request.FILES.get('image')
             
-            seller = user # 판매자
+            seller = user
             
-            category=request.POST.get('category') # 카테고리
-            album=request.POST.get('album') # 앨범
+            category=request.POST.get('category')
+            album=request.POST.get('album')
             
-            group=request.POST.get('group') # 그룹
-            member=request.POST.get('member') # 멤버
-            member_obj = Member.objects.get(name=member, group__name=group)
+            member=request.POST.get('member')
+            # group_name, member_name = member.split(' - ')
+            # member_obj = Member.objects.get(name=member_name, group__name=group_name)
             
-            poca_state=request.POST.get('poca_state') # 하자상태
-            tag=request.POST.getList('tag', None) # 태그
+            poca_state=request.POST.get('poca_state')
+            # 태그 문자리스트로 get
+            tag=request.POST.getlist('tag', None)
             
-            trade_type=request.POST.get('trade_type') # 거래방식
-            price = request.POST.get('price') # 가격
-            description = request.POST.get('description','') # 상세설명
+            trade_type=request.POST.get('trade_type')
+            place=request.POST.get('place')
             
-            place=request.POST.get('place') # 장소
+            sell_state = '중' # 등록 시 default
             
-            sell_state = '중' # 구매자 거래 상태 (등록 시 default)
-            
-            # 거래 날짜
             if request.POST.get('available_at') == "" :
-                available_at = str(date.today()) # blank로 들어오면 오늘 날짜
+                available_at = str(date.today())
             else:
-                available_at = request.POST.get('available_at') # 지정한 경우 지정 날짜
+                available_at = request.POST.get('available_at')
             
-            latitude=request.POST.get('latitude') # 위도
-            longitude=request.POST.get('longitude') # 경도
+            # 위치 문자열 -> 숫자열로 전환
+            lat = request.POST.get('latitude')
+            lng = request.POST.get('longitude')
+
+            latitude = float(lat) if lat else None
+            longitude = float(lng) if lng else None
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, price=price, description=description, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
-            
+            print(title, image,seller,category, album, member, poca_state,tag,trade_type,place,sell_state,available_at)
             # redirect로 이동
             return redirect('/photocard/list')
             
@@ -154,12 +153,14 @@ def update(request, pno):
     if user.user_id == photo_qs.seller.user_id :
         try:
             if request.method == "GET":
+                member_qs = Member.objects.all() # DB 내 아이돌 전체
                 context = {
                     'category_choices': Photocard.CATEGORY_CHOICES,
                     'poca_state_choices': Photocard.P_STATE_CHOICES,
                     'trade_type_choices': Photocard.TRADE_CHOICES,
                     'place_choices': Photocard.PLACE_CHOICES,
                     'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
+                    'member': member_qs,
                     'photocard': photo_qs
                 }
                 return render(request, 'update.html', context)
@@ -172,17 +173,14 @@ def update(request, pno):
                 photo_qs.category=request.POST.get('category') # 카테고리 (공방, 앨범)
                 photo_qs.album=request.POST.get('album') # 활동 시기 앨범 (1집, 2집)
                 
-                group=request.POST.get('group') # 그룹
-                member=request.POST.get('member') # 멤버
-                member_obj = Member.objects.get(name=member, group__name=group)
+                member_id=request.POST.get('member') # 아이돌
+                member_obj = Member.objects.get(pk=int(member_id))
                 photo_qs.member = member_obj
                 
                 photo_qs.poca_state=request.POST.get('poca_state') # 포카 하자 상태
                 photo_qs.tag=request.POST.get('tag', None) # 태그
                 
                 photo_qs.trade_type=request.POST.get('trade_type') # 거래 방식
-                photo_qs.price = request.POST.get('price','') # 가격
-                photo_qs.description = request.POST.get('description','') # 상세 설명
                 photo_qs.place=request.POST.get('place') # 장소 (올공, 더현대)
                 
                 photo_qs.sell_state = request.POST.get('sell_state') # 판매자 거래 상태
