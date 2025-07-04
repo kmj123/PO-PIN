@@ -24,9 +24,11 @@ urlpatterns = [
     path("api/idols/", include("idols.urls")),
 ]
 
+
 # ✅ static()은 따로 추가 (덮어쓰기 X)
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 # urlpatterns += static(settings.MEDIA_URL, 
                      # document_root=settings.MEDIA_ROOT)
+

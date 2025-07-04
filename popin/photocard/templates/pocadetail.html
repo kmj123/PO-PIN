@@ -23,14 +23,14 @@
 
     .cardItem div{text-align: center; margin:10px 0;}
 
-    .pocanavi {
+    .pocanavi, .pocanavi button {
         font-size:1.3rem;
         background:rgba(255, 255, 255, 0.95); height:50px;
         display:flex; justify-content:space-between; align-items:center;
         padding:0 15px;
     }
 
-    .pocanavi a{color:#333;}
+    .pocanavi button{border:none; background:transparent; padding:0;}
 
     .icons {width:70px; display:flex; justify-content: space-between;}
 
@@ -260,6 +260,8 @@
         .share-bottom-sheet{max-width:500px;}
         
         .map-bottom-sheet{max-width:500px;}
+
+        #map-bottomSheet.active, #share-bottomSheet.show{width:100%;}
     }
 
     @media (max-width: 480px) {
@@ -288,7 +290,6 @@
             else {$(this).removeClass("fas fa-heart red").addClass("fal fa-heart");}
         });
         
-
         // 공유하기 //
         const url = "https://example.com"; // 공유할 URL
         const text = "이 웹사이트를 공유합니다!"; // 공유할 텍스트
@@ -325,6 +326,7 @@
 
             alert("링크가 클립보드에 복사되었습니다!"); // 복사 완료 알림
         });
+
     });
 </script>
 
@@ -332,7 +334,7 @@
     <div class="content">
         <div class="content_background">
             <div class="pocanavi">
-                <a href="#"><i class="fal fa-chevron-left"></i></a>
+                <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
                 <div class="icons"><i class="fal fa-heart" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
                 <!-- 오버레이 (바텀시트 외부) -->
                 <div class="share-overlay" id="share-overlay" onclick="toggleBottomSheet()"></div>
@@ -349,7 +351,7 @@
                 <div class="card-info">
                     <h4>IVE 원영 (WONYOUNG)</h4>
                     <div class="card-meta">
-                        <span class="card-album">WISH 1집</span>&ensp;
+                        <span class="card-album">ELEVEN</span>&ensp;
                         <span class="card-likes">❤️ 27</span>
                     </div>
                     <div class="card-tags">
@@ -362,7 +364,7 @@
             </div>
             <!-- 지도 -->
             <div id="map" style="width:100%;height:350px;"></div>
-            <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=685921f3c75dcb3652a49e7cdce9673d"></script>
+            <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=685921f3c75dcb3652a49e7cdce9673d"></script>
             <script>
             var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
                 mapOption = { 
