@@ -22,8 +22,8 @@ class Photocard(models.Model):
     ]
 
     TRADE_CHOICES = [
+        ('판매', '판매'),
         ('교환', '교환'),
-        ('구매', '구매'),
     ]
 
     PLACE_CHOICES = [

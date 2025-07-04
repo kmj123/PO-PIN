@@ -720,7 +720,7 @@
                 <!--제목-->
                 <div class="form-content">
                     <label for="title">게시글 제목 <span class="required">*</span></label>
-                    <input type="text" id="title" name="title" placeholder="포토카드 제목을 입력해주세요" required>
+                    <input type="text" id="title" name="title" placeholder="포토카드 제목을 입력해주세요">
                 </div>
 
                 <!-- 이미지 업로드 -->
@@ -785,14 +785,13 @@
                     <label> 앨범 <span class="required">*</span></label>
                     <div class="album-input">
                         <input type="text" name="album" id="albumInput" placeholder="앨범명을 입력해주세요">
-                        <input type="hidden" name="album_type" id="albumType">
                     </div>
                     <div class="album-type-selector">
+                        <input type="hidden" name="album_type" id="albumType">
                         {%for value, label in category_choices%}
                         <button type="button" class="album-type-btn" data-type="{{value}}">{{label}}</button>
                         {%endfor%}
                     </div>
-                    <input type="hidden" name="category" id="categoryInput">
                 </div>
             <!--//기본정보섹션-->
 
@@ -803,16 +802,19 @@
                 <div class="form-content">
                     <label for="tradeType">거래 유형 선택 <span class="required">*</span></label>
                     <div class="trade-type-selector">
-                        <div class="trade-option" data-type="구매" name="trade_type">
-                            <h4>💰 판매글</h4>
+                        {%for value, label in trade_type_choices%}
+                        <div class="trade-option" data-type="{{ value }}">
+                            {% if value == "판매" %}
+                            <h4>💰 {{label}}글</h4>
                             <p>가격을 설정하여 판매</p>
-                        </div>
-                        <div class="trade-option" data-type="교환" name="trade_type">
-                            <h4>🔄 교환글</h4>
+                            {% elif value == "교환" %}
+                            <h4>🔄 {{label}}글</h4>
                             <p>다른 포토카드와 교환</p>
+                            {%endif%}
                         </div>
+                        {%endfor%}
                     </div>
-                    <input type="hidden" name="trade_type" id="tradeType" required>
+                    <input type="hidden" name="trade_type" id="tradeType">
                     
                     <div class="price-input" id="priceInput">
                         <label for="price">가격 (원) <span class="required">*</span></label>
@@ -827,10 +829,10 @@
                     </div>
                     <br>
                     <label for="photo"> 포토카드 상태 <span class="required">*</span></label>
-                    <select style="color: #757575;" name="poca_state" required>
-                        <option value="best">상: 미개봉상태 하자 없음</option>
-                        <option value="mid">중: 개봉상태, 육안으로는 안보이는 하자, 제작 공정상 생기는 미세한 하자</option>
-                        <option value="bad">하: 육안으로 봤을때 하자가 보이는 경우</option>
+                    <select style="color: #757575;" id="poca_state">
+                        {%for value, label in  poca_state_choices %}
+                        <option value="{{value}}">{{label}}</option>
+                        {% endfor %}
                     </select>
                 </div>
             </div>
@@ -863,12 +865,12 @@
                 <h3 class="section-title">📍 거래 위치</h3>
                 
                 <div class="form-content">
-                    <label>위치 선택 방법</label>
+                    <label for="db">위치 선택 방법</label>
+                    <button type="button" class="location-btn active" id="db" data-location="db">오프라인 장소</button>
                     <div class="location-toggle">
                         <!--오프라인 장소-->
-                        <button type="button" class="location-btn active" data-location="db">오프라인 장소</button>
                         <div id="dbLocationContainer" style="display:block;">
-                            <select name="place" id="dbLocation" required>
+                            <select name="place" id="dbLocation">
                                 <option value="location">장소를 선택해주세요</option>
                                 {% for key, label in place_choices %}
                                 <option value="{{ key }}">{{ label }}</option>
@@ -885,6 +887,9 @@
                             </div>
                             <div id="mapContainer">
                                 <div id="map" style="width:100%;height:350px;" name="available_at"></div>
+                                <p><em>위치변경을 원하는 경우 지도를 클릭해주세요!</em></p> 
+                                <div id="clickLatlng"></div>   
+
                             </div>
                         </div>
                     </div>
@@ -898,87 +903,52 @@
 
             <!--Current Location-->
             <script>
-                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                    mapOption = { 
-                        center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                        level: 3 // 지도의 확대 레벨 
-                    }; 
+                // 지도 생성
+                const mapContainer = document.getElementById('map');
+                const mapOption = {
+                    center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본값: 서울
+                    level: 3
+                };
+                const map = new kakao.maps.Map(mapContainer, mapOption);
 
-                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                // 마커 생성 (초기 위치는 지도 중심)
+                const marker = new kakao.maps.Marker({
+                    position: map.getCenter(),
+                    map: map
+                });
 
-                // HTML5의 geolocation으로 사용할 수 있는지 확인합니다 
+                // 현재 위치로 지도 이동
                 if (navigator.geolocation) {
-                    
-                    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        
-                        var lat = position.coords.latitude, // 위도
-                            lon = position.coords.longitude; // 경도
-                        
-                        var locPosition = new kakao.maps.LatLng(lat, lon), // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
-                            message = '<div style="padding:3px;">여기에 계신가요?!</div>'; // 인포윈도우에 표시될 내용입니다
-                        
-                        // 마커와 인포윈도우를 표시합니다
-                        displayMarker(locPosition, message,lat,lon);
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        const currentPos = new kakao.maps.LatLng(lat, lng);
+                        map.setCenter(currentPos);
+                        marker.setPosition(currentPos);
+
+                        // 위도/경도 input에 저장
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+
+                        infowindow.open(map, marker);
                     });
-                    
-                } else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-                    
-                    var locPosition = new kakao.maps.LatLng(33.450701, 126.570667),    
-                        message = 'geolocation을 사용할수 없어요..'
-                        
-                    displayMarker(locPosition, message);
+                } else {
+                    alert("Geolocation을 지원하지 않는 브라우저입니다.");
                 }
 
-                // 지도에 마커와 인포윈도우를 표시하는 함수입니다
-                function displayMarker(locPosition, message) {
-
-                    // 마커를 생성합니다
-                    var marker = new kakao.maps.Marker({  
-                        map: map, 
-                        position: locPosition
-                    }); 
-                    
-                    var iwContent = message, // 인포윈도우에 표시할 내용
-                        iwRemoveable = true;
-
-                    // 인포윈도우를 생성합니다
-                    var infowindow = new kakao.maps.InfoWindow({
-                        content : iwContent,
-                        removable : iwRemoveable
-                    });
-                    
-                    // 인포윈도우를 마커위에 표시합니다 
-                    infowindow.open(map, marker);
-                    
-                    // 지도 중심좌표를 접속위치로 변경합니다
-                    map.setCenter(locPosition);      
-                }    
-
-                kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                // 지도 클릭 시 마커 이동 및 좌표 저장
+                kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
                     const latlng = mouseEvent.latLng;
 
-                    selectedLat = latlng.getLat();
-                    selectedLng = latlng.getLng();
+                    // 마커 위치 이동
+                    marker.setPosition(latlng);
 
-                    // 마커 표시
-                    const marker = new kakao.maps.Marker({
-                        position: latlng,
-                        map: map
-                    });
+                    // 위도/경도 input에 저장
+                    document.getElementById('latitude').value = latlng.getLat();
+                    document.getElementById('longitude').value = latlng.getLng();
 
-                    // 인포윈도우로 위치 안내
-                    const infowindow = new kakao.maps.InfoWindow({
-                        content: '<div style="padding:5px;">선택한 위치입니다</div>'
-                    });
-                    infowindow.open(map, marker);
-
-                    // 위경도 값 input에 저장
-                    document.getElementById('latitude').value = selectedLat;
-                    document.getElementById('longitude').value = selectedLng;
-
-                    // 텍스트 안내 변경
-                    document.getElementById('locationInfo').textContent = '선택한 위치: ' + selectedLat.toFixed(5) + ', ' + selectedLng.toFixed(5);
+                    // 기존 인포윈도우 제거 (선택)
                 });
             </script>
             <!--//Current Location-->
@@ -1045,40 +1015,38 @@
             alert("이미지 파일만 업로드할 수 있습니다.");
         }
     }
-    
+
     // 앨범 타입 선택
     const albumtypeBtns = document.querySelectorAll('.album-type-btn');
-    const albumTypeInput = document.getElementById('categoryInput');
+    const albumType = document.getElementById('albumType'); 
 
     albumtypeBtns.forEach(btn => {
-        btn.addEventListener('click',()=>{
+        btn.addEventListener('click', () => {
+            // 버튼 스타일 초기화 및 활성화
             albumtypeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            albumTypeInput.value = btn.dataset.type;
 
-            
-            // 한글 텍스트 저장
-            const koreanLabel = btn.textContent.trim();  
-            albumTypeInput.value = koreanLabel; // 예: "앨범", "특전" 등
+            // 한글 텍스트 저장 (예: 앨범, 특전, MD 등)
+            const koreanLabel = btn.textContent.trim();
+            albumType.value = koreanLabel;
         });
     });
 
-    // 거래 유형 선택
+    // 거래유형 선택
     const tradeOptions = document.querySelectorAll('.trade-option');
     const tradeTypeInput = document.getElementById('tradeType');
     const priceInput = document.getElementById('priceInput');
     const blockedNotice = document.getElementById('blockedNotice');
-    const priceField = document.getElementById('price');
 
     tradeOptions.forEach(option => {
         option.addEventListener('click',() =>{
             tradeOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
 
-            const type = option.dataset.type;
-            tradeTypeInput.value = type;
+            const tradeType = option.dataset.type;
+            tradeTypeInput.value = tradeType;
 
-            if (type == 'sale'){
+            if (tradeType == '판매'){
                 priceInput.classList.add('active');
                 blockedNotice.classList.remove('active');
                 priceField.required = true;
@@ -1383,7 +1351,7 @@
                 }).join(', ');
                 
                 searchNotice.innerHTML = `
-                    <span style="color: #667eea; font-weight: 600;">${selectedList}</span>
+                    <input name="member" style="color: #667eea; font-weight: 600;" hidden>${selectedList}</input>
                 `;
                 console.log(selectedList);
             }
@@ -1427,47 +1395,60 @@
 
         // 폼제출 검증
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            const locationType = document.getElementById('dbLocation').value;
-
-            if(!locationType){
+            const title = document.getElementById('title').value.trim();
+            const imageInput = document.getElementById('imageInput').value;
+            const albumInput = document.getElementById('albumInput').value.trim();
+            const albumType = document.querySelector('albumType').value;
+            const tradeType = document.querySelector('tradeType').value;
+            const poca_state = document.getElementById('poca_state').value;
+            const dbLocation = document.getElementById('dbLocation').value;
+            
+            console.log(title,imageInput,albumInput,albumType,tradeType,poca_state,dbLocation);
+            if(!title){
                 e.preventDefault();
-                alert("오프라인 장소를 선택해주세요!");
+                alert("제목을 입력 해주세요!");
                 return false;
             }
-            if(locationType === 'current' && (!selectedLat || !selectedLng)) {
+            if(!imageInput){
                 e.preventDefault();
-                alert('지도에서 거래장소를 선택해주세요!');
+                alert("이미지를 선택해주세요!");
+                return false;
+            }
+            if(!albumInput){
+                e.preventDefault();
+                alert("앨범명을 입력 해주세요!");
+                return false;
+            }
+            if(!albumType){
+                e.preventDefault();
+                alert("앨범타입을 선택해주세요!");
+                return false;
+            }
+            if(!tradeType){
+                e.preventDefault();
+                alert("거래유형을 선택해주세요!");
                 return false;
             }
 
-            const place = document.getElementById('dbLocation').value;
+            if (!poca_state || !poca_state.value) {
+                e.preventDefault();
+                alert('포토카드 상태를 선택해주세요!');
+                return false;
+            }
+
             if (locationType === 'db' && (!place || place === 'location')) {
                 e.preventDefault();
-                alert("거래 장소를 선택해주세요!");
+                alert("지정된 오프라인 위치를 선택해주세요!");
                 return false;
             }
 
-            const tradeType = document.getElementById('tradeType').value;
-            if (!tradeType) {
-                e.preventDefault();
-                alert('거래 유형을 선택해주세요!');
-                return false;
-            }
-
-            if (tradeType === 'sale') {
+            if (tradeType === '구매') {
                 const price = document.getElementById('price').value;
                 if (!price) {
                     e.preventDefault();
                     alert('판매가격을 입력해주세요!');
                     return false;
                 }
-            }
-
-            const photoState = document.querySelector('select[name="poca_state"]');
-            if (!photoState || !photoState.value) {
-                e.preventDefault();
-                alert('포토카드 상태를 선택해주세요!');
-                return false;
             }
         });
     });
