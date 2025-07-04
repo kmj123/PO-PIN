@@ -151,14 +151,12 @@ def update(request, pno):
     if user.user_id == photo_qs.seller.user_id :
         try:
             if request.method == "GET":
-                member_qs = Member.objects.all() # DB 내 아이돌 전체
                 context = {
                     'category_choices': Photocard.CATEGORY_CHOICES,
                     'poca_state_choices': Photocard.P_STATE_CHOICES,
                     'trade_type_choices': Photocard.TRADE_CHOICES,
                     'place_choices': Photocard.PLACE_CHOICES,
                     'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
-                    'member': member_qs,
                     'photocard': photo_qs
                 }
                 return render(request, 'update.html', context)
@@ -171,14 +169,17 @@ def update(request, pno):
                 photo_qs.category=request.POST.get('category') # 카테고리 (공방, 앨범)
                 photo_qs.album=request.POST.get('album') # 활동 시기 앨범 (1집, 2집)
                 
-                member_id=request.POST.get('member') # 아이돌
-                member_obj = Member.objects.get(pk=int(member_id))
+                group=request.POST.get('group') # 그룹
+                member=request.POST.get('member') # 멤버
+                member_obj = Member.objects.get(name=member, group__name=group)
                 photo_qs.member = member_obj
                 
                 photo_qs.poca_state=request.POST.get('poca_state') # 포카 하자 상태
                 photo_qs.tag=request.POST.get('tag', None) # 태그
                 
                 photo_qs.trade_type=request.POST.get('trade_type') # 거래 방식
+                photo_qs.price = request.POST.get('price','') # 가격
+                photo_qs.description = request.POST.get('description','') # 상세 설명
                 photo_qs.place=request.POST.get('place') # 장소 (올공, 더현대)
                 
                 photo_qs.sell_state = request.POST.get('sell_state') # 판매자 거래 상태
