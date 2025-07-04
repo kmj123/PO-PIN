@@ -329,6 +329,8 @@
     </nav>
   </header>
 
+  <form method="POST"  action="{% url 'community:write_sharing' %}" enctype="multipart/form-data">
+    {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
@@ -341,16 +343,17 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목</label></th>
-          <td><input type="text" class="wlong" id="title"/></td>
+          <td><input type="text" class="wlong" name ="title" id="title"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="artist">아티스트</label></th>
-          <td><input type="text" class="wlong" id="artist" placeholder="예: NewJeans"/></td>
+          <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: NewJeans"/></td>
         </tr>
+        
         <tr>
           <th scope="row"><label for="type">종류</label></th>
           <td>
-            <select id="type" class="wlong">
+            <select id="type" class="wlong" name="category">
               <option value="">선택하세요</option>
               <option value="앨범">앨범</option>
               <option value="굿즈">굿즈</option>
@@ -360,29 +363,29 @@
         </tr>
         <tr>
           <th scope="row"><label for="location">위치</label></th>
-          <td><input type="text" class="wlong" id="location" placeholder="예: 서울 강남구"/></td>
+          <td><input type="text" class="wlong" name="location" id="location" placeholder="예: 서울 강남구"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="datetime">날짜 및 시간</label></th>
-          <td><input type="datetime-local" class="wlong" id="datetime"/></td>
+          <td><input type="datetime-local" class="wlong" name ="share_date" id="datetime"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="requirements">필수 사항</label></th>
-          <td><textarea id="requirements" placeholder="필수 사항을 입력해주세요."></textarea></td>
+          <td><textarea name ='requirement' id="requirements" placeholder="필수 사항을 입력해주세요."></textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="content">본문</label></th>
-          <td><textarea class="tta" id="content"></textarea></td>
+          <td><textarea class="tta" name="content"id="content"></textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" placeholder="#태그1, #태그2 (쉼표로 구분)"/></td>
+          <td><input type="text" class="wlong"name="tags" id="tags" placeholder="#태그1, #태그2 (쉼표로 구분)"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="file">사진 첨부</label></th>
           <td>
             <div class="file-upload-area" id="fileUploadArea" style="width: calc(80% - 10px); border: 2px dashed #ccc; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; background: #fafafa;">
-              <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
+              <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display:none;">
               <div class="upload-icon" style="font-size: 48px; color: #7E6EB0; margin-bottom: 10px;">📷</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
@@ -395,167 +398,176 @@
     </table>
 
     <div class="btn">
-      <button type="button" value="write">확인</button>
+      <button type="submit" value="write">확인</button>
       <button type="button" value="cancel">취소</button>
     </div>
   </div>
+</form>
+
 
   <script>
-    const toggleButtons = document.querySelectorAll('.type-toggle button');
-    let selectedType = '';
+document.addEventListener("DOMContentLoaded", function () {
+  const writeButton = document.querySelector('button[value="write"]');
+  const cancelButton = document.querySelector('button[value="cancel"]');
+  const fileUploadArea = document.getElementById('fileUploadArea');
+  const fileInput = document.getElementById('fileInput');
+  const fileList = document.getElementById('fileList');
+  const fileCount = document.getElementById('fileCount');
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const writeButton = document.querySelector('button[value="write"]');
-      const cancelButton = document.querySelector('button[value="cancel"]');
-      const fileUploadArea = document.getElementById('fileUploadArea');
-      const fileInput = document.getElementById('fileInput');
-      const fileList = document.getElementById('fileList');
-      const fileCount = document.getElementById('fileCount');
+  let selectedFiles = [];
 
-      let selectedFiles = [];
+  fileUploadArea.addEventListener('click', () => fileInput.click());
 
-      fileUploadArea.addEventListener('click', () => {
-        fileInput.click();
-      });
+  fileInput.addEventListener('change', function(e) {
+    handleFiles(e.target.files);
+  });
 
-      fileInput.addEventListener('change', function(e) {
-        handleFiles(e.target.files);
-      });
+  fileUploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    fileUploadArea.classList.add('dragover');
+  });
 
-      fileUploadArea.addEventListener('dragenter', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-      });
+  fileUploadArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    if (!fileUploadArea.contains(e.relatedTarget)) {
+      fileUploadArea.classList.remove('dragover');
+    }
+  });
 
-      fileUploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        fileUploadArea.classList.add('dragover');
-      });
+  fileUploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    fileUploadArea.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
 
-      fileUploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (!fileUploadArea.contains(e.relatedTarget)) {
-          fileUploadArea.classList.remove('dragover');
-        }
-      });
-
-      fileUploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        fileUploadArea.classList.remove('dragover');
-        handleFiles(e.dataTransfer.files);
-      });
-
-      function handleFiles(files) {
-        Array.from(files).forEach(file => {
-          if (!file.type.startsWith('image/')) {
-            alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
-            return;
-          }
-
-          if (file.size > 10 * 1024 * 1024) {
-            alert(`${file.name}은(는) 파일 크기가 너무 큽니다. (최대 10MB)`);
-            return;
-          }
-
-          if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
-            alert(`${file.name}은(는) 이미 추가된 파일입니다.`);
-            return;
-          }
-
-          selectedFiles.push(file);
-          displayFile(file);
-        });
-
-        updateFileCount();
+  function handleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
+        return;
       }
 
-      function displayFile(file) {
-        const fileItem = document.createElement('div');
-        fileItem.className = 'file-item';
-        fileItem.setAttribute('data-filename', file.name);
-        fileItem.style = `
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 15px;
-          background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
-          border: 1px solid #e0e5ff;
-          border-radius: 8px;
-          margin: 8px 0;
-          transition: all 0.3s ease;
-        `;
-
-        fileItem.innerHTML = `
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div style="width:32px; height:32px; background:#7E6EB0; border-radius:6px; display:flex; align-items:center; justify-content:center; color:white; font-size:14px;">📷</div>
-            <div>
-              <div style="font-weight:500; color:#333;">${file.name}</div>
-              <div style="font-size:12px; color:#666; margin-left:5px;">${formatFileSize(file.size)}</div>
-            </div>
-          </div>
-          <span style="color:#ff4444; cursor:pointer; font-weight:bold; font-size:18px; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition: all 0.3s ease;" onclick="removeFile('${file.name}', ${file.size})">×</span>
-        `;
-
-        fileList.appendChild(fileItem);
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`${file.name}은(는) 파일 크기가 너무 큽니다. (최대 10MB)`);
+        return;
       }
 
-      window.removeFile = function(fileName, fileSize) {
-        selectedFiles = selectedFiles.filter(file => !(file.name === fileName && file.size === fileSize));
-        const fileItems = document.querySelectorAll('.file-item');
-        fileItems.forEach(item => {
-          if (item.getAttribute('data-filename') === fileName) {
-            item.remove();
-          }
-        });
-        updateFileCount();
-      };
-
-      function updateFileCount() {
-        if (selectedFiles.length > 0) {
-          fileCount.style.display = 'block';
-          fileCount.textContent = `총 ${selectedFiles.length}개의 파일이 선택되었습니다.`;
-        } else {
-          fileCount.style.display = 'none';
-        }
+      if (selectedFiles.length >= 5) {
+        alert("이미지는 최대 5개까지만 업로드할 수 있습니다.");
+        return;
       }
 
-      function formatFileSize(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-      }
-
-      writeButton.addEventListener("click", function () {
-        const title = document.getElementById("title").value.trim();
-        const artist = document.getElementById("artist").value.trim();
-        const type = document.getElementById("type").value;
-        const location = document.getElementById("location").value.trim();
-        const datetime = document.getElementById("datetime").value;
-        const requirements = document.getElementById("requirements").value.trim();
-        const content = document.getElementById("content").value.trim();
-        const tags = document.getElementById("tags").value.trim();
-
-        if (!title || !artist || !type || !location || !datetime || !requirements || !content) {
-          alert("필수 항목을 모두 입력해주세요!");
-          return;
-        }
-
-        alert("게시글이 작성되었습니다!");
-        console.log({
-          title, artist, type, location, datetime, requirements, content, tags, files: selectedFiles
-        });
-      });
-
-      cancelButton.addEventListener("click", function () {
-        window.location.href = "main.html";
-      });
-
+      selectedFiles.push(file);
+      displayFile(file);
     });
-  </script>
+
+    updateFileCount();
+  }
+
+  function displayFile(file) {
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+    fileItem.setAttribute('data-filename', file.name);
+
+    fileItem.innerHTML = `
+      <div class="file-info">
+        <div class="file-icon">📷</div>
+        <div>
+          <div class="file-name">${file.name}</div>
+          <div class="file-size">${formatFileSize(file.size)}</div>
+        </div>
+      </div>
+      <span class="file-remove" onclick="removeFile('${file.name}', ${file.size})">×</span>
+    `;
+
+    fileList.appendChild(fileItem);
+  }
+
+  window.removeFile = function(fileName, fileSize) {
+    selectedFiles = selectedFiles.filter(file => !(file.name === fileName && file.size === fileSize));
+    document.querySelectorAll('.file-item').forEach(item => {
+      if (item.getAttribute('data-filename') === fileName) {
+        item.remove();
+      }
+    });
+    updateFileCount();
+  };
+
+  function updateFileCount() {
+    if (selectedFiles.length > 0) {
+      fileCount.style.display = 'block';
+      fileCount.textContent = `총 ${selectedFiles.length}개의 파일이 선택되었습니다.`;
+    } else {
+      fileCount.style.display = 'none';
+    }
+  }
+
+  function formatFileSize(bytes) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (bytes === 0) return '0 Bytes';
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+  }
+
+  writeButton.addEventListener("click", function (e) {
+    e.preventDefault(); // 기본 submit 막기
+
+    const title = document.getElementById("title").value.trim();
+    const artist = document.getElementById("artist").value.trim();
+    const type = document.getElementById("type").value;
+    const location = document.getElementById("location").value.trim();
+    const datetime = document.getElementById("datetime").value;
+    const requirements = document.getElementById("requirements").value.trim();
+    const content = document.getElementById("content").value.trim();
+    const tags = document.getElementById("tags").value.trim();
+
+    if (!title || !artist || !type || !location || !datetime || !requirements || !content) {
+      alert("필수 항목을 모두 입력해주세요!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("artist", artist);
+    formData.append("category", type);
+    formData.append("location", location);
+    formData.append("share_date", datetime);
+    formData.append("requirement", requirements);
+    formData.append("content", content);
+    formData.append("tags", tags);
+
+    selectedFiles.forEach(file => {
+      formData.append("images", file);
+    });
+
+    fetch("{% url 'community:write_sharing' %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+      body: formData,
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("서버 오류 발생");
+      return response.text();
+    })
+    .then(data => {
+      alert("게시글이 성공적으로 등록되었습니다.");
+      window.location.href = "{% url 'sharing:main' %}";
+    })
+    .catch(error => {
+      console.error("❌ 오류:", error);
+      alert("등록 중 오류가 발생했습니다.");
+    });
+  });
+
+  cancelButton.addEventListener("click", function () {
+    window.history.back();
+  });
+});
+
+
+
+ </script>
 </body>
 </html>
