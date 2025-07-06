@@ -741,7 +741,7 @@
                 <!-- 아티스트 검색 모달창 오픈 -->
                 <div class="searchModalOpen" id="searchModalOpen">
                     <div class="form-content">
-                        <label>그룹 - 멤버 <span class="required">*</span></label>
+                        <label for="member">그룹 - 멤버 <span class="required">*</span></label>
                         <div class="member-grid">
                             <div class="search-notice" id="searchNotice">
                                 <img src="/static/images/search.svg/">
@@ -750,20 +750,26 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- 아티스트 검색 모달창-->
                 <div id="searchModal" class="modal" >
                     <div class="modal-content">
-                    <span id="searchModalOpenClose" class="close">&times;</span>
-                        <div class="search-container">
-                            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="searchInput">
-                            <div class="filter-buttons">
+                        <span id="searchModalOpenClose" class="close">&times;</span>
+                        <form id="uploadForm" method="POST" action="{% url 'signup:member_select' %}">
+                            {% csrf_token %}
+                            <div class="search-container">
+                                <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+                                <input type="hidden" name="group_name" id="selectedGroup">
+                                <input type="hidden" name="member_name" id="selectedMember">
+
+                                <div class="filter-buttons">
                                 <button type="button" class="filter-btn active" data-filter="all">전체</button>
                                 <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
                                 <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+                                </div>
                             </div>
-                        </div>
 
+<<<<<<< HEAD
                         <!--아티스트 검색-->
                         <div class="search-noticeBox" id="searchNotice">
                             <span class="icon">🔍</span>
@@ -774,12 +780,31 @@
                         <div class="groups-container" id="groupsContainer"></div>
                         <div id="hiddenInputsContainer"></div>
                         <button id="completeBtn" class="btn btn-primary" type="button">완료</button>
+=======
+                            <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
+
+                            <div class="selected-members" id="selectedMembers" style="display: none;">
+                                <h3>🌟 내 최애 멤버들</h3>
+                                <div class="selected-list" id="selectedList"></div>
+                            </div>
+
+                            <div class="search-notice" id="searchNotice">
+                                <span class="icon">🔍</span>
+                                <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+                                <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
+                            </div>
+                            
+                            <div class="groups-container" id="groupsContainer"></div>
+                            <div id="hiddenInputsContainer"></div>
+                            <button id="completeBtn" class="btn btn-primary" onclick="completeMemberSelection()" type="button" disabled>완료</button>
+                        </form>
+>>>>>>> a42fc10859323a58fe171f54c83520a916100f2b
                     </div>
                 </div>
 
                 <!-- 앨범 정보 -->
                 <div class="form-content">
-                    <label> 앨범 <span class="required">*</span></label>
+                    <label for="albumInput"> 앨범 <span class="required">*</span></label>
                     <div class="album-input">
                         <input type="text" name="album" id="albumInput" placeholder="앨범명을 입력해주세요">
                     </div>
@@ -845,7 +870,7 @@
                 </div>
 
                 <div class="form-content">
-                    <label for="tag" style="display:flex;"> 태그 <span class="required">*</span></label>
+                    <label for="tagInput" style="display:flex;"> 태그 <span class="required">*</span></label>
                     <div class="tag-input-container">
                         <input type="text" id="tagInput" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
                         <div id="tagList" class="tag-list"></div>
@@ -959,7 +984,6 @@
                     등록하기
                 </button>
             </div>
-            <!--//버튼-->
         </form>
     </div>
     <!--//Upload-Form-->
@@ -1132,21 +1156,19 @@
         mapContainer.style.display = 'none';
     });
 
-
-    
     // 아티스트 검색 모달창 오픈
     document.addEventListener('DOMContentLoaded',() => {
-        const modal = document.getElementById('searchModal');
-        const searchModalOpen = document.getElementById('searchModalOpen');
-        const searchModalClose = document.getElementById('searchModalOpenClose');
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const groupsContainer = document.getElementById('groupsContainer');
-        const searchNotice = document.querySelector('.search-noticeBox');
-        const completeBtn = document.getElementById('completeBtn');
-        const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const filterBtnsActive = document.querySelectorAll('filter-btn.active');
+    const modal = document.getElementById('searchModal');
+    const searchModalOpen = document.getElementById('searchModalOpen');
+    const searchModalClose = document.getElementById('searchModalOpenClose');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const groupsContainer = document.getElementById('groupsContainer');
+    const searchNotice = document.querySelector('.search-noticeBox');
+    const completeBtn = document.getElementById('completeBtn');
+    const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterBtnsActive = document.querySelectorAll('filter-btn.active');
         
         // 모달 오픈
         searchModalOpen.addEventListener('click', () => {
@@ -1165,211 +1187,102 @@
             modal.style.display = 'none';
             }
         });
+    });
 
-    // 아티스트 검색 모달창 오픈
-    document.addEventListener('DOMContentLoaded',() => {
-        const modal = document.getElementById('searchModal');
-        const searchModalOpen = document.getElementById('searchModalOpen');
-        const searchModalClose = document.getElementById('searchModalOpenClose');
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const groupsContainer = document.getElementById('groupsContainer');
-        const searchNotice = document.querySelector('.search-noticeBox');
+
+    // 이벤트 발생 스크립트
+    document.addEventListener("DOMContentLoaded", function () {
+    let selectedMembers = new Set();
+    let currentFilter = 'all';
+
+    function updateSelectedDisplay() {
+        const count = document.getElementById('selectedCount');
+        const container = document.getElementById('selectedMembers');
+        const list = document.getElementById('selectedList');
         const completeBtn = document.getElementById('completeBtn');
-        const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const filterBtnsActive = document.querySelectorAll('filter-btn.active');
-        
-        let selectedMembers = new Set();
-        let currentFilter = 'all';
 
-        
-        const groups = {
-          boyGroups: {
-            "RIIZE": ["성찬", "원빈", "쇼타로", "은석", "소희", "앤톤"],
-            "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
-            "SEVENTEEN": ["에스쿱스", "정한", "조슈아", "준", "호시", "원우", "우지", "디에잇", "민규", "도겸", "승관", "버논", "디노"],
-            "TWS": ["신유", "도훈", "영재", "한진", "지훈", "경민"],
-            "THE BOYZ": ["상연", "제이콥", "영훈", "현재", "주연", "케빈", "뉴", "큐", "선우", "에릭"],
-            "EXO": ["수호", "시우민", "디오", "백현", "찬열", "카이", "세훈"],
-            "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
-            "NCT DREAM": ["마크", "런쥔", "제노", "해찬", "재민", "천러", "지성"],
-            "ENHYPEN": ["정원", "희승", "제이", "제이크", "성훈", "선우", "니키"],
-            "NCT 127": ["쟈니", "태용", "유타", "도영", "재현", "윈윈", "정우", "마크", "해찬"],
-            "Stray Kids": ["방찬", "리노", "창빈", "현진", "한", "필릭스", "승민", "아이엔"],
-            "TOMORROW X TOGETHER": ["연준", "수빈", "범규", "태현", "휴닝카이"],
-            "ZEROBASEONE": ["성한빈", "김지웅", "장하오", "석매튜", "김태래", "리키", "김규빈", "박건욱", "한유진"],
-            "ATEEZ": ["성화", "홍중", "윤호", "여상", "산", "민기", "우영", "종호"],
-            "ASTRO": ["MJ", "진진", "차은우", "문빈", "라키", "윤산하"],
-            "N.Flying": ["이승협", "차훈", "김재현", "유회승", "서동성"],
-            "BOYNEXTDOOR": ["성호", "리우", "명재현", "태산", "이한", "운학"],
-            "MONSTA X": ["셔누", "민혁", "기현", "형원", "주헌", "아이엠"],
-            "82MAJOR": ["조성일", "윤예찬", "남성모", "황성빈", "박석준", "김도균"],
-            "&TEAM": ["케이", "후마", "니콜라스", "의주", "유마", "조", "하루아", "타키", "마키"],
-            "KickFlip": ["계훈", "아마루", "동화", "주왕", "민제", "케이주", "동현"],
-            "PLAVE": ["예준", "노아", "밤비", "은호", "하민"],
-          },
-          girlGroups: {
-            "BLACKPINK": ["지수", "제니", "로제", "리사"],
-            "aespa": ["카리나", "지젤", "윈터", "닝닝"],
-            "IVE": ["안유진", "가을", "레이", "원영", "리즈", "이서"],
-            "(G)I-DLE": ["미연", "민니", "소연", "우기", "슈화"],
-            "TWICE": ["나연", "정연", "모모", "사나", "지효", "미나", "다현", "채영", "쯔위"],
-            "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
-            "Red Velvet": ["아이린", "슬기", "웬디", "조이", "예리"],
-            "LE SSERAFIM": ["사쿠라", "채원", "윤진", "카즈하", "은채"],
-            "ILLIT": ["윤아", "민주", "모카", "원희", "이로하"],
-            "KISS OF LIFE": ["쥴리", "나띠", "벨", "하늘"],
-            "Hearts2Hearts": ["지우", "카르멘", "유하", "스텔라", "주은", "에이나", "이안", "예온"]
-          }
-        };
-        
-        // filter-btn 버튼 
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click',(e)=>{
-                //e.preventDefault(); 사용 → <button>이 <form> 안에 있을 때 submit 방지
-                e.preventDefault();
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // currentFilter 라는 전역 변수에 클릭한 버튼의 data-filter 값을 저장
-                currentFilter = btn.dataset.filter;
+        count.textContent = selectedMembers.size;
+        if (selectedMembers.size === 0) {
+        container.style.display = 'none';
+        completeBtn.disabled = true;
+        } else {
+        container.style.display = 'block';
+        completeBtn.disabled = false;
+        list.innerHTML = Array.from(selectedMembers).map(item => {
+            const [group, member] = item.split('-');
+            return `
+            <div class="selected-item">
+                <span>${group} - ${member}</span>
+                <button class="remove-btn" data-item="${item}">×</button>
+            </div>
+            `;
+        }).join('');
+        }
+    }
 
-                // 현재 검색어로 다시검색
-                if (searchInput.value.trim()){
-                    performSearch(searchInput.value.trim());
-                }
-            });
-        });
+    document.getElementById("idolSearch").addEventListener("input", function () {
+        const query = this.value.trim();
+        const container = document.getElementById("groupsContainer");
+        const searchNotice = document.getElementById("searchNotice");
 
-        // 필터 버튼 초기화
-        filterBtns.forEach(btn => btn.classList.remove('active'));
-        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-        if (allBtn) {
-            allBtn.classList.add('active');
-            currentFilter = 'all';
+        if (!query) {
+        container.innerHTML = '';
+        searchNotice.style.display = 'block';
+        return;
         }
 
-        
-        // 모달 오픈
-        searchModalOpen.addEventListener('click', () => {
-            modal.style.display="block";
-            searchInput.focus();
-        });
-
-        // 모달 닫기
-        searchModalClose.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-
-        // 바깥 클릭 시 닫기
-        window.addEventListener('click', e => {
-            if (e.target === modal) {
-            modal.style.display = 'none';
-            }
-        });
-
-
-        // 검색 결과 렌더링 함수
-        function renderGroups() {
-            const searchTerm = searchInput.value.toLowerCase().trim();
-
-            if (!searchTerm) {
-                groupsContainer.innerHTML = '';
-                searchNotice.style.display = 'block';
-                return;
-            }
-
+        fetch(`/api/idols/search/?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            container.innerHTML = "";
             searchNotice.style.display = 'none';
-            groupsContainer.innerHTML = '';
 
-            const renderGroupType = (groupsObj, type) => {
-                Object.entries(groupsObj).forEach(([groupName, members]) => {
-                    // 필터 적용
-                    if (currentFilter !== 'all' && currentFilter !== type) return;
+            const addGroupCard = (name, gender, members) => {
+            const groupCard = document.createElement("div");
+            groupCard.className = "group-card";
+            const typeClass = gender === "M" ? "boy-group" : "girl-group";
 
-                    const groupMatches = groupName.toLowerCase().includes(searchTerm);
-                    const memberMatches = members.some(member => member.toLowerCase().includes(searchTerm));
-
-                    if (groupMatches || memberMatches) {
-                        const groupCard = document.createElement('div');
-                        groupCard.className = 'group-card';
-
-                        // 검색어에 매치되는 멤버만 필터링
-                        const filteredMembers = members.filter(member => 
-                            member.toLowerCase().includes(searchTerm) || groupMatches
-                        );
-
-                        groupCard.innerHTML = `
-                            <div class="group-header">
-                                <div class="group-name">${groupName}</div>
-                                <div class="group-type ${type === 'boy' ? 'boy-group' : 'girl-group'}">
-                                    ${type === 'boy' ? '보이그룹' : '걸그룹'}
-                                </div>
-                            </div>
-                            <div class="members-grid">
-                                ${filteredMembers.map(member => {
-                                    const isSelected = selectedMembers.has(`${groupName}-${member}`);
-                                    const isDisabled = !isSelected && selectedMembers.size >= 1;
-                                    return `
-                                        <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}" 
-                                                data-group="${groupName}" data-member="${member}">
-                                            ${member}
-                                        </button>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `;
-
-                        groupsContainer.appendChild(groupCard);
-                    }
-                });
+            groupCard.innerHTML = `
+                <div class="group-header">
+                <div class="group-name">${name}</div>
+                <div class="group-type ${typeClass}">
+                    ${gender === "M" ? "보이그룹" : "걸그룹"}
+                </div>
+                </div>
+                ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
+                <div class="members-grid">
+                ${members.map(member => {
+                    const isSelected = selectedMembers.has(`${name}-${member.name}`);
+                    const isDisabled = !isSelected && selectedMembers.size >= 2;
+                    return `
+                    <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                            data-group="${name}" data-member="${member.name}">
+                        ${member.name}
+                    </button>
+                    `;
+                }).join('')}
+                </div>
+            `;
+            container.appendChild(groupCard);
             };
 
-            renderGroupType(groups.boyGroups, 'boy');
-            renderGroupType(groups.girlGroups, 'girl');
-        }
-
-        // 선택된 멤버 표시 업데이트
-        function updateSelectedDisplay() {
-            const completeBtn = document.getElementById('completeBtn');
-            
-            if (selectedMembers.size === 0) {
-                completeBtn.disabled = true;
-            } else {
-                completeBtn.disabled = false;
+            const groups = {};
+            data.members.forEach(member => {
+            const groupName = member.group__name;
+            if (!groups[groupName]) {
+                groups[groupName] = {
+                gender: member.group__gender,
+                members: []
+                };
             }
-            console.log(selectedMembers)
-        }
-
-        // 멤버 선택 완료 함수
-        function completeMemberSelection() {
-            // hidden input 생성
-            hiddenInputsContainer.innerHTML = '';
-            
-            selectedMembers.forEach(item => {
-                const [group, member] = item.split('-');
-                
-                const groupInput = document.createElement('input');
-                groupInput.type = 'hidden';
-                groupInput.name = 'group_name';
-                groupInput.value = group;
-                
-                const memberInput = document.createElement('input');
-                memberInput.type = 'hidden';
-                memberInput.name = 'member_name';
-                memberInput.value = member;
-                
-                hiddenInputsContainer.appendChild(groupInput);
-                hiddenInputsContainer.appendChild(memberInput);
+            groups[groupName].members.push(member);
             });
 
-            // 선택된 내용을 메인 페이지에 표시
-            updateMainPageDisplay();
-            
-            // 모달 닫기
-            modal.style.display = 'none';
-        }
+            Object.entries(groups).forEach(([groupName, info]) => {
+            addGroupCard(groupName, info.gender, info.members);
+            });
 
+<<<<<<< HEAD
         // 메인 페이지에 선택된 내용 표시
         function updateMainPageDisplay() {
             const searchNotice = document.querySelector('#searchNotice');
@@ -1392,19 +1305,49 @@
                     `;
                     console.log(item);
                 })
+=======
+            updateSelectedDisplay();
+        });
+    });
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentFilter = e.target.dataset.filter;
+        document.getElementById("idolSearch").dispatchEvent(new Event("input")); // 다시 필터링
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+        const group = e.target.dataset.group;
+        const member = e.target.dataset.member;
+        const key = `${group}-${member}`;
+
+        if (selectedMembers.has(key)) {
+            selectedMembers.delete(key);
+            e.target.classList.remove('selected');
+        } else {
+            if (selectedMembers.size < 2) {
+            selectedMembers.add(key);
+            e.target.classList.add('selected');
+>>>>>>> a42fc10859323a58fe171f54c83520a916100f2b
             }
         }
 
-        // 검색 입력 이벤트
-        searchInput.addEventListener('input', renderGroups);
+        updateSelectedDisplay();
+        }
 
-        // 멤버 선택/해제 이벤트
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
-                const group = e.target.dataset.group;
-                const member = e.target.dataset.member;
-                const key = `${group}-${member}`;
+        if (e.target.classList.contains('remove-btn')) {
+        const item = e.target.dataset.item;
+        selectedMembers.delete(item);
+        updateSelectedDisplay();
+        document.getElementById("idolSearch").dispatchEvent(new Event("input"));
+        }
+    });
 
+<<<<<<< HEAD
                 if (selectedMembers.has(key)) {
                     selectedMembers.delete(key);
                     e.target.classList.remove('selected');
@@ -1417,18 +1360,39 @@
                         return;
                     }
                 }
+=======
+    document.getElementById("completeBtn").addEventListener("click", function () {
+        if (selectedMembers.size === 0) {
+        alert("최소 1명 이상의 멤버를 선택해주세요.");
+        return;
+        }
+>>>>>>> a42fc10859323a58fe171f54c83520a916100f2b
 
-                updateSelectedDisplay();
-                renderGroups(); // 선택 상태 반영을 위해 다시 렌더링
-            }
+        const container = document.getElementById("hiddenInputsContainer");
+        container.innerHTML = "";
+
+        selectedMembers.forEach(item => {
+        const [group, member] = item.split('-');
+
+        const groupInput = document.createElement("input");
+        groupInput.type = "hidden";
+        groupInput.name = "group_name";
+        groupInput.value = group;
+
+        const memberInput = document.createElement("input");
+        memberInput.type = "hidden";
+        memberInput.name = "member_name";
+        memberInput.value = member;
+
+        container.appendChild(groupInput);
+        container.appendChild(memberInput);
         });
 
-        // 완료 버튼 클릭 이벤트
-        completeBtn.addEventListener('click', completeMemberSelection);
+        document.getElementById("uploadForm").submit();
+    });
 
-        // 초기 상태 설정
-        renderGroups();
-        updateSelectedDisplay();
+    updateSelectedDisplay();
+    });
 
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
             const title = document.getElementById('title').value.trim();
@@ -1480,7 +1444,7 @@
                 return false;
             }
 
-            if (tradeType === '구매') {
+            if (tradeType === '판매') {
                 const price = document.getElementById('price').value;
                 if (!price) {
                     e.preventDefault();
