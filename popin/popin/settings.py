@@ -45,13 +45,10 @@ INSTALLED_APPS = [
     'photocard',
     'idols',
     'adpage',
-    'companion',
     'home',
-    'chgReview',
-    'proxy',
     'sharing',
-    'status',
     'community',
+    'chgReview',
     'pocadeco',
 ]
 
@@ -139,7 +136,8 @@ STATICFILES_DIRS = (
 
 ### 파일업로드 위치
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = BASE_DIR / 'media'
+#MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # MEDIA_ROOT = 'c:/aaa' # 로컬드라이브 설정
 
 # Default primary key field type
@@ -164,3 +162,4 @@ EMAIL_HOST_USER = ' popinproject123@gmail.com'
 EMAIL_HOST_PASSWORD = 'puyz isul hqyi igdf'  # 앱 비밀번호 발급받아야됨..
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+AUTH_USER_MODEL = 'signupFT.User'

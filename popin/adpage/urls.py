@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 
-app_name = 'admin'
+app_name = 'adpage'
 urlpatterns = [
     path('', views.main, name='main'),                      # 관리자 대시보드
     path('user/', views.user, name='user'),                 # 사용자관리
@@ -11,4 +11,5 @@ urlpatterns = [
     path('notice/', views.notice, name='notice'),           # 공지사항
     path('noticeV/', views.noticeV, name='noticeV'),        # 공지사항 상세보기
     path('noticeW/', views.noticeW, name='noticeW'),        # 공지사항 작성
+    path('noticeR/', views.noticeR, name='noticeR'),        # 공지사항 수정
 ]

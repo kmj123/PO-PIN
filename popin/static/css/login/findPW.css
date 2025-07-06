@@ -68,3 +68,31 @@ a{text-decoration: none;}
 .login-form .findPW{background : #8A79AF; color : #fffdfd; padding-top : 15px; margin-top : 20px;}
 
 .back{color : #8A79AF; }
+
+@media (max-width: 480px) {
+ body {
+   padding: 15px;
+ }}
+
+@media (max-width: 375px) {
+ .login-form {
+   padding: 25px 30px;
+ }
+
+ .login-form .top h2 {
+   font-size: 28px;
+ }
+
+ .login-form h3 {
+   font-size: 17px;
+ }
+
+
+ .login-form .subtitle {
+   font-size: 11px;
+ }
+
+ .login-form input{
+    font-size : 13px;
+ }
+}
