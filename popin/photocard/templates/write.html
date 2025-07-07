@@ -283,6 +283,7 @@
         grid-template-columns: 1fr 2fr;
         gap: 15px;
         align-items: end;
+        cursor:pointer;
     }
 
     .album-type-selector {
@@ -350,9 +351,9 @@
 
     .search-notice{
         display: flex;
-        background-color: #ffff;
         width: 100%;
         padding: 7px;
+        background-color: #ffff;
         border: 2px solid #e1e5e9;
         border-radius: 12px;
     }
@@ -465,7 +466,7 @@
     .selected-item {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      padding: 8px 12px;
+      padding:15px;
       border-radius: 15px;
       font-size: 14px;
       display: flex;
@@ -516,15 +517,15 @@
         display: grid;
         gap: 20px;
         max-height: 400px;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
 
     .group-card {
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
     }
 
     .group-card:hover {
@@ -742,10 +743,11 @@
                     <div class="form-content">
                         <label for="member">그룹 - 멤버 <span class="required">*</span></label>
                         <div class="member-grid">
-                            <div class="search-notice" id="searchNotice">
+                            <div class="search-notice" id="searchNoticeBox">
                                 <img src="/static/images/search.svg">
                                 <span class="artist-search" id="member">아티스트 검색</span>
                             </div>
+                            <!--검색된 결과 렌더링-->
                         </div>
                     </div>
                 </div>
@@ -762,7 +764,7 @@
                                 <input type="hidden" name="member_name" id="selectedMember">
 
                                 <div class="filter-buttons">
-                                    <button type="button" class="filter-btn active" data-filter="all">전체</button>
+                                    <button type="button" class="filter-btn" data-filter="all">전체</button>
                                     <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
                                     <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
                                 </div>
@@ -773,7 +775,7 @@
                                 <div class="selected-list" id="selectedList"></div>
                             </div>
 
-                            <div class="search-notice" id="searchNotice">
+                            <div class="search-noticeBox" id="searchNotice">
                                 <span class="icon">🔍</span>
                                 <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
                                 <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
@@ -808,7 +810,7 @@
                 <div class="form-content">
                     <label for="tradeType">거래 유형 선택 <span class="required">*</span></label>
                     <div class="trade-type-selector">
-                        {%for value, label in trade_type_choices%}
+                        {%for value, label in trade_type_choices %}
                         <div class="trade-option" data-type="{{ value }}">
                             {% if value == "판매" %}
                             <h4>💰 {{label}}글</h4>
@@ -854,7 +856,7 @@
                 </div>
 
                 <div class="form-content">
-                    <label for="tagInput" style="display:flex;"> 태그 <span class="required">*</span></label>
+                    <label for="tagInput" style="display:flex;"> 태그</label>
                     <div class="tag-input-container">
                         <input type="text" id="tagInput" placeholder="#희귀 #한정판 #교환급구 등의 태그를 입력해주세요">
                         <div id="tagList" class="tag-list"></div>
@@ -876,9 +878,8 @@
                     <div class="location-toggle">
                         <!--오프라인 장소-->
                         <div id="dbLocationContainer" style="display:block;">
-                            <select name="place" id="dbLocation">
+                            <select name="place" id="dbLocation">   
                                 <option value="location">위치를 선택해주세요</option>
-                                <option value="current">내위치</option>
                                 {% for key, label in place_choices %}
                                 <option value="{{ key }}">{{ label }}</option>
                                 {% endfor %}
@@ -886,16 +887,18 @@
                         </div>
                     </div>
                     <div class="location-toggle">
-                        <!-- 내 위치 지도 영역 -->
-                        <div class="current-map" id="currentMapWrapper" style="display:none;">
-                        <div class="location-info" id="locationInfo">
-                            * 내위치에서 거래를 원할경우 선택해주세요
-                        </div>
-                        <div id="mapContainer" style="display:none;">
-                            <div id="map" style="width:100%; height:350px;" name="available_at"></div>
-                            <p><em>위치변경을 원하는 경우 지도를 클릭해주세요!</em></p> 
-                            <div id="clickLatlng"></div>
-                        </div>
+                        <!--내위치-->
+                        <div class="current-map">
+                            <div class="location-info" id="locationInfo">
+                                <button type="button" class="location-btn" data-location="current">내 위치</button>
+                                * 내위치에서 거래를 원할경우 선택해주세요
+                            </div>
+                            <div id="mapContainer">
+                                <div id="map" style="width:100%;height:350px;" name="available_at"></div>
+                                <p><em>위치변경을 원하는 경우 지도를 클릭해주세요!</em></p> 
+                                <div id="clickLatlng"></div>   
+
+                            </div>
                         </div>
                     </div>
 
@@ -905,6 +908,57 @@
                 </div>
             </div>
             <!--//위치정보섹션-->
+                        <!--Current Location-->
+            <script>
+                // 지도 생성
+                const mapContainer = document.getElementById('map');
+                const mapOption = {
+                    center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본값: 서울
+                    level: 3
+                };
+                const map = new kakao.maps.Map(mapContainer, mapOption);
+
+                // 마커 생성 (초기 위치는 지도 중심)
+                const marker = new kakao.maps.Marker({
+                    position: map.getCenter(),
+                    map: map
+                });
+
+                // 현재 위치로 지도 이동
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function (position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        const currentPos = new kakao.maps.LatLng(lat, lng);
+                        map.setCenter(currentPos);
+                        marker.setPosition(currentPos);
+
+                        // 위도/경도 input에 저장
+                        document.getElementById('latitude').value = lat;
+                        document.getElementById('longitude').value = lng;
+
+                        infowindow.open(map, marker);
+                    });
+                } else {
+                    alert("Geolocation을 지원하지 않는 브라우저입니다.");
+                }
+
+                // 지도 클릭 시 마커 이동 및 좌표 저장
+                kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+                    const latlng = mouseEvent.latLng;
+
+                    // 마커 위치 이동
+                    marker.setPosition(latlng);
+
+                    // 위도/경도 input에 저장
+                    document.getElementById('latitude').value = latlng.getLat();
+                    document.getElementById('longitude').value = latlng.getLng();
+
+                    // 기존 인포윈도우 제거 (선택)
+                });
+            </script>
+            <!--//Current Location-->
 
             <!-- 버튼 -->
             <div class="button-container">
@@ -979,9 +1033,9 @@
             albumtypeBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // 한글 텍스트 저장 (예: 앨범, 특전, MD 등)
-            const koreanLabel = btn.textContent.trim();
-            albumType.value = koreanLabel;
+            const category = btn.dataset.type;
+            albumType.value = category;
+            console.log(category)
         });
     });
 
@@ -1053,7 +1107,7 @@
     if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         addTag(tagInput.value);
-    }
+        }
     });
 
     // 태그 삭제 이벤트
@@ -1062,208 +1116,204 @@
         const index = parseInt(e.target.dataset.index);
         tags.splice(index, 1);
         updateTagDisplay();
-    }
-    });
-    // 지도 생성
-    const mapContainer = document.getElementById('map');
-    const mapOption = {
-        center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본값: 서울
-        level: 3
-    };
-    const map = new kakao.maps.Map(mapContainer, mapOption);
-
-    // 마커 생성 (초기 위치는 지도 중심)
-    const marker = new kakao.maps.Marker({
-        position: map.getCenter(),
-        map: map
+        }
     });
 
-    // 현재 위치로 지도 이동
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            const currentPos = new kakao.maps.LatLng(lat, lng);
-            map.setCenter(currentPos);
-            marker.setPosition(currentPos);
-
-            // 위도/경도 input에 저장
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
-
-            infowindow.open(map, marker);
-        });
-    } else {
-        alert("Geolocation을 지원하지 않는 브라우저입니다.");
-    }
-
-    // 지도 클릭 시 마커 이동 및 좌표 저장
-    kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-        const latlng = mouseEvent.latLng;
-
-        // 마커 위치 이동
-        marker.setPosition(latlng);
-
-        // 위도/경도 input에 저장
-        document.getElementById('latitude').value = latlng.getLat();
-        document.getElementById('longitude').value = latlng.getLng();
-
-        // 기존 인포윈도우 제거 (선택)
-    });
 
     // 위치선택
     const locationBtns = document.querySelectorAll('.location-btn');
     const locationTypeInput = document.getElementById('locationType');
     const dbLocationContainer = document.getElementById('dbLocationContainer');
     const locationInfo = document.getElementById('locationInfo');
-    const dbLocationSelect = document.getElementById('dbLocation');
 
-    // 셀렉트박스 값 변경 시 이벤트 처리
-    dbLocationSelect.addEventListener('change', function () {
-        const selected = this.value;
-
-        if (selected === 'current') {
-            locationTypeInput.value = "current";    // 숨겨진 Input값 설정
-            locationInfo.style.display = 'block';
-            mapContainer.style.display = 'block';
-        } else {
-            locationTypeInput.value = 'db';     // 일반장소 선택시
-            locationInfo.style.display = 'none';
-            mapContainer.style.display = 'none';
-        }
-    });
-
-    // 버튼 클릭 시 처리 (오프라인 장소 / 내위치 버튼)
     locationBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        // 모든 버튼 active 해제
-        locationBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
+        btn.addEventListener('click', () => {
+            btn.classList.add('active');
 
             const locationType = btn.dataset.location;
             locationTypeInput.value = locationType;
 
-            // 위치 선택에 따라 지도 표시 여부 처리
-            if (locationType === 'db') {
-                dbLocationContainer.style.display = 'block'; // DB 위치 선택 영역 숨기기
-                locationInfo.style.display="none";  
-                mapContainer.style.display = 'none'; 
-
-                dbLocationSelect.value = 'location';  // select 초기화
-            } else if(locationType === 'current') {
-                dbLocationContainer.style.display = 'none'; 
-                locationInfo.style.display="block";  
-                mapContainer.style.display = 'block'; 
+            if(locationType == 'db'){
+                dbLocationContainer.style.display = 'block';
+            } else if(locationType == 'current'){
+                dbLocationContainer.style.display = 'block';
+                mapContainer.style.display = 'block';
             }
         });
+        mapContainer.style.display = 'none';
     });
-        // 지도 초기화
-    window.onload = function () {
-        if (document.getElementById('map')) {
-            const mapOption = {
-                center: new kakao.maps.LatLng(37.5665, 126.9780),
-                level: 3
-            };
-            const map = new kakao.maps.Map(document.getElementById('map'), mapOption);
-            const marker = new kakao.maps.Marker({
-                position: map.getCenter(),
-                map: map
-            });
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    const lat = pos.coords.latitude;
-                    const lng = pos.coords.longitude;
-                    const latlng = new kakao.maps.LatLng(lat, lng);
-                    map.setCenter(latlng);
-                    marker.setPosition(latlng);
-                    document.getElementById('latitude').value = lat;
-                    document.getElementById('longitude').value = lng;
-                });
-            }
-
-            kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                const latlng = mouseEvent.latLng;
-                marker.setPosition(latlng);
-                document.getElementById('latitude').value = latlng.getLat();
-                document.getElementById('longitude').value = latlng.getLng();
-            });
-        }
-    }
-
-
-    // 모달 검색창 
+    // 아티스트 검색 모달창
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById('searchModal');
         const searchModalOpen = document.getElementById('searchModalOpen');
         const searchModalClose = document.getElementById('searchModalOpenClose');
         const searchInput = document.getElementById('idolSearch');
-        const searchNotice = document.getElementById('searchNotice');
-        const groupsContainer = document.getElementById('groupsContainer');
         const completeBtn = document.getElementById('completeBtn');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const searchNotice = document.getElementById('searchNotice');
         const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
+        const memberGrid = document.querySelector('.member-grid');
 
-        let selectedMembers = new Set();
+        let selectedMember = null; // 한 명만 저장
         let currentFilter = 'all';
+        let allData = [];   // 전체 데이터
 
         // 모달 열기
         searchModalOpen.addEventListener('click', () => {
             modal.style.display = "block";
+            searchInput.value = '';
             searchInput.focus();
+            groupsContainer.innerHTML = '';
+            searchNotice.style.display = 'block';
+            selectedMember = null;
+            completeBtn.disabled = true;
+            
+            // 전체 데이터 초기 로딩
+            fetch(`/api/idols/search/?q=`)
+                .then(res => res.json())
+                .then(data => {
+                    allData = data.members;
+                    renderGroups();  // 필터에 따라 전체 렌더링
+            });
         });
 
+
         // 모달 닫기
-        searchModalClose.addEventListener('click', () => 
-            modal.style.display = 'none');
-            window.addEventListener('click', e => {
+        searchModalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', e => {
             if (e.target === modal) modal.style.display = 'none';
         });
 
-        // 검색 입력
-        searchInput.addEventListener('input', function () {
-            const query = this.value.trim();
+        // 검색 처리
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
             if (!query) {
                 groupsContainer.innerHTML = '';
                 searchNotice.style.display = 'block';
                 return;
             }
 
+            // api query
             fetch(`/api/idols/search/?q=${query}&filter=${currentFilter}`)
                 .then(res => res.json())
                 .then(data => {
-                    searchNotice.style.display = 'none';
                     groupsContainer.innerHTML = '';
+                    searchNotice.style.display = 'none';
+                    completeBtn.disabled = true;
 
+                    // 검색된 결과가 1명일 경우
+                    if (data.members.length === 1) {
+                        const member = data.members[0];
+                        selectedMember = {
+                            group: member.group__name,
+                            member: member.name
+                        };
+                        renderSingleResult(member);
+                        completeBtn.disabled = false;
+                        return;
+                    }
+
+                    // 검색된 결과가 여러명 경우
                     const groups = {};
-                    data.members.forEach(member => {
-                        const group = member.group__name;
+                    data.members.forEach(m => {
+                        const group = m.group__name;
                         if (!groups[group]) {
-                            groups[group] = { gender: member.group__gender, members: [] };
+                            groups[group] = { gender: m.group__gender, members: [] };
                         }
-                        groups[group].members.push(member);
+                        groups[group].members.push(m);
                     });
 
                     Object.entries(groups).forEach(([groupName, info]) => {
                         const groupCard = document.createElement('div');
-                        groupCard.innerHTML = `<h4>${groupName} (${info.gender})</h4>`;
-                        info.members.forEach(member => {
-                            const div = document.createElement('div');
-                            div.textContent = member.name;
-                            div.dataset.group = groupName;
-                            div.dataset.member = member.name;
-                            div.classList.add('member-toggle');
-                            groupCard.appendChild(div);
-                        });
+                        groupCard.className = 'group-card';
+                        const typeClass = info.gender === "M" ? "boy-group" : "girl-group";
+
+                        groupCard.innerHTML = `
+                            <div class="group-header">
+                                <div class="group-name">${groupName}</div>
+                                <div class="group-type ${typeClass}">
+                                    ${info.gender === "M" ? "보이그룹" : "걸그룹"}
+                                </div>
+                            </div>
+                            <div class="members-grid">
+                                ${info.members.map(member => {
+                                    const isSelected = selectedMember && selectedMember.group === groupName && selectedMember.member === member.name;
+                                    return `
+                                        <button type="button" class="member-toggle ${isSelected ? 'selected' : ''}"
+                                            data-group="${groupName}" data-member="${member.name}">
+                                            ${member.name}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
                         groupsContainer.appendChild(groupCard);
                     });
-                })
-                .catch(err => {
-                    console.error("검색 오류:", err);
                 });
         });
 
-        // 필터 버튼
+        // 단일 결과 렌더링
+        function renderSingleResult(member) {
+            groupsContainer.innerHTML = `
+                <div class="group-card">
+                    <div class="group-header">
+                        <div class="group-name">${member.group__name}</div>
+                        <div class="group-type ${member.group__gender === "M" ? "boy-group" : "girl-group"}">
+                            ${member.group__gender === "M" ? "보이그룹" : "걸그룹"}
+                        </div>
+                    </div>
+                    <div class="members-grid">
+                        <button type="button" class="member-toggle selected"
+                            data-group="${member.group__name}" data-member="${member.name}">
+                            ${member.name}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 버튼 클릭으로 멤버 선택
+        groupsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('member-toggle')) {
+                const group = e.target.dataset.group;
+                const member = e.target.dataset.member;
+
+                selectedMember = { group, member };
+                completeBtn.disabled = false;
+
+                // 버튼 상태 갱신
+                document.querySelectorAll('.member-toggle').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            }
+        });
+
+        // 완료 버튼 클릭
+        completeBtn.addEventListener('click', () => {
+            if (!selectedMember) return;
+
+            // hidden input 생성
+            hiddenInputsContainer.innerHTML = `
+                <input type="hidden" name="group" value="${selectedMember.group}">
+                <input type="hidden" name="member" value="${selectedMember.member}">
+            `;
+
+            // 메인 페이지에 렌더링
+            memberGrid.innerHTML = `
+                <div class="selected-item">
+                    <input type="hidden">${selectedMember.group} - ${selectedMember.member}
+                </div>
+            `;
+
+            modal.style.display = 'none';
+        });
+
+        // 필터 버튼 처리
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -1273,115 +1323,59 @@
             });
         });
 
-        // 멤버 선택
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('member-toggle')) {
-                const group = e.target.dataset.group;
-                const member = e.target.dataset.member;
-                const key = `${group}-${member}`;
+    // 업로드 폼 제출 시 검증
+    document.getElementById('uploadForm').addEventListener('submit', (e) => {
+        const titleInput = document.getElementById('title');
+        const imageInput = document.getElementById('imageInput');
+        const albumInput = document.getElementById('albumInput');
+        const albumTypeInput = document.getElementById('albumType');
+        const tradeTypeInput = document.getElementById('tradeType');
+        const pocaStateInput = document.getElementById('poca_state');
+        const priceInput = document.getElementById('price');
+        const locationTypeInput = document.getElementById('locationType');
+        const dbLocationInput = document.getElementById('dbLocation');
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
 
-                if (selectedMembers.has(key)) {
-                    selectedMembers.delete(key);
-                    e.target.classList.remove('selected');
-                } else {
-                    selectedMembers.clear();
-                    selectedMembers.add(key);
-                    document.querySelectorAll('.member-toggle').forEach(el => el.classList.remove('selected'));
-                    e.target.classList.add('selected');
-                }
-                updateSelectedDisplay();
-            }
+        const title = titleInput.value.trim();
+        const image = imageInput.value;
+        const album = albumInput.value.trim();
+        const albumType = albumTypeInput.value;
+        const tradeType = tradeTypeInput.value;
+        const pocaState = pocaStateInput.value;
+        const price = priceInput.value;
+        const locationType = locationTypeInput.value;
+        const dbLocation = dbLocationInput.value;
+        const latitude = latitudeInput.value;
+        const longitude = longitudeInput.value;
 
-            if (e.target.classList.contains('remove-btn')) {
-                selectedMembers.delete(e.target.dataset.item);
-                updateSelectedDisplay();
-                searchInput.dispatchEvent(new Event('input'));
-            }
-        });
+        if (!title) return focusAndAlert(e, titleInput, "제목을 입력해주세요!");
+        if (!image) return focusAndAlert(e, imageInput, "이미지를 선택해주세요!");
+        if (!album) return focusAndAlert(e, albumInput, "앨범명을 입력해주세요!");
+        if (!albumType) return focusAndAlert(e, albumTypeInput, "앨범타입을 선택해주세요!");
+        if (!tradeType) return focusAndAlert(e, tradeTypeInput, "거래유형을 선택해주세요!");
+        if (!pocaState) return focusAndAlert(e, pocaStateInput, "포토카드 상태를 선택해주세요!");
 
-        function updateSelectedDisplay() {
-            const count = document.getElementById('selectedCount');
-            const container = document.getElementById('selectedMembers');
-            const list = document.getElementById('selectedList');
-            if (selectedMembers.size === 0) {
-                container.style.display = 'none';
-                completeBtn.disabled = true;
-            } else {
-                container.style.display = 'block';
-                completeBtn.disabled = false;
-                list.innerHTML = Array.from(selectedMembers).map(item => {
-                    const [group, member] = item.split('-');
-                    return `
-                        <div class="selected-item">
-                            <span>${group} - ${member}</span>
-                            <button class="remove-btn" data-item="${item}">×</button>
-                        </div>
-                    `;
-                }).join('');
-            }
+        if (locationType === 'current' && (!latitude || !longitude)) {
+            return focusAndAlert(e, latitudeInput, "지도에서 거래장소를 선택해주세요!");
         }
 
-        completeBtn.addEventListener('click', () => {
-            hiddenInputsContainer.innerHTML = '';
-            selectedMembers.forEach(item => {
-                const [group, member] = item.split('-');
-                const groupInput = document.createElement("input");
-                groupInput.type = "hidden";
-                groupInput.name = "group_name";
-                groupInput.value = group;
+        if (locationType === 'db' && (!dbLocation || dbLocation === 'location')) {
+            return focusAndAlert(e, dbLocationInput, "오프라인 장소를 선택해주세요!");
+        }
 
-                const memberInput = document.createElement("input");
-                memberInput.type = "hidden";
-                memberInput.name = "member_name";
-                memberInput.value = member;
-
-                hiddenInputsContainer.appendChild(groupInput);
-                hiddenInputsContainer.appendChild(memberInput);
-            });
-            modal.style.display = "none";
-        });
-
-        // 업로드 폼 제출 시 검증
-        document.getElementById('uploadForm').addEventListener('submit', (e) => {
-            const title = document.getElementById('title').value.trim();
-            const imageInput = document.getElementById('imageInput').value;
-            const albumInput = document.getElementById('albumInput').value.trim();
-            const albumTypeInput = document.getElementById('albumType');
-            const tradeType = document.getElementById('tradeType').value;
-            const pocaState = document.getElementById('poca_state').value;
-            const locationType = document.getElementById('locationType').value;
-            const place = document.getElementById('dbLocation').value;
-            const latitude = document.getElementById('latitude').value;
-            const longitude = document.getElementById('longitude').value;
-            console.log(title,imageInput,albumInput,albumTypeInput,tradeType,pocaState,locationType,place,latitude,longitude)
-
-            if (!title) return alertAndStop(e, "제목을 입력해주세요!");
-            if (!imageInput) return alertAndStop(e, "이미지를 선택해주세요!");
-            if (!albumInput) return alertAndStop(e, "앨범명을 입력해주세요!");
-            if (!albumTypeInput.value) return alertAndStop(e, "앨범타입을 선택해주세요!");
-            if (!tradeType) return alertAndStop(e, "거래유형을 선택해주세요!");
-            if (!pocaState) return alertAndStop(e, "포토카드 상태를 선택해주세요!");
-
-            if (locationType === 'current' && (!latitude || !longitude)) {
-                return alertAndStop(e, "지도에서 거래장소를 선택해주세요!");
-            }
-
-            if (locationType === 'db' && (!place || place === 'location')) {
-                return alertAndStop(e, "오프라인 장소를 선택해주세요!");
-            }
-
-            if (tradeType === '판매') {
-                const price = document.getElementById('price').value;
-                if (!price) return alertAndStop(e, "판매 가격을 입력해주세요!");
-            }
-        });
-        
-        function alertAndStop(e, message) {
+        if (tradeType === '판매' && !price) {
+            return focusAndAlert(e, priceInput, "판매 가격을 입력해주세요!");
+        }
+        // focus + alert + 제출 방지
+        function focusAndAlert(e, el, message) {
             e.preventDefault();
+            el.focus();
             alert(message);
-            return false; // 폼 제출을 멈추는 반환값
-        }
+            return false;
+        } 
     });
+});
 
 </script>
 </body>
