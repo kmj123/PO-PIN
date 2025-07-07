@@ -34,7 +34,7 @@
 
     .icons {width:70px; display:flex; justify-content: space-between;}
 
-    #heart{cursor:pointer;}
+    .pocanavi i{cursor:pointer;}
 
     .red{color:red;}
 
@@ -155,6 +155,7 @@
     #map-bottomSheet {
         position: fixed;
         width:100%;
+        max-height:400px;
         left:50%;
         transform: translateX(-50%);
         justify-content: center;
@@ -167,7 +168,7 @@
         transition: transform 0.3s ease; /* 애니메이션 */
         display:inline-block;
         align-items:center;
-        width:550px; height:250px;
+        width:550px;
         z-index: 106;
     }
 
@@ -352,12 +353,20 @@
                     <h4>{{info.member}}</h4>
                     <div class="card-meta">
                         <span class="card-album">{{info.album}}</span>&ensp;
-                        <span class="card-likes">❤️ 27</span>
+                        <span class="card-likes">❤️ {{info.wish_count}}</span>
                     </div>
                     <div class="card-tags">
-                        <span class="tag">교환</span>
-                        <span class="tag">럭키드로우</span>
-                        <span class="tag">하자없음</span>
+                        <span class="tag">{{info.trade_type}}</span>
+                        <span class="tag">{{info.category}}</span>
+                        <span class="tag">
+                            {% if info.poca_state == "상" %}
+                                하자없음
+                            {% elif info.poca_state == "중" %}
+                                상태보통
+                            {% else %}
+                                하자있음
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="card-location">📍 {{info.place}}</div>
                 </div>
@@ -396,14 +405,24 @@
                 <div class="map-info">
                     <div class="closebutton"><h3>거래 정보</h3> <button style="background:none; border: none;" onclick="closeMapBottomSheet()">✕</button></div>
                     <div class="poca-seller">거래자 아이디 : {{info.seller.user_id}}</div>
+                    <div class="poca-title">게시글 제목 : {{info.title}}</div>
                     <div class="poca-place">거래 장소 : {{info.place}}</div>
                     <div class="poca-type">거래 방식 : {{info.trade_type}}</div>
+                    {% if info.price %}
+                        <div class="poca-price">가격: {{info.price}}원</div>
+                    {% endif %}
+                    {% if info.description %}
+                        <div class="poca-description">상세설명 : {{info.description}}</div>    
+                    {% endif %}
                     <div class="poca-available">거래 가능 일자 : {{info.available_at}}</div>
                     <div class="poca-created">등록 일자 : {{info.created_at|date:'Y년 m월 d일 A h:i'}}</div>
                     <div class="poca-state">포토카드 상태 : {{info.poca_state}}</div>
                     <div class="poca-tag">
-                        <span>럭키드로우</span>
-                        <span>사운드웨이브</span>
+                        {% if info.tag %}
+                            {% for tag in tags %}
+                                <span>{{tag}}</span>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>

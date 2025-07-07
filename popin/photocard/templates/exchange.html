@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <title>{% block title %}포토카드 교환{% endblock %}</title>
+<meta name='csrf-token' content='{{csrf_token}}'>
 <style>
     .fb{
         position:fixed;
@@ -145,6 +146,8 @@
     }
 
     .clocation a{color:#333;}
+
+    .fgroup, .fdiv{margin-top:10px;}
 
     #searchBtn{
         width:258px; height:50px; width:100%;
@@ -308,6 +311,7 @@
         }
     }
 </style>
+
 <script>
     $(document).ready(function() {
         // "검색 필터" 텍스트를 클릭했을 때만 펼치거나 접기
@@ -324,9 +328,18 @@
         // 메뉴 항목 클릭 시 텍스트 변경
         $('.dropdown-content .dropdown-item').click(function(e) {
             e.preventDefault();
-            var selectedOption = $(this).data('option');
+            var selectedOption = $(this).attr('value');  // data-option -> value로 변경
             $(this).closest('.dropdown').find('.dropdown-text').text(selectedOption);
             $(this).closest('.dropdown').find('.dropdown-content').hide();
+
+            // 거래 방식 드롭다운에서 선택 시
+            if ($(this).closest('.dropdown').hasClass('trade-dropdown')) {
+                setTradeValue(selectedOption);  // trade 값 설정
+            }
+            // 거래 장소 드롭다운에서 선택 시
+            else if ($(this).closest('.dropdown').hasClass('place-dropdown')) {
+                setPlaceValue(selectedOption);  // place 값 설정
+            }
         });
 
         // 메뉴 외부 클릭 시 드롭다운 닫기
@@ -335,6 +348,16 @@
                 $('.dropdown-content').hide();
             }
         });
+
+        // 거래 방식 값을 설정하는 함수
+        function setTradeValue(value) {
+            $('#tradeInput').val(value);  // hidden input에 trade 값을 설정
+        }
+
+        // 거래 장소 값을 설정하는 함수
+        function setPlaceValue(value) {
+            $('#placeInput').val(value);  // hidden input에 place 값을 설정
+        }
 
         // 그룹 검색
         const groupMembers = {
@@ -350,28 +373,34 @@
             const searchText = $(this).val().toLowerCase();
             $('.members').empty(); // 멤버 목록 초기화
 
+            let matchedGroupName = "";
+
             if (searchText) {
                 $('.fchoice').show(); // 검색 결과 영역 보이기
 
                 for (const group in groupMembers) {
                     if (group.toLowerCase().includes(searchText)) {
-                        // 해당 그룹에 속한 멤버들 추가
-                        $('.members').append(`
-                            <input type="checkbox" id="memberAll" class="memberToggle">
-                            <label for="memberAll">전체</label>
-                        `);  // 전체 선택 체크박스 추가
+                        matchedGroupName = group; // 가장 먼저 매치된 그룹명 저장
+                        $('#groupInputHidden').val(matchedGroupName); // hidden input에 정확한 그룹명 세팅
 
+                        // 멤버 표시
+                        $('.members').append(`
+                            <input type="checkbox" id="memberAll" name="selectedMembers" class="memberToggle" value="전체">
+                            <label for="memberAll">전체</label>
+                        `);
                         groupMembers[group].forEach(function(member, index) {
-                            const memberId = 'member' + group + (index + 1); // 고유 ID 생성
+                            const memberId = 'member' + group + (index + 1);
                             $('.members').append(`
-                                <input type="checkbox" id="${memberId}" class="memberToggle">
+                                <input type="checkbox" id="${memberId}" name="selectedMembers" class="memberToggle" value="${member}">
                                 <label for="${memberId}">${member}</label>
                             `);
                         });
+                        break;  // 첫 번째 매칭만 사용
                     }
                 }
             } else {
-                $('.fchoice').hide(); // 검색어가 없으면 멤버 목록 숨김
+                $('.fchoice').hide();
+                $('#groupInputHidden').val('');
             }
         });
 
@@ -396,6 +425,32 @@
             }
         });
 
+        // 검색 버튼 클릭 시 동작
+        $('#searchBtn').on('click', function() {
+            alert("검색");
+            console.log("폼 전송 전");
+            console.log("거래 방식:", $('#tradeInput').val());
+            console.log("장소:", $('#placeInput').val());
+            console.log("전송될 그룹명 : ", $('#groupInputHidden').val());
+
+            // 그룹, 거래 방식, 거래 상태, 자주 거래되는 장소에 대한 선택값을 가져옴
+            const selectedGroup = $('#searchinput').val().trim();
+            const selectedTradeType = $('.fcategory .dropdown-text').text().trim();
+            const selectedLocation = $('.flocation .dropdown-text').text().trim();
+
+            // 멤버 선택 여부 체크
+            const selectedMembers = $('.memberToggle:checked').map(function() {
+                return $(this).val();
+            }).get().filter(val => val !== "전체");
+
+            if (selectedMembers.length === 0) {
+                $(".no-members").show();  // 멤버를 선택하지 않았다면 멤버 선택 메시지 보이기
+                $(".photoGrid").empty();  // 기존 포토카드 목록 비우기
+                $(".no-results").hide();  // "검색 결과가 없습니다" 메시지 숨기기
+                return;
+            }
+            else{$(".no-members").hide();}  // 멤버를 선택했으면 멤버 선택 메시지 숨기기
+        });
     });
 </script>
 
@@ -405,56 +460,71 @@
     <div class="content">
         <section class="sfilter">
             <h3 class="filter-label">🔍 검색필터</h3>
-            <div class="fgroup">
-                <h4>그룹 검색</h4>
-                <div class="groupsearch">
-                    <input type="text" name="searhgroup" id="searchinput" placeholder="그룹 검색 후 멤버 선택 가능">
-                </div>
-            </div>
-            <div class="fchoice" style="display: none;">
-                <h4>멤버 선택</h4>
-                <div class="members">
-                    
-                </div>
-            </div>
-
             <form method="get" action="{% url 'photocard:exchange' %}">
+                <div class="fgroup">
+                    <h4>그룹 검색</h4>
+                    <div class="groupsearch">
+                        <input type="text" id="searchinput" placeholder="그룹 검색 후 멤버 선택 가능">
+                    </div>
+                </div>
+                <div class="fchoice" style="display: none;">
+                    <h4>멤버 선택</h4>
+                    <div class="members">
+                        {% for group in groupMembers %}
+                            <!-- 전체 선택 체크박스 -->
+                            <input type="checkbox" id="memberAll{{ group }}" name="selectedMembers" value="{{ group.name }}">
+                            <label for="memberAll{{ group }}">전체</label>
+
+                            {% for member in group.members %}
+                                <!-- 각 멤버 체크박스, member.name을 value로 설정 -->
+                                <input type="checkbox" id="member{{ group.name }}{{ member }}" name="selectedMembers" value="{{ member }}">
+                                <label for="member{{ group.name }}{{ member }}">{{ member }}</label>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
                 <div class="fcategory">
                     <h4>거래 방식</h4>
-                    <div class="dropdown">
-                        <div class="dropdown-text" id="dropdownText">전체</div>
+                    <div class="dropdown trade-dropdown">
+                        <div class="dropdown-text" id="dropdownText">{{ trade|default:"전체" }}</div>
                         <div class="dropdown-content">
-                            <div class="dropdown-item" data-option="전체">전체</div>
+                            <div class="dropdown-item" value="전체" onclick="setTradeValue('전체')">전체</div>
                             {% for value, label in trade_choices %}
-                                <div class="dropdown-item" data-option="{{ value }}">{{ label }}</div>
+                                <div class="dropdown-item" value="{{ value }}" onclick="setTradeValue('{{ value }}')">{{ label }}</div>
                             {% endfor %}
                         </div>
                     </div>
                 </div>
-                <div class="flocation fdiv">
+                <div class="flocation">
                     <h4>📍 위치 설정</h4>
                     <div class="clocation">강남구 (현재 위치)<a href="#"><i class="fas fa-map"></i></a></div>
-                    <div class="dropdown">
-                        <div class="last-dropdown">
-                            <div class="dropdown-text" id="dropdownText">자주 거래되는 장소</div>
-                            <div class="dropdown-content">
-                                <div class="dropdown-item" data-option="전체">전체</div>
-                                {% for value, label in place_choices %}
-                                    <div class="dropdown-item" data-option="{{value}}">{{label}}</div>
-                                {% endfor %}
+                    <div class="fdiv">
+                        <h4>자주 거래되는 장소</h4>
+                        <div class="dropdown place-dropdown">
+                            <div class="last-dropdown">
+                                <div class="dropdown-text" id="dropdownTextPlace">{{ place|default:"전체" }}</div>
+                                <div class="dropdown-content">
+                                    <div class="dropdown-item" value="전체" onclick="setPlaceValue('전체')">전체</div>
+                                    {% for value, label in place_choices %}
+                                        <div class="dropdown-item" value="{{value}}" onclick="setPlaceValue('{{ value }}')">{{label}}</div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <input type="hidden" name="searchgroup" id="groupInputHidden">
+                <input type="hidden" name="trade" id="tradeInput" value="{{ trade|default:'' }}">
+                <input type="hidden" name="place" id="placeInput" value="{{ place|default:'' }}">
                 <div class="searchBtn">
-                    <button type="button" id="searchBtn">검색</button>
+                    <button type="submit" id="searchBtn">검색</button>
                 </div>
             </form>
         </section>
 
         <section class="photocardList">
             <!-- 멤버를 선택해주세요 메시지 -->
-            <div class="no-members">검색 필터에서 멤버를 선택해주세요</div>
+            <div class="no-members" style="{% if no_members_selected %}display:block{% else %}display:none{% endif %}">검색 필터에서 멤버를 선택해주세요</div>
             <div class="photoGrid">
                 {% for p in photocards %}
                     <div class="cardItem">
