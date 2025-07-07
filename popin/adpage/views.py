@@ -77,10 +77,46 @@ def main(request) :
     
 
 def user(request) :
-    return render(request,"admin/manageUser.html")
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        total_users = User.objects.all().count() # 전체 사용자
+        active_users = User.objects.filter(state=1).count() # 활성 사용자 (정상 사용자)
+        block_users = User.objects.filter(state=3).count() # 정지된 사용자 (차단 사용자)
+        
+        user_list = User.objects.all().values('user_id','nickname','email','state') # 전체 유저 리스트
+        
+        print("======================")
+        print(total_users, active_users, block_users)
+        print("======================")
+        
+        context = {
+            "total_users":total_users, # 전체 사용자
+            "active_users":active_users, # 활성 사용자 (정상 사용자)
+            "block_users" : block_users, # 정지된 사용자 (차단 사용자)
+            "users":user_list, # 전체 유저 리스트
+        }
+        return render(request,"admin/manageUser.html", context)
+        
+    except:
+        return redirect('home:main')  # 예외 상황 대비
 
 def post(request) :
-    return render(request,"admin/managePost.html")
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        return render(request,"admin/managePost.html")
+    except:
+        return redirect('home:main')  # 예외 상황 대비
+    
 
 def postV(request) :
     return render(request,"admin/managePost_view.html")
