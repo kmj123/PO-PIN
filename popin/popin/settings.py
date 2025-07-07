@@ -46,9 +46,7 @@ INSTALLED_APPS = [
     'idols',
     'adpage',
     'home',
-    'sharing',
     'community',
-    'chgReview',
     'pocadeco',
 ]
 
