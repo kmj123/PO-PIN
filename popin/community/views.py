@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from chgReview.models import ExchangeReview, ReviewImage, ReviewTag
+from .models import ExchangeReview, ReviewImage, ReviewTag
+from .models import ExchangeReview
+from .models import SharingPost, SharingTag, SharingImage
 
 ##### 커뮤니티
 # 메인페이지
 def main(request):
     return render(request, 'community/main.html')
-from sharing.models import SharingPost, SharingTag, SharingImage
+
 User = get_user_model()
 
 
@@ -140,6 +142,16 @@ def write_sharing(request):
 ##### 교환/판매후기 게시판
 def chgReview(request) :
     return render(request,'chgReview/main.html')
+
+def chgReviewmain(request):
+    reviews = ExchangeReview.objects.all().order_by('-created_at')  # 최신순
+    return render(request, 'chgReview/main.html', {'reviews': reviews})
+
+def chgReviewview(request) :
+    return render(request,"chgReview/chgR_view.html")
+
+
+
 
 ##### 동행 게시판
 def companion(request) :
