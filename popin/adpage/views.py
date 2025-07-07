@@ -118,6 +118,20 @@ def user(request) :
     except:
         return redirect('home:main')  # 예외 상황 대비
 
+def delete_user(request, delete_user_id):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        delete_user = User.objects.get(user_id=delete_user_id)
+        delete_user.delete()
+        return redirect('adpage:main')  # 예외 상황 대비
+    except:
+        return redirect('home:main')  # 예외 상황 대비
+
 def post(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
