@@ -106,6 +106,8 @@
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     }
 
+    .card-item a{text-decoration:none;}
+
     .card-image {
         width: 100%;
         height: 284px;
@@ -313,19 +315,21 @@
             <div class="cards-grid">
                 {% for photocard in photocards%}
                 <div class="card-item">
-                    <div class="card-image"><img src="/media/{{photocard.image}}"></div>
-                    <div class="card-info">
-                        <h4>{{photocard.member.group.name}} {{photocard.member.name}}</h4>
-                        <div class="card-meta">
-                            <span class="card-album">{{photocard.album}}</span>
-                            <span class="card-likes">❤️ {{photocard.wish_count}}</span>
+                    <a href="/photocard/detail/{{photocard.pno}}">
+                        <div class="card-image"><img src="/media/{{photocard.image}}"></div>
+                        <div class="card-info">
+                            <h4>{{photocard.member.group.name}} {{photocard.member.name}}</h4>
+                            <div class="card-meta">
+                                <span class="card-album">{{photocard.album}}</span>
+                                <span class="card-likes">❤️ {{photocard.wish_count}}</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="tag">{{photocard.trade_type}}</span>
+                                <span class="tag">{{photocard.category}}</span>
+                            </div>
+                            <div class="card-location">📍 {{photocard.place}}</div>
                         </div>
-                        <div class="card-tags">
-                            <span class="tag">{{photocard.trade_type}}</span>
-                            <span class="tag">{{photocard.category}}</span>
-                        </div>
-                        <div class="card-location">📍 {{photocard.place}}</div>
-                    </div>
+                    </a>
                 </div>
                 {%endfor%}
             </div>

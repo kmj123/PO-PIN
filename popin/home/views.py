@@ -25,6 +25,8 @@ def main(request):
         # 최근 인기 포토카드 (거래중인 것)
         photocards = Photocard.objects.filter(sell_state='중', buy_state=None).select_related('member__group').annotate(
         wish_count=Count('wished_by_users')).order_by('-wish_count')[:4]
+        # 최신 게시글
+        recent = Photocard.objects.filter(sell_state='중', buy_state=None).order_by('-created_at')[:5]
         
         context = {
             'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
@@ -32,6 +34,7 @@ def main(request):
             'total_photocard':total_photocard, # 전체 게시글
             'total_user':total_user,  # 활성 사용자
             'completed_photocard':completed_photocard, #교환 완료
+            'recent':recent
         }
         
         return render(request, 'main.html', context)
@@ -41,37 +44,24 @@ def main(request):
     
     
 
-
-# 임시 게시글 데이터 (카테고리별로 구분된 예시)
-posts = [
-    {'title': 'IVE 원영 포토카드 교환해요!', 'category': '교환', 'writer_id': 'kpop_lover', 'createDate': '5분 전', 'hit': 23},
-    {'title': 'IVE 원영 포토카드 판매해요!', 'category': '판매', 'writer_id': 'kpop_lover', 'createDate': '30분 전', 'hit': 38},
-    {'title': 'BLACKPINK 리사 포토카드 판매합니다', 'category': '판매', 'writer_id': 'generous_fan', 'createDate': '12분 전', 'hit': 45},
-    {'title': 'BTS 정국 포토카드 판매', 'category': '판매', 'writer_id': 'army_collector', 'createDate': '23분 전', 'hit': 67},
-    {'title': '교환 구해요', 'category': '교환', 'writer_id': 'happy_trader', 'createDate': '1시간 전', 'hit': 112},
-    {'title': 'IVE 안유진 포카 판매', 'category': '판매', 'writer_id': 'creative_diver', 'createDate': '35분 전', 'hit': 89},
-    {'title': 'NCT 포토카드 교환해요!', 'category': '교환', 'writer_id': 'kpop_lover', 'createDate': '50분 전', 'hit': 50},
-    {'title': '뷔 포카 판매', 'category': '판매', 'writer_id': 'kpop_lover', 'createDate': '1달 전', 'hit': 40},
-    {'title': '트와이스 나연 포카 판매', 'category': '판매', 'writer_id': 'generous_fan', 'createDate': '2일 전', 'hit': 145},
-    {'title': '포카 정리합니다', 'category': '판매', 'writer_id': 'army_collector', 'createDate': '55분 전', 'hit': 67},
-    {'title': '포카 교환', 'category': '교환', 'writer_id': 'happy_trader', 'createDate': '4시간 전', 'hit': 112},
-    {'title': '정연 포카 팔아요', 'category': '판매', 'writer_id': 'creative_diver', 'createDate': '1시간 전', 'hit': 89},
-]
-
 def recent(request):
+    posts = Photocard.objects.all().order_by('-created_at')
+        
     # GET 요청에서 카테고리와 검색어를 받음
     category = request.GET.get('category', '전체')  # 기본값은 '전체'
     searchinput = request.GET.get('searchinput', '')
 
     # 카테고리 필터링
-    if category != '전체':
-        filtered_posts = [post for post in posts if post['category'] == category]
+    if category == '교환':
+        filtered_posts = Photocard.objects.filter(trade_type='교환').order_by('-created_at')
+    elif category == '판매':
+        filtered_posts = Photocard.objects.filter(trade_type='판매').order_by('-created_at')
     else:
         filtered_posts = posts  # '전체'일때 모든 게시글을 표시
 
     # 검색어 필터링
     if searchinput:
-        filtered_posts = [post for post in filtered_posts if searchinput.lower() in post['title'].lower()]
+        filtered_posts = filtered_posts.filter(title__icontains=searchinput)
     
     # 페이지네이터
     paginator = Paginator(filtered_posts, 5)
