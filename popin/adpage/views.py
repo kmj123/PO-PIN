@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models.functions import ExtractMonth
-from django.db.models import Count
+from django.db.models import Count, Q
 from collections import defaultdict
 
 from signupFT.models import User
@@ -88,10 +88,23 @@ def user(request) :
         active_users = User.objects.filter(state=1).count() # 활성 사용자 (정상 사용자)
         block_users = User.objects.filter(state=3).count() # 정지된 사용자 (차단 사용자)
         
-        user_list = User.objects.all().values('user_id','nickname','email','state') # 전체 유저 리스트
-        
         print("======================")
         print(total_users, active_users, block_users)
+        print("======================")
+        
+        state = request.GET.get('state')
+        keyword = request.GET.get('keyword')
+        
+        user_list = User.objects.all().values('user_id','nickname','email','state') # 전체 유저 리스트
+        
+        # 조건부 필터링 (값이 있을 경우에만 필터링)
+        if state:
+            user_list = user_list.filter(state=state)
+        if keyword:
+            user_list = user_list.filter(Q(user_id=keyword) | Q(email=keyword))
+        
+        print("======================")
+        print(user_list)
         print("======================")
         
         context = {
