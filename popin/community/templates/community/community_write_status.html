@@ -402,7 +402,8 @@
       </div>
     </nav>
   </header>
-
+ <form method="POST"  action="{% url 'community:write_status' %}" enctype="multipart/form-data">
+{% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
@@ -499,6 +500,7 @@
       <button type="button" class="btn-cancel" onclick="goBack()">취소</button>
     </div>
   </div>
+</form>
 
   <script>
     let uploadedImages = [];

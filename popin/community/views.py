@@ -5,14 +5,16 @@ from .models import ExchangeReview, ReviewImage, ReviewTag
 from .models import ExchangeReview
 from .models import SharingPost, SharingTag, SharingImage
 
+User = get_user_model()
+
 ##### 커뮤니티
+
 # 메인페이지
 def main(request):
     return render(request, 'community/main.html')
-
-User = get_user_model()
-
-
+##############################################
+# 교환후기 글작성 
+# User = get_user_model()
 @login_required
 def write_review(request):
     if request.method == "POST":
@@ -113,27 +115,247 @@ def write_review(request):
         return redirect('chgReview:main')  # 또는 너의 리뷰 리스트 페이지
 
     # GET 요청일 경우
-    return render(request, 'community_write_review.html')
+    return render(request, 'community/community_write_review.html')
+#####################################
+# 동행모집글 작성
+def write_companion(request):
+    
+    if request.method == "POST":
+        user = request.user
+        title = request.POST.get('title', '').strip()
+        artist = request.POST.get('artist', '').strip()
+        category =request.POST.get('category', '').strip()
+        location= request.POST.get('location','').strip()
+        share_date=request.POST.get('share_date','').strip()
+        requirement=request.POST.get('requirement','').strip()
+        content = request.POST.get('content', '').strip()
+        tag_string = request.POST.get('tags', '').strip()
+        images = request.FILES.getlist('images')
+        # 2. 필수값 체크
+        required_fields = {
+            "제목": title,
+            "내용": content,
+            "장소": location,
+            "필수사항": requirement,
+        }
+        for label, value in required_fields.items():
+            if not value:
+                return render(request, 'community_write_sharing.html', {
+                    "error": f"{label}은(는) 필수 항목입니다.",
+                    "form_data": request.POST
+                })
+
+
+        # 3. 나눔글 저장
+        try:
+            post = SharingPost.objects.create(
+                title=title,
+                artist=artist,
+                category =category,
+                location=location,
+                share_date =share_date ,
+                content=content,
+                author=user,
+               
+            )
+            print(" 리뷰 생성 완료:", post.id)
+        except Exception as e:
+            print(" 리뷰 저장 실패:", e)
+            return render(request, 'community_write_sharing.html', {
+                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
+                "form_data": request.POST
+            })
+
+        # 4. 태그 저장
+        if tag_string:
+            tag_names = tag_string.replace(",", " ").split()
+            for tag_name in tag_names:
+                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag_obj)
+            print(" 태그 추가:", tag_names)
+
+        # 5. 이미지 수 제한 확인
+        if len(images) > 5:
+            return render(request, 'community_write_sharing.html', {
+                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
+                "form_data": request.POST
+            })
+
+        # 6. 이미지 저장
+        for img in images: 
+            try:
+                 SharingImage.objects.create(post=post, image=img)
+                 print(" 이미지 저장됨:", img.name)
+            except Exception as e: 
+                print(" 이미지 저장 실패 :" ,  e)
+
+        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
+
+    return render(request, 'community/community_write_companion.html')
+
+#########################################################################
+# 대리구매글 작성
+def write_proxy(request):
+    if request.method == "POST":
+        user = request.user
+        title = request.POST.get('title', '').strip()
+        artist = request.POST.get('artist', '').strip()
+        #대리구매 날짜 =
+        location= request.POST.get('location','').strip()
+        #최대모집인원 = 
+        #수고비 = 
+        content = request.POST.get('content', '').strip()
+        tag_string = request.POST.get('tags', '').strip()
+        images = request.FILES.getlist('images')
+        
+        # 2. 필수값 체크
+        required_fields = {
+            "제목": title,
+            "내용": content,
+            "장소": location,
+           
+        }
+        for label, value in required_fields.items():
+            if not value:
+                return render(request, 'community_write_sharing.html', {
+                    "error": f"{label}은(는) 필수 항목입니다.",
+                    "form_data": request.POST
+                })
+
+
+        # 3. 나눔글 저장
+        try:
+            post = SharingPost.objects.create(
+                title=title,
+                artist=artist,
+                #날짜 
+                location=location,
+                # 최대모집인원 
+                #수고비 
+                content=content,
+                author=user,
+               
+            )
+            print(" 리뷰 생성 완료:", post.id)
+        except Exception as e:
+            print(" 리뷰 저장 실패:", e)
+            return render(request, 'community_write_sharing.html', {
+                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
+                "form_data": request.POST
+            })
+
+        # 4. 태그 저장
+        if tag_string:
+            tag_names = tag_string.replace(",", " ").split()
+            for tag_name in tag_names:
+                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag_obj)
+            print(" 태그 추가:", tag_names)
+
+        # 5. 이미지 수 제한 확인
+        if len(images) > 5:
+            return render(request, 'community_write_sharing.html', {
+                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
+                "form_data": request.POST
+            })
+
+        # 6. 이미지 저장
+        for img in images: 
+            try:
+                 SharingImage.objects.create(post=post, image=img)
+                 print(" 이미지 저장됨:", img.name)
+            except Exception as e: 
+                print(" 이미지 저장 실패 :" ,  e)
+
+        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
+
+    return render(request, 'community/community_write_companion.html')
+    
+    
+    return render(request, 'community/community_write_proxy.html')
+############################################################################
 
 # 최근게시글
 def recent(request):
     return render(request, 'community/community_recent.html')
 
-# 동행모집글 작성
-def write_companion(request):
-    return render(request, 'community/community_write_companion.html')
 
-# 대리구매글 작성
-def write_proxy(request):
-    return render(request, 'community/community_write_proxy.html')
 
-# 후기 작성
-def write_review(request):
-    return render(request, 'community/community_write_review.html')
 
-# 나눔글 작성
-def write_sharing(request):
-    return render(request, 'community/community_write_sharing.html')
+# 나눔글 작성 
+def community_write_sharing(request):
+     if request.method == "POST":
+        user = request.user
+        title = request.POST.get('title', '').strip()
+        artist = request.POST.get('artist', '').strip()
+        category =request.POST.get('category', '').strip()
+        location= request.POST.get('location','').strip()
+        share_date=request.POST.get('share_date','').strip()
+        requirement=request.POST.get('requirement','').strip()
+        content = request.POST.get('content', '').strip()
+        tag_string = request.POST.get('tags', '').strip()
+        images = request.FILES.getlist('images')
+        # 2. 필수값 체크
+        required_fields = {
+            "제목": title,
+            "내용": content,
+            "장소": location,
+            "필수사항": requirement,
+        }
+        for label, value in required_fields.items():
+            if not value:
+                return render(request, 'community/community_write_sharing.html', {
+                    "error": f"{label}은(는) 필수 항목입니다.",
+                    "form_data": request.POST
+                })
+
+
+        # 3. 나눔글 저장
+        try:
+            post = SharingPost.objects.create(
+                title=title,
+                artist=artist,
+                category =category,
+                location=location,
+                share_date =share_date ,
+                content=content,
+                author=user,
+               
+            )
+            print(" 리뷰 생성 완료:", post.id)
+        except Exception as e:
+            print(" 리뷰 저장 실패:", e)
+            return render(request, 'community/community_write_sharing.html', {
+                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
+                "form_data": request.POST
+            })
+
+        # 4. 태그 저장
+        if tag_string:
+            tag_names = tag_string.replace(",", " ").split()
+            for tag_name in tag_names:
+                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag_obj)
+            print(" 태그 추가:", tag_names)
+
+        # 5. 이미지 수 제한 확인
+        if len(images) > 5:
+            return render(request, 'community/community_write_sharing.html', {
+                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
+                "form_data": request.POST
+            })
+
+        # 6. 이미지 저장
+        for img in images: 
+            try:
+                 SharingImage.objects.create(post=post, image=img)
+                 print(" 이미지 저장됨:", img.name)
+            except Exception as e: 
+                print(" 이미지 저장 실패 :" ,  e)
+
+        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
+    
+     return render(request, 'community/community_write_sharing.html')
 
 # 현황공유 작성
 # def write_status(request):
@@ -167,7 +389,7 @@ def sharing(request) :
 
 ##### 현황공유 게시판
 def status(request) :
-    return render(request,'status/main.html')
+      return render(request,'status/main.html')
 
 
 def write_sharing(request):

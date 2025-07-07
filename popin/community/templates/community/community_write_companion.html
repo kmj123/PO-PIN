@@ -233,7 +233,8 @@
       <a href="#" class="home"><i class="fi-rr-caret-left"></i>이전으로</a>
     </nav>
   </header>
-
+ <form method="POST"  action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
+    {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
       <h2>동행 모집 글 작성</h2>
@@ -294,6 +295,7 @@
       <button type="button" id="cancelBtn">취소</button>
     </div>
   </div>
+</form>
 
   <script>
     const toggleButtons = document.querySelectorAll('.type-toggle button');
