@@ -1,0 +1,298 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/static/css/community/companion.css">
+  <script src="/static/js/community/companion.js" defer></script>
+  <title>동행게시판</title>
+</head>
+<body>
+  <div class="list">
+    <div class="menu">
+      <h3>동행 게시판</h3>
+      <ul>
+        <li class="board"><a href="">전체보기</a></li>
+        <li><a href="">콘서트</a></li>
+        <li><a href="">팝업스토어</a></li>
+        <li><a href="">팬사인회</a></li>
+        <li><a href="">전시회</a></li>
+        <li><a href="">굿즈샵</a></li>
+        <li><a href="">기타</a></li>
+      </ul>
+      <h3>동행 현황</h3>
+      <table class="now">
+        <tbody>
+          <tr>
+            <th scope="row">모집중</th>
+            <td>123</td>
+          </tr>
+          <tr>
+            <th scope="row">모집완료</th>
+            <td>56</td>
+          </tr>
+          <tr>
+            <th scope="row">진행중</th>
+            <td>9</td>
+          </tr>
+          <tr>
+            <th scope="row">진행완료</th>
+            <td>628</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="dashboard">
+      <div class="top">
+        <h3>동행 모집</h3>
+      </div>
+      <div class="line"></div>
+      <div class="search-filter-container">
+          <div class="search-toggle">
+            <button class="toggle-btn active" data-type="general">일반 검색</button>
+            <button class="toggle-btn" data-type="tag">태그 검색</button>
+          </div>
+          <input type="text" id="generalSearch" class="search-input" placeholder="제목, 그룹명으로 검색">
+          <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+          <select id="regionFilter" class="filter-select">
+              <option value="">지역 선택</option>
+              <option value="서울">서울</option>
+              <option value="경기">경기</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="인천">인천</option>
+              <option value="광주">광주</option>
+              <option value="대전">대전</option>
+              <option value="울산">울산</option>
+              <option value="강원">강원</option>
+              <option value="충북">충북</option>
+              <option value="충남">충남</option>
+              <option value="전북">전북</option>
+              <option value="전남">전남</option>
+              <option value="경북">경북</option>
+              <option value="경남">경남</option>
+              <option value="제주">제주</option>
+              <option value="기타">기타</option>
+          </select>
+          
+
+          <select id="stateFilter" class="filter-select">
+            <option value="">게시글 상태</option>
+              <option>모집중</option>
+              <option>모집완료</option>
+              <option>진행중</option>
+          </select>
+        </div>
+        
+        <div class="postlist">
+          <!-- 동행 카드들 -->
+          <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/landing/wonyoung.jpg">
+          <div class="post-header">
+            <div class = "postf">
+              <span class = "artist">IVE</span>
+              <span class = "region">서울</span>
+            </div>
+            <div class="post-title-row">
+              <h3 class="post-title">IVE 팬사인회 동행 모집</h3>
+              <div class="post-right">
+                <span class="post-status status-full">모집완료</span>
+                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+              </div>
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#팬사인회</span>
+              <span class="post-tag">#IVE</span>
+              <span class="post-tag">#강남</span>
+            </div>
+          </div>
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-people">👥</span>
+                      <span>3/3명 (모집완료)</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  IVE 팬사인회 당첨되신 분들 같이 가요! 팬사인회 전후 식사도 함께 하고 덕질 이야기 나눠요 ✨
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta">2025-06-31</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 67</span>
+                      <span>💬 23</span>
+                    </div>
+                  </div>
+              <div class="post-actions">
+                  <button class="join-btn disabled">모집 완료</button>
+              </div>
+          </div>
+
+          <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
+          <div class="post-header">
+            <div class = "postf">
+              <span class = "artist">BOYNEXTDOOR</span>
+              <span class = "region">대구</span>
+            </div>
+            <div class="post-title-row">
+              <h3 class="post-title">IVE 장원영 생카 동행모집</h3>
+              <div class="post-right">
+                <span class="post-status status-recruiting">모집중</span>
+                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+              </div>
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#생일카페</span>
+              <span class="post-tag">#IVE</span>
+              <span class="post-tag">#홍대</span>
+            </div>
+          </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 8월 3일 (토) 10:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>용산 아이파크몰</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>2/5명 (3명 더 모집)</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  원영이 생카 같이 가실 분 모집해요! 오전 일찍 가서 여유롭게 관람하고 점심도 같이 먹어요 💜
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 army_purple</span>
+                      <span class="post-meta">2024-02-21</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 28</span>
+                      <span>💬 6</span>
+                    </div>
+              </div>
+              <div class="post-actions">
+                <button class="join-btn active">채팅하기</button>
+              </div>
+            </div>
+          <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
+          <div class="post-header">
+            <div class = "postf">
+              <span class = "artist">BOYNEXTDOOR</span>
+              <span class = "region">대구</span>
+            </div>
+            <div class="post-title-row">
+              <h3 class="post-title">IVE 장원영 생카 동행모집</h3>
+              <div class="post-right">
+                <span class="post-status progress">진행중</span>
+                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+              </div>
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#생일카페</span>
+              <span class="post-tag">#IVE</span>
+              <span class="post-tag">#홍대</span>
+            </div>
+          </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 8월 3일 (토) 10:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>용산 아이파크몰</span>
+                  </div>
+                  <div class="info-people">
+                      <span class="info-icon">👥</span>
+                      <span>2/5명 (3명 더 모집)</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  원영이 생카 같이 가실 분 모집해요! 오전 일찍 가서 여유롭게 관람하고 점심도 같이 먹어요 💜
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                    <span>👤 army_purple</span>
+                    <span class="post-meta">2025-07-05</span>
+                  </div>
+                  <div class="participants">
+                    <span>👁️ 28</span>
+                    <span>💬 6</span>
+                    </div>
+                  </div>
+                  <div class="post-actions">
+                <button class="join-btn active">채팅하기</button>
+              </div>
+            </div>
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-btn" onclick="closePostModal()">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostArtist" class="artist"></span>
+                      <span id="modalPostRegion" class="region"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostCreated"></p>
+                    </div>
+                    <p id="modalPostDate">📅 날짜</p>
+                    <p id="modalPostPlace">📍 장소</p>
+                    <p id="modalPostPeople">👥 인원</p>
+                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
+                      설명 내용
+                    </div>
+                    <div id="modalPostImages" style="display:flex; gap:10px;"></div>
+                </div>
+                </div>
+                <!-- 이미지 확대 모달 -->
+                <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
+                  <button id="prevBtn">‹</button>
+                  <img id="modalImage" style="max-width:80%; max-height:80%;" />
+                  <button id="nextBtn">›</button>
+                </div>
+                <div class="pagination">
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
+            </div>
+          </div>
+          <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
+        </body>
+{% endblock content %}
+</body>
+</html>

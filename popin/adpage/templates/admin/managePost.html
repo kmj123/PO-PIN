@@ -24,7 +24,9 @@
             display : flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 25px;
+            margin-top:5px;
+            padding : 0 25px;
+
         }
         .banner h2{ 
             font-size : 30px; 
@@ -53,11 +55,6 @@
             padding: 0;
             gap: 10px;
         }
-        .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
         .menu li{
             display : flex;
             text-align : center;
@@ -73,10 +70,14 @@
             color : #764ba2;
             border : 2px solid  #764ba2;
         }
+        .menu li a{color : #764ba2;}
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
             border : none;
+        }
+        .menu li.board a {
+          color: rgba(255, 255, 255, 0.95); 
         }
         .home {
             all: unset;
@@ -321,23 +322,24 @@
       transform: none;
       box-shadow: none;
     }
+    a{text-decoration : none;}
     table{}
   </style>
 </head>
 <body>
   <div>
     <div class="banner">
-      <strong><h2>PO-PIN</h2></strong>
+      <a href = "{% url 'home:main' %}"><h2>PO-PIN</h2></a>
       <div class = "menu">
                 <ul>
-                    <li>대시보드</li>
-                    <li >공지사항</li>
-                    <li class = "board">게시글 관리</li>
-                    <li>사용자 관리</li>
+                    <li><a href="{% url 'adpage:main' %}">메인</a></li>
+                    <li><a href="{% url 'adpage:notice' %}">공지사항</a></li>
+                    <li class="board"><a href="{% url 'adpage:post' %}">게시글 관리</a></li>
+                    <li><a href="{% url 'adpage:user' %}">사용자 관리</a></li>
                 </ul>
             </div>
             <div class="banner-right">
-                <a href="#" class="home">
+                <a href="{% url 'home:main' %}" class="home">
                     <i class="fi fi-rr-home"></i>홈으로
                 </a>
             </div>
@@ -400,7 +402,7 @@
               <td><input type="checkbox" class="row-checkbox"></td>
               <td>abcdefg</td>
               <td>교환후기</td>
-              <td><a href="#">ㅇㅇ님과 교환후기</a></td>
+              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ님과 교환후기</a></td>
               <td>ㅁㅁ</td>
               <td>2025-06-25</td>
               <td>3</td>
@@ -410,7 +412,7 @@
               <td><input type="checkbox" class="row-checkbox"></td>
               <td>gijklmnop</td>
               <td>동행</td>
-              <td><a href="#">ㅇㅇ콘 동행구해요</a></td>
+              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
               <td>ㅁㄴㅇㄹ</td>
               <td>2025-06-25</td>
               <td>0</td>

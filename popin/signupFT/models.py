@@ -24,14 +24,14 @@ class User(models.Model):
     password = models.CharField(max_length=255, verbose_name="비밀번호")
     name = models.CharField(max_length=100, verbose_name="이름")
     birth_date = models.DateField(null=True, blank=True ,verbose_name="생년월일")
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True , blank=True, verbose_name="성별")
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name="성별")
     email = models.EmailField(unique=True, verbose_name="이메일")
-    reported_by = models.TextField(default="", blank=True ,verbose_name="신고당한 횟수")  
+    
     # bias_group 필드를 Group 모델을 참조하는 ForeignKey로 변경
     bias_group = models.ManyToManyField(
         Group, 
         blank=True, 
-       
+        
         related_name='fans_group', # 역참조 이름
         verbose_name="최애 그룹"
     )
@@ -40,7 +40,7 @@ class User(models.Model):
     bias_member = models.ManyToManyField(
         Member, 
         blank=True, 
-    
+       
         related_name='fans_member', # 역참조 이름
         verbose_name="최애 멤버"
     )
