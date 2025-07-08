@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count, Q
 from collections import defaultdict
+from django.http import JsonResponse
+import json
 
 from signupFT.models import User
 from photocard.models import Photocard
@@ -119,7 +121,10 @@ def user(request) :
     except:
         return redirect('home:main')  # 예외 상황 대비
 
-def delete_user(request, delete_user_id):
+def delete_user(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
+    
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
     if not user_id:
@@ -127,32 +132,74 @@ def delete_user(request, delete_user_id):
     
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
-        delete_user = User.objects.get(user_id=delete_user_id)
-        delete_user.delete()
-        return redirect('adpage:main')  # 예외 상황 대비
-    except:
-        return redirect('home:main')  # 예외 상황 대비
-    
-def block_user(request, block_user_id):
-    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
-    
-    if not user_id:
-        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
-    
-    try:
-        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
-        block_user = User.objects.get(user_id=block_user_id) # 해당 유저 객체
+        body = json.loads(request.body)
+        ids = body.get('ids')  # 리스트 형태로 받아야 함
         
-        if block_user.state == 3: # 차단 사용자일 경우
-            block_user.state = 1 # 일반 사용자로 전환
-            
-        elif block_user.state == 1: # 일반 사용자의 경우
-            block_user.state = 3 # 차단 사용자로 전환
-            
-        block_user.save() # 저장
-        return redirect('adpage:main')  # 예외 상황 대비
-    except:
-        return redirect('home:main')  # 예외 상황 대비
+        if not ids or not isinstance(ids, list):
+            return JsonResponse({'error': '유효한 사용자 ID 리스트가 필요합니다.'}, status=400)
+        
+        results = []
+        for uid in ids:
+            try:
+                user = User.objects.get(user_id=uid)
+                user.delete()
+                message = uid + " 삭제 완료"
+                results.append({'user_id': uid, 'message': message})
+                
+            except User.DoesNotExist:
+                results.append({'user_id': uid, 'error': '사용자 없음'})
+
+        return JsonResponse({
+            'success': True,
+            'processed': len(results),
+            'results': results
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def block_user(request):
+    if request.method != "POST":
+        return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=405)
+    
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        body = json.loads(request.body)
+        ids = body.get('ids')  # 리스트 형태로 받아야 함
+        
+        if not ids or not isinstance(ids, list):
+            return JsonResponse({'error': '유효한 사용자 ID 리스트가 필요합니다.'}, status=400)
+        
+        results = []
+        for uid in ids:
+            try:
+                user = User.objects.get(user_id=uid)
+                if user.state == 3:
+                    user.state = 1
+                    message = "차단 → 일반"
+                elif user.state == 1:
+                    user.state = 3
+                    message = "일반 → 차단"
+                else:
+                    message = f"변경 안됨 (현재 상태: {user.state})"
+                user.save()
+                results.append({'user_id': uid, 'new_state': user.state, 'message': message})
+            except User.DoesNotExist:
+                results.append({'user_id': uid, 'error': '사용자 없음'})
+
+        return JsonResponse({
+            'success': True,
+            'processed': len(results),
+            'results': results
+        })
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 def post(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
