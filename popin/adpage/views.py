@@ -165,7 +165,8 @@ def block_user(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
     if not user_id:
-        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+        return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+
     
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
