@@ -147,7 +147,9 @@
 
     .clocation a{color:#333;}
 
-    .fgroup, .fdiv{margin-top:10px;}
+    .fgroup, .fdiv{margin-top:15px;}
+
+    .fchoice{margin-bottom:10px;}
 
     #searchBtn{
         width:258px; height:50px; width:100%;
@@ -178,6 +180,7 @@
         grid-template-rows: repeat(3, 245px);
         grid-template-columns: repeat(4, 183px);
         gap:10px;
+        justify-content:center;
         max-height:755px;
         overflow-y: auto;
         width:100%; height:100%;
@@ -189,14 +192,6 @@
         font-size: 1rem;
         color: #888;
         text-align: center;
-        display: none;  /* 기본적으로 숨기기 */
-    }
-
-    .no-members {
-        font-size: 1rem;
-        color: #888;
-        text-align: center;
-        display: block;  /* 기본적으로 멤버 선택 메시지 보이기 */
     }
 
     .cardItem {
@@ -425,32 +420,6 @@
             }
         });
 
-        // 검색 버튼 클릭 시 동작
-        $('#searchBtn').on('click', function() {
-            alert("검색");
-            console.log("폼 전송 전");
-            console.log("거래 방식:", $('#tradeInput').val());
-            console.log("장소:", $('#placeInput').val());
-            console.log("전송될 그룹명 : ", $('#groupInputHidden').val());
-
-            // 그룹, 거래 방식, 거래 상태, 자주 거래되는 장소에 대한 선택값을 가져옴
-            const selectedGroup = $('#searchinput').val().trim();
-            const selectedTradeType = $('.fcategory .dropdown-text').text().trim();
-            const selectedLocation = $('.flocation .dropdown-text').text().trim();
-
-            // 멤버 선택 여부 체크
-            const selectedMembers = $('.memberToggle:checked').map(function() {
-                return $(this).val();
-            }).get().filter(val => val !== "전체");
-
-            if (selectedMembers.length === 0) {
-                $(".no-members").show();  // 멤버를 선택하지 않았다면 멤버 선택 메시지 보이기
-                $(".photoGrid").empty();  // 기존 포토카드 목록 비우기
-                $(".no-results").hide();  // "검색 결과가 없습니다" 메시지 숨기기
-                return;
-            }
-            else{$(".no-members").hide();}  // 멤버를 선택했으면 멤버 선택 메시지 숨기기
-        });
     });
 </script>
 
@@ -514,8 +483,8 @@
                     </div>
                 </div>
                 <input type="hidden" name="searchgroup" id="groupInputHidden">
-                <input type="hidden" name="trade" id="tradeInput" value="{{ trade|default:'' }}">
-                <input type="hidden" name="place" id="placeInput" value="{{ place|default:'' }}">
+                <input type="hidden" name="trade" id="tradeInput" value="{{ trade|default:'전체' }}">
+                <input type="hidden" name="place" id="placeInput" value="{{ place|default:'전체' }}">
                 <div class="searchBtn">
                     <button type="submit" id="searchBtn">검색</button>
                 </div>
@@ -523,9 +492,8 @@
         </section>
 
         <section class="photocardList">
-            <!-- 멤버를 선택해주세요 메시지 -->
-            <div class="no-members" style="{% if no_members_selected %}display:block{% else %}display:none{% endif %}">검색 필터에서 멤버를 선택해주세요</div>
             <div class="photoGrid">
+                <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다</div>
                 {% for p in photocards %}
                     <div class="cardItem">
                         <a href="/photocard/detail/{{p.pno}}/">
@@ -534,8 +502,6 @@
                             </div>
                         </a>
                     </div>
-                {% empty %}
-                    <div class="no-results">검색 결과가 없습니다</div>
                 {% endfor %}
             </div>
         </section>

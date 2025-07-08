@@ -79,15 +79,15 @@ def exchange(request):
     # GET 요청에서 필터 값 가져오기
     searchgroup = request.GET.get('searhgroup', '')
     selected_members = request.GET.getlist('selectedMembers')
-    trade = request.GET.get('trade', '')
-    place = request.GET.get('place', '')
+    trade = request.GET.get('trade', '전체')
+    place = request.GET.get('place', '전체')
     
     # 전체 포토카드 리스트 불러오기
     photocards = Photocard.objects.filter(sell_state="중")
     
     if searchgroup:
         photocards = photocards.filter(member__group__name=searchgroup)
-        
+    
     # 선택된 멤버가 있으면 필터링
     if selected_members:
         photocards = photocards.filter(member__name__in=selected_members)
@@ -98,8 +98,6 @@ def exchange(request):
     
     if place != '전체':
         photocards = photocards.filter(place=place)
-        
-    no_members_selected = not selected_members
 
     # 필터링된 포토카드를 템플릿에 전달
     context = {
@@ -110,12 +108,8 @@ def exchange(request):
         'trade':trade,
         'place':place,
         'searchgroup':searchgroup,
-        'selected_members':selected_members,
-        'no_members_selected':no_members_selected
+        'selected_members':selected_members
     }
-    
-    print(photocards.count())
-    print(photocards.query)
         
     return render(request, 'exchange.html', context)
 
@@ -137,12 +131,36 @@ def detail(request, pno):
     # pno 포토카드 불러오기
     qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
     
+    qs.hit += 1
+    qs.save()
+    
+    if not qs.latitude and not qs.longitude:
+        if qs.place == "올림픽공원":
+            qs.latitude = 37.51784192112612
+            qs.longitude = 127.1276152266286
+        elif qs.place == "상암":
+            qs.latitude = 37.580534952338624
+            qs.longitude = 126.89203603891819
+        elif qs.place == "더현대":
+            qs.latitude = 37.52586982023892
+            qs.longitude = 126.92844895447732
+        elif qs.place == "고척":
+            qs.latitude = 37.49823024363382
+            qs.longitude = 126.86710307179943
+        elif qs.place == "인스파이어":
+            qs.latitude = 37.46667138168973
+            qs.longitude = 126.39058501167706
+        elif qs.place == "홍대":
+            qs.latitude = 37.55683650372744
+            qs.longitude = 126.9237735042553
+    
     # 포토카드 상세정보 반환
     if qs.tag:
         tags = qs.tag.split(",")
         context = {"info":qs, "tags":tags}
     else:
         context = {"info":qs}
+
     
     return render(request, 'pocadetail.html', context)
 
