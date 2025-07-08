@@ -1,11 +1,3 @@
-function reportBtn() {
-  if (confirm("신고하시겠습니까?")) {
-    alert("신고되었습니다.");
-  } else {
-    alert("취소");
-  }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   const modalImage = document.getElementById('modalImage');
   const imageModal = document.getElementById('imageModal');
@@ -21,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const stateFilter = document.getElementById("stateFilter");
   const sortFilter = document.getElementById("sortFilter");
   const categoryLinks = document.querySelectorAll(".group a[data-category]");
+  const pagination = document.querySelector(".pagination");
 
   let imageList = [];
   let currentImageIndex = 0;
@@ -30,9 +23,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentPage = 1;
   const itemsPerPage = 3;
 
-  let selectedCategory = null; // null = 전체보기
+  let selectedCategory = null;
 
-  // 이미지 모달 기능
+  // 신고
+  window.reportBtn = function () {
+    if (confirm("신고하시겠습니까?")) alert("신고되었습니다.");
+    else alert("취소");
+  };
+
+  // 이미지 모달
   if (document.getElementById('modalPostImages')) {
     document.getElementById('modalPostImages').addEventListener('click', e => {
       if (e.target.tagName === 'IMG') {
@@ -69,12 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 게시글 클릭 시 모달 열기
   if (postList) {
     postList.addEventListener("click", e => {
       const card = e.target.closest(".post-card");
       if (!card) return;
-
       if (e.target.closest('.report-btn') || e.target.closest('.join-btn')) return;
 
       const artistText = card.querySelector(".artist")?.textContent.trim() || "";
@@ -162,14 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // TOP 버튼 동작
   if (topBtn) {
     window.addEventListener("scroll", () => {
-      if (window.pageYOffset > 300) {
-        topBtn.classList.add('show');
-      } else {
-        topBtn.classList.remove('show');
-      }
+      if (window.pageYOffset > 300) topBtn.classList.add('show');
+      else topBtn.classList.remove('show');
     });
 
     topBtn.addEventListener("click", () => {
@@ -177,7 +170,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 카테고리 클릭 이벤트 (href 막기)
   categoryLinks.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
@@ -187,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 검색 모드 토글
   toggleBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       toggleBtns.forEach(b => b.classList.remove("active"));
@@ -206,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 검색어, 상태 필터, 정렬 필터 입력 이벤트
   [generalInput, tagInput, stateFilter, sortFilter].forEach(el => {
     if (!el) return;
     el.addEventListener("input", () => {
@@ -215,15 +205,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 필터/검색/정렬 적용 함수
   function applyFilters() {
     filteredCards = allCards.filter(card => {
-      // 카테고리 필터
-      if (selectedCategory && selectedCategory !== "전체보기" && card.dataset.category !== selectedCategory) {
-        return false;
-      }
+      if (selectedCategory && selectedCategory !== "전체보기" && card.dataset.category !== selectedCategory) return false;
 
-      // 검색 필터
       const searchType = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
       const keyword = (searchType === "general" ? generalInput.value : tagInput.value).toLowerCase().trim();
 
@@ -231,27 +216,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (searchType === "general") {
           const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
           const artist = card.querySelector(".artist")?.textContent.toLowerCase() || "";
-          if (!title.includes(keyword) && !artist.includes(keyword)) {
-            return false;
-          }
+          if (!title.includes(keyword) && !artist.includes(keyword)) return false;
         } else {
           const tags = Array.from(card.querySelectorAll(".post-tag")).map(t => t.textContent.toLowerCase().replace('#', '').trim());
           if (!tags.some(t => t.includes(keyword))) return false;
         }
       }
 
-      // 상태 필터
       const selectedState = stateFilter.value;
-      if (selectedState && selectedState !== "" && card.querySelector(".post-status")?.textContent !== selectedState) {
-        return false;
-      }
-      currentPage = Math.min(currentPage, Math.ceil(filteredCards.length / itemsPerPage) || 1);
-      applyPagination();
+      if (selectedState && selectedState !== "" && card.querySelector(".post-status")?.textContent !== selectedState) return false;
 
       return true;
     });
 
-    // 정렬 필터
     const sortValue = sortFilter.value;
     if (sortValue === "최신순") {
       filteredCards.sort((a, b) => {
@@ -267,39 +244,35 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // 해당게시글없다 문구
-      const noResults = document.getElementById("noResultsMessage");
-        if (filteredCards.length === 0) {
-          noResults.style.display = "block";
-        } else {
-          noResults.style.display = "none";
-        }
-
     currentPage = Math.min(currentPage, Math.ceil(filteredCards.length / itemsPerPage) || 1);
     applyPagination();
   }
 
-  // 페이지네이션 적용 함수
   function applyPagination() {
-  allCards.forEach(card => card.style.display = "none");
+    allCards.forEach(card => card.style.display = "none");
 
-  const totalPages = Math.ceil(filteredCards.length / itemsPerPage) || 1;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const pageCards = filteredCards.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(filteredCards.length / itemsPerPage) || 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageCards = filteredCards.slice(startIndex, endIndex);
 
-  pageCards.forEach(card => card.style.display = "block");
+    pageCards.forEach(card => card.style.display = "block");
 
-  updatePaginationUI(totalPages);  // <-- 페이지네이션 UI 갱신
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+    updatePaginationUI(totalPages);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   function updatePaginationUI(totalPages) {
-    const pagination = document.querySelector(".pagination");
     if (!pagination) return;
-
     pagination.innerHTML = "";
+
+    // 게시물 수가 적으면 숨김
+    if (filteredCards.length <= itemsPerPage) {
+      pagination.style.display = "none";
+      return;
+    } else {
+      pagination.style.display = "flex";
+    }
 
     const createPageLink = (text, page, disabled = false, active = false) => {
       const a = document.createElement("a");
@@ -321,9 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + 4);
-    if (endPage - startPage < 4) {
-      startPage = Math.max(1, endPage - 4);
-    }
+    if (endPage - startPage < 4) startPage = Math.max(1, endPage - 4);
 
     for (let i = startPage; i <= endPage; i++) {
       pagination.appendChild(createPageLink(i, i, false, currentPage === i));
@@ -337,5 +308,5 @@ document.addEventListener("DOMContentLoaded", () => {
   applyFilters();
 
   // 모달 닫기 버튼 연결
-  document.querySelector(".close-btn").addEventListener("click", closePostModal);
+  document.querySelector(".close-btn")?.addEventListener("click", closePostModal);
 });

@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
       tags.forEach(tag => {
         const span = document.createElement("span");
         span.className = "post-tag";
-        span.textContent = tag;
+        span.textContent = `${tag}`;
         tagsContainer.appendChild(span);
       });
       tagsContainer.style.display = "flex";

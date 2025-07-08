@@ -19,18 +19,39 @@ categoryLinks.forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
 
-    const selectedCategory = link.dataset.category?.trim();
+    const selectedCategory = link.dataset.category?.trim();  // data-category 값
+    const labelText = link.textContent.trim();                // <a> 안의 텍스트 (예: 뉴진스, 세븐틴)
     const allCards = document.querySelectorAll(".post-card");
 
+    // 카테고리 필터링
     filteredCards = Array.from(allCards).filter(card => {
       const cardCategory = card.dataset.category?.trim();
       return selectedCategory === "" || selectedCategory === cardCategory;
     });
 
-    // 모든 카드 숨기고 필터링된 카드만 보여주기
-    allCards.forEach(card => card.style.display = "none");
+    // 결과 없음 메시지 처리
+    const noResults = document.getElementById("noResultsMessage");
+    const pagination = document.querySelector(".pagination");
 
-    showPage(1);
+    if (filteredCards.length === 0) {
+      noResults.textContent = `${labelText}에 해당하는 게시물이 없습니다.`;
+      noResults.style.display = "block";
+
+      allCards.forEach(card => card.style.display = "none");
+
+      if (pagination) {
+        pagination.style.display = "none";
+      }
+    } else {
+      noResults.style.display = "none";
+
+      if (pagination) {
+        pagination.style.display = "block";
+      }
+
+      // 첫 페이지부터 보여주기
+      showPage(1);
+    }
   });
 });
 

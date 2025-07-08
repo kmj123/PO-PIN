@@ -306,7 +306,6 @@
               </div>
             </div>
             {% endfor %}
-          </div>
             <div class="pagination">
                   <a href="#" title="첫 페이지">«</a>
                   <a href="#" title="이전 페이지">‹</a>
@@ -318,7 +317,7 @@
                   <a href="#" title="다음 페이지">›</a>
                   <a href="#" title="마지막 페이지">»</a>
             </div>
-
+          </div>
             <div id="postModal" class="modal">
                 <div class="modal-content">
                     <button class="close-btn" onclick="closePostModal()">&times;</button>
@@ -347,8 +346,8 @@
                   <img id="modalImage" style="max-width:80%; max-height:80%;" />
                   <button id="nextBtn">›</button>
                 </div>
+                <!-- 메뉴에서 해당 게시물이 없을 때 -->
                 <p id="noResultsMessage" style="display:none; text-align:center; padding:20px;">
-                  해당 게시물이 없습니다.
                 </p>
             </div>
           </div>
