@@ -17,51 +17,51 @@ document.addEventListener("DOMContentLoaded", function () {
   let imageList = [];
 
   // 후기 카드 클릭 시 모달 열기
-document.querySelectorAll(".board-item").forEach(item => {
-item.addEventListener("click", (e) => {
-    if (e.target.closest('.report-btn')) return;
+  document.querySelectorAll(".board-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      if (e.target.closest('.report-btn')) return;
 
-    const artistText = item.querySelector(".artist")?.textContent.trim();
-    const onoffText = item.querySelector(".onoff")?.textContent.trim();
-    const TwayText = item.querySelector(".Tway")?.textContent.trim();
-    const title = item.querySelector(".board-title")?.textContent.trim();
-    const star = item.querySelector(".star")?.textContent.trim();
-    const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
-    const writer = item.querySelector(".writer_id")?.textContent.trim();
-    const partner = item.querySelector(".partner_id")?.textContent.trim();
-    const date = item.querySelector(".post-date")?.textContent.trim(); // 날짜 추가
-    const images = item.getAttribute("data-images")?.split(",") || [];
-    const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.trim());
+      const artistText = item.querySelector(".artist")?.textContent.trim();
+      const onoffText = item.querySelector(".onoff")?.textContent.trim();
+      const TwayText = item.querySelector(".Tway")?.textContent.trim();
+      const title = item.querySelector(".board-title")?.textContent.trim();
+      const star = item.querySelector(".star")?.textContent.trim();
+      const desc = item.querySelector(".board-preview, .board-content")?.textContent.trim();
+      const writer = item.querySelector(".writer_id")?.textContent.trim();
+      const partner = item.querySelector(".partner_id")?.textContent.trim();
+      const date = item.querySelector(".post-date")?.textContent.trim();
+      const images = item.getAttribute("data-images")?.split(",") || [];
+      const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.trim());
 
-    openPostModal(artistText, onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags, date);
-});
-});
+      openPostModal(artistText, onoffText, TwayText, title, `${writer} ⇄ ${partner}`, star, desc, images, tags, date);
+    });
+  });
 
-function openPostModal(artistText, onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = [], date = "") {
-const [writer, partner] = writerPartner.split(" ⇄ ");
+  function openPostModal(artistText, onoffText, TwayText, title, writerPartner, star, desc, imageUrls = [], tags = [], date = "") {
+    const [writer, partner] = writerPartner.split(" ⇄ ");
 
-const artistEl = document.getElementById("modalPostArtist");
-const onoffEl = document.getElementById("modalPostOnoff");
-const TwayEl = document.getElementById("modalPostTway");
+    const artistEl = document.getElementById("modalPostArtist");
+    const onoffEl = document.getElementById("modalPostOnoff");
+    const TwayEl = document.getElementById("modalPostTway");
 
-artistEl.textContent = artistText;
-artistEl.className = "artist";
+    artistEl.textContent = artistText;
+    artistEl.className = "artist";
 
-onoffEl.textContent = onoffText;
-onoffEl.className = "onoff";
+    onoffEl.textContent = onoffText;
+    onoffEl.className = "onoff";
 
-TwayEl.textContent = TwayText;
-TwayEl.className = "Tway";
+    TwayEl.textContent = TwayText;
+    TwayEl.className = "Tway";
 
-document.getElementById("modalPostTitle").textContent = title;
-document.getElementById("modalPostWriter").textContent = `${writer}`;
-document.getElementById("modalPostPartner").textContent = `🔄 ${partner}`;
-document.getElementById("modalPostStar").textContent = `${star}`;
-document.getElementById("modalPostDescription").textContent = desc;
-document.getElementById("modalPostDate").textContent = date; // 날짜 설정
+    document.getElementById("modalPostTitle").textContent = title;
+    document.getElementById("modalPostWriter").textContent = `${writer}`;
+    document.getElementById("modalPostPartner").textContent = `🔄 ${partner}`;
+    document.getElementById("modalPostStar").textContent = `${star}`;
+    document.getElementById("modalPostDescription").textContent = desc;
+    document.getElementById("modalPostDate").textContent = date;
 
-const tagsContainer = document.getElementById("modalPostTags");
-tagsContainer.innerHTML = "";
+    const tagsContainer = document.getElementById("modalPostTags");
+    tagsContainer.innerHTML = "";
 
     if (tags.length > 0) {
       tags.forEach(tag => {
@@ -101,7 +101,6 @@ tagsContainer.innerHTML = "";
         prevBtn.style.display = 'none';
         nextBtn.style.display = 'none';
       }
-
     } else {
       imageContainer.style.display = "none";
       prevBtn.style.display = 'none';
@@ -109,7 +108,6 @@ tagsContainer.innerHTML = "";
     }
 
     postModal.style.display = "flex";
-
     topBtn.style.pointerEvents = 'none';
     topBtn.style.opacity = '0.4';
   }
@@ -174,9 +172,8 @@ tagsContainer.innerHTML = "";
   topBtn.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+  // 검색 및 필터링 기능
   const generalInput = document.getElementById("generalSearch");
   const tagInput = document.getElementById("tagSearch");
   const ratingFilter = document.getElementById("ratingFilter");
@@ -184,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const toggleBtns = document.querySelectorAll(".toggle-btn");
   const boardItems = Array.from(document.querySelectorAll(".board-item"));
 
-  // 🔁 토글 버튼 클릭 시 검색 입력창 전환
+  // 토글 버튼 클릭 시 검색 입력창 전환
   toggleBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       toggleBtns.forEach(b => b.classList.remove("active"));
@@ -197,18 +194,19 @@ document.addEventListener("DOMContentLoaded", function () {
         generalInput.style.display = "none";
         tagInput.style.display = "inline-block";
       }
-      applyFilters(); // 즉시 반영
+      applyFilters();
     });
   });
 
-  // 🎯 검색/필터/정렬 이벤트 바인딩
+  // 검색 입력 이벤트
   generalInput.addEventListener("input", applyFilters);
   tagInput.addEventListener("input", applyFilters);
   ratingFilter.addEventListener("change", applyFilters);
   sortFilter.addEventListener("change", applyFilters);
 
+  // 검색/필터/정렬 적용 함수
   function applyFilters() {
-    const searchMode = document.querySelector(".toggle-btn.active").dataset.type;
+    const searchMode = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
     const keyword = (searchMode === "general" ? generalInput.value : tagInput.value).toLowerCase();
     const selectedRating = ratingFilter.value;
     const sortBy = sortFilter.value;
@@ -219,66 +217,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const partner = item.querySelector(".partner_id")?.textContent.toLowerCase() || "";
       const tags = Array.from(item.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase());
       const star = item.querySelector(".star")?.textContent.replace("⭐", "").trim();
-
-      document.getElementById('sortFilter').addEventListener('change', function() {
-    const sortType = this.value;
-    sortPosts(sortType);
-});
-
-    // 정렬 필터 이벤트 리스너 추가
-document.getElementById('sortFilter').addEventListener('change', function() {
-    const sortType = this.value;
-    sortPosts(sortType);
-});
-
-// 게시글 정렬 함수
-function sortPosts(sortType) {
-    const boardList = document.querySelector('.board-list');
-    const boardItems = Array.from(boardList.querySelectorAll('.board-item'));
-    
-    let sortedItems;
-    
-    switch(sortType) {
-        case 'latest':
-            // 최신순 정렬 (날짜 기준 내림차순)
-            sortedItems = boardItems.sort((a, b) => {
-                const dateA = new Date(a.querySelector('.post-date').textContent);
-                const dateB = new Date(b.querySelector('.post-date').textContent);
-                return dateB - dateA; // 내림차순
-            });
-            break;
-            
-        case 'rating':
-            // 평점순 정렬 (별점 기준 내림차순)
-            sortedItems = boardItems.sort((a, b) => {
-                const ratingA = parseInt(a.querySelector('.star').textContent.match(/\d+/)[0]);
-                const ratingB = parseInt(b.querySelector('.star').textContent.match(/\d+/)[0]);
-                return ratingB - ratingA; // 내림차순
-            });
-            break;
-            
-        case 'views':
-            // 조회순 정렬 (조회수 기준 내림차순)
-            sortedItems = boardItems.sort((a, b) => {
-                const viewsA = parseInt(a.querySelector('.board-meta span:last-child').textContent.match(/\d+/)[0]);
-                const viewsB = parseInt(b.querySelector('.board-meta span:last-child').textContent.match(/\d+/)[0]);
-                return viewsB - viewsA; // 내림차순
-            });
-            break;
-            
-        case '':
-        default:
-            // 기본 정렬 (원래 순서 유지)
-            sortedItems = boardItems;
-            return; // 빈 값일 때는 정렬하지 않음
-    }
-    
-    // 기존 게시글들 제거
-    boardItems.forEach(item => item.remove());
-    
-    // 정렬된 게시글들 다시 추가
-    sortedItems.forEach(item => boardList.appendChild(item));
-}
 
       // 검색 필터
       let matchSearch = true;
@@ -300,23 +238,195 @@ function sortPosts(sortType) {
     });
 
     // 정렬
-    filtered.sort((a, b) => {
-      if (sortBy === "latest") {
-        return boardItems.indexOf(a) - boardItems.indexOf(b);
-      } else if (sortBy === "rating") {
-        const aRating = parseFloat(a.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
-        const bRating = parseFloat(b.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
-        return bRating - aRating;
-      } else if (sortBy === "views") {
-        const aViews = parseInt(a.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
-        const bViews = parseInt(b.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
-        return bViews - aViews;
-      }
-    });
+    if (sortBy) {
+      filtered.sort((a, b) => {
+        if (sortBy === "latest") {
+          const dateA = new Date(a.querySelector(".post-date")?.textContent.trim() || 0);
+          const dateB = new Date(b.querySelector(".post-date")?.textContent.trim() || 0);
+          return dateB - dateA;
+        } else if (sortBy === "rating") {
+          const ratingA = parseFloat(a.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+          const ratingB = parseFloat(b.querySelector(".star")?.textContent.replace("⭐", "").trim() || 0);
+          return ratingB - ratingA;
+        } else if (sortBy === "views") {
+          const viewsA = parseInt(a.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+          const viewsB = parseInt(b.querySelector(".board-meta span:last-child")?.textContent.replace("👁️", "").trim() || 0);
+          return viewsB - viewsA;
+        }
+        return 0;
+      });
+    }
 
-    // 다시 그리기
-    const container = document.querySelector(".board-list");
-    container.innerHTML = "";
-    filtered.forEach(item => container.appendChild(item));
+    // 페이지네이션 초기화 및 적용
+    resetPagination(filtered);
   }
+
+  // 초기 필터링 적용
+  applyFilters();
 });
+
+// 페이지네이션 관련 변수
+let currentPage = 1;
+let itemsPerPage = 3;
+let filteredCards = [];
+
+// 페이지네이션 메인 함수
+function showPage(pageNumber) {
+  currentPage = pageNumber;
+  hideAllCards();
+  showCurrentPageCards();
+  updatePageButtons();
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 모든 카드 숨기기
+function hideAllCards() {
+  const allCards = document.querySelectorAll(".board-item");
+  allCards.forEach(card => {
+    card.style.display = "none";
+  });
+}
+
+// 현재 페이지 카드들만 보여주기
+function showCurrentPageCards() {
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const cardsToShow = filteredCards.slice(startIndex, endIndex);
+
+  cardsToShow.forEach(card => {
+    card.style.display = "block"; // 필요한 카드만 보이게 함
+  });
+}
+
+
+// 페이지네이션 버튼 업데이트
+function updatePageButtons() {
+  const pagination = document.querySelector(".pagination");
+  if (!pagination) return;
+  
+  const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+  pagination.innerHTML = "";
+  
+  if (totalPages <= 1) return; // 페이지가 1개 이하면 버튼 표시 안함
+  
+  createNavigationButtons(pagination, totalPages);
+  createPageNumberButtons(pagination, totalPages);
+}
+
+// 이전/다음 버튼 생성
+function createNavigationButtons(pagination, totalPages) {
+  const firstBtn = createButton("«", "첫 페이지", () => {
+    if (currentPage > 1) showPage(1);
+  });
+  
+  const prevBtn = createButton("‹", "이전 페이지", () => {
+    if (currentPage > 1) showPage(currentPage - 1);
+  });
+  
+  const nextBtn = createButton("›", "다음 페이지", () => {
+    if (currentPage < totalPages) showPage(currentPage + 1);
+  });
+  
+  const lastBtn = createButton("»", "마지막 페이지", () => {
+    if (currentPage < totalPages) showPage(totalPages);
+  });
+  
+  // 비활성화 상태 스타일링
+  if (currentPage === 1) {
+    firstBtn.classList.add('disabled');
+    prevBtn.classList.add('disabled');
+  }
+  
+  if (currentPage === totalPages) {
+    nextBtn.classList.add('disabled');
+    lastBtn.classList.add('disabled');
+  }
+  
+  pagination.appendChild(firstBtn);
+  pagination.appendChild(prevBtn);
+  pagination.nextBtn = nextBtn;
+  pagination.lastBtn = lastBtn;
+}
+
+// 페이지 번호 버튼들 생성
+function createPageNumberButtons(pagination, totalPages) {
+  const maxVisiblePages = 5;
+  let startPage, endPage;
+  
+  if (totalPages <= maxVisiblePages) {
+    startPage = 1;
+    endPage = totalPages;
+  } else {
+    startPage = Math.max(1, currentPage - 2);
+    endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage === totalPages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+  }
+  
+  for (let i = startPage; i <= endPage; i++) {
+    const pageBtn = createPageButton(i, i === currentPage);
+    pagination.appendChild(pageBtn);
+  }
+  
+  pagination.appendChild(pagination.nextBtn);
+  pagination.appendChild(pagination.lastBtn);
+}
+
+// 일반 버튼 생성 헬퍼 함수
+function createButton(text, title, clickHandler) {
+  const button = document.createElement("a");
+  button.href = "#";
+  button.title = title;
+  button.textContent = text;
+  button.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (!button.classList.contains('disabled')) {
+      clickHandler();
+    }
+  });
+  return button;
+}
+
+// 페이지 번호 버튼 생성 헬퍼 함수
+function createPageButton(pageNumber, isCurrentPage) {
+  if (isCurrentPage) {
+    const currentBtn = document.createElement("strong");
+    currentBtn.textContent = pageNumber;
+    currentBtn.classList.add('current-page');
+    return currentBtn;
+  } else {
+    return createButton(pageNumber, `${pageNumber}페이지`, () => {
+      showPage(pageNumber);
+    });
+  }
+}
+
+// 필터링 후 페이지네이션 초기화
+function resetPagination(newFilteredCards) {
+  filteredCards = newFilteredCards;
+  currentPage = 1;
+
+  const container = document.querySelector(".board-list");
+  if (container) {
+    // 기존 카드 비우고
+    container.innerHTML = "";
+
+    // 필터링된 카드들을 다시 append
+    filteredCards.forEach(item => {
+      item.style.display = "none"; // 기본은 숨김
+      container.appendChild(item);
+    });
+  }
+
+  showPage(1); // 첫 페이지부터 다시 보여줌
+}
+
+
+// 초기 실행
+function initializePagination() {
+  filteredCards = Array.from(document.querySelectorAll(".board-item"));
+  showPage(1);
+}

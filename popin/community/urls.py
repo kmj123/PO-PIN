@@ -10,7 +10,7 @@ urlpatterns = [
     path('write/proxy/', views.write_proxy, name='write_proxy'),
     path('write/review/', views.write_review, name='write_review'),
     path('write/sharing/', views.write_sharing, name='write_sharing'),
-    # path('write/status/', views.write_status, name='write_status'),
+    path('write/status/', views.write_status, name='write_status'),
     #
     path('chgReview/', views.chgReview, name='chgReview'),
     path('companion/', views.companion, name='companion'),

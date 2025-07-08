@@ -172,21 +172,22 @@ if (sortSelect) {
 
 // 페이지네이션 생성 및 렌더링
 function renderPagination(totalPosts, perPage) {
-    const paginationContainer = document.querySelector('.pagination');
-    if (!paginationContainer) return;
+  const pagination = document.querySelector('.pagination');
+  pagination.innerHTML = ""; // 버튼 초기화
 
-    const totalPages = Math.ceil(totalPosts / perPage);
-    paginationContainer.innerHTML = ""; // 기존 페이지네이션 버튼 비우기
+  const totalPages = Math.ceil(totalPosts / perPage);
 
-    // 첫 페이지 버튼 "«"
-    const firstPageBtn = document.createElement('button');
-    firstPageBtn.textContent = '«';
-    firstPageBtn.addEventListener('click', () => {
-        if (currentPage !== 1) {
-            currentPage = 1;
-            applyFilters();
-        }
-    });
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.onclick = () => {
+      currentPage = i;
+      applyFilters();
+    };
+    if (i === currentPage) btn.classList.add('active');
+    pagination.appendChild(btn);
+  }
+}
     paginationContainer.appendChild(firstPageBtn);
 
     // 이전 페이지 버튼 "‹"
@@ -233,7 +234,7 @@ function renderPagination(totalPosts, perPage) {
         }
     });
     paginationContainer.appendChild(lastPageBtn);
-}
+
 
 // 검색, 필터, 정렬, 페이지네이션을 통합하여 적용하는 함수
 window.addEventListener('DOMContentLoaded', () => {
@@ -325,13 +326,13 @@ window.addEventListener('DOMContentLoaded', () => {
         });
 
         // 정렬 로직
-        if (sortOption === "latest") { // 최신순
+        if (sortOption === "최신순") {
             cards.sort((a, b) => {
                 const dateA = new Date(a.querySelector(".post-meta")?.textContent);
                 const dateB = new Date(b.querySelector(".post-meta")?.textContent);
                 return dateB - dateA; // 최신 날짜가 앞으로
             });
-        } else if (sortOption === "popular") { // 조회순
+        } else if (sortOption === "조회순") {
             cards.sort((a, b) => {
                 // .participants span에서 숫자만 추출 (예: "👁️ 67" -> 67)
                 const viewsA = parseInt(a.querySelector(".participants span")?.textContent.replace(/[^\d]/g, "")) || 0;
@@ -341,8 +342,9 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         const postList = document.querySelector(".postlist");
+        postList.innerHTML = "";
+
         if (postList) {
-            postList.innerHTML = ""; // 게시글 목록 비우기
 
             const totalPosts = cards.length;
             const start = (currentPage - 1) * postsPerPage;

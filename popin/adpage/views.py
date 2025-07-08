@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 
 # Create your views here.
 def main(request) :
@@ -24,3 +24,14 @@ def noticeW(request) :
 
 def noticeR(request) :
     return render(request,"admin/notice_rewrite.html")
+
+def noticeD(request,pk) :
+    ## 모델 추가시 적용 
+    # notice = get_object_or_404(Notice, pk=pk) 
+
+    if request.method == 'POST':
+        notice.delete()
+        return redirect('adpage:notice')  # 목록 페이지로 이동
+
+    return redirect('adpage:noticeV', pk=pk)  # 잘못된 접근일 경우 다시 상세 페이지로
+
