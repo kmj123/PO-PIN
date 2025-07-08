@@ -1198,7 +1198,7 @@
             }
 
             // api query
-            fetch(`/api/idols/search/?q=${query}&filter=${currentFilter}`)
+            fetch(`/idols/search/?q=${query}&filter=${currentFilter}`)
                 .then(res => res.json())
                 .then(data => {
                     groupsContainer.innerHTML = '';
