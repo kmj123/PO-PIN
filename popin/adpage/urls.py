@@ -14,5 +14,5 @@ urlpatterns = [
     path('noticeW/', views.noticeW, name='noticeW'),        # 공지사항 작성
     path('noticeV/<int:notice_id>/', views.noticeV, name='noticeV'),        # 공지사항 상세보기
     path('noticeR/<int:notice_id>/', views.noticeR, name='noticeR'),        # 공지사항 수정
-    path('noticeD//<int:notice_id>/', views.noticeD, name='noticeD'),        # 공지사항 삭제
+    path('noticeD/<int:notice_id>/', views.noticeD, name='noticeD'),        # 공지사항 삭제
 ]

@@ -228,18 +228,23 @@ def noticeW(request) :
         elif request.method == "POST":
             notice_type = request.POST.get('notice_type')
             title = request.POST.get('title')
-            is_pinned = request.POST.get('is_pinned')
+            is_pinned = True if request.POST.get('is_pinned') == 'on' else False
             content = request.POST.get('content')
             images = request.FILES.getlist('images')
             
             notice = Notice.objects.create(notice_type=notice_type, title=title, is_pinned=is_pinned, content=content)
-
+            
             for image in images:
                 NoticeImage.objects.create(notice=notice, image=image)
-        
-            return render(request,"admin/notice_write.html")
-    except:
-        return redirect('home:main')  # 예외 상황 대비
+            
+            return render(request, "admin/notice_write.html")
+    
+    except User.DoesNotExist:
+        return redirect('login:loginp')  # 로그인 안 되어있거나 권한 없으면 로그인 페이지로
+    except Exception as e:
+        # 에러 로그 찍어보세요 (디버깅용)
+        print(f"Error: {e}")
+        return redirect('home:main')
 
 
 def noticeR(request, notice_id) :
@@ -252,7 +257,7 @@ def noticeR(request, notice_id) :
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
         if request.method == "GET":
             notice = Notice.objects.get(id=notice_id)
-            images = NoticeImage.objects.get(notice=notice)
+            images = NoticeImage.objects.filter(notice=notice)
             
             context = {
                 "notice":notice,
@@ -263,7 +268,7 @@ def noticeR(request, notice_id) :
         elif request.method == "POST":
             notice_type = request.POST.get('notice_type')
             title = request.POST.get('title')
-            is_pinned = request.POST.get('is_pinned')
+            is_pinned = True if request.POST.get('is_pinned') == 'on' else False
             content = request.POST.get('content')
             images = request.FILES.getlist('images')
             
@@ -285,9 +290,14 @@ def noticeR(request, notice_id) :
             notice.save()
             
             return redirect('adpage:notice')
-
-    except:
-        return redirect('home:main')  # 예외 상황 대비
+    
+    
+    except User.DoesNotExist:
+        return redirect('login:loginp')  # 로그인 안 되어있거나 권한 없으면 로그인 페이지로    
+    except Exception as e:
+        # 에러 로그 찍어보세요 (디버깅용)
+        print(f"Error: {e}")
+        return redirect('home:main')
     
 def noticeD(request, notice_id) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -301,6 +311,3 @@ def noticeD(request, notice_id) :
         return redirect('adpage:notice')
     except:
         return redirect('home:main')  # 예외 상황 대비
-
-def test(request):
-    return render(request, "admin/test.html")
