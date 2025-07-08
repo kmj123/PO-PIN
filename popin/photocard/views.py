@@ -32,7 +32,8 @@ def list(request):
     # 좋아요 순 정렬 옵션 적용
     if sort == 'likes':
         photocards = photocards.annotate(wish_count=Count('wished_by_users')).order_by('-wish_count')
-    # 조회수 순 정렬 옵션 적용
+    
+    # 조회수 정렬 옵션 적용
     elif sort == 'hit':
         photocards = photocards.order_by('-hit')
     
@@ -57,18 +58,93 @@ def view(request, pno):
             
     # pno 포토카드 불러오기
     qs = Photocard.objects.get(pno=pno)
+    
+    # 조회수 증가
     qs.hit += 1
     qs.save()
     
+    tags = qs.tag.split(',') # 태그별 분리
+    
     # 포토카드 상세정보 반환
-    context = {"info":qs}
+    context = {
+        "info":qs,
+        "tags":tags,
+    }
     return render(request, 'view.html', context)
   
 def exchange(request):
-    return render(request, 'exchange.html')
+    # 기본 데이터 로드
+    groupMember = Member.objects.select_related('group').all()
+    
+    # GET 요청에서 필터 값 가져오기
+    searchgroup = request.GET.get('searhgroup', '')
+    selected_members = request.GET.getlist('selectedMembers')
+    trade = request.GET.get('trade', '')
+    place = request.GET.get('place', '')
+    
+    # 전체 포토카드 리스트 불러오기
+    photocards = Photocard.objects.filter(sell_state="중")
+    
+    if searchgroup:
+        photocards = photocards.filter(member__group__name=searchgroup)
+        
+    # 선택된 멤버가 있으면 필터링
+    if selected_members:
+        photocards = photocards.filter(member__name__in=selected_members)
+    
+    # 선택된 필터 값에 따라 포토카드 필터링
+    if trade != '전체':
+        photocards = photocards.filter(trade_type=trade)
+    
+    if place != '전체':
+        photocards = photocards.filter(place=place)
+        
+    no_members_selected = not selected_members
 
-def detail(request):
-    return render(request, 'pocadetail.html')
+    # 필터링된 포토카드를 템플릿에 전달
+    context = {
+        'list': groupMember,
+        'photocards': photocards,
+        'trade_choices': Photocard.TRADE_CHOICES,
+        'place_choices': Photocard.PLACE_CHOICES,
+        'trade':trade,
+        'place':place,
+        'searchgroup':searchgroup,
+        'selected_members':selected_members,
+        'no_members_selected':no_members_selected
+    }
+    
+    print(photocards.count())
+    print(photocards.query)
+        
+    return render(request, 'exchange.html', context)
+
+def detail(request, pno):
+    user_id = request.session.get('user_id')
+    
+    if user_id: # 유저 정보가 있는 경우
+        latest_list = request.session.get('latest_poca', []) # 세선 안에 latest_poca 있으면 리스트 불러오기 or []
+        
+        if pno in latest_list: # 리스트 안에 해당 게시글 pno가 있을 때
+            if latest_list[0] != pno: # pno가 리스트 안에 존재하지만 가장 최근이 아닐 때
+                latest_list.remove(pno) # 리스트 내 pno 제거
+                latest_list.insert(0,pno) # 가장 최근으로 insert
+        else:
+            latest_list.insert(0,pno) # 가장 최근으로 insert
+            
+        request.session['latest_poca'] = latest_list
+            
+    # pno 포토카드 불러오기
+    qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
+    
+    # 포토카드 상세정보 반환
+    if qs.tag:
+        tags = qs.tag.split(",")
+        context = {"info":qs, "tags":tags}
+    else:
+        context = {"info":qs}
+    
+    return render(request, 'pocadetail.html', context)
 
 # 포토카드 거래글 작성
 def write(request):
@@ -110,7 +186,9 @@ def write(request):
             member_obj = Member.objects.get(name=member, group__name=group)
             
             poca_state=request.POST.get('poca_state') # 하자상태
-            tag=request.POST.getList('tag', None) # 태그
+            
+            tags=request.POST.getList('tag', None) # 태그 리스트
+            tag = ','.join(tags) # 하나의 문자열로 태그 전환
             
             trade_type=request.POST.get('trade_type') # 거래방식
             price = request.POST.get('price') # 가격
@@ -126,8 +204,12 @@ def write(request):
             else:
                 available_at = request.POST.get('available_at') # 지정한 경우 지정 날짜
             
-            latitude=request.POST.get('latitude') # 위도
-            longitude=request.POST.get('longitude') # 경도
+            # 위치 문자열 -> 숫자열로 전환
+            lat = request.POST.get('latitude')
+            lng = request.POST.get('longitude')
+
+            latitude = float(lat) if lat else None
+            longitude = float(lng) if lng else None
             
             # Photocard 객체 생성
             Photocard.objects.create(
@@ -154,13 +236,16 @@ def update(request, pno):
     if user.user_id == photo_qs.seller.user_id :
         try:
             if request.method == "GET":
+                
+                tags = photo_qs.tag.split(',') # 태그별 분리
                 context = {
                     'category_choices': Photocard.CATEGORY_CHOICES,
                     'poca_state_choices': Photocard.P_STATE_CHOICES,
                     'trade_type_choices': Photocard.TRADE_CHOICES,
                     'place_choices': Photocard.PLACE_CHOICES,
                     'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
-                    'photocard': photo_qs
+                    'photocard': photo_qs,
+                    'tags':tags,
                 }
                 return render(request, 'update.html', context)
             
@@ -178,11 +263,15 @@ def update(request, pno):
                 photo_qs.member = member_obj
                 
                 photo_qs.poca_state=request.POST.get('poca_state') # 포카 하자 상태
-                photo_qs.tag=request.POST.get('tag', None) # 태그
                 
                 photo_qs.trade_type=request.POST.get('trade_type') # 거래 방식
+                
+                tags=request.POST.getList('tag', None) # 태그 리스트
+                photo_qs.tag = ','.join(tags) # 하나의 문자열로 태그 전환
+                
                 photo_qs.price = request.POST.get('price','') # 가격
                 photo_qs.description = request.POST.get('description','') # 상세 설명
+                
                 photo_qs.place=request.POST.get('place') # 장소 (올공, 더현대)
                 
                 photo_qs.sell_state = request.POST.get('sell_state') # 판매자 거래 상태
@@ -196,8 +285,12 @@ def update(request, pno):
                 photo_qs.available_at = available_at 
                 
                 #거래 위치 위도 경도
-                photo_qs.latitude=request.POST.get('latitude')
-                photo_qs.longitude=request.POST.get('longitude')
+                # 위치 문자열 -> 숫자열로 전환
+                lat = request.POST.get('latitude')
+                lng = request.POST.get('longitude')
+
+                photo_qs.latitude = float(lat) if lat else None
+                photo_qs.longitude = float(lng) if lng else None
                 
                 # 새로 설정한 값 수정
                 photo_qs.save()

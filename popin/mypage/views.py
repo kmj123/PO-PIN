@@ -15,7 +15,7 @@ def profile(request):
     
     try:
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
-        completed = Photocard.objects.filter(seller=user.user_id, sell_state = "후", buy_state = "후").count()
+        completed = Photocard.objects.filter(seller=user, sell_state = "후", buy_state = "후").count()
         print(user)
         context = {
             'user':user,
