@@ -10,17 +10,32 @@ from django.forms import BaseInlineFormSet, ValidationError
 
 
 ### 이미지 개수 제한용 FormSet
+# class LimitedImageInlineFormSet(BaseInlineFormSet):
+#     def clean(self):
+#         super().clean()
+#         total_forms = len([
+#             form for form in self.forms
+#             if not form.cleaned_data.get('DELETE', False) and form.cleaned_data
+#         ])
+#         #  pk 존재할 때만 이미지 개수 체크
+#         if self.instance.pk and self.instance.images.count() + total_forms > 5:
+#             raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
 class LimitedImageInlineFormSet(BaseInlineFormSet):
     def clean(self):
         super().clean()
-        total_forms = len([
-            form for form in self.forms
-            if not form.cleaned_data.get('DELETE', False) and form.cleaned_data
-        ])
-        #  pk 존재할 때만 이미지 개수 체크
-        if self.instance.pk and self.instance.images.count() + total_forms > 5:
-            raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
 
+        # 삭제 요청 제외한 신규 업로드 수
+        new_uploads = len([
+            form for form in self.forms
+            if not form.cleaned_data.get('DELETE', False)
+            and not form.instance.pk  # pk 없으면 신규 이미지
+        ])
+
+        # 현재 저장된 이미지 수
+        existing_count = self.instance.images.count() if self.instance.pk else 0
+
+        if existing_count + new_uploads > 5:
+            raise ValidationError('이미지는 최대 5개까지만 등록할 수 있습니다.')
 # 이미지 인라인
 class ReviewImageInline(admin.TabularInline):
     model = ReviewImage
@@ -47,7 +62,7 @@ class ReviewTagAdmin(admin.ModelAdmin):
 # 이미지 어드민
 @admin.register(ReviewImage)
 class ReviewImageAdmin(admin.ModelAdmin):
-    list_display = ("review", "image", "caption")
+    list_display = ("review", "image")
     readonly_fields = ("uploaded_at",)
 
 ###################################################################################################################
@@ -70,7 +85,7 @@ class CompanionImageInline(admin.TabularInline):
 
 @admin.register(CompanionImage)
 class CompanionImageAdmin(admin.ModelAdmin):
-    list_display = ("post", "image", "caption", "uploaded_at")
+    list_display = ("post", "image", "uploaded_at")
     readonly_fields = ("uploaded_at",)
     
 @admin.register(CompanionTag)
@@ -131,7 +146,7 @@ class ProxyImageInline(admin.TabularInline):
 
 @admin.register(ProxyImage)
 class ProxyImageAdmin(admin.ModelAdmin):
-    list_display = ("post", "image", "caption", "uploaded_at")
+    list_display = ("post", "image","uploaded_at")
     readonly_fields = ("uploaded_at",)
     
 #태그
