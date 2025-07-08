@@ -3,7 +3,7 @@ from django.conf import settings
 from signupFT.models import User
 from django.utils import timezone
 
-
+##보드 
 class Board(models.Model):
     TYPE_CHOICES = [
         ('exchange-review', '교환후기'),
@@ -45,13 +45,14 @@ class Board(models.Model):
         return self.title
     
     ################################################################
+##신고 
 class ReportLevel(models.TextChoices):
         NORMAL = 'normal', '정상'
         PENDING = 'pending', '대기'
         HIDDEN = 'hidden', '숨김'
 
     ##################################################################
-
+## 교환판매후기 
 
 # 후기 태그
 class ReviewTag(models.Model):
@@ -77,8 +78,9 @@ class ExchangeReview(models.Model):
 
     overall_score = models.PositiveSmallIntegerField("총 평점 (1~5)", choices=[(i, f"{i}점") for i in range(1, 6)])
 
-    created_at = models.DateTimeField("작성일", auto_now_add=True)
     views = models.PositiveIntegerField("조회수", default=0)
+    created_at = models.DateTimeField("작성일", auto_now_add=True)
+    updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
     def __str__(self):
         return f"[{self.title}] {self.writer} → {self.partner}"
@@ -87,14 +89,13 @@ class ExchangeReview(models.Model):
 class ReviewImage(models.Model):
     review = models.ForeignKey(ExchangeReview, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField("첨부 이미지", upload_to='review_images/')
-    caption = models.CharField("이미지 설명", max_length=100, blank=True)
     uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
 
     def __str__(self):
         return f"Image for {self.review.title}"
     
 #######################################################################
-
+## 동행 
 
 # 동행 카테고리 (콘서트, 팬미팅 등)
 class CompanionCategory(models.TextChoices):
@@ -146,10 +147,11 @@ class CompanionPost(models.Model):
         verbose_name="작성자"
     )
 
-    created_at = models.DateTimeField("작성일", auto_now_add=True)
     views = models.PositiveIntegerField("조회수", default=0)
-    comments_count = models.PositiveIntegerField("댓글 수", default=0)
+    created_at = models.DateTimeField("작성일", auto_now_add=True)
+    updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    comments_count = models.PositiveIntegerField("댓글 수", default=0)
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -161,6 +163,16 @@ class CompanionPost(models.Model):
     def status_display_with_count(self):
         return f"{self.current_people}/{self.max_people} ({self.status})"
 
+    
+class CompanionImage(models.Model):
+    post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField("첨부 이미지", upload_to='companion_images/')
+    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
+    
+
+    def __str__(self):
+        return f"{self.post.title}의 이미지"
+    
 # 댓글 모델 (선택)
 class CompanionComment(models.Model):
     post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name="comments", verbose_name="게시글")
@@ -172,18 +184,9 @@ class CompanionComment(models.Model):
     
     
     
-class CompanionImage(models.Model):
-    post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField("첨부 이미지", upload_to='companion_images/')
-    caption = models.CharField("이미지 설명", max_length=100, blank=True)
-    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.post.title}의 이미지"
-    
-    
     
     ########################################
+## 대리구매 
 
 # --- 카테고리, 상태 Choice ---
 class ProxyCategory(models.TextChoices):
@@ -199,7 +202,7 @@ class ProxyStatus(models.TextChoices):
     DEADLINE = '마감임박', '마감임박'
 
 
-# --- 태그 모델 ---
+# --- 태그---
 class ProxyTag(models.Model):
     name = models.CharField("태그명", max_length=30, unique=True)
 
@@ -207,7 +210,7 @@ class ProxyTag(models.Model):
         return self.name
 
 
-# --- 대리구매 게시글 ---
+# --- 대리구매 포스트---
 class ProxyPost(models.Model):
     title = models.CharField("제목", max_length=100)
     artist = models.CharField("아티스트", max_length=50)  # 예: aespa, NCT DREAM
@@ -221,10 +224,11 @@ class ProxyPost(models.Model):
     description = models.TextField("본문")
     tags = models.ManyToManyField(ProxyTag, blank=True, related_name="proxy_posts", verbose_name="태그")
     author = models.ForeignKey(User, on_delete=models.CASCADE,related_name="proxy_posts", verbose_name="작성자")
-    created_at = models.DateTimeField("작성일", auto_now_add=True)
     views = models.PositiveIntegerField("조회수", default=0)
-    comments_count = models.PositiveIntegerField("댓글 수", default=0)
+    created_at = models.DateTimeField("작성일", auto_now_add=True)
+    updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    comments_count = models.PositiveIntegerField("댓글 수", default=0)
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -235,7 +239,15 @@ class ProxyPost(models.Model):
     @property
     def status_display_with_count(self):
         return f"{self.current_people}/{self.max_people} ({self.status})"
-    
+
+#이미지     
+class ProxyImage(models.Model):
+    post = models.ForeignKey(ProxyPost, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField("첨부 이미지", upload_to='proxy_images/')
+    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.post.title}의 이미지"    
 
 # --- 댓글 모델 ---
 class ProxyComment(models.Model):
@@ -243,27 +255,22 @@ class ProxyComment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="작성자")
     content = models.TextField("댓글 내용")
     created_at = models.DateTimeField("작성일", auto_now_add=True)
-
+    updated_at = models.DateTimeField("수정일", auto_now=True)
     def __str__(self):
         return f"{self.author} - {self.content[:20]}"       
-     
-class ProxyImage(models.Model):
-    post = models.ForeignKey(ProxyPost, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField("첨부 이미지", upload_to='proxy_images/')
-    caption = models.CharField("이미지 설명", max_length=100, blank=True)
-    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
+ 
 
-    def __str__(self):
-        return f"{self.post.title}의 이미지"    
 ################################################
+## 나눔 
 
+#태그 
 class SharingTag(models.Model):
     name = models.CharField("태그명", max_length=30, unique=True)
 
     def __str__(self):
         return self.name
 
-
+#포스트
 class SharingPost(models.Model):
     CATEGORY_CHOICES = [
         ('앨범', '앨범'),
@@ -286,13 +293,15 @@ class SharingPost(models.Model):
     location = models.CharField("나눔 장소", max_length=100, blank=True)
     tags = models.ManyToManyField(SharingTag, blank=True, related_name="sharing_posts", verbose_name="태그")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sharing_posts", verbose_name="작성자")
-    created_at = models.DateTimeField("작성일", auto_now_add=True)
     views = models.PositiveIntegerField("조회수", default=0)
+    created_at = models.DateTimeField("작성일", auto_now_add=True)
+    updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+
     def __str__(self):
         return f"[{self.title}] by {self.author}"
 
-
+#이미지 
 class SharingImage(models.Model):
     post = models.ForeignKey(SharingPost, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField("첨부 이미지", upload_to='sharing_images/')
@@ -302,20 +311,16 @@ class SharingImage(models.Model):
         return f"{self.post.title}의 이미지"
     
     #################################################################################
+    ## 현황공유 
     
-    
-    
+  #태그   
 class StatusTag(models.Model):
     name = models.CharField("태그명", max_length=30, unique=True)
 
     def __str__(self):
         return self.name
-
-
-    def __str__(self):
-        return f"{self.post.title}의 이미지"
     
-    
+ #포스트 
 class StatusPost(models.Model):
     CATEGORY_CHOICES = [
         ("콘서트", "콘서트"),
@@ -366,8 +371,11 @@ class StatusPost(models.Model):
  
     def __str__(self):
         return f"{self.title} - {self.artist}"
-
+#이미지 
 class StatusImage(models.Model):
     post = models.ForeignKey(StatusPost, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField("첨부 이미지", upload_to='status_images/')
     uploaded_at = models.DateTimeField("업로드 시각", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.post.title}의 이미지"
