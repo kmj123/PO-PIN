@@ -492,7 +492,7 @@
       return;
     }
 
-    fetch(`/api/idols/search/?q=${query}`)
+    fetch(`/idols/search/?q=${query}`)
       .then(response => response.json())
       .then(data => {
         container.innerHTML = "";
