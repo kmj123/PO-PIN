@@ -12,8 +12,6 @@ class Notice(models.Model):
     notice_type = models.CharField("공지 유형", max_length=20, choices=NOTICE_TYPES, default="일반")
     is_pinned = models.BooleanField("상단 고정", default=False)
 
-    file = models.FileField("첨부파일", upload_to="notice_files/", blank=True, null=True)
-
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     views = models.PositiveIntegerField("조회수", default=0)
@@ -25,3 +23,11 @@ class Notice(models.Model):
 
     def __str__(self):
         return f"[{self.notice_type}] {self.title}"
+    
+class NoticeImage(models.Model):
+    notice = models.ForeignKey(Notice, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField("첨부 이미지", upload_to='notice_files/')
+    uploaded_at = models.DateTimeField("업로드 시간", auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.notice.title}의 이미지"   

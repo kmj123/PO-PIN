@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from signupFT.models import User
 from photocard.models import Photocard
-from adpage.models import Notice
+from adpage.models import Notice, NoticeImage
 
 # Create your views here.
 def main(request) :
@@ -18,8 +18,8 @@ def main(request) :
             print(user_id)
             admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
             
-            # 전체 게시글
-            total_photocards = Photocard.objects.all().count() 
+            # 전체 게시글 (** 커뮤니티 수정 필요)
+            total_photocards = Photocard.objects.all().count()
             # 전체 사용자
             total_users = User.objects.all().count() 
             # 대기중인 신고 (게시글)
@@ -179,7 +179,16 @@ def notice(request) :
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
         qs = Notice.objects.all()
-    return render(request,"admin/notice.html")
+        
+        print(qs)
+        context = {
+            "notice_list": qs, 
+        }
+        
+        return render(request,"admin/notice.html", context)
+
+    except:
+        return redirect('adpage:main')
 
 def noticeV(request, notice_id) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -188,15 +197,22 @@ def noticeV(request, notice_id) :
     
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
-        qs = Notice.objects.get(id=notice_id)
+        notice = Notice.objects.get(id=notice_id)
+        notice.views += 1
+        notice.save()
+        
+        images = NoticeImage.objects.getlist(notice=notice)
         
         context = {
-            'notice':qs,
+            'notice':notice,
+            'images':images
         }
         return render(request,"admin/notice_view.html", context)
     
-    except:
-        return redirect('home:main')  # 예외 상황 대비
+    except User.DoesNotExist:
+        return redirect('home:main')
+    except Notice.DoesNotExist:
+        return redirect('adpage:notice')
 
 def noticeW(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -214,12 +230,12 @@ def noticeW(request) :
             title = request.POST.get('title')
             is_pinned = request.POST.get('is_pinned')
             content = request.POST.get('content')
-            file = request.FILE.get('file')
+            images = request.FILES.getlist('images')
             
-            qs = Notice.objects.create(notice_type=notice_type, title=title, is_pinned=is_pinned, content=content, file=file)
-            print("============")
-            print(qs)
-            print("============")
+            notice = Notice.objects.create(notice_type=notice_type, title=title, is_pinned=is_pinned, content=content)
+
+            for image in images:
+                NoticeImage.objects.create(notice=notice, image=image)
         
             return render(request,"admin/notice_write.html")
     except:
@@ -235,23 +251,38 @@ def noticeR(request, notice_id) :
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
         if request.method == "GET":
-            return render(request,"admin/notice_rewrite.html")
+            notice = Notice.objects.get(id=notice_id)
+            images = NoticeImage.objects.get(notice=notice)
+            
+            context = {
+                "notice":notice,
+                "images":images,
+            }
+            return render(request,"admin/notice_rewrite.html", context)
         
         elif request.method == "POST":
             notice_type = request.POST.get('notice_type')
             title = request.POST.get('title')
             is_pinned = request.POST.get('is_pinned')
             content = request.POST.get('content')
-            file = request.FILE.get('file')
+            images = request.FILES.getlist('images')
             
-            qs = Notice.objects.get(id = notice_id)
+            notice = Notice.objects.get(id = notice_id)
             
-            qs.notice_type = notice_type
-            qs.title = title
-            qs.is_pinned = is_pinned
-            qs.content = content
-            qs.file = file
-            qs.save()
+            notice.notice_type = notice_type
+            notice.title = title
+            notice.is_pinned = is_pinned
+            notice.content = content
+            
+            if images:
+                for img in NoticeImage.objects.filter(notice=notice):
+                    img.image.delete(save=False)  # 실제 파일 삭제
+                    img.delete()                  # 레코드 삭제
+                    
+                for image in images:
+                    NoticeImage.objects.create(notice=notice, image=image)
+            
+            notice.save()
             
             return redirect('adpage:notice')
 
@@ -266,8 +297,7 @@ def noticeD(request, notice_id) :
     
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
-        qs = Notice.objects.get(id=notice_id)
-        qs.delete()
+        Notice.objects.get(id=notice_id).delete()
         return redirect('adpage:notice')
     except:
         return redirect('home:main')  # 예외 상황 대비
