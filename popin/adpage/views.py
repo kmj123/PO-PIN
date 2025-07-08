@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from signupFT.models import User
 from photocard.models import Photocard
+from adpage.models import Notice
 
 # Create your views here.
 def main(request) :
@@ -131,6 +132,27 @@ def delete_user(request, delete_user_id):
         return redirect('adpage:main')  # 예외 상황 대비
     except:
         return redirect('home:main')  # 예외 상황 대비
+    
+def block_user(request, block_user_id):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        block_user = User.objects.get(user_id=block_user_id) # 해당 유저 객체
+        
+        if block_user.state == 3: # 차단 사용자일 경우
+            block_user.state = 1 # 일반 사용자로 전환
+            
+        elif block_user.state == 1: # 일반 사용자의 경우
+            block_user.state = 3 # 차단 사용자로 전환
+            
+        block_user.save() # 저장
+        return redirect('adpage:main')  # 예외 상황 대비
+    except:
+        return redirect('home:main')  # 예외 상황 대비
 
 def post(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -149,16 +171,106 @@ def postV(request) :
     return render(request,"admin/managePost_view.html")
 
 def notice(request) :
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        qs = Notice.objects.all()
     return render(request,"admin/notice.html")
 
-def noticeV(request) :
-    return render(request,"admin/notice_view.html")
+def noticeV(request, notice_id) :
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        qs = Notice.objects.get(id=notice_id)
+        
+        context = {
+            'notice':qs,
+        }
+        return render(request,"admin/notice_view.html", context)
+    
+    except:
+        return redirect('home:main')  # 예외 상황 대비
 
 def noticeW(request) :
-    return render(request,"admin/notice_write.html")
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        
+        if request.method == "GET":
+            return render(request,"admin/notice_view.html")
+        elif request.method == "POST":
+            notice_type = request.POST.get('notice_type')
+            title = request.POST.get('title')
+            is_pinned = request.POST.get('is_pinned')
+            content = request.POST.get('content')
+            file = request.FILE.get('file')
+            
+            qs = Notice.objects.create(notice_type=notice_type, title=title, is_pinned=is_pinned, content=content, file=file)
+            print("============")
+            print(qs)
+            print("============")
+        
+            return render(request,"admin/notice_write.html")
+    except:
+        return redirect('home:main')  # 예외 상황 대비
 
-def noticeR(request) :
-    return render(request,"admin/notice_rewrite.html")
+
+def noticeR(request, notice_id) :
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        if request.method == "GET":
+            return render(request,"admin/notice_rewrite.html")
+        
+        elif request.method == "POST":
+            notice_type = request.POST.get('notice_type')
+            title = request.POST.get('title')
+            is_pinned = request.POST.get('is_pinned')
+            content = request.POST.get('content')
+            file = request.FILE.get('file')
+            
+            qs = Notice.objects.get(id = notice_id)
+            
+            qs.notice_type = notice_type
+            qs.title = title
+            qs.is_pinned = is_pinned
+            qs.content = content
+            qs.file = file
+            qs.save()
+            
+            return redirect('adpage:notice')
+
+    except:
+        return redirect('home:main')  # 예외 상황 대비
+    
+def noticeD(request, notice_id) :
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    try:
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        qs = Notice.objects.get(id=notice_id)
+        qs.delete()
+        return redirect('adpage:notice')
+    except:
+        return redirect('home:main')  # 예외 상황 대비
 
 def test(request):
     return render(request, "admin/test.html")

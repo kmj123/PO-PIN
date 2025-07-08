@@ -7,7 +7,6 @@ class Notice(models.Model):
         ('업데이트', '업데이트'),
         ('점검', '점검'),
     ]
-
     title = models.CharField("제목", max_length=200)
     content = models.TextField("내용")
     notice_type = models.CharField("공지 유형", max_length=20, choices=NOTICE_TYPES, default="일반")
