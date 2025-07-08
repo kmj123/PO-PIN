@@ -493,7 +493,7 @@
 
         <section class="photocardList">
             <div class="photoGrid">
-                <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다</div>
+                <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다.</div>
                 {% for p in photocards %}
                     <div class="cardItem">
                         <a href="/photocard/detail/{{p.pno}}/">

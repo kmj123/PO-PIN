@@ -136,7 +136,7 @@ def detail(request, pno):
     
     if not qs.latitude and not qs.longitude:
         if qs.place == "올림픽공원":
-            qs.latitude = 37.51784192112612
+            qs.latitude = 37.51784192112613
             qs.longitude = 127.1276152266286
         elif qs.place == "상암":
             qs.latitude = 37.580534952338624
