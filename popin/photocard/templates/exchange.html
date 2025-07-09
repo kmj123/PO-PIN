@@ -1,6 +1,4 @@
-{% extends "header_login.html" %}
 {% load static %}
-{% block content %}
 <title>{% block title %}포토카드 교환{% endblock %}</title>
 <meta name='csrf-token' content='{{csrf_token}}'>
 <style>
@@ -424,6 +422,11 @@
 </script>
 
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
 
     <div class="content">
@@ -507,4 +510,3 @@
         </section>
 
     </div>
-{% endblock content %}

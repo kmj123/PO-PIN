@@ -1,6 +1,4 @@
-{% extends "header_login.html" %}
 {% load static %}
-{% block content %}
 <title>{% block title %}포토카드 상세{% endblock %}</title>
 <style>
     .content {
@@ -332,6 +330,11 @@
 </script>
 
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <div class="content">
         <div class="content_background">
             <div class="pocanavi">
@@ -459,4 +462,3 @@
             </script>
         </div>
     </div>
-{% endblock content %}

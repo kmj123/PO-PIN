@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'home',
     'community',
     'pocadeco',
+    'customer',
 ]
 
 MIDDLEWARE = [

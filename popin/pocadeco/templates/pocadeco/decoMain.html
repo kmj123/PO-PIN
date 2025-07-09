@@ -1,7 +1,5 @@
-{% extends 'header_login.html'%}
 {% load static %}
 <!--상단 헤더-->
-{%block content%}
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -50,7 +48,7 @@
             align-items: center;
         }
 
-        .btn {
+        .btn1 {
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
@@ -66,17 +64,17 @@
             border-radius: 100px;
         }
 
-        .btn img{
+        .btn1 img{
             width:100%;
             height:100%;
         }
 
-        .btn:hover {
+        .btn1:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn.active {
+        .btn1.active {
             background: linear-gradient(45deg, #764ba2, #667eea);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
         }
@@ -389,69 +387,74 @@
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            .content{
-                width:100%;
-            }
-            
-            .sidebar {
-                width: 100%;
-            }
-            
-            .navbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .sort-buttons {
-                justify-content: center;
-            }
-            
-            .photo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-            .photo-card{
-                width:100%;
-            }
+        .main-content {
+            flex-direction: column;
         }
-                /* 페이지네이션 */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 40px;
+        .content{
+            width:100%;
+        }
+        
+        .sidebar {
+            width: 100%;
+        }
+        
+        .navbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .sort-buttons {
+            justify-content: center;
+        }
+        
+        .photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        .photo-card{
+            width:100%;
+        }
     }
+        /* 페이지네이션 */
+        .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 40px;
+        }
 
-    .page-btn {
-      padding: 10px 15px;
-      border: 2px solid #667eea;
-      border-radius: 10px;
-      background: white;
-      color: #667eea;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
+        .page-btn {
+        padding: 10px 15px;
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        background: white;
+        color: #667eea;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        }
 
-    .page-btn:hover,
-    .page-btn.active {
-      background: #667eea;
-      color: white;
-      transform: translateY(-2px);
-    }
+        .page-btn:hover,
+        .page-btn.active {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        }
 
-    .page-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        }
 
     </style>
 </head>
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
@@ -478,7 +481,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn" style="width:100%;" id="searchBtn">검색하기</button>
+                <button type="submit" class="btn1" style="width:100%;" id="searchBtn">검색하기</button>
             </div>
             <div class="content">
                 <div class="navbar">
@@ -546,7 +549,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn upload-btn"><img src="/static/images/write_icon.png/"></button>
+        <button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button>
     </div>
 
     <script>
@@ -605,6 +608,5 @@
         });
 
     </script>
-{%endblock%}
 </body>
 </html>
