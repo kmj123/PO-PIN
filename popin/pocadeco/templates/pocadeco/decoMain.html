@@ -504,17 +504,20 @@
                                 <div class="photo-title">{{deco.title}}</div>
                                 <div class="photo-meta">
                                     <span>{{deco.user}}</span>
-                                    <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                                    <span>{{deco.created_at}}</span>
                                 </div>
                                 <!--미구현-->
                                 <div class="photo-tags">
                                     <span class="tag">{{deco.group}}</span>
-                                    <span class="tag">{{deco.name}}</span>
+                                    <span class="tag">{{deco.member}}</span>
+                                    {%for tag in deco.tags%}
+                                        <span class="tag">{{tag}}</span>
+                                    {%endfor%}
                                 </div>
                                 <div class="photo-stats">
                                     <div class="stat-item">
                                         <span>👀</span>
-                                        <span>{{deco.views}}</span>
+                                        <span>{{deco.hit}}</span>
                                     </div>
                                     <div class="stat-item">
                                         <span>❤️</span>

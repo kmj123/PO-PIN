@@ -12,7 +12,9 @@ from datetime import date
 # 데코포토 전체 리스트
 def decoMain(request):
     # 전체 데코포토 리스트 불러오기
-    decoratedpoca = DecoratedPhotocard.objects.all()
+    decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(
+    wish_count=Count('wished_by_users')
+)
     
     # 필터용 쿼리 파라미터 받아오기
     searchgroup = request.GET.getlist('searhgroup', '')
@@ -35,8 +37,26 @@ def decoMain(request):
     # 조회수 정렬 옵션 적용
     elif sort == 'hit':
         decoratedpoca = decoratedpoca.order_by('-hit')
+        
+    deco_list = []
+    for poca in decoratedpoca:
+        tags = poca.tag.split(',')
+        deco_list.append({
+            'id': poca.id,
+            'title':poca.title,
+            'result_image': poca.result_image,
+            'user' : poca.user.name,
+            'created_at': poca.created_at.strftime('%Y-%m-%d'),
+            'hit': poca.hit,
+            'member': poca.member.name,
+            'group': poca.member.group.name,
+            'tags': tags,
+            'likes': poca.wish_count,
+        })
+        print(deco_list)
+
     
-    context = {'decoList': decoratedpoca}
+    context = {'decoList': deco_list}
     return render(request,'pocadeco/decoMain.html', context)
 
 def main(request):
