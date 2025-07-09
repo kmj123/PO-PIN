@@ -7,10 +7,304 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8">
+        <meta name="csrf-token" content="{{ csrf_token}}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" type="text/css" href="/static/css/mypage.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <title>{%block title%}마이페이지{%endblock%}</title>
     </head>
+
+    <script>
+        //모달창 스크립트
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalOpenButton = document.getElementById('favorite-btn');
+            const modalSaveButton = document.getElementById('favorite-btnSave');
+            const modalCloseButton = document.getElementById('favorite-btnClose');
+            const modal = document.getElementById('modalContainer');
+
+            // 모달창 오픈
+            modalOpenButton.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+            });
+
+            // 모달창 저장
+            modalSaveButton.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            // 모달창 취소
+            modalCloseButton.addEventListener('click',() => {
+                modal.classList.add('hidden');
+            });
+            // 바깥 클릭 시 닫기
+            window.addEventListener('click', e => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+        });
+        //모달창스크립트
+
+        // 전체 카테고리
+        function showTab(tabName) {
+            const contents = document.querySelectorAll('.tab-content');
+            const tabs = document.querySelectorAll('.tab');
+            // 모든 탭 콘텐츠 숨기기
+            contents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 모든 탭 버튼 비활성화
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 선택된 탭 콘텐츠 보이기
+            document.getElementById(tabName).classList.add('active');
+
+            // 선택된 탭 버튼 활성화
+            event.target.classList.add('active');
+        }
+
+        // 교환거래 카테고리
+        function showTransactionTab(type) {
+            const transactionTabs = document.querySelectorAll('.transaction-tab');
+            const transactionContents = document.querySelectorAll('.transaction-content');
+            const sellingList = document.getElementById('selling-list');
+            const buyingList = document.getElementById('buying-list');
+            const tradingList = document.getElementById('trading-list');
+            // 교환거래 탭 버튼들 비활성화
+            transactionTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 교환거래 콘텐츠들 숨기기
+            transactionContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'selling') {
+                sellingList.style.display = 'block';
+            } else if(type==='buying'){
+                buyingList.style.display = 'block';
+            } else if(type==='trading'){
+                tradingList.style.display='block';
+            }
+        }
+
+        // 후기 카테고리
+        function showReviewTab(type) {
+            const reviewTabs = document.querySelectorAll('.review-tab');
+            const reviewContents = document.querySelectorAll('.review-content');
+            // 후기 탭 버튼들 비활성화
+            reviewTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 후기 콘텐츠들 숨기기
+            reviewContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // 선택된 탭 활성화
+            event.target.classList.add('active');
+            
+            // 선택된 콘텐츠 보이기
+            if (type === 'received') {
+                document.getElementById('received-reviews').style.display = 'block';
+            } else {
+                document.getElementById('written-reviews').style.display = 'block';
+            }
+        }
+
+        // 커뮤니티 카테고리 
+        function showCommunityTab(type){
+            const communityTabs = document.querySelectorAll('.community-tab');
+            const communityContents = document.querySelectorAll('.community-content');
+            const WithU = document.getElementById('WithU');
+            const Sharing = document.getElementById('Sharing');
+            const Insteadbuy = document.getElementById('Insteadbuy');
+
+            communityTabs.forEach(tab=>{
+                tab.classList.remove('active');
+            });
+
+            communityContents.forEach(content=>{
+                content.style.display="none";
+            })
+
+            event.target.classList.add('active');
+
+            if (type === "WithU"){
+                WithU.style.display="block";
+            } else if(type === "Sharing"){
+                Sharing.style.display="block";
+            } else if(type === "Insteadbuy"){
+                Insteadbuy.style.display="block";
+            }
+        }
+
+        // 블랙리스트 카테고리
+        function showBlockedTab(type){
+            const blockedTabs = document.querySelectorAll('.blocked-tab');
+            const blockedContents = document.querySelectorAll('.blocked-content')
+            const blockeduser = document.getElementById('blocked-user');
+            const blockedpost = document.getElementById('blocked-post');
+
+            // 블랙리스트 탭 버튼들 비활성화
+            blockedTabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 블랙리스트 콘텐츠들 숨기기
+            blockedContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            event.target.classList.add('active');
+
+            // 선택된 콘텐츠 보이기
+            if (type === 'blocked-user') {
+                blockeduser.style.display = 'block';
+            } else {
+                blockedpost.style.display = 'block';
+            }
+        }
+        
+
+        // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
+        const photocardData = {
+            'bts-mots7': {
+                title: 'BTS - Map of the Soul: 7',
+                cards: [
+                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
+                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
+                    { id: 6, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
+                    { id: 7, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
+                    { id: 8, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
+                    { id: 9, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
+                    { id: 10, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
+                ]
+            },
+            'bp-thealbum': {
+                title: 'BLACKPINK - THE ALBUM',
+                cards: [
+                    { id: 1, member: '로제', type: '일반', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=ROSE' },
+                    { id: 2, member: '리사', type: '포토카드', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=LISA' },
+                    { id: 3, member: '제니', type: '한정판', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=JENNIE' }
+                ]
+            },
+            'bts-ly': {
+                title: 'BTS - Love Yourself: Her',
+                cards: [
+                    { id: 1, member: '지민', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JIMIN' },
+                    { id: 2, member: 'V', type: '포토카드', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=V' },
+                    { id: 3, member: '정국', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JK' },
+                    { id: 4, member: 'RM', type: '한정판', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=RM' }
+                ]
+            },
+            'nj-omg': {
+                title: 'NewJeans - OMG',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '한정판', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI2' }
+                ]
+            },
+            'nj-getup': {
+                title: 'NewJeans - Get Up',
+                cards: [
+                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI' },
+                    { id: 2, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI' },
+                    { id: 3, member: '다니엘', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE' },
+                    { id: 4, member: '해린', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HAERIN' },
+                    { id: 5, member: '혜인', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HYEIN' },
+                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI2' },
+                    { id: 7, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI2' },
+                    { id: 8, member: '다니엘', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE2' }
+                ]
+            },
+            'bp-bornpink': {
+                title: 'BLACKPINK - Born Pink',
+                cards: [
+                    { id: 1, member: '지수', type: '일반', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=JISOO' },
+                    { id: 2, member: '로제', type: '한정판', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=ROSE' }
+                ]
+            }
+        };
+
+        // 앨범 -> 
+        function showPhotoCards(albumId) {
+            const albumData = photocardData[albumId];
+            if (!albumData) return;
+
+            // 앨범 목록 숨기기
+            document.getElementById('album-list').style.display = 'none';
+            
+            // 포토카드 목록 보이기
+            document.getElementById('photocard-list').style.display = 'block';
+            
+            // 뒤로가기 버튼 보이기
+            document.querySelector('.back-btn').style.display = 'inline-block';
+            
+            // 현재 앨범 제목 설정
+            document.getElementById('current-album-title').textContent = albumData.title;
+            
+            // 포토카드 그리드 생성
+            const photocardGrid = document.querySelector('.photocard-grid');
+            photocardGrid.innerHTML = '';
+            
+            albumData.cards.forEach(card => {
+                const photocardElement = document.createElement('div');
+                photocardElement.className = 'photocard';
+                photocardElement.innerHTML = `
+                    <div class="photocard-img">
+                        <img src="${card.img}" alt="${card.member}">
+                    </div>
+                    <h5>${card.member}</h5>
+                    <p>${card.type}</p>
+                    `;
+                photocardGrid.appendChild(photocardElement);
+            });
+        }
+
+        function showAlbumList() {
+            // 포토카드 목록 숨기기
+            document.getElementById('photocard-list').style.display = 'none';
+            
+            // 앨범 목록 보이기
+            document.getElementById('album-list').style.display = 'grid';
+            
+            // 뒤로가기 버튼 숨기기
+            document.querySelector('.back-btn').style.display = 'none';
+        }
+
+        // 변경하기 버튼 클릭 이벤트
+        document.querySelectorAll('.change-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                alert('변경 기능이 실행됩니다.');
+            });
+        });
+
+        // 차단해제 버튼 클릭 이벤트
+        document.querySelectorAll('.unblock-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(confirm('정말 차단을 해제하시겠습니까?')) {
+                    this.parentElement.remove();
+                }
+            });
+        });
+    </script>
 
     <body>
     <!--프로필-->
@@ -21,8 +315,8 @@
                     <div class="polaroid">
                         <div class="polaroid-image">
                             <!--클릭시 프로필변경페이지 이동-->
-                            <a href="/mypage/profileUpdate/">
-                                <img src='/static/images/mypage/도영.jfif/'>
+                            <a href="/mypage/update_profile/">
+                                <img src='/media/{{profile_image}}/' alt="{{profile_image}}">
                             </a>
                         </div>
                         
@@ -61,8 +355,8 @@
             <div class="tabs-wrapper">
                 <div class="tabs">
                     <button class="tab active " onclick="showTab('keywords')">키워드</button>
-                    <button class="tab" onclick="showTab('recent')">최근본글</buttㄴon>
-                    <button class="tab" onclick="showTab('cards')">마이 포카</button>
+                    <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    <button class="tab" onclick="showTab('mypoca')">마이 포카</button>
                     <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
                     <button class="tab" onclick="showTab('transactions')">포토카드</button>
                     <button class="tab" onclick="showTab('reviews')">후기글</button>
@@ -94,98 +388,18 @@
 
             <!--최신본글-->
             <div id="recent" class="tab-content">
-                <div class="section-content">
-                    <div class="item">
-                        <h3>BTS 정국 포토카드 교환해요</h3>
-                        <p>2024.01.20 12:30 - Map of the Soul: 7</p>
-                    </div>
-                    <div class="item">
-                        <h3>블랙핑크 로제 포카 판매합니다</h3>
-                        <p>2024.01.20 11:45 - THE ALBUM 한정판</p>
-                    </div>
-                    <div class="item">
-                        <h3>NewJeans 민지 포카 급구해요!</h3>
-                        <p>2024.01.19 16:20 - OMG 앨범</p>
-                    </div>
-                </div>
+                <div class="section-content"></div>
             </div>
 
             <!--마이포카-->
-            <div id="cards" class="tab-content">
+            <div id="mypoca" class="tab-content">
                 <div class="cards-header">
                     <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>
                 </div>
                 
                 <!-- 앨범 목록 뷰 -->
-                <div class="section-content">
-                    <div id="album-list" class="album-grid">
-                        <div class="album-card" onclick="showPhotoCards('bts-mots7')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="Map of the Soul: 7">
-                            </div>
-                            <div class="album-info">
-                                <h4>Map of the Soul: 7</h4>
-                                <p>BTS</p>
-                                <span class="card-count">5장</span>
-                            </div>
-                        </div>
-                        
-                        <div class="album-card" onclick="showPhotoCards('bp-thealbum')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="THE ALBUM">
-                            </div>
-                            <div class="album-info">
-                                <h4>THE ALBUM</h4>
-                                <p>BLACKPINK</p>
-                                <span class="card-count">3장</span>
-                            </div>
-                        </div>
-                        
-                        <div class="album-card" onclick="showPhotoCards('bts-ly')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="Love Yourself">
-                            </div>
-                            <div class="album-info">
-                                <h4>Love Yourself: Her</h4>
-                                <p>BTS</p>
-                                <span class="card-count">4장</span>
-                            </div>
-                        </div>
-                        
-                        <div class="album-card" onclick="showPhotoCards('nj-omg')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="OMG">
-                            </div>
-                            <div class="album-info">
-                                <h4>OMG</h4>
-                                <p>NewJeans</p>
-                                <span class="card-count">6장</span>
-                            </div>
-                        </div>
-                        
-                        <div class="album-card" onclick="showPhotoCards('nj-getup')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="Get Up">
-                            </div>
-                            <div class="album-info">
-                                <h4>Get Up</h4>
-                                <p>NewJeans</p>
-                                <span class="card-count">8장</span>
-                            </div>
-                        </div>
-                        
-                        <div class="album-card" onclick="showPhotoCards('bp-bornpink')">
-                            <div class="album-cover">
-                                <img src="/static/images/mypage/승관.jfif/" alt="Born Pink">
-                            </div>
-                            <div class="album-info">
-                                <h4>Born Pink</h4>
-                                <p>BLACKPINK</p>
-                                <span class="card-count">2장</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="section-content"></div>
+
                 
                 <!-- 포토카드 목록 뷰 (기본적으로 숨김) -->
                 <div id="photocard-list" style="display: none;">
@@ -484,7 +698,7 @@
     </main>
     
         <!--프로필 수정 모달창 구현-->
-        <form action="/mypage/profileupdate/" method="post" name="profileFrm" enctype="multipart/form-data">
+        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
             {% csrf_token %}
             <div id="modalContainer" class="hidden">
                 <div id="modalContent">
@@ -529,37 +743,6 @@
             </div>
         </form>
 
-        <!-- 모달창 스크립트 -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const modalOpenButton = document.getElementById('favorite-btn');
-                const modalSaveButton = document.getElementById('favorite-btnSave');
-                const modalCloseButton = document.getElementById('favorite-btnClose');
-                const modal = document.getElementById('modalContainer');
-
-                // 모달창 오픈
-                modalOpenButton.addEventListener('click', () => {
-                    modal.classList.remove('hidden');
-                });
-
-                // 모달창 저장
-                modalSaveButton.addEventListener('click', () => {
-                    modal.classList.add('hidden');
-                });
-
-                // 모달창 취소
-                modalCloseButton.addEventListener('click',() => {
-                    modal.classList.add('hidden');
-                });
-                // 바깥 클릭 시 닫기
-                window.addEventListener('click', e => {
-                    if (e.target === modal) {
-                     modal.classList.add('hidden');
-                    }
-                });
-            });
-        </script>
-        <!--//모달창스크립트-->
 
     <script>
         // 파일업로드 관련
@@ -611,266 +794,71 @@
             }
         }
 
+        // Recent AJAX
+        $.ajax({
+            url: "/mypage/latest/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            success: function (data) {
+                console.log('성공')
+                const cardsHtml = data.photocards.map(card => 
+                `<div class="item">
+                    <div>
+                        <h3>${card.title}</h3>
+                        <p>${card.created_at} - ${card.album}</p>
+                    </div>  
+                </div>`).join("");
 
-        // 전체 카테고리
-        function showTab(tabName) {
-            const contents = document.querySelectorAll('.tab-content');
-            const tabs = document.querySelectorAll('.tab');
-            // 모든 탭 콘텐츠 숨기기
-            contents.forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // 모든 탭 버튼 비활성화
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 선택된 탭 콘텐츠 보이기
-            document.getElementById(tabName).classList.add('active');
-
-            // 선택된 탭 버튼 활성화
-            event.target.classList.add('active');
-        }
-
-        // 교환거래 카테고리
-        function showTransactionTab(type) {
-            const transactionTabs = document.querySelectorAll('.transaction-tab');
-            const transactionContents = document.querySelectorAll('.transaction-content');
-            const sellingList = document.getElementById('selling-list');
-            const buyingList = document.getElementById('buying-list');
-            const tradingList = document.getElementById('trading-list');
-            // 교환거래 탭 버튼들 비활성화
-            transactionTabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 교환거래 콘텐츠들 숨기기
-            transactionContents.forEach(content => {
-                content.style.display = 'none';
-            });
-
-            // 선택된 탭 활성화
-            event.target.classList.add('active');
-            
-            // 선택된 콘텐츠 보이기
-            if (type === 'selling') {
-                sellingList.style.display = 'block';
-            } else if(type==='buying'){
-                buyingList.style.display = 'block';
-            } else if(type==='trading'){
-                tradingList.style.display='block';
-            }
-        }
-
-        // 후기 카테고리
-        function showReviewTab(type) {
-            const reviewTabs = document.querySelectorAll('.review-tab');
-            const reviewContents = document.querySelectorAll('.review-content');
-            // 후기 탭 버튼들 비활성화
-            reviewTabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 후기 콘텐츠들 숨기기
-            reviewContents.forEach(content => {
-                content.style.display = 'none';
-            });
-
-            // 선택된 탭 활성화
-            event.target.classList.add('active');
-            
-            // 선택된 콘텐츠 보이기
-            if (type === 'received') {
-                document.getElementById('received-reviews').style.display = 'block';
-            } else {
-                document.getElementById('written-reviews').style.display = 'block';
-            }
-        }
-
-        // 커뮤니티 카테고리 
-        function showCommunityTab(type){
-            const communityTabs = document.querySelectorAll('.community-tab');
-            const communityContents = document.querySelectorAll('.community-content');
-            const WithU = document.getElementById('WithU');
-            const Sharing = document.getElementById('Sharing');
-            const Insteadbuy = document.getElementById('Insteadbuy');
-
-            communityTabs.forEach(tab=>{
-                tab.classList.remove('active');
-            });
-
-            communityContents.forEach(content=>{
-                content.style.display="none";
-            })
-
-            event.target.classList.add('active');
-
-            if (type === "WithU"){
-                WithU.style.display="block";
-            } else if(type === "Sharing"){
-                Sharing.style.display="block";
-            } else if(type === "Insteadbuy"){
-                Insteadbuy.style.display="block";
-            }
-        }
-
-        // 블랙리스트 카테고리
-        function showBlockedTab(type){
-            const blockedTabs = document.querySelectorAll('.blocked-tab');
-            const blockedContents = document.querySelectorAll('.blocked-content')
-            const blockeduser = document.getElementById('blocked-user');
-            const blockedpost = document.getElementById('blocked-post');
-
-            // 블랙리스트 탭 버튼들 비활성화
-            blockedTabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
-
-            // 블랙리스트 콘텐츠들 숨기기
-            blockedContents.forEach(content => {
-                content.style.display = 'none';
-            });
-
-            event.target.classList.add('active');
-
-            // 선택된 콘텐츠 보이기
-            if (type === 'blocked-user') {
-                blockeduser.style.display = 'block';
-            } else {
-                blockedpost.style.display = 'block';
-            }
-        }
-        
-
-        // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
-        const photocardData = {
-            'bts-mots7': {
-                title: 'BTS - Map of the Soul: 7',
-                cards: [
-                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
-                    { id: 6, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
-                    { id: 7, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
-                    { id: 8, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
-                    { id: 9, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
-                    { id: 10, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
-                ]
+                $("#recent .section-content").html(cardsHtml || "<div>최근 본 글이 없습니다.</div>");
             },
-            'bp-thealbum': {
-                title: 'BLACKPINK - THE ALBUM',
-                cards: [
-                    { id: 1, member: '로제', type: '일반', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=ROSE' },
-                    { id: 2, member: '리사', type: '포토카드', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=LISA' },
-                    { id: 3, member: '제니', type: '한정판', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=JENNIE' }
-                ]
-            },
-            'bts-ly': {
-                title: 'BTS - Love Yourself: Her',
-                cards: [
-                    { id: 1, member: '지민', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JIMIN' },
-                    { id: 2, member: 'V', type: '포토카드', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=V' },
-                    { id: 3, member: '정국', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JK' },
-                    { id: 4, member: 'RM', type: '한정판', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=RM' }
-                ]
-            },
-            'nj-omg': {
-                title: 'NewJeans - OMG',
-                cards: [
-                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI' },
-                    { id: 2, member: '하니', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HANNI' },
-                    { id: 3, member: '다니엘', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=DANIELLE' },
-                    { id: 4, member: '해린', type: '한정판', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HAERIN' },
-                    { id: 5, member: '혜인', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HYEIN' },
-                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI2' }
-                ]
-            },
-            'nj-getup': {
-                title: 'NewJeans - Get Up',
-                cards: [
-                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI' },
-                    { id: 2, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI' },
-                    { id: 3, member: '다니엘', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE' },
-                    { id: 4, member: '해린', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HAERIN' },
-                    { id: 5, member: '혜인', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HYEIN' },
-                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI2' },
-                    { id: 7, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI2' },
-                    { id: 8, member: '다니엘', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE2' }
-                ]
-            },
-            'bp-bornpink': {
-                title: 'BLACKPINK - Born Pink',
-                cards: [
-                    { id: 1, member: '지수', type: '일반', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=JISOO' },
-                    { id: 2, member: '로제', type: '한정판', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=ROSE' }
-                ]
+            error: function () {
+                console.error("최근 본 글 불러오기 실패");
+                $("#recent .section-content").html("<div>최근 본 글을 불러오는 데 실패했습니다.</div>");
             }
-        };
+        });
 
-        function showPhotoCards(albumId) {
-            const albumData = photocardData[albumId];
-            if (!albumData) return;
+$.ajax({
+    url: "/mypage/mypoca/",
+    type: "POST",
+    headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+    dataType: "json",
+    success: function (data) {
+        console.log("받은 데이터:", data.group_album_dict);
 
-            // 앨범 목록 숨기기
-            document.getElementById('album-list').style.display = 'none';
-            
-            // 포토카드 목록 보이기
-            document.getElementById('photocard-list').style.display = 'block';
-            
-            // 뒤로가기 버튼 보이기
-            document.querySelector('.back-btn').style.display = 'inline-block';
-            
-            // 현재 앨범 제목 설정
-            document.getElementById('current-album-title').textContent = albumData.title;
-            
-            // 포토카드 그리드 생성
-            const photocardGrid = document.querySelector('.photocard-grid');
-            photocardGrid.innerHTML = '';
-            
-            albumData.cards.forEach(card => {
-                const photocardElement = document.createElement('div');
-                photocardElement.className = 'photocard';
-                photocardElement.innerHTML = `
-                    <div class="photocard-img">
-                        <img src="${card.img}" alt="${card.member}">
+        const albumList = $("#album-list");
+        albumList.empty(); // 기존 목록 비우기
+
+        const groupAlbumDict = data.group_album_dict;
+
+        for (let groupName in groupAlbumDict) {
+            const albumMap = groupAlbumDict[groupName];
+
+            for (let albumName in albumMap) {
+                const photocards = albumMap[albumName];
+                const firstCard = photocards[0]; // 대표 이미지
+                const imageUrl = firstCard.image_url || '/static/images/default.jpg';
+                const cardCount = photocards.length;
+
+                const albumCard = `
+                    <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
+                        <div class="album-cover">
+                            <img src="${imageUrl}" alt="${albumName}">
+                        </div>
+                        <div class="album-info">
+                            <h4>${albumName}</h4>
+                            <p>${groupName}</p>
+                            <span class="card-count">${cardCount}장</span>
+                        </div>
                     </div>
-                    <h5>${card.member}</h5>
-                    <p>${card.type}</p>
-                    `;
-                photocardGrid.appendChild(photocardElement);
-            });
-        }
-
-        function showAlbumList() {
-            // 포토카드 목록 숨기기
-            document.getElementById('photocard-list').style.display = 'none';
-            
-            // 앨범 목록 보이기
-            document.getElementById('album-list').style.display = 'grid';
-            
-            // 뒤로가기 버튼 숨기기
-            document.querySelector('.back-btn').style.display = 'none';
-        }
-
-        // 변경하기 버튼 클릭 이벤트
-        document.querySelectorAll('.change-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                alert('변경 기능이 실행됩니다.');
-            });
-        });
-
-        // 차단해제 버튼 클릭 이벤트
-        document.querySelectorAll('.unblock-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(confirm('정말 차단을 해제하시겠습니까?')) {
-                    this.parentElement.remove();
-                }
-            });
-        });
-
+                `;
+                albumList.append(albumCard);  // ✅ #album-list 안에만 card 추가
+            }
+        }            
+    },
+    error: function (xhr, status, error) {
+        console.error("에러 발생:", error);
+    }
+});
     </script>
 
 {%endblock%}
