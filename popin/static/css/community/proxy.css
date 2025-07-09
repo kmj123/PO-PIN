@@ -18,54 +18,9 @@
     margin-top: 20px;
 }
 
-.menu {
-    width: 220px;
-    height: 620px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    color: rgb(86, 85, 88);
-}
-
-.menu h3 {
-    font-size: 18px;
-    margin: 18px 0 5px 20px;
-    padding: 10px 0;
-}
-
-.menu ul {
-    margin-left: 25px;
-}
-
-.menu a {
-    text-decoration: none;
-    color: rgb(86, 85, 88);
-}
-
-.menu li {
-    font-size: 13px;
-    text-align: center;
-    padding: 5px;
-    list-style: none;
-    font-weight: 420;
-    margin-bottom: 10px;
-    width: 170px;
-    height: 40px;
-    line-height: 2.2;
-    border-radius: 15px;
-    cursor: pointer;
-    border: 1px solid rgba(160, 152, 152, 0.71);
-    transition: all 0.3s ease;
-    background : white;
-}
-
-.menu li:hover {
-    color: white;
-    background:rgba(153, 172, 241, 0.35);
-}
-
 .dashboard {
     width: 47%;
-    min-height: 550px;
+    min-height: 300px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 25px;
     margin-left: 20px;
@@ -208,6 +163,23 @@
 
 .group ul{list-style : none;}
 .group a{text-decoration : none; color : rgb(86, 85, 88); }
+
+.group li.active {
+  background-color: #91a3f1;
+  color: white;
+  font-weight: bold;
+  border-radius: 15px;
+}
+
+.group li.active a {
+  color: white;
+}
+
+
+.group a:hover {
+  font-weight : 00;
+  border-radius: 15px;
+}
 
 .postlist {
     padding: 0 30px 30px;
@@ -660,7 +632,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin: -20px 20px 20px 20px;
 }
 
 .pagination a,
@@ -678,12 +650,14 @@
 
 .pagination a.disabled {
   pointer-events: none;
-  color: #ccc;
+  cursor: default;
 }
 .pagination a.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  pointer-events: none;
+  cursor: default;
 }
 .pagination a:hover {
     background: #f0f0f0;

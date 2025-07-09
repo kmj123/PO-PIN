@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let allCards = Array.from(document.querySelectorAll(".post-card"));
   let filteredCards = [...allCards];
   let currentPage = 1;
-  const itemsPerPage = 3;
+  const itemsPerPage = 2;
 
   let selectedCategory = null;
 
@@ -170,15 +170,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  categoryLinks.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      selectedCategory = link.dataset.category || null;
-      currentPage = 1;
-      applyFilters();
-    });
-  });
 
+  function updateCategoryDisplay() {
+  // 모든 카테고리 링크의 부모 li에서 active 클래스 제거
+  categoryLinks.forEach(link => {
+    link.parentElement.classList.remove('active');
+  });
+  
+  // 현재 선택된 카테고리의 부모 li에 active 클래스 추가
+  if (selectedCategory) {
+    const activeLink = document.querySelector(`a[data-category="${selectedCategory}"]`);
+    if (activeLink) {
+      activeLink.parentElement.classList.add('active');
+    }
+  }
+}
+
+
+  categoryLinks.forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    selectedCategory = link.dataset.category || null;
+    currentPage = 1;
+    updateCategoryDisplay();
+    applyFilters();
+  });
+});
+
+  
   toggleBtns.forEach(btn => {
     btn.addEventListener("click", () => {
       toggleBtns.forEach(b => b.classList.remove("active"));
@@ -197,70 +216,133 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  [generalInput, tagInput, stateFilter, sortFilter].forEach(el => {
-    if (!el) return;
-    el.addEventListener("input", () => {
-      currentPage = 1;
-      applyFilters();
-    });
+  [generalInput, tagInput].forEach(el => {
+  if (!el) return;
+  el.addEventListener("input", () => {
+    currentPage = 1;
+    applyFilters();
   });
+});
+
+[stateFilter, sortFilter].forEach(el => {
+  if (!el) return;
+  el.addEventListener("change", () => {
+    currentPage = 1;
+    applyFilters();
+  });
+});
 
   function applyFilters() {
-    filteredCards = allCards.filter(card => {
-      if (selectedCategory && selectedCategory !== "전체보기" && card.dataset.category !== selectedCategory) return false;
-
-      const searchType = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
-      const keyword = (searchType === "general" ? generalInput.value : tagInput.value).toLowerCase().trim();
-
-      if (keyword) {
-        if (searchType === "general") {
-          const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
-          const artist = card.querySelector(".artist")?.textContent.toLowerCase() || "";
-          if (!title.includes(keyword) && !artist.includes(keyword)) return false;
-        } else {
-          const tags = Array.from(card.querySelectorAll(".post-tag")).map(t => t.textContent.toLowerCase().replace('#', '').trim());
-          if (!tags.some(t => t.includes(keyword))) return false;
-        }
-      }
-
-      const selectedState = stateFilter.value;
-      if (selectedState && selectedState !== "" && card.querySelector(".post-status")?.textContent !== selectedState) return false;
-
-      return true;
-    });
-
-    const sortValue = sortFilter.value;
-    if (sortValue === "최신순") {
-      filteredCards.sort((a, b) => {
-        const dateA = new Date(a.querySelector(".post-meta")?.textContent || 0);
-        const dateB = new Date(b.querySelector(".post-meta")?.textContent || 0);
-        return dateB - dateA;
-      });
-    } else if (sortValue === "조회순") {
-      filteredCards.sort((a, b) => {
-        const viewsA = parseInt(a.querySelector(".participants span:first-child")?.textContent.replace("👁️", "").trim()) || 0;
-        const viewsB = parseInt(b.querySelector(".participants span:first-child")?.textContent.replace("👁️", "").trim()) || 0;
-        return viewsB - viewsA;
-      });
+  filteredCards = allCards.filter(card => {
+    // 카테고리 필터링
+    if (selectedCategory && card.dataset.category !== selectedCategory) {
+      return false;
     }
 
+    const searchType = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
+    const keyword = (searchType === "general" ? generalInput.value : tagInput.value).toLowerCase().trim();
+
+    if (keyword) {
+      if (searchType === "general") {
+        const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
+        if (!title.includes(keyword)) return false;
+      } else {
+        const tags = Array.from(card.querySelectorAll(".post-tag")).map(t => t.textContent.toLowerCase().replace('#', '').trim());
+        if (!tags.some(t => t.includes(keyword))) return false;
+      }
+    }
+
+    const selectedState = stateFilter.value;
+    if (selectedState && selectedState !== "" && card.querySelector(".post-status")?.textContent !== selectedState) return false;
+
+    return true;
+  });
+
+
+    const sortValue = sortFilter ? sortFilter.value : "";
+    console.log("정렬 값:", sortValue);
+    console.log("정렬 전 카드 개수:", filteredCards.length);
+
+    if (sortValue === "최신순") {
+      filteredCards.sort((a, b) => {
+        const dateA = a.querySelector(".post-meta")?.textContent.trim() || "1970-01-01";
+        const dateB = b.querySelector(".post-meta")?.textContent.trim() || "1970-01-01";
+        console.log("날짜 A:", dateA, "날짜 B:", dateB);
+        return new Date(dateB) - new Date(dateA);
+      });
+      console.log("최신순 정렬 완료");
+    } else if (sortValue === "조회순") {
+      filteredCards.sort((a, b) => {
+        const viewsTextA = a.querySelector(".participants span:first-child")?.textContent || "👁️ 0";
+        const viewsTextB = b.querySelector(".participants span:first-child")?.textContent || "👁️ 0";
+        const viewsA = parseInt(viewsTextA.replace("👁️", "").trim()) || 0;
+        const viewsB = parseInt(viewsTextB.replace("👁️", "").trim()) || 0;
+        console.log("조회수 A:", viewsA, "조회수 B:", viewsB);
+        return viewsB - viewsA;
+      });
+      console.log("조회순 정렬 완료");
+    }
+        
     currentPage = Math.min(currentPage, Math.ceil(filteredCards.length / itemsPerPage) || 1);
     applyPagination();
   }
 
   function applyPagination() {
-    allCards.forEach(card => card.style.display = "none");
+  const postList = document.querySelector(".postlist");
+  const pagination = document.querySelector(".pagination");
+  const noResultsMessage = document.getElementById("noResultsMessage");
 
-    const totalPages = Math.ceil(filteredCards.length / itemsPerPage) || 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const pageCards = filteredCards.slice(startIndex, endIndex);
+  // 게시물이 없으면
+  if (filteredCards.length === 0) {
+    // 게시물 리스트 비우고
+    postList.querySelectorAll(".post-card").forEach(card => card.remove());
 
-    pageCards.forEach(card => card.style.display = "block");
+    // 게시물 리스트 숨기기 (필요 시)
+    // postList.style.display = "none"; // 필요하면 사용하세요
 
-    updatePaginationUI(totalPages);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // "해당 조건에 맞는 게시물이 없습니다." 메시지 보이기
+    noResultsMessage.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+    noResultsMessage.style.display = "block";
+
+    // 페이지네이션 숨기기
+    if (pagination) pagination.style.display = "none";
+
+    return; // 이후 코드 실행하지 않음
   }
+
+  // 게시물이 있으면 메시지 숨기기
+  noResultsMessage.style.display = "none";
+  // postList.style.display = "block"; // 필요 시 다시 보이도록
+
+  // 모든 카드 숨기기
+  allCards.forEach(card => {
+    card.style.display = "none";
+  });
+
+  const totalPages = Math.ceil(filteredCards.length / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageCards = filteredCards.slice(startIndex, endIndex);
+
+  // 기존 카드 제거
+  postList.querySelectorAll(".post-card").forEach(card => card.remove());
+
+  // 현재 페이지 카드 추가
+  pageCards.forEach(card => {
+    postList.appendChild(card);
+    card.style.display = "block";
+  });
+
+  // 페이지네이션 표시 여부 결정
+  if (filteredCards.length <= itemsPerPage) {
+    pagination.style.display = "none";
+  } else {
+    pagination.style.display = "flex";
+  }
+
+  updatePaginationUI(totalPages);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
   function updatePaginationUI(totalPages) {
     if (!pagination) return;
@@ -280,6 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
       a.textContent = text;
       if (disabled) a.classList.add("disabled");
       if (active) a.classList.add("active");
+
       a.addEventListener("click", e => {
         e.preventDefault();
         if (disabled || active) return;
@@ -288,6 +371,8 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       return a;
     };
+
+    
 
     pagination.appendChild(createPageLink("«", 1, currentPage === 1));
     pagination.appendChild(createPageLink("‹", currentPage - 1, currentPage === 1));
@@ -306,6 +391,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 초기 필터 적용
   applyFilters();
+  updateCategoryDisplay();
 
   // 모달 닫기 버튼 연결
   document.querySelector(".close-btn")?.addEventListener("click", closePostModal);
