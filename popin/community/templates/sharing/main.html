@@ -7,7 +7,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="/static/images/login/popin_logo.png" type="image/png">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/static/css/community/sharing.css">
   <script src="/static/js/community/sharing.js" defer></script>
@@ -21,34 +20,34 @@
       <h3>걸그룹</h3>
       <div class="line"></div>
       <ul>
-        <li><a href="">BLACKPINK</a></li>
-        <li><a href="">aespa</a></li>
-        <li><a href="">IVE</a></li>
-        <li><a href="">(G)I-DLE</a></li>
-        <li><a href="">TWICE</a></li>
-        <li><a href="">NewJeans</a></li>
-        <li><a href="">Red Velvet</a></li>
-        <li><a href="">LE SSERAFIM</a></li>
-        <li><a href="">ILLIT</a></li>
-        <li><a href="">KISS OF LIFE</a></li>
-        <li><a href="">Hearts2Hearts</a></li>
+        <li><a href="#" data-category="BLACKPINK" >BLACKPINK</a></li>
+        <li><a href="#" data-category="aespa" >aespa</a></li>
+        <li><a href="#" data-category="IVE" >IVE</a></li>
+        <li><a href="#" data-category="(G)I-DLE" >(G)I-DLE</a></li>
+        <li><a href="#" data-category="TWICE" >TWICE</a></li>
+        <li><a href="#" data-category="NewJeans" >NewJeans</a></li>
+        <li><a href="#" data-category="Red Velvet" >Red Velvet</a></li>
+        <li><a href="#" data-category="LE SSERAFIM" >LE SSERAFIM</a></li>
+        <li><a href="#" data-category="ILLIT" >ILLIT</a></li>
+        <li><a href="#" data-category="KISS OF LIFE" >KISS OF LIFE</a></li>
+        <li><a href="#" data-category="Hearts2Hearts" >Hearts2Hearts</a></li>
       </ul>
     </div>
     <div class="boy">
       <h3>보이그룹</h3>
       <div class="line"></div>
       <ul>
-        <li><a href="">NCT</a></li>
-        <li><a href="">SEVENTEEN</a></li>
-        <li><a href="">BOYNEXTDOOR</a></li>
-        <li><a href="">RIIZE</a></li>
-        <li><a href="">ENHYPEN</a></li>
-        <li><a href="">&TEAM</a></li>
-        <li><a href="">PLAVE</a></li>
-        <li><a href="">TWS</a></li>
-        <li><a href="">EXO</a></li>
-        <li><a href="">BTS</a></li>
-        <li><a href="">기타</a></li>
+        <li><a href="" data-category="NCT" >NCT</a></li>
+        <li><a href="" data-category="SEVENTEEN" >SEVENTEEN</a></li>
+        <li><a href="" data-category="BOYNEXTDOOR" >BOYNEXTDOOR</a></li>
+        <li><a href="" data-category="RIIZE" >RIIZE</a></li>
+        <li><a href="" data-category="ENHYPEN" >ENHYPEN</a></li>
+        <li><a href="" data-category="&TEAM" >&TEAM</a></li>
+        <li><a href="" data-category="PLAVE" >PLAVE</a></li>
+        <li><a href="" data-category="TWS" >TWS</a></li>
+        <li><a href="" data-category="EXO" >EXO</a></li>
+        <li><a href="" data-category="BTS" >BTS</a></li>
+        <li><a href="" data-category="기타" >기타</a></li>
       </ul>
     </div>
     </div>
@@ -67,17 +66,16 @@
         <button class="toggle-btn active" data-type="general">일반 검색</button>
         <button class="toggle-btn" data-type="tag">태그 검색</button>
       </div>
-      <input type="text" id="generalSearch" class="search-input" placeholder="제목, 내용으로 검색">
+      <input type="text" id="generalSearch" class="search-input" placeholder="제목, 그룹명으로 검색">
       <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
 
-      <select id="categoryFilter" class="filter-select">
+      <select id="stateFilter" class="filter-select">
         <option value="">나눔 종류</option>
-        <option>전체</option>
         <option value="앨범">앨범</option>
         <option value="굿즈">굿즈</option>
         <option value="기타">기타</option>
       </select>
-      <select id = "sortFilter" class="filter-select">
+      <select id="sortSelect" class="filter-select">
           <option value="">정렬</option>
           <option value="최신순">최신순</option>
           <option value="조회순">조회순</option>
@@ -85,7 +83,7 @@
     </div>
         <div class="postlist">
           <!-- 동행 카드들 -->
-          <div class="post-card" data-category="album" data-imgs="/static/images/test/sharing.jpg">
+          <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
               <div class="post-header">
               <span class = "boardf">
                 <span class = "artist">AESPA</span>
@@ -133,8 +131,8 @@
                     </div>
               </div>
           </div>
-
-          <div class="post-card" data-category="concert">
+          {% for i in ""|center:30 %}
+          <div class="post-card" data-category="NCT">
               <div class="post-header">
               <span class = "boardf">
                 <span class = "artist">NCT DREAM</span>
@@ -182,6 +180,66 @@
                   </div>
               </div>
             </div>
+            {% endfor %}
+            <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+              <div class="post-header">
+              <span class = "boardf">
+                <span class = "artist">AESPA</span>
+                <span class = "stype">앨범</span>
+              </span>
+              <div class="post-title-row">
+                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <div class="post-right">
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+              </div>
+              <div class="post-tags">
+                <span class="post-tag">#앨범</span>
+                <span class="post-tag">#aespa</span>
+                <span class="post-tag">#오프라인</span>
+              </div>
+            </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-icon">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-icon">📍</span>
+                      <span>등촌동 SBS홀</span>
+                  </div>
+                  <div class="info-check">
+                      <span class="info-icon">✅</span>
+                      <span>에스파 위버스 멤버쉽 확인</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                  에스파 앨범 나눔합니다
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 wintercute</span>
+                      <span class="post-meta">2025-01-01</span>
+                    </div>
+                    <div class="participants">
+                      <span>👁️ 67</span>
+                    </div>
+              </div>
+           </div>
+              <div class="pagination">
+                  <a href="#" title="첫 페이지">«</a>
+                  <a href="#" title="이전 페이지">‹</a>
+                  <strong>1</strong>
+                  <a href="#">2</a>
+                  <a href="#">3</a>
+                  <a href="#">4</a>
+                  <a href="#">5</a>
+                  <a href="#" title="다음 페이지">›</a>
+                  <a href="#" title="마지막 페이지">»</a>
+                </div>
             <div id="postModal" class="modal">
                 <div class="modal-content">
                     <button class="close-btn" onclick="closePostModal()">&times;</button>
@@ -209,18 +267,8 @@
                   <button id="nextBtn">›</button>
                 </div>
                 </div>
-                <div class="pagination">
-                  <a href="#" title="첫 페이지">«</a>
-                  <a href="#" title="이전 페이지">‹</a>
-                  <strong>1</strong>
-                  <a href="#">2</a>
-                  <a href="#">3</a>
-                  <a href="#">4</a>
-                  <a href="#">5</a>
-                  <a href="#" title="다음 페이지">›</a>
-                  <a href="#" title="마지막 페이지">»</a>
-                </div>
-            </div>
+                
+              </div>
           </div>
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
         </body>

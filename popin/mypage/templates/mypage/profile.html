@@ -32,13 +32,13 @@
                         </button>
                     </div>
                     <div class="profile-info">
-                        <h1 style="text-align:center;">{{user.name}}</h1>
-                        <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
+                        <h1 style="text-align:center;">{{nickname}}</h1>
+                        <h3 style="margin-bottom:20px;">"{{introduction}}"</h3>
                         <br>
                         
                         <div class="stats">
                             <div class="stat">
-                                <div class="stat-number">{{user.selling_photocards.count}}</div>
+                                <div class="stat-number">{{selling_photocards}}</div>
                                 <div>보유 포카</div>
                             </div>
                             <div class="stat">
@@ -46,7 +46,7 @@
                                 <div>교환 완료</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">{{user.manners_score}}</div>
+                                <div class="stat-number">{{manners_score}}</div>
                                 <div>평점</div>
                             </div>
                         </div>
@@ -74,12 +74,20 @@
             <div id="keywords" class="tab-content active">
                 <div class="section-content">
                     <div class="item">
-                        <h3>관심 키워드</h3>
-                        <p>#정국포카 #로제포카 #한정판 #시그네쳐 #러키드로우</p>
+                        <h3>관심 그룹 키워드</h3>
+                        <p>
+                            {%for group in groups%}
+                                #{{group.name}}
+                            {%endfor%}
+                        </p>
                     </div>
                     <div class="item">
-                        <h3>알림 키워드</h3>
-                        <p>#BTS #BLACKPINK #NewJeans #포카교환 #급구</p>
+                        <h3>관심 멤버 키워드</h3>
+                        <p>
+                            {%for member in members%}
+                                #{{member.name}}
+                            {%endfor%}
+                        </p>
                     </div>
                 </div>
             </div>

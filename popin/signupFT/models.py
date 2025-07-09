@@ -13,8 +13,8 @@ GENDER_CHOICES = [
 USER_STATE_CHOICES = [
     (0, '관리자'),
     (1, '일반 사용자'),
-    (2, '숨김 사용자'),
-    (3, '차단된 사용자'),
+    (2, '신고된 사용자'),
+    (3, '정지된 사용자'),
 ]
 # --- CHOICES 정의 끝 ---
 
@@ -62,7 +62,7 @@ class User(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="가입일")
     agree_marketing = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True, verbose_name="최근 수정일")
-    
+    introduction = models.TextField(blank=True, null=True, max_length=100)
     class Meta:
         verbose_name = "사용자"
         verbose_name_plural = "사용자 목록"
