@@ -55,7 +55,7 @@
 
 .dashboard {
     width: 47%;
-    min-height: 550px;
+    min-height: 300px;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 25px;
     margin-left: 20px;
@@ -239,6 +239,12 @@ border-radius: 6px;
 .pagination img {
     width: 16px;
     height: 16px;
+}
+
+.current-page,
+.disabled {
+  pointer-events: none;
+  cursor: default;
 }
 
 /* Board List */

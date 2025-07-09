@@ -242,4 +242,4 @@ def write_sharing(request):
 
         return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
     
-     return render(request, 'community_write_sharing.html')
+     return render(request, 'community/community_write_sharing.html')
