@@ -134,8 +134,8 @@ def write_sharing(request):
     return render(request, 'community/community_write_sharing.html')
 
 # 현황공유 작성
-# def write_status(request):
-#     return render(request, 'community/community_write_status.html')
+def write_status(request):
+  return render(request, 'community/community_write_status.html')
 
 ##### 교환/판매후기 게시판
 def chgReview(request) :
@@ -230,4 +230,4 @@ def write_sharing(request):
 
         return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
     
-     return render(request, 'community_write_sharing.html')
+     return render(request, 'community/community_write_sharing.html')
