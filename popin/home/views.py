@@ -1,7 +1,10 @@
 
 from django.shortcuts import render,redirect
+
 from signupFT.models import User
 from photocard.models import Photocard
+from pocadeco.models import DecoratedPhotocard
+
 from django.db.models import Count
 from django.core.paginator import Paginator
 
@@ -18,9 +21,11 @@ def main(request):
         # 전체 게시글
         total_photocard = Photocard.objects.all().count() 
         # 활성 사용자
-        total_user = User.objects.all().count() 
+        total_user = User.objects.filter(state=1).count()
         # 교환 완료
         completed_photocard = Photocard.objects.filter(sell_state='후', buy_state='후').count() 
+        # 포카 꾸미기
+        total_decopoca = DecoratedPhotocard.objects.all().count()
         
         # 최근 인기 포토카드 (거래중인 것)
         photocards = Photocard.objects.filter(sell_state='중', buy_state=None).select_related('member__group').annotate(
@@ -34,6 +39,7 @@ def main(request):
             'total_photocard':total_photocard, # 전체 게시글
             'total_user':total_user,  # 활성 사용자
             'completed_photocard':completed_photocard, #교환 완료
+            'total_decopoca':total_decopoca,
             'recent':recent
         }
         
