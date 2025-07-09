@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 <title>{% block title %}포토카드 상세{% endblock %}</title>
+<meta name='csrf-token' content='{{csrf_token}}'>
 <style>
     .content {
         background: rgba(255, 255, 255, 0.95);
@@ -106,6 +107,10 @@
         width:183px; height:284px; border-radius:5px;
     }
 
+    .card-info {
+        width:250px;
+    }
+
     .card-info h4 {
         font-size: 1.1rem;
         font-weight: 600;
@@ -115,7 +120,8 @@
 
     .card-meta {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        padding:0 40px;
         align-items: center;
         margin-bottom: 1rem;
     }
@@ -284,11 +290,29 @@
 
 <script>
     $(document).ready(function() {
-        // 찜버튼 //
+        // 위시버튼 //
         $("#heart").click(function() {
-            if ($(this).hasClass("fal fa-heart")) {
-            $(this).removeClass("fal fa-heart").addClass("fas fa-heart red");} 
-            else {$(this).removeClass("fas fa-heart red").addClass("fal fa-heart");}
+            let pno = {{info.pno}}
+            let csrfToken = $('meta[name="csrf-token"]').attr('content')
+
+            $.ajax({
+                url: '/photocard/toggle_wish/' + pno + '/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrfToken },
+                data: { action: 'action' }, // 클릭한 버튼 상태에 따른 액션
+                success: function(response) {
+                    // 위시 상태에 따른 새로 갱신된 찜 수 반영
+                    $(".wish_count").text(response.new_like_count);
+                    if (response.action === 'increased') {
+                        $("#heart").removeClass("fal fa-heart").addClass("fas fa-heart red");
+                    } else {
+                        $("#heart").removeClass("fas fa-heart red").addClass("fal fa-heart");
+                    }
+                },
+                error: function() {
+                    alert("실패");
+                }
+            });
         });
         
         // 공유하기 //
@@ -336,7 +360,7 @@
         <div class="content_background">
             <div class="pocanavi">
                 <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
-                <div class="icons"><i class="fal fa-heart" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
+                <div class="icons"><i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
                 <!-- 오버레이 (바텀시트 외부) -->
                 <div class="share-overlay" id="share-overlay" onclick="toggleBottomSheet()"></div>
 
@@ -349,11 +373,13 @@
             </div>
             <div class="cardItem">
                 <div class="card-image"><img src="/media/{{info.image}}"></div>
-                <div class="card-info">
+                <div class="card-info" style="margin:0 auto;">
                     <h4>{{info.member}}</h4>
                     <div class="card-meta">
-                        <span class="card-album">{{info.album}}</span>&ensp;
-                        <span class="card-likes">❤️ {{info.wish_count}}</span>
+                        <span class="card-album">{{info.album}}</span>
+                        <span class="card-likes">
+                            ❤️ <span class="wish_count">{{info.wish_count}}</span> 
+                        </span>
                     </div>
                     <div class="card-tags">
                         <span class="tag">{{info.trade_type}}</span>

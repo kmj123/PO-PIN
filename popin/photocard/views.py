@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from signupFT.models import User
 from photocard.models import Photocard
@@ -7,6 +7,8 @@ from photocard.models import TempWish
 
 from django.db.models import Count
 from datetime import date
+
+from django.http import JsonResponse
 
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
@@ -83,7 +85,7 @@ def exchange(request):
     place = request.GET.get('place', '전체')
     
     # 전체 포토카드 리스트 불러오기
-    photocards = Photocard.objects.filter(sell_state="중")
+    photocards = Photocard.objects.filter(sell_state="중", buy_state=None).annotate(wish_count=Count('wished_by_users')).order_by('-hit')
     
     if searchgroup:
         photocards = photocards.filter(member__group__name=searchgroup)
@@ -108,7 +110,7 @@ def exchange(request):
         'trade':trade,
         'place':place,
         'searchgroup':searchgroup,
-        'selected_members':selected_members
+        'selected_members':selected_members,
     }
         
     return render(request, 'exchange.html', context)
@@ -130,6 +132,7 @@ def detail(request, pno):
             
     # pno 포토카드 불러오기
     qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
+    is_wish = TempWish.objects.filter(user=user_id, photocard=qs).exists()
     
     qs.hit += 1
     qs.save()
@@ -157,12 +160,40 @@ def detail(request, pno):
     # 포토카드 상세정보 반환
     if qs.tag:
         tags = qs.tag.split(",")
-        context = {"info":qs, "tags":tags}
+        context = {"info":qs, "is_wish":is_wish, "tags":tags}
     else:
-        context = {"info":qs}
+        context = {"info":qs, "is_wish":is_wish}
 
     
     return render(request, 'pocadetail.html', context)
+
+def toggle_wish(request, pno):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = get_object_or_404(User, user_id=user_id)
+    photocard = get_object_or_404(Photocard, pno=pno)
+
+    temp_wish = TempWish.objects.filter(user=user, photocard=photocard).first()
+    
+    if temp_wish:
+        temp_wish.delete()
+        action = 'decreased'
+    else:
+        TempWish.objects.create(user=user, photocard=photocard)
+        action = 'increased'
+        
+    wish_count = photocard.wished_by_users.count()
+    
+    # ajax 요청에 대해서는 JSON 응답을 반환
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'action': action, 'new_like_count': wish_count})
+
+    # 일반적인 요청에는 포토카드 교환 페이지로 리다이렉트
+    return redirect('/photocard/exchange/')
+
 
 # 포토카드 거래글 작성
 def write(request):
