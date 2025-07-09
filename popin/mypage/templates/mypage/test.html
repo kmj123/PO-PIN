@@ -15,7 +15,22 @@
   <button id="wishlist">위시리스트</button>
   <button id="trade">교환내역</button>
   <button id="blocklist">차단유저리스트</button>
+  <button id="update_blocklist">차단해제</button>
   <div id="div_box"></div>
+
+  <br><br>
+  <form id="profileForm" enctype="multipart/form-data">
+    <label for="nickname">닉네임:</label><br>
+    <input type="text" id="nickname" name="nickname" required><br><br>
+
+    <label for="introduction">자기소개:</label><br>
+    <textarea id="introduction" name="introduction" rows="4" cols="40"></textarea><br><br>
+
+    <label for="profile_image">프로필 이미지:</label><br>
+    <input type="file" id="profile_image" name="profile_image" accept="image/*"><br><br>
+
+    <button type="submit">수정하기</button>
+  </form>
 
   <script>
     $(document).ready(function() {
@@ -226,6 +241,64 @@
           }
         });
       });
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+    $('#profileForm').on('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+
+      $.ajax({
+        url: '/mypage/update_profile/',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
+        },
+        success: function(response) {
+          alert(response.message);
+        },
+        error: function(xhr) {
+          alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+        }
+      });
+    });
+
+    $('#update_blocklist').on('click', function() {
+      const id = $('#userid').val();
+
+      $.ajax({
+        url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
+        type: 'POST',
+        data: JSON.stringify({ id: 'bbb' }),  // JSON 형식으로 전송
+        contentType: 'application/json',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        success: function(response) {
+          $('#result').text(response.blocked_users?.[0]?.message || '성공적으로 처리되었습니다.');
+        },
+        error: function(xhr) {
+          $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
+        }
+      });
+    });
 
     });
   </script>

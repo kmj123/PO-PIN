@@ -413,7 +413,7 @@
       
       {% comment %} <form method = "post" action = "{% url 'adpage:noticeD' notice.id %}" id = "deleteFrm"> {% endcomment %}
         <div class="btn">
-          <button type="button" onclick="location.href='{% url 'adpage:noticeR' %}'" value="update">수정</button>
+          <button type="button" onclick="location.href='{% url 'adpage:noticeR' notice.id %}'" value="update">수정</button>
           <button type="button" onclick = "deleteBtn()" value="delete">삭제</button>
           <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
         </div>
