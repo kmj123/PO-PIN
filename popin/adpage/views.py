@@ -226,7 +226,7 @@ def notice(request) :
     
     try:
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
-        qs = Notice.objects.all()
+        qs = Notice.objects.all().values('id', 'title', 'created_at', 'views')
         
         print(qs)
         context = {

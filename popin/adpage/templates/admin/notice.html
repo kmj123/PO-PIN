@@ -239,64 +239,9 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for notice in notice_list %}
                         <tr>
-                            <td><a href = "/adpage/noticeV/1/">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1%}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' 1 %}">포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        {% for i in ""|center:30 %}
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
-                        </tr>
-                        <tr>
-                            <td><a href = "{% url 'adpage:noticeV' %}">포카꾸미기 안내</a></td>
+                            <td><a href = "/adpage/noticeV/{{notice.id}}/">포카꾸미기 이용 안내</a></td>
                             <td>2025-06-25</td>
                             <td>123</td>
                         </tr>
