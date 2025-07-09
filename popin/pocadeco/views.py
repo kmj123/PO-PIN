@@ -63,3 +63,18 @@ def main(request):
     return render(request, 'pocadeco/main.html')
 def mydecolist(request):
     return render(request, 'pocadeco/mydecolist.html')
+
+def view(reqeust, id):
+    decophotocard = DecoratedPhotocard.objects.get(id=id)
+    tags = decophotocard.tag.split(',')
+    context = {
+        'nickname' : decophotocard.user.nickname,
+        'title': decophotocard.title,
+        'result_image': decophotocard.result_image,
+        'tags' : tags,
+        'group' : decophotocard.member.group.name,
+        'member' :decophotocard.member.name,
+        'hit' : decophotocard.hit,
+        'like' : decophotocard.wished_by_users.count(),
+    }
+    return render(reqeust, 'pocadeco/view.html', context)
