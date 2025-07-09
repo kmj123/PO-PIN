@@ -27,7 +27,6 @@ def chgReviewmain(request):
     # 평균 평점
     average_score = ExchangeReview.objects.aggregate(avg_score=Avg("overall_score"))["avg_score"]
     average_score = round(average_score or 0, 1)  # None 대비 처리
-    
     all_reviews = ExchangeReview.objects.all().order_by('-created_at')  # 최신순
     
     # 페이지네이터
@@ -37,176 +36,149 @@ def chgReviewmain(request):
     context = {"weekly_count": weekly_count, "average_score": average_score,"page_obj": page_obj}
     return render(request, "chgReview/main.html", context)
 
-
-
-
 ##교환/판매 상세보기 
-def chgReviewview(request) :
-    return render(request,"chgReview/chgR_view.html")
+from django.shortcuts import render, get_object_or_404
+from community.models import ExchangeReview,ReviewImage,ReviewTag
+
+def chgReviewview(request, post_id):
+    post = get_object_or_404(
+        ExchangeReview.objects.prefetch_related('tags', 'images'),
+        id=post_id
+    )
+    return render(request, 'community/chgR_view.html', {'post': post})
+    
+   
 
 ## 최근게시글
 def recent(request):
+    
     return render(request, 'community/community_recent.html')
 
 #############################################################################
 # 동행모집글 작성
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from datetime import datetime
+from .models import CompanionPost, CompanionTag, CompanionImage
+from signupFT.models import User  # 사용자 모델 import
+
 def write_companion(request):
-    
     if request.method == "POST":
-        user = request.user
-        title = request.POST.get('title', '').strip()
-        artist = request.POST.get('artist', '').strip()
-        category =request.POST.get('category', '').strip()
-        location= request.POST.get('location','').strip()
-        share_date=request.POST.get('share_date','').strip()
-        requirement=request.POST.get('requirement','').strip()
-        content = request.POST.get('content', '').strip()
-        tag_string = request.POST.get('tags', '').strip()
-        images = request.FILES.getlist('images')
-        # 2. 필수값 체크
-        required_fields = {
-            "제목": title,
-            "내용": content,
-            "장소": location,
-            "필수사항": requirement,
-        }
-        for label, value in required_fields.items():
-            if not value:
-                return render(request, 'community_write_sharing.html', {
-                    "error": f"{label}은(는) 필수 항목입니다.",
-                    "form_data": request.POST
-                })
-
-
-        # 3. 나눔글 저장
         try:
-            post = SharingPost.objects.create(
+            # 1. 사용자
+            user_id = request.session.get('user_id')
+            user = User.objects.get(user_id=user_id)
+
+            # 2. 기본 정보
+            title = request.POST.get('title')
+            artist = request.POST.get('artist')
+            category = request.POST.get('category')
+            location = request.POST.get('location')
+            content = request.POST.get('content')
+            max_people = request.POST.get('maxParticipants')
+            tags = request.POST.get('tags', '')
+
+            # 3. 날짜 + 시간 → datetime 필드
+            date_str = request.POST.get('eventDate')
+            time_str = request.POST.get('eventTime')
+            event_datetime = timezone.make_aware(datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M"))
+
+            # 4. 게시글 저장
+            post = CompanionPost.objects.create(
                 title=title,
                 artist=artist,
-                category =category,
+                category=category,
                 location=location,
-                share_date =share_date ,
                 content=content,
+                max_people=max_people,
+                event_date=event_datetime,
                 author=user,
-               
             )
-            print(" 리뷰 생성 완료:", post.id)
-        except Exception as e:
-            print(" 리뷰 저장 실패:", e)
-            return render(request, 'community_write_sharing.html', {
-                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
-                "form_data": request.POST
-            })
 
-        # 4. 태그 저장
-        if tag_string:
-            tag_names = tag_string.replace(",", " ").split()
-            for tag_name in tag_names:
-                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
+            # 5. 태그 처리
+            tag_list = [tag.strip().lstrip('#') for tag in tags.split(',') if tag.strip()]
+            for tag_name in tag_list:
+                tag_obj, _ = CompanionTag.objects.get_or_create(name=tag_name)
                 post.tags.add(tag_obj)
-            print(" 태그 추가:", tag_names)
 
-        # 5. 이미지 수 제한 확인
-        if len(images) > 5:
-            return render(request, 'community_write_sharing.html', {
-                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
-                "form_data": request.POST
-            })
+            # 6. 이미지 저장
+            for file in request.FILES.getlist('images'):
+                CompanionImage.objects.create(post=post, image=file)
 
-        # 6. 이미지 저장
-        for img in images: 
-            try:
-                 SharingImage.objects.create(post=post, image=img)
-                 print(" 이미지 저장됨:", img.name)
-            except Exception as e: 
-                print(" 이미지 저장 실패 :" ,  e)
-
-        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
-
+            return redirect('community:companion')  # 동행 목록 페이지로 이동
+        except Exception as e:
+            return render(request, 'community/community_write_companion.html', {'error': str(e)})
+    
     return render(request, 'community/community_write_companion.html')
-
+   
+    
 ## 대리구매글 작성
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from community.models import ProxyPost, ProxyImage, ProxyTag
+from signupFT.models import User  # 사용자 모델 import
+from datetime import datetime
 
 def write_proxy(request):
     if request.method == "POST":
-        user = request.user
-        title = request.POST.get('title', '').strip()
-        artist = request.POST.get('artist', '').strip()
-        #대리구매 날짜 =
-        location= request.POST.get('location','').strip()
-        #최대모집인원 = 
-        #수고비 = 
-        content = request.POST.get('content', '').strip()
-        tag_string = request.POST.get('tags', '').strip()
-        images = request.FILES.getlist('images')
-        
-        # 2. 필수값 체크
-        required_fields = {
-            "제목": title,
-            "내용": content,
-            "장소": location,
-           
-        }
-        for label, value in required_fields.items():
-            if not value:
-                return render(request, 'community_write_sharing.html', {
-                    "error": f"{label}은(는) 필수 항목입니다.",
-                    "form_data": request.POST
-                })
+        title = request.POST.get("title")
+        artist = request.POST.get("artist")
+        category = request.POST.get("category", "기타")
+        status = request.POST.get("status", "모집중")
 
+        # 날짜와 시간 조합 → DateTimeField에 맞게
+        event_date = request.POST.get("eventDate")
+        event_time = request.POST.get("eventTime")
+        event_datetime = timezone.make_aware(datetime.strptime(f"{event_date} {event_time}", "%Y-%m-%d %H:%M"))
 
-        # 3. 나눔글 저장
+        location = request.POST.get("location")
+        max_people = request.POST.get('max_people')
+        reward = request.POST.get("fee")
+        description = request.POST.get("content")
+        tag_string = request.POST.get("tags", "")
+
+        # 세션에서 사용자 가져오기
+        user_id = request.session.get("user_id")
+        if not user_id:
+            return redirect("login")  # 로그인 안 되어 있으면 로그인 페이지로
+
         try:
-            post = SharingPost.objects.create(
-                title=title,
-                artist=artist,
-                #날짜 
-                location=location,
-                # 최대모집인원 
-                #수고비 
-                content=content,
-                author=user,
-               
-            )
-            print(" 리뷰 생성 완료:", post.id)
-        except Exception as e:
-            print(" 리뷰 저장 실패:", e)
-            return render(request, 'community_write_sharing.html', {
-                "error": f"리뷰 저장 중 오류 발생: {str(e)}",
-                "form_data": request.POST
-            })
+            user = User.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return render(request, "community/write_proxy.html", {"error": "사용자를 찾을 수 없습니다."})
 
-        # 4. 태그 저장
-        if tag_string:
-            tag_names = tag_string.replace(",", " ").split()
-            for tag_name in tag_names:
-                tag_obj, _ = SharingTag.objects.get_or_create(name=tag_name)
-                post.tags.add(tag_obj)
-            print(" 태그 추가:", tag_names)
+        # 저장
+        proxy_post = ProxyPost.objects.create(
+            title=title,
+            artist=artist,
+            category=category,
+            status=status,
+            event_date=event_datetime,
+            location=location,
+            max_people=max_people,
+            reward=reward,
+            description=description,
+            author=user
+        )
 
-        # 5. 이미지 수 제한 확인
-        if len(images) > 5:
-            return render(request, 'community_write_sharing.html', {
-                "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
-                "form_data": request.POST
-            })
+        # 태그 처리
+        tags = [t.strip().replace("#", "") for t in tag_string.split() if t.strip()]
+        for tag_name in tags:
+            tag_obj, _ = ProxyTag.objects.get_or_create(name=tag_name)
+            proxy_post.tags.add(tag_obj)
 
-        # 6. 이미지 저장
-        for img in images: 
-            try:
-                 SharingImage.objects.create(post=post, image=img)
-                 print(" 이미지 저장됨:", img.name)
-            except Exception as e: 
-                print(" 이미지 저장 실패 :" ,  e)
+        # 이미지 업로드
+        images = request.FILES.getlist("images")
+        for img in images:
+            ProxyImage.objects.create(post=proxy_post, image=img)
 
-        return redirect('sharing:main')  # 또는 너의 리뷰 리스트 페이지
+        return redirect("community:main")  # 작성 완료 후 메인으로 이동
 
-    return render(request, 'community/community_write_companion.html')
-    
     
     return render(request, 'community/community_write_proxy.html')
 
-
+#############################################
 ## 교환후기 글작성 
 def write_review(request):
     if request.method == 'POST':
@@ -270,34 +242,50 @@ def write_review(request):
 #########################################
 
 #나눔 
-
-from signupFT.models import User  # 정확한 사용자 모델 import
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+from django.utils.timezone import make_aware
+from datetime import datetime
+from signupFT.models import User
+from .models import SharingPost, SharingTag, SharingImage
 
 def write_sharing(request):
     if request.method == 'POST':
         try:
-            user_id = request.session.get('user_id')  # 문자열 'aaa' 같은 값
+            user_id = request.session.get('user_id')
             if not user_id:
                 messages.error(request, "[오류] 로그인 정보가 없습니다.")
                 return redirect('community:write_sharing')
 
-            # 💥 핵심 수정: get(pk=...) 사용하고, 모델의 PK는 'user_id'이므로 문제 없음
             try:
                 author = User.objects.get(pk=user_id)
             except User.DoesNotExist:
                 messages.error(request, "[오류] 작성자 정보를 찾을 수 없습니다.")
                 return redirect('community:write_sharing')
 
-            # 폼 데이터 수집
+            # POST 데이터 받기
             title = request.POST.get('title')
             content = request.POST.get('content')
             artist = request.POST.get('artist', '기타')
             category = request.POST.get('category')
-            type = request.POST.get('type')
-            share_date = request.POST.get('share_date')
+            sharing_type = request.POST.get('type')
+            if not sharing_type: sharing_type = '오프라인'
             location = request.POST.get('location')
             requirement = request.POST.get('requirement')
             tag_str = request.POST.get('tags', '')
+            share_date_str = request.POST.get('share_date')
+
+            # 타입 누락 시 오류 처리
+            if not sharing_type:
+                messages.error(request, "[오류] 나눔 형태(type)는 필수 선택 항목입니다.")
+                return redirect('community:write_sharing')
+
+            # 날짜 변환
+            share_date = None
+            if share_date_str:
+                naive_datetime = datetime.strptime(share_date_str, "%Y-%m-%dT%H:%M")
+                share_date = make_aware(naive_datetime)
 
             with transaction.atomic():
                 post = SharingPost.objects.create(
@@ -306,7 +294,7 @@ def write_sharing(request):
                     content=content,
                     artist=artist,
                     category=category,
-                    type=type,
+                    type=sharing_type,  #  정확히 전달
                     share_date=share_date,
                     location=location,
                     requirement=requirement
@@ -314,7 +302,7 @@ def write_sharing(request):
 
                 # 태그 저장
                 if tag_str:
-                    tag_list = [tag.strip().lstrip('#') for tag in tag_str.split()]
+                    tag_list = [tag.strip().lstrip('#') for tag in tag_str.split(',')]
                     for tag in tag_list:
                         tag_obj, _ = SharingTag.objects.get_or_create(name=tag)
                         post.tags.add(tag_obj)
@@ -333,30 +321,191 @@ def write_sharing(request):
 
     return render(request, 'community/community_write_sharing.html')
 #################################################################
- #현황공유 작성
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_datetime
+from community.models import StatusPost, StatusImage, StatusTag
+from signupFT.models import User
+
+@csrf_exempt
 def write_status(request):
-     return render(request, 'community/community_write_status.html')
+    if request.method == 'POST':
+        try:
+            user_id = request.session.get('user_id')
+            if not user_id:
+                return JsonResponse({'error': '로그인이 필요합니다.'}, status=403)
+
+            user = User.objects.get(user_id=user_id)
+
+            title = request.POST.get('title', '').strip()
+            artist = request.POST.get('artist', '').strip()
+            category = request.POST.get('category', '').strip()
+            event_datetime_str = request.POST.get('event_datetime')
+            event_datetime = parse_datetime(event_datetime_str) if event_datetime_str else None
+            location = request.POST.get('location', '').strip()
+            region = request.POST.get('region', '').strip()
+            content = request.POST.get('content', '').strip()
+            tag_string = request.POST.get('tags', '')
+            tag_names = [tag.strip() for tag in tag_string.split(',') if tag.strip()]
+
+            # 필수값 누락 시 예외
+            if not (title and artist and category and event_datetime and location and content):
+                return JsonResponse({'error': '필수 항목이 누락되었습니다.'}, status=400)
+
+            # 게시글 저장
+            post = StatusPost.objects.create(
+                author=user,
+                title=title,
+                artist=artist,
+                category=category,
+                event_datetime=event_datetime,
+                place=location,
+                region=region,
+                content=content
+            )
+
+            # 태그 저장
+            for tag_name in tag_names:
+                tag, _ = StatusTag.objects.get_or_create(name=tag_name)
+                post.tags.add(tag)
+
+            # 이미지 저장
+            for image in request.FILES.getlist('images'):
+                StatusImage.objects.create(post=post, image=image)
+
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    # GET 요청일 경우 템플릿 렌더링
+    return render(request, 'community/community_write_status.html')
+ #현황공유 작성
 
 
+
+#######################################################################
 # 메인페이지
+from itertools import chain
+from operator import attrgetter
+from .models import SharingPost, CompanionPost, ProxyPost
+
 def main(request):
-    return render(request, 'community/main.html')
+    all_posts = sorted(
+        chain(
+            SharingPost.objects.all(),
+            CompanionPost.objects.all(),
+            ProxyPost.objects.all()
+        ),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+    return render(request, 'community/main.html', {'posts': all_posts})
 
-
-
+#########################################
+from .models import CompanionPost
 ##### 동행 게시판
 def companion(request) :
-    return render(request,'companion/main.html')
+       # 1. 동행 글 전체 가져오기 (최신순 정렬)
+    all_posts = CompanionPost.objects.all().order_by('-created_at')
+
+    # 2. 통계 수치 계산
+    ongoing_count = CompanionPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+    completed_count = CompanionPost.objects.filter(status='모집완료').count()
+    weekly_count = CompanionPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+
+    # 3. 페이지네이션
+    paginator = Paginator(all_posts, 6)  # 페이지당 6개
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'posts': page_obj,  # 페이지네이터 객체
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+    }
+  
+    return render(request,'companion/main.html',context)
 
 ##### 대리구매 게시판
+from .models import ProxyPost,ProxyStatus
 def proxy(request) :
-    return render(request,'proxy/main.html')
+         # 1. 나눔 글 전체 가져오기 (최신순 정렬)
+    all_posts = ProxyPost.objects.all().order_by('-created_at')
+
+    # 2. 통계 수치 계산
+    ongoing_count = ProxyPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+    completed_count = ProxyPost.objects.filter(status=ProxyStatus.DEADLINE).count()
+    weekly_count = ProxyPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+
+    # 3. 페이지네이션
+    paginator = Paginator(all_posts, 6)  # 페이지당 6개
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'posts': page_obj,  # 페이지네이터 객체
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+    }
+    
+    return render(request,'proxy/main.html',context)
 
 ##### 나눔 게시판
-def sharing(request) :
-    return render(request,'sharing/main.html')
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from .models import SharingPost
+from django.utils import timezone
+from .models import SharingPost, SharingStatus
 
+def sharing(request) :
+      # 1. 나눔 글 전체 가져오기 (최신순 정렬)
+    all_posts = SharingPost.objects.all().order_by('-created_at')
+
+    # 2. 통계 수치 계산
+    ongoing_count = SharingPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+    completed_count = SharingPost.objects.filter(status=SharingStatus.CLOSED).count()
+    weekly_count = SharingPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+
+    # 3. 페이지네이션
+    paginator = Paginator(all_posts, 6)  # 페이지당 6개
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'posts': page_obj,  # 페이지네이터 객체
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+    }
+    return render(request, 'sharing/main.html', context)
+ #####################################################   
+from .models import StatusPost,StatusStatus
+     
 ##### 현황공유 게시판
 def status(request) :
-      return render(request,'status/main.html')
+     # 1. 현황공유 글 전체 가져오기 (최신순 정렬)
+    all_posts = StatusPost.objects.all().order_by('-created_at')
+
+    # 2. 통계 수치 계산
+    ongoing_count = StatusPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+    completed_count = StatusPost.objects.filter(status=StatusStatus.CLOSED).count()
+    weekly_count = StatusPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+
+    # 3. 페이지네이션
+    paginator = Paginator(all_posts, 6)  # 페이지당 6개
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'posts': page_obj,  # 페이지네이터 객체
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+    }
+    return render(request,'status/main.html',context)
 
