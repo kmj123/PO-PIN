@@ -478,7 +478,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn" style="width:100%;">검색하기</button>
+                <button type="submit" class="btn" style="width:100%;" id="searchBtn">검색하기</button>
             </div>
             <div class="content">
                 <div class="navbar">
@@ -506,6 +506,7 @@
                                     <span>{{deco.user}}</span>
                                     <span>{{deco.created_at|date:"Y-m-d"}}</span>
                                 </div>
+                                <!--미구현-->
                                 <div class="photo-tags">
                                     <span class="tag">{{deco.group}}</span>
                                     <span class="tag">{{deco.name}}</span>
@@ -520,6 +521,7 @@
                                         <span>{{deco.likes}}</span>
                                     </div>
                                 </div>
+                                <!--미구현-->
                             </div>
                         </div>
                         {%endfor%}
@@ -556,207 +558,47 @@
         let debounceTimer = null;
         let currentResults = [];
 
+          const keyword = [
+            "승관",
+            "데코",
+            "차은우",
+            "내가"
+        ];
+
         // 키워드를 searchInput에 입력
         // 입력된 키워드가 포함된 데코포토 리스트 출력
         // 키워드 => 포토카드 제목, 이미지 파일명, 아이디, 닉네임
- 
-        // 아티스트 검색 결과 렌더링
-        function renderSearchResults(searchTerm) {
-            if (!searchTerm.trim()) {
-                searchResults.classList.remove('show');
-                return;
+
+          function renderResults(filteredList) {
+            searchResults.innerHTML = ""; // 초기화
+            if (filteredList.length === 0) {
+            searchResults.innerHTML = "<p>검색 결과가 없습니다.</p>";
+            return;
+            }
+            const ul = document.createElement("ul");
+            filteredList.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            ul.appendChild(li);
+            });
+            searchResults.appendChild(ul);
+        }
+
+        searchBtn.addEventListener("click", () => {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+            searchResults.innerHTML = "<p>검색어를 입력해주세요.</p>";
+            return;
             }
 
-            const filteredGroups = Object.keys(groups).filter(group => 
-                group.toLowerCase().includes(searchTerm.toLowerCase())
+            // 키워드를 포함하는 항목 필터링
+            const filtered = keyword.filter(artist =>
+            artist.toLowerCase().includes(keyword)
             );
 
-            if (filteredGroups.length === 0) {
-                searchResults.innerHTML = '<div class="search-item">검색 결과가 없습니다.</div>';
-            } else {
-                searchResults.innerHTML = filteredGroups.map(group => `
-                    <div class="search-item" data-group="${group}">
-                        ${group}
-                    </div>
-                `).join('');
-            }
-            
-            searchResults.classList.add('show');
-        }
+            renderResults(filtered);
+        });
 
-        // 선택된 아티스트 표시
-        function showSelectedArtist(group) {
-            selectedArtistDiv.innerHTML = `
-                <div class="selected-artist">
-                    <span>${group}</span>
-                    <button class="remove-artist" onclick="removeSelectedArtist()">×</button>
-                </div>
-            `;
-            artistSearch.value = '';
-            searchResults.classList.remove('show');
-            selectmember.style.display="block";
-            renderMembersList(group);
-        }
-
-        // 선택된 아티스트 제거
-        function removeSelectedArtist() {
-            selectedArtistDiv.innerHTML = '';
-            groupsList.innerHTML = '';
-            selectedGroup = null;
-            selectedMember = null;
-            currentData = filterData();
-            renderPhotos(currentData);
-        }
-
-        // 멤버 리스트 렌더링
-        function renderMembersList(group) {
-            groupsList.innerHTML = `
-                <div class="group-item">
-                    <div class="members-list open">
-                        <div class="member-item ${!selectedMember ? 'selected' : ''}" data-group="${group}" data-member="">
-                            전체 멤버
-                        </div>
-                        ${groups[group].map(member => `
-                            <div class="member-item ${selectedMember === member ? 'selected' : ''}" data-group="${group}" data-member="${member}">
-                                ${member}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        // 포토카드 렌더링
-        function renderPhotos(data) {
-            if (data.length === 0) {
-                photoGrid.innerHTML = '<div class="no-results">조건에 맞는 포토카드가 없습니다.</div>';
-                return;
-            }
-
-            photoGrid.innerHTML = data.map(photo => `
-                <div class="photo-card" data-id="${photo.id}">
-                    <div class="photo-image">
-                        ${photo.image ? `<img src="${photo.image}" alt="${photo.title}">` : '🎨 포토카드'}
-                    </div>
-                    <div class="photo-info">
-                        <div class="photo-title">${photo.title}</div>
-                        <div class="photo-meta">
-                            <span>@${photo.author}</span>
-                            <span>${photo.date}</span>
-                        </div>
-                        <div class="photo-tags">
-                            <span class="tag">${photo.group}</span>
-                            <span class="tag">${photo.member}</span>
-                        </div>
-                        <div class="photo-stats">
-                            <div class="stat-item">
-                                <span>👁️</span>
-                                <span>${photo.views.toLocaleString()}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span>❤️</span>
-                                <span>${photo.likes}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        // 데이터 정렬
-        function sortData(data, sortType) {
-            const sorted = [...data];
-            switch (sortType) {
-                case 'latest':
-                    return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
-                case 'popularity':
-                    return sorted.sort((a, b) => b.likes - a.likes);
-                case 'views':
-                    return sorted.sort((a, b) => b.views - a.views);
-                default:
-                    return sorted;
-            }
-        }
-
-        // 데이터 필터링
-        function filterData() {
-            let filtered = [...sampleData];
-            
-            if (selectedGroup && selectedMember) {
-                filtered = filtered.filter(photo => 
-                    photo.group === selectedGroup && photo.member === selectedMember
-                );
-            } else if (selectedGroup) {
-                filtered = filtered.filter(photo => photo.group === selectedGroup);
-            }
-            
-            return sortData(filtered, currentSort);
-        }
-
-        // 이벤트 리스너 설정
-        function setupEventListeners() {
-            // 정렬 옵션
-            sortOptions.forEach(option => {
-                option.addEventListener('change', (e) => {
-                    currentSort = e.target.value;
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                });
-            });
-
-            // 아티스트 검색
-            artistSearch.addEventListener('input', (e) => {
-                renderSearchResults(e.target.value);
-            });
-
-            // 검색 결과 클릭
-            searchResults.addEventListener('click', (e) => {
-                if (e.target.classList.contains('search-item') && e.target.dataset.group) {
-                    const group = e.target.dataset.group;
-                    selectedGroup = group;
-                    selectedMember = null;
-                    showSelectedArtist(group);
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                }
-            });
-
-            // 멤버 선택
-            groupsList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('member-item')) {
-                    // 멤버 선택
-                    document.querySelectorAll('.member-item').forEach(item => {
-                        item.classList.remove('selected');
-                    });
-                    
-                    e.target.classList.add('selected');
-                    selectedMember = e.target.dataset.member || null;
-                    
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                }
-            });
-
-            // 검색창 외부 클릭 시 검색 결과 숨기기
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.search-section')) {
-                    searchResults.classList.remove('show');
-                }
-            });
-
-            // 업로드 버튼
-            document.querySelector('.upload-btn').addEventListener('click', () => {
-                location.href="{%url 'photocard:write' %}";
-            });
-
-            // 포토카드 클릭
-            photoGrid.addEventListener('click', (e) => {
-                const card = e.target.closest('.photo-card');
-                if (card) {
-                    const photoId = card.dataset.id;
-                    alert(`포토카드 ID ${photoId} 상세보기`);
-                }
-            });
-        }
     </script>
 {%endblock%}
 </body>
