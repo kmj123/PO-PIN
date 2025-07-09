@@ -1,13 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from chgReview.models import ExchangeReview, ReviewImage, ReviewTag
+from .models import ExchangeReview, ReviewImage, ReviewTag
+from .models import ExchangeReview
+from .models import SharingPost, SharingTag, SharingImage
 
 ##### 커뮤니티
 # 메인페이지
 def main(request):
     return render(request, 'community/main.html')
-from sharing.models import SharingPost, SharingTag, SharingImage
+
 User = get_user_model()
 
 
@@ -51,7 +53,7 @@ def write_review(request):
             print("파트너 유저 확인:", partner_user.username)
         except User.DoesNotExist:
             print(" 파트너 유저 없음:", partner_username)  # ← 이거 찍히면 문제
-            return render(request, 'community_write_review.html', {
+            return render(request, 'community/community_write_review.html', {
                 "error": "입력한 교환 상대방 아이디가 존재하지 않습니다.",
                 "form_data": request.POST
             })
@@ -60,7 +62,7 @@ def write_review(request):
         try:
             overall_score = int(overall_score)
         except ValueError:
-            return render(request, 'community_write_review.html', {
+            return render(request, 'community/community_write_review.html', {
                 "error": "총 평점은 숫자여야 합니다.",
                 "form_data": request.POST
             })
@@ -80,7 +82,7 @@ def write_review(request):
             print(" 리뷰 생성 완료:", review.id)
         except Exception as e:
             print(" 리뷰 저장 실패:", e)
-            return render(request, 'community_write_review.html', {
+            return render(request, 'community/community_write_review.html', {
                 "error": f"리뷰 저장 중 오류 발생: {str(e)}",
                 "form_data": request.POST
             })
@@ -95,7 +97,7 @@ def write_review(request):
 
         # 7. 이미지 수 제한 확인
         if len(images) > 5:
-            return render(request, 'community_write_review.html', {
+            return render(request, 'community/community_write_review.html', {
                 "error": "이미지는 최대 5개까지만 업로드할 수 있습니다.",
                 "form_data": request.POST
             })
@@ -111,7 +113,7 @@ def write_review(request):
         return redirect('chgReview:main')  # 또는 너의 리뷰 리스트 페이지
 
     # GET 요청일 경우
-    return render(request, 'community_write_review.html')
+    return render(request, 'community/community_write_review.html')
 
 # 최근게시글
 def recent(request):
@@ -137,9 +139,20 @@ def write_sharing(request):
 def write_status(request):
   return render(request, 'community/community_write_status.html')
 
+
 ##### 교환/판매후기 게시판
 def chgReview(request) :
     return render(request,'chgReview/main.html')
+
+def chgReviewmain(request):
+    reviews = ExchangeReview.objects.all().order_by('-created_at')  # 최신순
+    return render(request, 'chgReview/main.html', {'reviews': reviews})
+
+def chgReviewview(request) :
+    return render(request,"chgReview/chgR_view.html")
+
+
+
 
 ##### 동행 게시판
 def companion(request) :

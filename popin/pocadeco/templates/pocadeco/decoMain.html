@@ -455,7 +455,7 @@
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
-                <div class="search-section">
+                <div class="searc
                     <h3 class="filter-title" id="select_artist">아티스트 선택</h3>
                     <input type="text" class="search-input" placeholder="검색어를 입력해주세요" id="artistSearch">
                     <div class="search-results" id="searchResults"></div>
@@ -464,7 +464,16 @@
                 <div class="filter-section" id="selectmember" style="display:none;">
                     <h3 class="filter-title">멤버 필터</h3>
                     <div id="groupsList">
-                        <!-- 선택된 그룹의 멤버 리스트가 여기에 표시됩니다 -->
+                        <!-- 선택된 그룹의 멤버 리스트가 여기에 표시됩니다 --
+                    <h3 class="filter-title" id="select_artist">검색어 입력</h3>
+                    <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
+                    <div class="search-results" id="searchResults"></div>
+                    <div id="selectedArtist"></div>
+                </div>
+                <div class="filter-section" id="selectgroup" style="display:none;">
+                    <h3 class="filter-title">그룹 필터</h3>
+                    <div id="groupsList">
+                        <!-- 조회된 그룹 리스트 표시 --
                     </div>
                 </div>
 
@@ -478,7 +487,9 @@
                         </select>
                     </div>
                 </div>
+
                 <button type="submit" class="btn" style="width:100%;">검색하기</button>
+                <button type="submit" class="btn" style="width:100%;" id="searchBtn">검색하기</button>
             </div>
             <div class="content">
                 <div class="navbar">
@@ -495,6 +506,49 @@
                         <!-- JS에서 렌더링 -->
                     </div>
                 </div>
+                </div>
+
+                <!--데코포카 리스트-->
+                <div class="photo-section">
+                    <div class="photo-grid" id="photoGrid">
+                        {%for deco in decoList %}
+                        <div class="photo-card" data-id="{{deco.user}}">
+                            <div class="photo-image">
+                                {%if deco.result_image %}
+                                    <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                               {%else%}
+                                    <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                               {%endif%}
+                            </div>
+                            <div class="photo-info">
+                                <div class="photo-title">{{deco.title}}</div>
+                                <div class="photo-meta">
+                                    <span>{{deco.user}}</span>
+                                    <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                                </div>
+                                <!--미구현-->
+                                <div class="photo-tags">
+                                    <span class="tag">{{deco.group}}</span>
+                                    <span class="tag">{{deco.name}}</span>
+                                </div>
+                                <div class="photo-stats">
+                                    <div class="stat-item">
+                                        <span>👀</span>
+                                        <span>{{deco.views}}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span>❤️</span>
+                                        <span>{{deco.likes}}</span>
+                                    </div>
+                                </div>
+                                <!--미구현-->
+                            </div>
+                        </div>
+                        {%endfor%}
+                        <!-- JS에서 렌더링 -->
+                    </div>
+                </div>
+
                 <div class="pagination">
                     <button class="page-btn" disabled>‹</button>
                     <a href="#" class="page-btn active">1</a>
@@ -599,6 +653,9 @@
         const photoGrid = document.getElementById('photoGrid');
         const groupsList = document.getElementById('groupsList');
         const artistSearch = document.getElementById('artistSearch');
+        // DOM 요소들
+        const searchInput = document.getElementById('searchInput');
+
         const searchResults = document.getElementById('searchResults');
         const selectedArtistDiv = document.getElementById('selectedArtist');
         const sortOptions = document.querySelectorAll('input[name="sort"]');
@@ -810,6 +867,53 @@
 
         // 초기화 실행
         init();
+        const photosection = document.getElementById('photo-section');
+        const photoGrid = document.getElementById('photoGrid');
+        const groupsList = document.getElementById('groupsList');
+
+        let debounceTimer = null;
+        let currentResults = [];
+
+          const keyword = [
+            "승관",
+            "데코",
+            "차은우",
+            "내가"
+        ];
+
+        // 키워드를 searchInput에 입력
+        // 입력된 키워드가 포함된 데코포토 리스트 출력
+        // 키워드 => 포토카드 제목, 이미지 파일명, 아이디, 닉네임
+
+          function renderResults(filteredList) {
+            searchResults.innerHTML = ""; // 초기화
+            if (filteredList.length === 0) {
+            searchResults.innerHTML = "<p>검색 결과가 없습니다.</p>";
+            return;
+            }
+            const ul = document.createElement("ul");
+            filteredList.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            ul.appendChild(li);
+            });
+            searchResults.appendChild(ul);
+        }
+
+        searchBtn.addEventListener("click", () => {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+            searchResults.innerHTML = "<p>검색어를 입력해주세요.</p>";
+            return;
+            }
+
+            // 키워드를 포함하는 항목 필터링
+            const filtered = keyword.filter(artist =>
+            artist.toLowerCase().includes(keyword)
+            );
+
+            renderResults(filtered);
+        });
     </script>
 {%endblock%}
 </body>
