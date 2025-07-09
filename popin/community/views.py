@@ -16,26 +16,39 @@ from django.contrib import messages
 User = get_user_model()
 #########  urls.py 순서대로 정리함 
 
- ##교환/판매후기 메인
+from django.db.models import Q
+
 def chgReviewmain(request):
-    #이번 주 시작일 기준잡기  
-    today= datetime.today()
-    start_of_week = today - timedelta(days=today.weekday())# 월요일기준 
-    #이번 주 거래량 (후기수)
+    today = datetime.today()
+    start_of_week = today - timedelta(days=today.weekday())
     weekly_reviews = ExchangeReview.objects.filter(created_at__gte=start_of_week)
-    weekly_count = weekly_reviews.count() 
-    # 평균 평점
+    weekly_count = weekly_reviews.count()
     average_score = ExchangeReview.objects.aggregate(avg_score=Avg("overall_score"))["avg_score"]
-    average_score = round(average_score or 0, 1)  # None 대비 처리
-    all_reviews = ExchangeReview.objects.all().order_by('-created_at')  # 최신순
-    
-    # 페이지네이터
-    paginator = Paginator(all_reviews, 7)  # 한 페이지당 7개
+    average_score = round(average_score or 0, 1)
+
+    query = request.GET.get('q', '')
+    if query:
+        filtered_reviews = ExchangeReview.objects.filter(
+            Q(title__icontains=query) | Q(writer__user_id__icontains=query)
+        ).order_by('-created_at')
+    else:
+        filtered_reviews = ExchangeReview.objects.all().order_by('-created_at')
+
+    paginator = Paginator(filtered_reviews, 7)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    context = {"weekly_count": weekly_count, "average_score": average_score,"page_obj": page_obj}
+
+    context = {
+        "weekly_count": weekly_count,
+        "average_score": average_score,
+        "page_obj": page_obj,
+        "query": query,
+    }
+
     return render(request, "chgReview/main.html", context)
 
+
+################################################################################
 ##교환/판매 상세보기 
 from django.shortcuts import render, get_object_or_404
 from community.models import ExchangeReview,ReviewImage,ReviewTag
@@ -45,10 +58,11 @@ def chgReviewview(request, post_id):
         ExchangeReview.objects.prefetch_related('tags', 'images'),
         id=post_id
     )
+    
     return render(request, 'community/chgR_view.html', {'post': post})
     
    
-
+################################################################################
 ## 최근게시글
 def recent(request):
     
@@ -75,7 +89,7 @@ def write_companion(request):
             category = request.POST.get('category')
             location = request.POST.get('location')
             content = request.POST.get('content')
-            max_people = request.POST.get('maxParticipants')
+            max_people = request.POST.get('max_people')  
             tags = request.POST.get('tags', '')
 
             # 3. 날짜 + 시간 → datetime 필드
@@ -105,12 +119,14 @@ def write_companion(request):
             for file in request.FILES.getlist('images'):
                 CompanionImage.objects.create(post=post, image=file)
 
-            return redirect('community:companion')  # 동행 목록 페이지로 이동
+            return redirect('community:companion')
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())  # 콘솔 확인용
             return render(request, 'community/community_write_companion.html', {'error': str(e)})
     
     return render(request, 'community/community_write_companion.html')
-   
+  ########################################################################################## 
     
 ## 대리구매글 작성
 from django.shortcuts import render, redirect
@@ -406,106 +422,154 @@ def main(request):
 
 #########################################
 from .models import CompanionPost
-##### 동행 게시판
-def companion(request) :
-       # 1. 동행 글 전체 가져오기 (최신순 정렬)
-    all_posts = CompanionPost.objects.all().order_by('-created_at')
-
-    # 2. 통계 수치 계산
-    ongoing_count = CompanionPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
-    completed_count = CompanionPost.objects.filter(status='모집완료').count()
-    weekly_count = CompanionPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
-
-    # 3. 페이지네이션
-    paginator = Paginator(all_posts, 6)  # 페이지당 6개
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'posts': page_obj,  # 페이지네이터 객체
-        'ongoing_count': ongoing_count,
-        'completed_count': completed_count,
-        'weekly_count': weekly_count,
-    }
-  
-    return render(request,'companion/main.html',context)
-
-##### 대리구매 게시판
-from .models import ProxyPost,ProxyStatus
-def proxy(request) :
-         # 1. 나눔 글 전체 가져오기 (최신순 정렬)
-    all_posts = ProxyPost.objects.all().order_by('-created_at')
-
-    # 2. 통계 수치 계산
-    ongoing_count = ProxyPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
-    completed_count = ProxyPost.objects.filter(status=ProxyStatus.DEADLINE).count()
-    weekly_count = ProxyPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
-
-    # 3. 페이지네이션
-    paginator = Paginator(all_posts, 6)  # 페이지당 6개
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        'posts': page_obj,  # 페이지네이터 객체
-        'ongoing_count': ongoing_count,
-        'completed_count': completed_count,
-        'weekly_count': weekly_count,
-    }
-    
-    return render(request,'proxy/main.html',context)
-
-##### 나눔 게시판
+from django.utils import timezone
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from .models import SharingPost
+
+def companion(request):
+    query = request.GET.get('q', '')  # 검색어 받아오기
+
+    if query:
+        all_posts = CompanionPost.objects.filter(
+            Q(title__icontains=query)
+        ).order_by('-created_at')
+    else:
+        all_posts = CompanionPost.objects.all().order_by('-created_at')
+
+    # 통계 수치
+    ongoing_count = CompanionPost.objects.count()
+    completed_count = CompanionPost.objects.filter(status='모집완료').count() 
+    weekly_count = CompanionPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+
+    # 페이지네이터
+    paginator = Paginator(all_posts, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'posts': page_obj,
+        'query': query,
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+    }
+
+    return render(request, 'companion/main.html', context)
+###########################################################################
+##### 대리구매 게시판
+from django.shortcuts import render
+from django.core.paginator import Paginator
 from django.utils import timezone
-from .models import SharingPost, SharingStatus
+from .models import ProxyPost, ProxyStatus
 
-def sharing(request) :
-      # 1. 나눔 글 전체 가져오기 (최신순 정렬)
-    all_posts = SharingPost.objects.all().order_by('-created_at')
+def proxy(request):
+    # 🔍 검색어 받기
+    query = request.GET.get('q', '')  # 일반 검색어
 
-    # 2. 통계 수치 계산
-    ongoing_count = SharingPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+    # 🔎 기본 queryset
+    all_posts = ProxyPost.objects.all()
+
+    if query:
+        all_posts = all_posts.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query)
+        )
+
+    all_posts = all_posts.order_by('-created_at')
+
+    # 📊 통계 계산
+    ongoing_count = ProxyPost.objects.count()  # 조건 추가 가능
+    completed_count = ProxyPost.objects.filter(status=ProxyStatus.DEADLINE).count()
+    weekly_count = ProxyPost.objects.filter(
+        created_at__week=timezone.now().isocalendar()[1]
+    ).count()
+
+    # 📄 페이지네이션
+    paginator = Paginator(all_posts, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 💬 템플릿 전달
+    context = {
+        'posts': page_obj,
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+        'weekly_count': weekly_count,
+        'query': query,  # 🔁 HTML에서 검색어 유지용
+    }
+
+    return render(request, 'proxy/main.html', context)
+#############################################################################################
+##### 나눔 게시판
+from django.db.models import Q
+from django.utils import timezone
+from django.core.paginator import Paginator
+from community.models import SharingPost, SharingStatus  
+
+def sharing(request):
+    # 1. 검색어 가져오기
+    query = request.GET.get('q', '')
+
+    # 2. 필터링 (제목 기준)
+    if query:
+        all_posts = SharingPost.objects.filter(title__icontains=query).order_by('-created_at')
+    else:
+        all_posts = SharingPost.objects.all().order_by('-created_at')
+
+    # 3. 통계 수치 계산
+    ongoing_count = SharingPost.objects.count()
     completed_count = SharingPost.objects.filter(status=SharingStatus.CLOSED).count()
     weekly_count = SharingPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
 
-    # 3. 페이지네이션
+    # 4. 페이지네이션
     paginator = Paginator(all_posts, 6)  # 페이지당 6개
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
-        'posts': page_obj,  # 페이지네이터 객체
+        'posts': page_obj,
         'ongoing_count': ongoing_count,
         'completed_count': completed_count,
         'weekly_count': weekly_count,
+        'query': query,  # 템플릿에서 검색어 유지하려면 필요
     }
     return render(request, 'sharing/main.html', context)
  #####################################################   
-from .models import StatusPost,StatusStatus
-     
+
+from django.db.models import Q
+from django.utils import timezone
+from django.core.paginator import Paginator
+from community.models import StatusPost, StatusStatus  
 ##### 현황공유 게시판
-def status(request) :
-     # 1. 현황공유 글 전체 가져오기 (최신순 정렬)
-    all_posts = StatusPost.objects.all().order_by('-created_at')
 
-    # 2. 통계 수치 계산
-    ongoing_count = StatusPost.objects.count()  # 진행 중 기준은 자유롭게 조건 추가 가능
+def status(request):
+    query = request.GET.get('q', '')
+
+    if query:
+        all_posts = StatusPost.objects.filter(
+            Q(title__icontains=query)
+        ).order_by('-created_at')
+    else:
+        all_posts = StatusPost.objects.all().order_by('-created_at')
+
+    # 통계 수치 계산
+    ongoing_count = StatusPost.objects.count()
     completed_count = StatusPost.objects.filter(status=StatusStatus.CLOSED).count()
-    weekly_count = StatusPost.objects.filter(created_at__week=timezone.now().isocalendar()[1]).count()
+    weekly_count = StatusPost.objects.filter(
+        created_at__week=timezone.now().isocalendar()[1]
+    ).count()
 
-    # 3. 페이지네이션
-    paginator = Paginator(all_posts, 6)  # 페이지당 6개
+    # 페이지네이션
+    paginator = Paginator(all_posts, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
-        'posts': page_obj,  # 페이지네이터 객체
+        'posts': page_obj,
         'ongoing_count': ongoing_count,
         'completed_count': completed_count,
         'weekly_count': weekly_count,
+        'query': query  # 검색어 유지
     }
-    return render(request,'status/main.html',context)
-
+    return render(request, 'status/main.html', context)

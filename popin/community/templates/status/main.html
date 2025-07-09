@@ -2,7 +2,7 @@
 {% load static %}
 <!--상단 헤더-->
 {%block content%}
-<!DOCTYPE html>
+
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -15,6 +15,7 @@
   </style>
 </head>
 <body>
+
   <div class="list">
     <div class="menu">
       <h3>카테고리</h3>
@@ -32,13 +33,15 @@
       <div class="top">
         <h3>현황공유</h3>
       </div>
+      <form method="GET" action="{% url 'community:status' %}">
       <div class="line"></div>
         <div class="search-filter-container">
         <div class="search-toggle">
           <button class="toggle-btn active" data-type="general">일반 검색</button>
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
-        <input type="text" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색">
+
+        <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색" value="{{ query }}">
         <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
         <select id="regionFilter" class="filter-select">
           <option value="">지역 선택</option>
@@ -64,154 +67,67 @@
           <option value="">정렬</option>
           <option value="최신순">최신순</option>
           <option value="조회순">조회순</option>
-        </select>
+        </select> 
       </div>
+    </form>
+
         <div class="postlist">
-          <div class="post-card" data-category="fansign" data-imgs="/static/images/landing/wonyoung.jpg">
+            {% for post in posts %}
+         <div class="post-card" data-category="{{ post.category }}">
               <div class="post-header">
                 <span class = "boardf">
-                  <span class = "artist">AESPA</span>
-                  <span class = "ptype">팬사인회</span>
+                  <span class = "artist">{{ post.artist }}</span>
+                  <span class = "ptype">{{ post.category }}</span>
                 </span>
                 <div class="post-title-row">
-                  <h3 class="post-title">IVE 공개팬사인회 사람</h3>
+                   <h3 class="post-title">{{ post.title }}</h3>
                   <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                 </div>
                 <div class="post-tags">
-                  <span class="post-tag">#팬사인회</span>
-                  <span class="post-tag">#IVE</span>
-                  <span class="post-tag">#강남</span>
+                  {% for tag in post.tags.all %}
+                    <span class="post-tag">#{{ tag.name }}</span>
+                  {% endfor %}
                 </div>
               </div>
               
               <div class="post-info">
                   <div class="info-date">
                       <span class="info-date">📅</span>
-                      <span>2024년 7월 25일 (목) 18:00</span>
+                       <span>{{ post.event_datetime|date:"Y년 m월 d일 (D) H:i" }}</span>
                   </div>
                   <div class="info-place">
                       <span class="info-place">📍</span>
-                      <span>강남구 CGV</span>
+                      <span> {{ post.place }}</span>
                   </div>
               </div>
               
               <div class="post-description">
-                  공팬 지금 사람 개많음 삼층가서봐야됨
+                   {{ post.content|truncatewords:20 }}
               </div>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
-                      <span>👤 dive_forever</span>
-                      <span class="post-meta">2024-05-03</span>
+                    <span>👤 {{ post.author.nickname }}</span>
+                        <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
                   </div>
                   <div class="participants">
-                      <span>👁️ 67</span>
+                    <span>👁️ {{ post.views }}</span>
                   </div>
               </div>
           </div>
-
-          <div class="post-card" data-category="exhibition" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/test/chgR3.jpg">
-              <div class="post-header">
-                <span class = "boardf">
-                  <span class = "artist">BTS</span>
-                  <span class = "ptype">전시회</span>
-                </span>
-                  <div class="post-title-row">
-                      <h3 class="post-title">BTS 전시회 엠디줄 현황</h3>
-                      <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
-                    </div>
-                      <div class="post-tags">
-                          <span class="post-tag">#전시회</span>
-                          <span class="post-tag">#BTS</span>
-                          <span class="post-tag">#용산</span>
-                      </div>
-                  </div>
-              <div class="post-info">
-                  <div class="info-date">
-                      <span class="info-icon">📅</span>
-                      <span>2024년 8월 3일 (토) 10:00</span>
-                  </div>
-                  <div class="info-place">
-                      <span class="info-icon">📍</span>
-                      <span>용산 아이파크몰</span>
-                  </div>
-              </div>
-              
-              <div class="post-description">
-                  엠디 지금 트레카 품절됐어욤 ㅜㅜ 그리고 앨범 럭드는 일인당 최대 7번 가능하고 30분 정도 웨이팅 있어요
-              </div>
-              
-              <div class="post-footer">
-                  <div class="post-wrtier_id">
-                      <span>👤 army_purple</span>
-                      <span class="post-meta">2025-03-05</span>
-                  </div>
-                  <div class="participants">
-                      <span>👁️ 28</span>
-                  </div>
-              </div>
-            </div>
-            <div class="post-card" data-category="exhibition" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/test/chgR3.jpg">
-              <div class="post-header">
-                  <span class = "boardf">
-                    <span class = "artist">TOMMOROWXTOGETHER</span>
-                    <span class = "ptype">기타</span>
-                  </span>
-                  <div class="post-title-row">
-                      <h3 class="post-title">BTS 전시회 엠디줄 현황</h3>
-                      <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
-                    </div>
-                      <div class="post-tags">
-                          <span class="post-tag">#전시회</span>
-                          <span class="post-tag">#BTS</span>
-                          <span class="post-tag">#용산</span>
-                      </div>
-                  </div>
-              <div class="post-info">
-                  <div class="info-date">
-                      <span class="info-icon">📅</span>
-                      <span>2024년 8월 3일 (토) 10:00</span>
-                  </div>
-                  <div class="info-place">
-                      <span class="info-icon">📍</span>
-                      <span>용산 아이파크몰</span>
-                  </div>
-              </div>
-              
-              <div class="post-description">
-                  엠디 지금 트레카 품절됐어욤 ㅜㅜ 그리고 앨범 럭드는 일인당 최대 7번 가능하고 30분 정도 웨이팅 있어요
-              </div>
-              
-              <div class="post-footer">
-                  <div class="post-wrtier_id">
-                      <span>👤 army_purple</span>
-                      <span class="post-meta">2025-06-28</span>
-                  </div>
-                  <div class="participants">
-                      <span>👁️ 28</span>
-                  </div>
-              </div>
-            </div>
-            <div id="postModal" class="modal">
-                <div class="modal-content">
-                    <button class="close-btn" onclick="closePostModal()">&times;</button>
-                    <div id="modalPostMeta" class="post-meta-wrapper">
-                      <span id="modalPostArtist" class="artist"></span>
-                      <span id="modalPostPtype" class="ptype"></span>
-                    </div>
-                    <h2 id="modalPostTitle">제목</h2>
-                    <div class = "modall">
-                      <div id="modalPostTags" class="post-tags"></div>
-                      <p id="modalPostCreated"></p>
-                    </div>
-                    <p id="modalPostDate">📅 날짜</p>
-                    <p id="modalPostPlace">📍 장소</p>
-                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
-                      설명 내용
-                    </div>
-                    <div id="modalPostImages" style="display:flex; gap:10px;"></div>
-                </div>
-                </div>
+            {% empty %}
+              <p>검색 결과가 없습니다.</p>
+            {% endfor %}
+          </div>
+            <button type="button" class="topBtn" id="topBtn">
+          <div class="post-images">
+          {% for image in post.images.all %}
+            <img src="{{ image.image.url }}" alt="첨부 이미지" style="max-width: 100px; max-height: 100px;">
+          {% endfor %}
+        </div>
+          </button>
+               {% endblock %}
+         
                 <!-- 이미지 확대 모달 -->
                 <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
                   <button id="prevBtn">‹</button>
@@ -231,9 +147,9 @@
                 </div>
             </div>
           </div>
+        
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
   </body>
-{%endblock%}
+
 <!--//상단헤더-->
-</body>
-</html>
+
