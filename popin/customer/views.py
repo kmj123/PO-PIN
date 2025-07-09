@@ -10,7 +10,7 @@ def information(request):
     return render(request, 'information.html')
 
 def notice(request):
-    noticeList = Notice.objects.all().order_by('-created_at')
+    noticeList = Notice.objects.all().order_by('-is_pinned', '-created_at')
     notice_list = []
     
     for notice in noticeList:
@@ -21,8 +21,6 @@ def notice(request):
             'views': notice.views,
             'notice_type':notice.notice_type,
         })
-    
-    filter_notice = []
     
     context = {
         "notice_list":notice_list,
@@ -55,6 +53,9 @@ def filter_notice(request):
 
 def notice_view(request, id):
     notice = Notice.objects.get(id=id)
+    notice.views += 1
+    notice.save()
+    
     notice_images = NoticeImage.objects.filter(notice=notice)
     print(notice_images)
     
