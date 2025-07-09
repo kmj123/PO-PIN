@@ -45,7 +45,7 @@ def decoMain(request):
             'id': poca.id,
             'title':poca.title,
             'result_image': poca.result_image,
-            'user' : poca.user.name,
+            'user' : poca.user.nickname,
             'created_at': poca.created_at.strftime('%Y-%m-%d'),
             'hit': poca.hit,
             'member': poca.member.name,
