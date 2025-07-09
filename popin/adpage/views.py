@@ -295,6 +295,7 @@ def noticeW(request) :
         return redirect('home:main')
 
 
+
 def noticeR(request, notice_id) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     

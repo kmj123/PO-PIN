@@ -526,8 +526,8 @@
           </div>
         </div>
         <div class="board-action">
-          <a href="community_write_review.html" class="action-btn btn-write">후기 작성</a>
-          <a href="#" class="action-btn btn-view">후기 보기</a>
+          <a href="{% url 'community:write_review' %}" class="action-btn btn-write">후기 작성</a>
+          <a href="{% url 'community:chgReview' %}" class="action-btn btn-view">후기 보기</a>
         </div>
       </div>
 
@@ -564,8 +564,8 @@
           </div>
         </div>
         <div class="board-action">
-        <a href="community_write_sharing.html" class="action-btn btn-write">나눔 작성</a>
-          <a href="#" class="action-btn btn-view">나눔 찾기</a>
+        <a href="{% url 'community:write_sharing' %}" class="action-btn btn-write">나눔 작성</a>
+          <a href="{% url 'community:sharing' %}" class="action-btn btn-view">나눔 찾기</a>
         </div>
       </div>
 
@@ -602,8 +602,8 @@
           </div>
         </div>
         <div class="board-action">
-          <a href="#" class="action-btn btn-write">대리구매 등록</a>
-          <a href="#" class="action-btn btn-view">대리구매 찾기</a>
+          <a href="{% url 'community:write_proxy' %}" class="action-btn btn-write">대리구매 등록</a>
+          <a href="{% url 'community:proxy' %}" class="action-btn btn-view">대리구매 찾기</a>
         </div>
       </div>
 
@@ -640,8 +640,8 @@
           </div>
         </div>
         <div class="board-action">
-          <a href="#" class="action-btn btn-write">현황 공유</a>
-          <a href="#" class="action-btn btn-view">현황 보기</a>
+          <a href="{% url 'community:write_status' %}" class="action-btn btn-write">현황 공유</a>
+          <a href="{% url 'community:status' %}" class="action-btn btn-view">현황 보기</a>
         </div>
       </div>
 
@@ -678,8 +678,8 @@
           </div>
         </div>
         <div class="board-action">
-          <a href="#" class="action-btn btn-write">동행 모집</a>
-          <a href="#" class="action-btn btn-view">동행 찾기</a>
+          <a href="{% url 'community:write_companion' %}" class="action-btn btn-write">동행 모집</a>
+          <a href="{% url 'community:companion' %}" class="action-btn btn-view">동행 찾기</a>
         </div>
       </div>
 
@@ -729,7 +729,7 @@
             <div class="activity-time">1시간 전</div>
           </li>
         </ul>
-        <a href="community_recent_activity.html" class="more-btn">더보기 →</a>
+        <a href="{% url 'community:recent' %}" class="more-btn">더보기 →</a>
       </div>
     </div>
   </div>
