@@ -249,7 +249,7 @@ def noticeV(request, notice_id) :
         notice.views += 1
         notice.save()
         
-        images = NoticeImage.objects.getlist(notice=notice)
+        images = NoticeImage.objects.filter(notice=notice)
         
         context = {
             'notice':notice,
@@ -269,7 +269,7 @@ def noticeW(request) :
         return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
     
     try:
-        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용자
+        admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용
         
         if request.method == "GET":
             return render(request,"admin/notice_view.html")
