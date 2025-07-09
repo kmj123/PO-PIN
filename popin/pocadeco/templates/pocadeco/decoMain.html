@@ -493,39 +493,41 @@
                     <div class="photo-grid" id="photoGrid">
                         {%for deco in decoList %}
                         <div class="photo-card" data-id="{{deco.user}}">
-                            <div class="photo-image">
-                                {%if deco.result_image %}
-                                    <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
-                               {%else%}
-                                    <img src="🎨 포토카드" alt="🎨 포토카드"> 
-                               {%endif%}
-                            </div>
-                            <div class="photo-info">
-                                <div class="photo-title">{{deco.title}}</div>
-                                <div class="photo-meta">
-                                    <span>{{deco.user}}</span>
-                                    <span>{{deco.created_at}}</span>
+                            <a href="/pocadeco/view/{{deco.id}}/">
+                                <div class="photo-image">
+                                    {%if deco.result_image %}
+                                        <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                                {%else%}
+                                        <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                                {%endif%}
                                 </div>
-                                <!--미구현-->
-                                <div class="photo-tags">
-                                    <span class="tag">{{deco.group}}</span>
-                                    <span class="tag">{{deco.member}}</span>
-                                    {%for tag in deco.tags%}
-                                        <span class="tag">{{tag}}</span>
-                                    {%endfor%}
-                                </div>
-                                <div class="photo-stats">
-                                    <div class="stat-item">
-                                        <span>👀</span>
-                                        <span>{{deco.hit}}</span>
+                                <div class="photo-info">
+                                    <div class="photo-title">{{deco.title}}</div>
+                                    <div class="photo-meta">
+                                        <span>{{deco.user}}</span>
+                                        <span>{{deco.created_at}}</span>
                                     </div>
-                                    <div class="stat-item">
-                                        <span>❤️</span>
-                                        <span>{{deco.likes}}</span>
+                                    <!--미구현-->
+                                    <div class="photo-tags">
+                                        <span class="tag">{{deco.group}}</span>
+                                        <span class="tag">{{deco.member}}</span>
+                                        {%for tag in deco.tags%}
+                                            <span class="tag">{{tag}}</span>
+                                        {%endfor%}
                                     </div>
+                                    <div class="photo-stats">
+                                        <div class="stat-item">
+                                            <span>👀</span>
+                                            <span>{{deco.hit}}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>❤️</span>
+                                            <span>{{deco.likes}}</span>
+                                        </div>
+                                    </div>
+                                    <!--미구현-->
                                 </div>
-                                <!--미구현-->
-                            </div>
+                            </a>
                         </div>
                         {%endfor%}
                         <!-- JS에서 렌더링 -->
