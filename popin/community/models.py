@@ -117,15 +117,13 @@ class CompanionTag(models.Model):
 
 class CompanionPost(models.Model):
     title = models.CharField("제목", max_length=100)
-    content = models.TextField("본문")
-
-    category = models.CharField("카테고리", max_length=20, choices=CompanionCategory.choices)
     artist = models.CharField("아티스트", max_length=50)
-
-    event_date = models.DateTimeField("행사 날짜 및 시간")
+    category = models.CharField("카테고리", max_length=20, choices=CompanionCategory.choices)
     location = models.CharField("위치", max_length=100)
-    
-    max_people = models.PositiveIntegerField("최대 모집 인원")
+    content = models.TextField("본문")
+    tags = models.ManyToManyField(CompanionTag, blank=True, related_name="companion_posts", verbose_name="태그")
+    event_date = models.DateTimeField("행사 날짜 및 시간" ,default=timezone.now)
+    max_people = models.PositiveIntegerField("최대 모집 인원", default=1)
     participants = models.ManyToManyField(
         User,
         blank=True,
@@ -199,11 +197,12 @@ class ProxyCategory(models.TextChoices):
 class ProxyStatus(models.TextChoices):
     RECRUITING = '모집중', '모집중'
     URGENT = '긴급모집', '긴급모집'
-    DEADLINE = '마감임박', '마감임박'
+    DEADLINE = '마감', '마감'
 
 
 # --- 태그---
 class ProxyTag(models.Model):
+    
     name = models.CharField("태그명", max_length=30, unique=True)
 
     def __str__(self):
@@ -216,9 +215,9 @@ class ProxyPost(models.Model):
     artist = models.CharField("아티스트", max_length=50)  # 예: aespa, NCT DREAM
     category = models.CharField("카테고리", max_length=20, choices=ProxyCategory.choices)
     status = models.CharField("모집상태", max_length=20, choices=ProxyStatus.choices)
-    event_date = models.DateTimeField("이벤트 날짜 및 시간")
+    event_date = models.DateTimeField("이벤트 날짜 및 시간",default=timezone.now)
     location = models.CharField("장소", max_length=100)
-    max_people = models.PositiveIntegerField("최대 모집 인원")
+    max_people = models.PositiveIntegerField("최대 모집 인원" ,default=1)
     participants = models.ManyToManyField(User, blank=True, related_name="joined_proxies", verbose_name="참여자 목록")
     reward = models.CharField("수고비", max_length=100)  # 예: '개당 수고비 0.1'
     description = models.TextField("본문")
@@ -271,6 +270,10 @@ class SharingTag(models.Model):
         return self.name
 
 #포스트
+class SharingStatus(models.TextChoices):
+    ONGOING = '진행중', '진행중'
+    CLOSED = '마감', '마감'
+   
 class SharingPost(models.Model):
     CATEGORY_CHOICES = [
         ('앨범', '앨범'),
@@ -288,12 +291,13 @@ class SharingPost(models.Model):
     artist = models.CharField("아티스트", max_length=50,default="기타")
     requirement=models.TextField("필수사항")
     category = models.CharField("카테고리", max_length=20, choices=CATEGORY_CHOICES)
-    type = models.CharField("나눔 형태", max_length=10, choices=TYPE_CHOICES)
+    type = models.CharField("나눔 형태", max_length=10, choices=TYPE_CHOICES, default='오프라인')
     share_date = models.DateTimeField("나눔 날짜", default=timezone.now)
     location = models.CharField("나눔 장소", max_length=100, blank=True)
     tags = models.ManyToManyField(SharingTag, blank=True, related_name="sharing_posts", verbose_name="태그")
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sharing_posts", verbose_name="작성자")
     views = models.PositiveIntegerField("조회수", default=0)
+    status = models.CharField("게시글 상태", max_length=10, choices=SharingStatus.choices, default=SharingStatus.ONGOING)
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
@@ -319,7 +323,10 @@ class StatusTag(models.Model):
 
     def __str__(self):
         return self.name
-    
+ #
+class StatusStatus(models.TextChoices):
+    ONGOING = '진행중', '진행중'
+    CLOSED = '마감', '마감'   
  #포스트 
 class StatusPost(models.Model):
     CATEGORY_CHOICES = [
@@ -360,6 +367,7 @@ class StatusPost(models.Model):
     content = models.TextField("본문 내용")
     tags = models.ManyToManyField(StatusTag, blank=True, related_name="status_posts", verbose_name="태그")
     author = models.ForeignKey(User,on_delete=models.CASCADE,related_name='status_posts',verbose_name="작성자")
+    status = models.CharField("게시글 상태", max_length=10, choices=StatusStatus.choices, default=StatusStatus.ONGOING)
     views = models.PositiveIntegerField("조회수", default=0)
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
