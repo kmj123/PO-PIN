@@ -459,12 +459,16 @@
                     </div>
                     {% for r in recent %}
                         <div class="post-item">
-                            <a href="/photocard/detail/{{r.pno}}">
+                            {%if r.category == "판매" or r.category == "교환" %}
+                                <a href="/photocard/detail/{{r.id}}">
+                            {%elif r.category == "포카 꾸미기" %}
+                                <a href="/pocadeco/view/{{r.id}}/"> {# 추후 생성 #}
+                            {%endif%}
                                 <div class="post-content">
                                     <div class="post-title">{{r.title}}</div>
-                                    <div class="post-meta">{{r.seller}} • {{r.created_at}} • 조회 {{r.hit}}</div>
+                                    <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
                                 </div>
-                                <div class="post-category">{{r.trade_type}}</div>
+                                <div class="post-category">{{r.category}}</div>
                             </a>
                         </div>
                     {% endfor %}

@@ -30,8 +30,56 @@ def main(request):
         # 최근 인기 포토카드 (거래중인 것)
         photocards = Photocard.objects.filter(sell_state='중', buy_state=None).select_related('member__group').annotate(
         wish_count=Count('wished_by_users')).order_by('-wish_count')[:4]
-        # 최신 게시글
-        recent = Photocard.objects.filter(sell_state='중', buy_state=None).order_by('-created_at')[:5]
+        
+        # 교환 최신 게시글
+        recent_exchange = Photocard.objects.filter(
+            sell_state='중',
+            buy_state=None,
+            trade_type='교환'
+        ).order_by('-created_at').first()
+
+        # 판매 최신 게시글
+        recent_sale = Photocard.objects.filter(
+            sell_state='중',
+            buy_state=None,
+            trade_type='판매'
+        ).order_by('-created_at').first()
+        
+        recent_deco = DecoratedPhotocard.objects.all().order_by('-created_at').first()
+
+        # None이 아닌 경우만 리스트에 추가
+        recent = []
+        if recent_exchange:
+            recent.append({
+                'id': recent_exchange.pno,
+                'category': recent_exchange.trade_type,
+                'title': recent_exchange.title,
+                'user': recent_exchange.seller.nickname,
+                'created_at' : recent_exchange.created_at,
+                'hit' : recent_exchange.hit,
+            })
+            
+        
+        if recent_sale:
+            recent.append({
+                'id': recent_sale.pno,
+                'category': recent_sale.trade_type,
+                'title': recent_sale.title,
+                'user': recent_sale.seller.nickname,
+                'created_at' : recent_sale.created_at,
+                'hit' : recent_sale.hit,
+            })
+        if recent_deco:
+            recent.append({
+                'id': recent_deco.id,
+                'category': "포카 꾸미기",
+                'title': recent_deco.title,
+                'user': recent_deco.user.nickname,
+                'created_at' : recent_deco.created_at,
+                'hit' : recent_deco.hit,
+            })
+        
+        print(recent)
         
         context = {
             'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
