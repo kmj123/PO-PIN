@@ -77,40 +77,56 @@ def exchange(request):
     groupMember = Member.objects.select_related('group').all()
     
     # GET 요청에서 필터 값 가져오기
-    searchgroup = request.GET.get('searhgroup', '')
-    selected_members = request.GET.getlist('selectedMembers')
-    trade = request.GET.get('trade', '전체')
-    place = request.GET.get('place', '전체')
-    
+    selected_trade = request.GET.get('trade_type', '전체')
+    selected_state = request.GET.get('sell_state', '전체')
+    selected_place = request.GET.get('place', '전체')
+    selected_members = request.GET.getlist('members[]')
+
+    # 쿼리 파라미터 받아오기
+    idol_names = request.GET.getlist('idol')
+    place = request.GET.get('place')
+    category = request.GET.get('category')
+    sort = request.GET.get('sort')
+
     # 전체 포토카드 리스트 불러오기
-    photocards = Photocard.objects.filter(sell_state="중")
-    
-    if searchgroup:
-        photocards = photocards.filter(member__group__name=searchgroup)
-    
-    # 선택된 멤버가 있으면 필터링
-    if selected_members:
-        photocards = photocards.filter(member__name__in=selected_members)
-    
+    photocards = Photocard.objects.select_related('member__group').annotate(
+        wish_count=Count('wished_by_users')
+    )
+
     # 선택된 필터 값에 따라 포토카드 필터링
-    if trade != '전체':
-        photocards = photocards.filter(trade_type=trade)
+    if selected_trade != '전체':
+        photocards = photocards.filter(trade_type=selected_trade)
     
-    if place != '전체':
-        photocards = photocards.filter(place=place)
+    if selected_state == '거래중':
+        photocards = photocards.filter(sell_state=selected_state)
+    
+    if selected_place != '전체':
+        photocards = photocards.filter(place=selected_place)
+    
+    # 멤버 선택 처리
+    if selected_members and '전체' not in selected_members:
+        photocards = photocards.filter(member__name__in=selected_members)
+
+    # 아이돌, 카테고리 필터링 (필요시 추가)
+    if idol_names:
+        photocards = photocards.filter(member__name__in=idol_names)
+
+    if category:
+        photocards = photocards.filter(category=category)
+
+    # 좋아요 순 정렬 옵션 적용
+    if sort == 'likes':
+        photocards = photocards.order_by('-wish_count')
 
     # 필터링된 포토카드를 템플릿에 전달
     context = {
         'list': groupMember,
         'photocards': photocards,
         'trade_choices': Photocard.TRADE_CHOICES,
+        'state_choices': Photocard.TRADE_STATE_CHOICES,
         'place_choices': Photocard.PLACE_CHOICES,
-        'trade':trade,
-        'place':place,
-        'searchgroup':searchgroup,
-        'selected_members':selected_members
     }
-        
+    
     return render(request, 'exchange.html', context)
 
 def detail(request, pno):
@@ -129,38 +145,10 @@ def detail(request, pno):
         request.session['latest_poca'] = latest_list
             
     # pno 포토카드 불러오기
-    qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
-    
-    qs.hit += 1
-    qs.save()
-    
-    if not qs.latitude and not qs.longitude:
-        if qs.place == "올림픽공원":
-            qs.latitude = 37.51784192112613
-            qs.longitude = 127.1276152266286
-        elif qs.place == "상암":
-            qs.latitude = 37.580534952338624
-            qs.longitude = 126.89203603891819
-        elif qs.place == "더현대":
-            qs.latitude = 37.52586982023892
-            qs.longitude = 126.92844895447732
-        elif qs.place == "고척":
-            qs.latitude = 37.49823024363382
-            qs.longitude = 126.86710307179943
-        elif qs.place == "인스파이어":
-            qs.latitude = 37.46667138168973
-            qs.longitude = 126.39058501167706
-        elif qs.place == "홍대":
-            qs.latitude = 37.55683650372744
-            qs.longitude = 126.9237735042553
+    qs = Photocard.objects.get(pno=pno)
     
     # 포토카드 상세정보 반환
-    if qs.tag:
-        tags = qs.tag.split(",")
-        context = {"info":qs, "tags":tags}
-    else:
-        context = {"info":qs}
-
+    context = {"info":qs}
     
     return render(request, 'pocadetail.html', context)
 
@@ -233,11 +221,9 @@ def write(request):
             Photocard.objects.create(
                 title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
-            print(title, image, seller, category, album, member, poca_state, tag, trade_type, 
-                  place, sell_state, available_at, latitude, longitude)
             
             # redirect로 이동
-            return redirect('/photocard/exchange')
+            return redirect('/photocard/list')
             
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
