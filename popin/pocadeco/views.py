@@ -17,13 +17,13 @@ def decoMain(request):
 )
     
     # 필터용 쿼리 파라미터 받아오기
-    searchgroup = request.GET.getlist('searhgroup', '')
+    searchgroup = request.GET.getlist('searchgroup')
     selected_members = request.GET.getlist('selectedMembers')
     sort = request.GET.get('sort')
     
     # 조건부 필터링 (값이 있을 경우에만 필터링)
     if searchgroup:
-        decoratedpoca = DecoratedPhotocard.filter(member__group__name=searchgroup)
+        decoratedpoca = decoratedpoca.filter(member__group__name__in=searchgroup)
         
     # 선택된 멤버가 있으면 필터링
     if selected_members:
