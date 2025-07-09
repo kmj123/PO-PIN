@@ -14,8 +14,7 @@
 </head>
 <body>
   
- <form method="POST"  action="{% url 'community:sharing' %}" enctype="multipart/form-data">
-    {% csrf_token %}
+ <form method="GET" action="{% url 'community:sharing' %}" class="search-form">
   <div class="list">
     <div class = 'group'>
 
@@ -65,25 +64,27 @@
           <div><p>{{ weekly_count }}</p><a>이번 주 나눔</a></div>
         </div>
       <div class="search-filter-container">
-      <div class="search-toggle">
-        <button class="toggle-btn active" data-type="general">일반 검색</button>
-        <button class="toggle-btn" data-type="tag">태그 검색</button>
-      </div>
-      <input type="text" id="generalSearch" class="search-input" placeholder="제목, 그룹명으로 검색">
-      <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
-
-      <select id="stateFilter" class="filter-select">
-        <option value="">나눔 종류</option>
-        <option value="앨범">앨범</option>
-        <option value="굿즈">굿즈</option>
-        <option value="기타">기타</option>
-      </select>
-      <select id="sortSelect" class="filter-select">
-          <option value="">정렬</option>
-          <option value="최신순">최신순</option>
-          <option value="조회순">조회순</option>
-      </select>
+    <div class="search-toggle">
+      <button class="toggle-btn active" data-type="general">일반 검색</button>
+      <button class="toggle-btn" data-type="tag">태그 검색</button>
     </div>
+        <input type="text" name="q" placeholder="제목 검색" value="{{ query }}" class="search-input">
+       <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+
+      <select id="categoryFilter" class="filter-select">
+      <option value="">나눔 종류</option>
+      <option>전체</option>
+      <option value="앨범">앨범</option>
+      <option value="굿즈">굿즈</option>
+      <option value="기타">기타</option>
+    </select>
+    <select id="sortFilter" class="filter-select">
+      <option value="">정렬</option>
+      <option value="최신순">최신순</option>
+      <option value="조회순">조회순</option>
+    </select>
+    </div>
+    </form>
     
     <div class="postlist">
       <!-- 동행 카드들 -->
