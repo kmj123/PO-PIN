@@ -398,7 +398,9 @@
                 </div>
                 
                 <!-- 앨범 목록 뷰 -->
-                <div class="section-content"></div>
+                <div class="section-content">
+                    <div id="album-list" class="album-grid"></div>
+                </div>
 
                 
                 <!-- 포토카드 목록 뷰 (기본적으로 숨김) -->
@@ -794,13 +796,16 @@
             }
         }
 
-        // Recent AJAX
+        // #Recent AJAX
         $.ajax({
             url: "/mypage/latest/",
             type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             success: function (data) {
-                console.log('성공')
+                console.log('최근 게시글 연결 성공')
+
+                const recentList = $("#recent .section-content");
+
                 const cardsHtml = data.photocards.map(card => 
                 `<div class="item">
                     <div>
@@ -809,56 +814,98 @@
                     </div>  
                 </div>`).join("");
 
-                $("#recent .section-content").html(cardsHtml || "<div>최근 본 글이 없습니다.</div>");
+                recentList.html(cardsHtml || "<div>최근 본 글이 없습니다.</div>");
             },
             error: function () {
                 console.error("최근 본 글 불러오기 실패");
-                $("#recent .section-content").html("<div>최근 본 글을 불러오는 데 실패했습니다.</div>");
+                recentList.html("<div>최근 본 글을 불러오는 데 실패했습니다.</div>");
             }
         });
 
-$.ajax({
-    url: "/mypage/mypoca/",
-    type: "POST",
-    headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-    dataType: "json",
-    success: function (data) {
-        console.log("받은 데이터:", data.group_album_dict);
+        // #mypoca AJAX
+        $.ajax({
+            url: "/mypage/mypoca/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (data) {
+                console.log("받은 데이터:", data.group_album_dict);
 
-        const albumList = $("#album-list");
-        albumList.empty(); // 기존 목록 비우기
+                const albumList = $("#mypoca #album-list");
+                albumList.empty(); // 기존 목록 비우기
 
-        const groupAlbumDict = data.group_album_dict;
+                const groupAlbumDict = data.group_album_dict;
 
-        for (let groupName in groupAlbumDict) {
-            const albumMap = groupAlbumDict[groupName];
+                for (let groupName in groupAlbumDict) {
+                    const albumMap = groupAlbumDict[groupName];
 
-            for (let albumName in albumMap) {
-                const photocards = albumMap[albumName];
-                const firstCard = photocards[0]; // 대표 이미지
-                const imageUrl = firstCard.image_url || '/static/images/default.jpg';
-                const cardCount = photocards.length;
+                    for (let albumName in albumMap) {
+                        const photocards = albumMap[albumName];
+                        const firstCard = photocards[0]; // 대표 이미지
+                        const imageUrl = firstCard.image_url || '{/static/images/default.jpg}';
+                        const cardCount = photocards.length;
 
-                const albumCard = `
-                    <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
-                        <div class="album-cover">
-                            <img src="${imageUrl}" alt="${albumName}">
-                        </div>
-                        <div class="album-info">
-                            <h4>${albumName}</h4>
-                            <p>${groupName}</p>
-                            <span class="card-count">${cardCount}장</span>
-                        </div>
-                    </div>
-                `;
-                albumList.append(albumCard);  // ✅ #album-list 안에만 card 추가
+                        const albumCard = `
+                            <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
+                                <div class="album-cover">
+                                    <img src="${imageUrl}" alt="${albumName}">
+                                </div>
+                                <div class="album-info">
+                                    <h4>${albumName}</h4>
+                                    <p>${groupName}</p>
+                                    <span class="card-count">${cardCount}장</span>
+                                </div>
+                            </div>
+                        `;
+                        albumList.append(albumCard);  
+
+                        $("#mypoca #album-list").append(albumList || "<div>보유한 포토카드가 없습니다.</div>");
+                    }
+                }            
+            },
+            error: function (xhr, status, error) {
+                console.error("에러 발생:", error);
             }
-        }            
-    },
-    error: function (xhr, status, error) {
-        console.error("에러 발생:", error);
-    }
-});
+        });
+
+        // #wishlist AJAX
+        $.ajax({
+            url: "/mypage/wishlist/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: 'json',
+            success: function(data){
+                console.log('위시리스트 연결 성공',data.wishlist);
+                // 기존 목록 비우기
+                const wishList = $("#wishlist .section-content");
+                wishList.empty();
+
+                const wishdata = data.wishlist.map(wish => 
+                    `<a href="/photocard/view/">
+                        <div class="item">
+                            <div class="wishlist">
+                                <div class="wish-list-img">
+                                    <img src=${wish.image_url}>
+                                </div>
+                                <div class="wish-list-txt">
+                                    <span class="badge complete">${wish.trade_state}</span>
+                                    <h3>${wish.title}
+                                    </h3>
+                                    <p>${wish.album}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>`).join("");
+                wishList.append(wishdata || "<div>위시리스트 목록이 없습니다.</div>")
+            },
+            error: function (xhr, status, error) {
+                console.error("에러 발생:", error);
+            }
+        });
+
+        // 판매목록 AJAX
+        $.ajax
+    
     </script>
 
 {%endblock%}
