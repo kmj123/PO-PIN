@@ -366,13 +366,14 @@
         </tbody>
       </table>
       <div class = "btn">
-          <button type = "button" value = "write">확인</button>
+          <button type = "button" value = "write" onclick = "writeBtn()">작성</button>
           <a href = "{% url 'adpage:notice' %}"><button type = "button" value = "cancel">취소</button></a>
         </div>
     </div>
   </div>
 </body>
 <script>
+    /* 첨부파일 */
     let selectedFiles = [];
     document.addEventListener("DOMContentLoaded", function () {
     const fileUploadArea = document.getElementById('fileUploadArea');
@@ -470,5 +471,10 @@
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
-</script>
+  
+    /* 작성버튼 */
+    function writeBtn(){
+      alert("작성되었습니다.");
+    }
+  </script>
 </html>

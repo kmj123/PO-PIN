@@ -227,7 +227,7 @@ def write(request):
             
             seller = user # 판매자
             
-            category=request.POST.get('category') # 카테고리
+            category=request.POST.get('album_type') # 카테고리
             album=request.POST.get('album') # 앨범
             
             group=request.POST.get('group') # 그룹
@@ -236,7 +236,7 @@ def write(request):
             
             poca_state=request.POST.get('poca_state') # 하자상태
             
-            tags=request.POST.getList('tag', None) # 태그 리스트
+            tags=request.POST.getlist('tag', None) # 태그 리스트
             tag = ','.join(tags) # 하나의 문자열로 태그 전환
             
             trade_type=request.POST.get('trade_type') # 거래방식
@@ -262,11 +262,13 @@ def write(request):
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, price=price, description=description, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
+            print(title, image, seller, category, album, member, poca_state, tag, trade_type, 
+                  place, sell_state, available_at, latitude, longitude)
             
             # redirect로 이동
-            return redirect('/photocard/list')
+            return redirect('/photocard/exchange')
             
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
