@@ -95,11 +95,36 @@ def main(request):
     
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
-    
-    
 
 def recent(request):
-    posts = Photocard.objects.all().order_by('-created_at')
+    posts = []
+    photocards = Photocard.objects.all().order_by('-created_at')
+    decophotocards = DecoratedPhotocard.objects.all().order_by('-created_at')
+    
+    for photocard in photocards :
+        posts.append({
+            'id': photocard.pno,
+            'category': photocard.trade_type,
+            'title': photocard.title,
+            'user': photocard.seller.nickname,
+            'created_at' : photocard.created_at,
+            'hit' : photocard.hit,
+        })
+        
+    for decopoca in decophotocards:
+        posts.append({
+            'id': decopoca.id,
+            'category': "포카 꾸미기",
+            'title': decopoca.title,
+            'user': decopoca.user.nickname,
+            'created_at' : decopoca.created_at,
+            'hit' : decopoca.hit,
+        })
+        
+        
+    # created_at 기준 최신순 정렬
+    posts.sort(key=lambda x: x['created_at'], reverse=True)
+    
         
     # GET 요청에서 카테고리와 검색어를 받음
     category = request.GET.get('category', '전체')  # 기본값은 '전체'
@@ -110,12 +135,17 @@ def recent(request):
         filtered_posts = Photocard.objects.filter(trade_type='교환').order_by('-created_at')
     elif category == '판매':
         filtered_posts = Photocard.objects.filter(trade_type='판매').order_by('-created_at')
+    elif category == '포카 꾸미기':
+        filtered_posts = DecoratedPhotocard.objects.all().order_by('-created_at')
     else:
         filtered_posts = posts  # '전체'일때 모든 게시글을 표시
 
     # 검색어 필터링
     if searchinput:
-        filtered_posts = filtered_posts.filter(title__icontains=searchinput)
+        if category == "전체":
+            filtered_posts = [p for p in filtered_posts if searchinput.lower() in p['title'].lower()]
+        else:
+            filtered_posts = filtered_posts.filter(title__icontains=searchinput)
     
     # 페이지네이터
     paginator = Paginator(filtered_posts, 5)
