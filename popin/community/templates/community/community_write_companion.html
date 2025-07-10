@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -154,6 +158,29 @@
         margin-top: 15px;
         width: 90%;
       }
+       .datetime-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+     input.wlong, textarea.tta, input.fileType, select.select-box {
+      width: calc(90%);
+      padding: 10px;
+      margin-right:20px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    input.wlong:focus, textarea.tta:focus, input.fileType:focus, select.select-box:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    .datetime-group input {
+      width: auto;
+      padding: 8px;
+    }
       .file-item {
         display: flex;
         justify-content: space-between;
@@ -220,19 +247,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#">홈</a></li>
-        <li><a href="#">포카교환</a></li>
-        <li><a href="#">커뮤니티</a></li>
-        <li><a href="#">포카꾸미기</a></li>
-        <li><a href="#">고객지원</a></li>
-      </ul>
-      <a href="#" class="home"><i class="fi-rr-caret-left"></i>이전으로</a>
-    </nav>
-  </header>
 
   <div class="Bboard">
     <div class="dash-top">
@@ -265,6 +279,18 @@
           <th><label for="location">위치</label></th>
           <td><input type="text" id="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
         </tr>
+        <tr>
+          <th scope="row">날짜 및 시간</th>
+          <td>
+            <div class="datetime-group">
+              <input type="date" id="eventDate"name="eventDate" required>
+              <input type="time" id="eventTime" name="eventTime" required>
+            </div>
+          </td>
+       <tr>
+          <th scope="row"><label for="max_people"> 모집 인원</label></th>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+       </tr>
         <tr>
           <th><label for="content">본문</label></th>
           <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
@@ -447,5 +473,6 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
   </script>
+{%endblock%}
 </body>
 </html>
