@@ -551,7 +551,9 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(data => {
       alert("게시글이 성공적으로 등록되었습니다.");
-      window.location.href = "{% url 'community:main' %}";
+
+      window.location.href = '{% url 'community:write_sharing' %}';
+
     })
     .catch(error => {
       console.error("❌ 오류:", error);

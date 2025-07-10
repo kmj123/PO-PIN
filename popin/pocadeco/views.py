@@ -85,5 +85,6 @@ def view(reqeust, id):
         'like' : decophotocard.wished_by_users.count(),
     }
     return render(reqeust, 'pocadeco/view.html', context)
+  
 def decolist(request):
     return render(request, 'pocadeco/decolist.html')

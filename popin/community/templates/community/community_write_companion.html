@@ -247,8 +247,9 @@
   </style>
 </head>
 <body>
- <form method="POST"  action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
-    {% csrf_token %}
+
+
+
   <div class="Bboard">
     <div class="dash-top">
       <h2>동행 모집 글 작성</h2>
@@ -281,7 +282,9 @@
           <th><label for="location">위치</label></th>
           <td><input type="text" id="location" name="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
         </tr>
-         <tr>
+
+        <tr>
+
           <th scope="row">날짜 및 시간</th>
           <td>
             <div class="datetime-group">
@@ -292,6 +295,12 @@
        <tr>
           <th scope="row"><label for="max_people"> 모집 인원</label></th>
           <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+
+       </tr>
+        <tr>
+          <th><label for="content">본문</label></th>
+          <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+
         </tr>
 
       <tr>
