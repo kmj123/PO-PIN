@@ -148,10 +148,12 @@ def write_proxy(request):
         category = request.POST.get("category", "기타")
         status = request.POST.get("status", "모집중")
 
+
         # 날짜와 시간 조합 → DateTimeField에 맞게
         event_date = request.POST.get("eventDate")
         event_time = request.POST.get("eventTime")
         event_datetime = timezone.make_aware(datetime.strptime(f"{event_date} {event_time}", "%Y-%m-%d %H:%M"))
+
 
         location = request.POST.get("location")
         max_people = request.POST.get('max_people')
@@ -399,6 +401,7 @@ def write_status(request):
 
             return JsonResponse({'success': True})
 
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 
@@ -579,3 +582,4 @@ def status(request):
         'query': query  # 검색어 유지
     }
     return render(request, 'status/main.html', context)
+

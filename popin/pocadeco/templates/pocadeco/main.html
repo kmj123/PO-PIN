@@ -1,4 +1,7 @@
+{% extends 'header_login.html'%}
 {% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,23 +15,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/pocadeco/main.css' %}" />
 </head>
 <body>
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">PO-PIN</div>
-            <ul class="nav-menu">
-                <li><a href="#home">홈</a></li>
-                <li><a href="#exchange">포카교환</a></li>
-                <li><a href="#community">커뮤니티</a></li>
-                <li><a href="#decorate" class="active">포카꾸미기</a></li>
-                <li><a href="#customer">고객지원</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <a href="#" class="btn btn-outline">로그인</a>
-                <a href="#" class="btn btn-primary">회원가입</a>
-            </div>
-        </nav>
-    </header>
-
     <div class="container">
         <div class="main-content">
             <div class="page-header">
@@ -54,7 +40,7 @@
                         <button class="btn btn-success" onclick="downloadImage()">다운로드</button>
                     </div>
 
-                    <div style="margin-top: 40px;">
+                    <div class="gallery-section"> {# 기존 style="margin-top: 40px;" 대신 새로운 클래스 추가 #}
                         <div class="gallery-header">
                             <h2>내 포꾸 갤러리</h2>
                             <button class="add-photo-btn" onclick="addToGallery()">
@@ -80,7 +66,7 @@
                                 <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
                             </div>
                             <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/wonbin.jpg' %}" alt="RIIZE Wonbin" />
+                                <img src="{% static 'images/pocadeco/wonbin.jpg' %}" alt="RIIZE 원빈" />
                                 <div class="gallery-info">
                                     <div class="gallery-title">RIIZE 원빈</div>
                                     <div class="gallery-date">2024-06-10</div>
@@ -91,150 +77,125 @@
                     </div>
                 </div>
 
-                <div class="editor-sidebar">
-                    <div class="tool-section">
-                        <h3>⚙️ 조정</h3>
-                        <div class="slider-group">
-                            <label>밝기</label>
-                            <input
-                              type="range"
-                              class="slider"
-                              min="0"
-                              max="200"
-                              value="100"
-                              data-filter="brightness"
-                            />
-                        </div>
-                        <div class="slider-group">
-                            <label>대비</label>
-                            <input
-                              type="range"
-                              class="slider"
-                              min="0"
-                              max="200"
-                              value="100"
-                              data-filter="contrast"
-                            />
-                        </div>
-                        <div class="slider-group">
-                            <label>채도</label>
-                            <input
-                              type="range"
-                              class="slider"
-                              min="0"
-                              max="200"
-                              value="100"
-                              data-filter="saturation"
-                            />
-                        </div>
-                    </div>
+              <div class="editor-sidebar panel"> 
+                <div id="searchNotice" style="display: none;">검색어를 입력해주세요.</div>
 
-                    <div class="tool-section">
-                        <h3>🖼️ 프레임</h3>
-                        <div class="frame-grid">
-                            <div class="frame-option" data-frame="circle">
-                                <div class="frame-preview circle"></div>
-                            </div>
-                            <div class="frame-option" data-frame="vintage">
-                                <div class="frame-preview vintage"></div>
-                            </div>
-                            <div class="frame-option" data-frame="polaroid">
-                                <div class="frame-preview polaroid"></div>
-                            </div>
-                            <div class="frame-option" data-frame="ornate">
-                                <div class="frame-preview ornate"></div>
-                            </div>
-                        </div>
-                    </div>
+<div id="selectedMembers" style="display: none;">
+  <p>선택된 멤버 (<span id="selectedCount">0</span>/2)</p>
+  <div id="selectedList"></div>
+</div>
 
-                    <div class="tool-section">
-                        <h3>📝 텍스트 입력</h3>
-                        <div class="text-input-group">
-                            <input type="text" id="textInput" placeholder="텍스트를 입력하세요" />
-                        </div>
-                        <div class="text-input-group" style="margin-top: 10px;">
-                            <label for="fontSelect" style="display: none;">글꼴 선택</label>
-                            <select id="fontSelect">
-                                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
-                                <option value="Noto Sans KR, sans-serif">본고딕</option>
-                                <option value="Arial, sans-serif">Arial</option>
-                                <option value="Verdana, sans-serif">Verdana</option>
-                                <option value="Georgia, serif">Georgia</option>
-                                <option value="Times New Roman, serif">Times New Roman</option>
-                            </select>
-                        </div>
-                        <div class="add-text-button-container">
-                            <button class="btn btn-primary" id="addTextBtn">텍스트 추가</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-section">
-                        <h3>🌟 스티커</h3>
-                        <div class="sticker-grid">
-                            <div class="sticker-btn" data-sticker="💖">💖</div>
-                            <div class="sticker-btn" data-sticker="⭐">⭐</div>
-                            <div class="sticker-btn" data-sticker="✨">✨</div>
-                            <div class="sticker-btn" data-sticker="💭">💭</div>
-                            <div class="sticker-btn" data-sticker="💤">💤</div>
-                            <div class="sticker-btn" data-sticker="💢">💢</div>
-                            <div class="sticker-btn" data-sticker="💫">💫</div>
-                            <div class="sticker-btn" data-sticker="🐹">🐹</div>
-                        </div>
-                    </div>
-                </div>
+<form id="memberForm" method="POST">
+  {% csrf_token %}
+  <div id="hiddenInputsContainer"></div>
+</form>
+    <div class="tool-section">
+        <h3>멤버 선택</h3>
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+            <div class="filter-buttons">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">전체</button>
+                    <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                    <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+             </div>
+            </div>
+        </div>
+        
+        <div class="groups-container" id="groupsContainer"></div>
+        <div id="hiddenInputsContainer"></div>
+    </div>
+    <div class="tool-section">
+        <h3>프레임</h3>
+        <div class="frame-grid">
+            <div class="frame-option" data-frame="vintage" onclick="selectFrame('vintage')">
+                <div class="frame-preview vintage"></div>
+            </div>
+            <div class="frame-option" data-frame="polaroid" onclick="selectFrame('polaroid')">
+                <div class="frame-preview polaroid"></div>
+            </div>
+            <div class="frame-option" data-frame="flower" onclick="selectFrame('flower')">
+                <div class="flower-decoration">🌸</div>
+            </div>
+            <div class="frame-option" data-frame="rainbow" onclick="selectFrame('rainbow')">
+                <div class="rainbow-decoration">🌈</div>
+            </div>
+            <div class="frame-option" data-frame="heart" onclick="selectFrame('heart')">
+                <div class="heart-decoration">💖</div>
+            </div>
+            <div class="frame-option" data-frame="gold" onclick="selectFrame('gold')">
+                <div class="frame-preview gold"></div>
             </div>
         </div>
     </div>
+
+    <div class="tool-section">
+        <h3>텍스트 입력</h3>
+        <div class="text-input-group">
+            <select id="fontSelect">
+                <option value="Nanum Gothic, sans-serif">나눔고딕</option>
+                <option value="Noto Sans KR, sans-serif">본고딕</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="Times New Roman, serif">Times New Roman</option>
+            </select>
+            <label for="fontSelect" style="display: none;">글꼴 선택</label>
+        </div>
+        <div class="text-input-group">
+            <input type="text" id="textInput" placeholder="텍스트를 입력하세요" />
+        </div>
+        <div class="add-text-button-container">
+            <button class="btn btn-primary" id="addTextBtn">텍스트 추가</button>
+        </div>
+    </div>
+
+    <div class="tool-section">
+        <h3>스티커</h3>
+        <div class="sticker-grid">
+            <div class="sticker-btn" data-sticker="💖">💖</div>
+            <div class="sticker-btn" data-sticker="⭐">⭐</div>
+            <div class="sticker-btn" data-sticker="✨">✨</div>
+            <div class="sticker-btn" data-sticker="💭">💭</div>
+            <div class="sticker-btn" data-sticker="💤">💤</div>
+            <div class="sticker-btn" data-sticker="💢">💢</div>
+            <div class="sticker-btn" data-sticker="💫">💫</div>
+            <div class="sticker-btn" data-sticker="🐹">🐹</div>
+        </div>
+    </div>
+</div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    // 1. 파일 업로드 이벤트
     document.getElementById('fileInput').addEventListener('change', handleFileSelect);
     document.getElementById('galleryInput').addEventListener('change', handleGalleryAdd);
 
-    // 2. 텍스트 추가 버튼
     document.getElementById('addTextBtn').addEventListener('click', addText);
 
-    // 3. 스티커 버튼 클릭 이벤트
     document.querySelectorAll('.sticker-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             addSticker(btn.dataset.sticker);
         });
     });
 
-    // 4. 프레임 옵션 클릭 이벤트
     document.querySelectorAll('.frame-option').forEach(option => {
         option.addEventListener('click', function () {
             applyFrame(option.dataset.frame);
         });
     });
 
-    // 5. 슬라이더 필터 이벤트
-    document.querySelectorAll('.slider').forEach(slider => {
-        slider.addEventListener('input', () => {
-            const type = slider.dataset.filter;
-            const value = parseInt(slider.value);
-            if (type === 'brightness') adjustBrightness(value);
-            else if (type === 'contrast') adjustContrast(value);
-            else if (type === 'saturation') adjustSaturation(value);
-        });
-    });
-
-    // 6. canvas placeholder 클릭시 파일 업로드 트리거
     const placeholder = document.getElementById('placeholder');
     if (placeholder) {
         placeholder.addEventListener('click', uploadPhoto);
     }
 
-    // 7. 캔버스 영역 드래그 방지 (의도치 않게 텍스트 드래그되는 거 막기)
     const canvas = document.getElementById('canvasArea');
     canvas.addEventListener('dragstart', e => e.preventDefault());
 });
 
 function uploadPhoto() {
     const canvas = document.getElementById('canvasArea');
-    const existingPhoto = canvas.querySelector('.photo-preview'); // 이미 사진이 있는지 확인
+    const existingPhoto = canvas.querySelector('.photo-preview');
     if (existingPhoto) {
-        // 이미 사진이 있으면 아무것도 하지 않음 (첨부 창 뜨지 않음)
         return;
     }
     document.getElementById('fileInput').click();
@@ -246,32 +207,18 @@ function handleFileSelect(event) {
         const reader = new FileReader();
         reader.onload = function (e) {
             const canvas = document.getElementById('canvasArea');
-            // 기존 이미지와 스티커, 프레임, 텍스트 제거
-            canvas.innerHTML = ''; 
-            canvas.style.border = '3px dashed #ddd'; // 테두리 초기화
+            canvas.innerHTML = '';
+            canvas.style.border = '3px dashed #ddd';
             canvas.appendChild(Object.assign(document.createElement('img'), {
                 src: e.target.result,
                 className: 'photo-preview',
                 id: 'uploadedPhoto'
             }));
-            // 필터 초기화
-            brightness = 100;
-            contrast = 100;
-            saturation = 100;
-            updateFilters();
-            // 슬라이더도 초기화
-            document.querySelectorAll('.slider').forEach(slider => slider.value = 100);
-            // 프레임 버튼 초기화
-            document.querySelectorAll('.frame-option').forEach(option => option.classList.remove('active'));
             
-            // 텍스트 입력 필드 초기화
+            document.querySelectorAll('.frame-option').forEach(option => option.classList.remove('active'));
+
             const textInput = document.getElementById('textInput');
             if (textInput) textInput.value = '';
-
-            // 사진 업로드 후 마우스 커서 숨기기 (body 전체)
-            document.body.style.cursor = 'none';
-            // 캔버스 영역의 커서도 숨김
-            canvas.style.cursor = 'none'; // ADDED THIS LINE
         };
         reader.readAsDataURL(file);
     }
@@ -284,95 +231,50 @@ function resetEditor() {
             <i>📷</i>
             <div>포토카드를 업로드하세요</div>
             <small>클릭하거나 드래그해서 파일을 선택하세요</small>
-        </div>`;
-    canvas.style.border = '3px dashed #ddd'; // 테두리 초기화
-    canvas.style.cursor = 'pointer'; // RESET CANVAS CURSOR
+        </div>
+    `;
+    canvas.style.border = '3px dashed #ddd';
 
-    // 필터 초기화
-    brightness = 100;
-    contrast = 100;
-    saturation = 100;
-    // img 요소가 없으므로 updateFilters는 호출하지 않음
-
-    // 슬라이더 초기화
-    document.querySelectorAll('.slider').forEach(slider => slider.value = 100);
-    // 프레임 버튼 초기화
     document.querySelectorAll('.frame-option').forEach(option => option.classList.remove('active'));
-    
-    // 텍스트 입력 필드 초기화
-    const textInput = document.getElementById('textInput');
-    if (textInput) textInput.value = '';
-    
-    // 에디터 초기화 시 마우스 커서 다시 보이게 함 (body 전체)
-    document.body.style.cursor = 'default';
+
+    document.getElementById('textInput').value = '';
+
+    const placeholder = document.getElementById('placeholder');
+    if (placeholder) {
+        placeholder.addEventListener('click', uploadPhoto);
+    }
 }
 
 function saveDecoration() {
     const canvasEl = document.getElementById('canvasArea');
-    const img = canvasEl.querySelector('.photo-preview');
-    if (!img) {
-        alert('이미지를 먼저 업로드해주세요');
-        return;
-    }
+    if (!canvasEl) return;
+
     const title = prompt("포꾸 이름을 입력해주세요:");
-    if (!title) return; // 사용자가 취소하면 저장하지 않음
+    if (!title) return;
 
-    // html2canvas 호출에 setTimeout 추가 (100ms 지연)
-    setTimeout(() => {
-        html2canvas(canvasEl, {
-            allowTaint: true, // 크로스 오리진 이미지 처리 허용 (필요시)
-            useCORS: true // CORS 문제 해결 (필요시)
-        }).then(canvas => {
-            const imgDataUrl = canvas.toDataURL('image/png'); // PNG 이미지 데이터 URL
-            
-            const gallery = document.getElementById('myGallery');
-            const now = new Date().toISOString().split('T')[0];
+    html2canvas(canvasEl, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2,
+    }).then(canvas => {
+        const dataUrl = canvas.toDataURL("image/png");
 
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.innerHTML = `
-                <img src="${imgDataUrl}" />
-                <div class="gallery-info">
-                    <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${title}</div>
-                    <div class="gallery-date">${now}</div>
-                </div>
-                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-            `;
-            gallery.prepend(item); // 갤러리 가장 앞에 추가
-            document.body.style.cursor = 'none'; // 저장 후 커서 다시 숨김
-        }).catch(error => {
-            console.error('이미지 저장 중 오류 발생:', error);
-            alert('이미지 저장에 실패했습니다. 이미지를 확인해주세요.');
-            document.body.style.cursor = 'none'; // 에러 발생 시에도 커서 숨김
-        });
-    }, 100); // <-- 여기에 setTimeout 추가
-}
+        const gallery = document.getElementById('myGallery');
+        const now = new Date().toISOString().split('T')[0];
 
-function downloadImage() {
-    const canvasEl = document.getElementById('canvasArea');
-    const img = canvasEl.querySelector('.photo-preview');
-    if (!img) {
-        alert('이미지를 먼저 업로드해주세요!');
-        return;
-    }
-
-    // html2canvas 호출에 setTimeout 추가 (100ms 지연)
-    setTimeout(() => {
-        html2canvas(canvasEl, {
-            allowTaint: true,
-            useCORS: true
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL('image/png');
-            link.download = 'poca_decorated.png';
-            link.click();
-            document.body.style.cursor = 'none'; // 다운로드 후 커서 다시 숨김
-        }).catch(error => {
-            console.error('이미지 다운로드 중 오류 발생:', error);
-            alert('이미지 다운로드에 실패했습니다. 이미지를 확인해주세요.');
-            document.body.style.cursor = 'none'; // 에러 발생 시에도 커서 숨김
-        });
-    }, 100); // <-- 여기에 setTimeout 추가
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.innerHTML = `
+            <img src="${dataUrl}" />
+            <div class="gallery-info">
+                <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${title}</div>
+                <div class="gallery-date">${now}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+        `;
+        gallery.prepend(item);
+    });
 }
 
 function addToGallery() {
@@ -413,43 +315,15 @@ function makeTitleEditable(element) {
     const title = element.querySelector('.gallery-title');
     title.setAttribute('contenteditable', true);
     title.focus();
-    // Blur 이벤트 발생 시 contenteditable 속성 제거
     title.onblur = () => {
         title.removeAttribute('contenteditable');
     };
-    // Enter 키 눌렀을 때도 편집 종료
     title.onkeydown = (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // 새 줄 방지
-            title.blur(); // 편집 종료
+            e.preventDefault();
+            title.blur();
         }
     };
-}
-
-let brightness = 100;
-let contrast = 100;
-let saturation = 100;
-
-function updateFilters() {
-    const img = document.getElementById('uploadedPhoto');
-    if (img) {
-        img.style.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
-    }
-}
-
-function adjustBrightness(val) {
-    brightness = val;
-    updateFilters();
-}
-
-function adjustContrast(val) {
-    contrast = val;
-    updateFilters();
-}
-
-function adjustSaturation(val) {
-    saturation = val;
-    updateFilters();
 }
 
 function applyFrame(styleName) {
@@ -460,7 +334,6 @@ function applyFrame(styleName) {
         return;
     }
 
-    // 기존 프레임 제거
     const existingFrame = canvas.querySelector('.frame-effect');
     if (existingFrame) existingFrame.remove();
 
@@ -468,12 +341,11 @@ function applyFrame(styleName) {
     frame.className = `frame-effect ${styleName}`;
     canvas.appendChild(frame);
 
-    // 활성화된 프레임 버튼 표시
     document.querySelectorAll('.frame-option').forEach(option => option.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    document.querySelector(`[data-frame="${styleName}"]`).classList.add('active');
 }
 
-let activeDraggable = null; // 현재 드래그/리사이즈 중인 요소를 추적
+let activeDraggable = null;
 
 function makeDraggableAndResizable(element) {
     const canvas = document.getElementById('canvasArea');
@@ -485,8 +357,8 @@ function makeDraggableAndResizable(element) {
     let initialWidth, initialHeight, initialX, initialY, initialFontSize;
 
     element.onmousedown = function (e) {
-        e.stopPropagation(); // 캔버스 클릭 이벤트 방지
-        activeDraggable = element; // 현재 활성 요소 설정
+        e.stopPropagation();
+        activeDraggable = element;
 
         if (e.target === resizeHandle) {
             isResizing = true;
@@ -496,39 +368,38 @@ function makeDraggableAndResizable(element) {
             initialHeight = element.offsetHeight;
             initialFontSize = parseFloat(window.getComputedStyle(element).fontSize);
             element.style.cursor = 'nwse-resize';
-            document.body.style.cursor = 'nwse-resize'; // 바디 커서도 변경
+            document.body.style.cursor = 'nwse-resize';
         } else {
             isDragging = true;
             offsetX = e.offsetX;
             offsetY = e.offsetY;
             element.style.cursor = 'grabbing';
-            document.body.style.cursor = 'grabbing'; // 바디 커서도 변경
+            document.body.style.cursor = 'grabbing';
         }
-        element.style.zIndex = 1000; // 드래그/리사이즈 중에는 최상위로
+        element.style.zIndex = 1000;
     };
 
     element.onmouseover = function() {
         if (!isDragging && !isResizing) {
-            element.style.cursor = 'grab'; // 스티커/텍스트 위에 있을 때
+            element.style.cursor = 'grab';
         }
     };
     element.onmouseout = function() {
         if (!isDragging && !isResizing) {
-            element.style.cursor = ''; // 기본값으로 되돌림 (상위 요소의 커서 상속)
+            element.style.cursor = '';
         }
     };
     document.onmousemove = function (e) {
-        if (!activeDraggable) return; // 활성 드래그 요소가 없으면 리턴
+        if (!activeDraggable) return;
 
         const canvasRect = canvas.getBoundingClientRect();
         if (isDragging) {
             let newLeft = e.clientX - canvasRect.left - offsetX;
             let newTop = e.clientY - canvasRect.top - offsetY;
 
-            // 캔버스 영역을 벗어나지 않도록 제한
             newLeft = Math.max(0, Math.min(newLeft, canvasRect.width - element.offsetWidth));
             newTop = Math.max(0, Math.min(newTop, canvasRect.height - element.offsetHeight));
-            
+
             element.style.left = newLeft + 'px';
             element.style.top = newTop + 'px';
         } else if (isResizing) {
@@ -540,14 +411,12 @@ function makeDraggableAndResizable(element) {
                 const ratioX = (initialWidth + deltaX) / initialWidth;
                 const ratioY = (initialHeight + deltaY) / initialHeight;
                 newFontSize = initialFontSize * Math.max(ratioX, ratioY);
-            } else { 
+            } else {
                 newFontSize = initialFontSize + Math.max(deltaX, deltaY);
             }
 
-            // 최소 폰트 크기 제한
-            newFontSize = Math.max(12, newFontSize); 
-            // 최대 폰트 크기 제한 (캔버스 크기 대비)
-            const maxAllowedFontSize = Math.min(canvasRect.width, canvasRect.height) * 0.3; // 캔버스 짧은 변의 30% 정도로 제한
+            newFontSize = Math.max(12, newFontSize);
+            const maxAllowedFontSize = Math.min(canvasRect.width, canvasRect.height) * 0.3;
             newFontSize = Math.min(newFontSize, maxAllowedFontSize);
 
             element.style.fontSize = newFontSize + 'px';
@@ -558,16 +427,15 @@ function makeDraggableAndResizable(element) {
         isDragging = false;
         isResizing = false;
         if (activeDraggable) {
-            activeDraggable.style.zIndex = 10; // 드래그/리사이즈 끝나면 기본 z-index로
-            activeDraggable.style.cursor = 'grab'; // 커서 원상 복귀
+            activeDraggable.style.zIndex = 50;
+            activeDraggable.style.cursor = 'grab';
         }
-        document.body.style.cursor = 'none'; // 바디 커서 다시 숨김
-        activeDraggable = null; // 활성 요소 해제
+        document.body.style.cursor = 'default';
+        activeDraggable = null;
     };
 
-    // 더블클릭하면 삭제
     element.ondblclick = function (e) {
-        e.stopPropagation(); // 캔버스 클릭 이벤트 방지
+        e.stopPropagation();
         if (confirm("삭제하시겠습니까?")) {
             element.remove();
         }
@@ -585,23 +453,20 @@ function addSticker(emoji) {
     const sticker = document.createElement('div');
     sticker.className = 'sticker-overlay';
     sticker.textContent = emoji;
-    
-    // 초기 위치 (캔버스 중앙에 가깝게)
+
     const canvasRect = canvas.getBoundingClientRect();
-    sticker.style.left = `${(canvasRect.width / 2) - 15}px`; // 스티커 크기 고려
-    sticker.style.top = `${(canvasRect.height / 2) - 15}px`; // 스티커 크기 고려
+    sticker.style.left = `${(canvasRect.width / 2) - 15}px`;
+    sticker.style.top = `${(canvasRect.height / 2) - 15}px`;
     sticker.style.position = 'absolute';
-    
-    // 크기 조절 핸들 추가
+
     const resizeHandle = document.createElement('div');
     resizeHandle.className = 'sticker-resize-handle';
     sticker.appendChild(resizeHandle);
 
     canvas.appendChild(sticker);
-    makeDraggableAndResizable(sticker); // 스티커에 드래그 및 크기 조절 기능 부여
-    
-    // 스티커 선택 완료 후 마우스 커서 숨기기
-    document.body.style.cursor = 'none';
+    makeDraggableAndResizable(sticker);
+
+    document.body.style.cursor = 'default';
 }
 
 function addText() {
@@ -621,43 +486,190 @@ function addText() {
     }
 
     const textElement = document.createElement('div');
-    textElement.className = 'text-overlay'; // 스티커와 동일한 스타일을 공유
+    textElement.className = 'text-overlay';
     textElement.textContent = textContent;
-    
-    // 글꼴 적용
+
     const fontSelect = document.getElementById('fontSelect');
     const selectedFont = fontSelect.value;
     textElement.style.fontFamily = selectedFont;
 
-    // 초기 위치 (캔버스 중앙에 가깝게)
     const canvasRect = canvas.getBoundingClientRect();
-    textElement.style.left = `${(canvasRect.width / 2) - 50}px`; // 텍스트 크기 고려
-    textElement.style.top = `${(canvasRect.height / 2) - 15}px`; // 텍스트 크기 고려
+    textElement.style.left = `${(canvasRect.width / 2) - 50}px`;
+    textElement.style.top = `${(canvasRect.height / 2) - 15}px`;
     textElement.style.position = 'absolute';
-    textElement.style.color = 'black'; // 기본 텍스트 색상
-    
-    // 크기 조절 핸들 추가
+    textElement.style.color = 'black';
+
     const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'sticker-resize-handle'; // 스티커와 동일한 핸들 사용
+    resizeHandle.className = 'sticker-resize-handle';
     textElement.appendChild(resizeHandle);
 
     canvas.appendChild(textElement);
-    makeDraggableAndResizable(textElement); // 텍스트에 드래그 및 크기 조절 기능 부여
+    makeDraggableAndResizable(textElement);
 
-    textInput.value = ''; // 입력 필드 초기화
-    document.body.style.cursor = 'none'; // 텍스트 추가 후 커서 숨기기
-}
-function updateFilters() {
-    const img = document.getElementById('uploadedPhoto');
-    if (img) {
-        const filterValue = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
-        img.style.filter = filterValue;
-        img.style.webkitFilter = filterValue; // 사파리 호환용
-        // setAttribute는 제거: 기존 스타일 덮어쓰기 때문에 레이아웃 깨짐
+      document.addEventListener("DOMContentLoaded", function () {
+  let selectedMembers = new Set();
+  let currentFilter = 'all';
+
+  function updateSelectedDisplay() {
+    const count = document.getElementById('selectedCount');
+    const container = document.getElementById('selectedMembers');
+    const list = document.getElementById('selectedList');
+    const completeBtn = document.getElementById('completeBtn');
+
+    count.textContent = selectedMembers.size;
+    if (selectedMembers.size === 0) {
+      container.style.display = 'none';
+      completeBtn.disabled = true;
+    } else {
+      container.style.display = 'block';
+      completeBtn.disabled = false;
+      list.innerHTML = Array.from(selectedMembers).map(item => {
+        const [group, member] = item.split('-');
+        return `
+          <div class="selected-item">
+            <span>${group} - ${member}</span>
+            <button class="remove-btn" data-item="${item}">×</button>
+          </div>
+        `;
+      }).join('');
     }
-}
+  }
+
+  document.getElementById("idolSearch").addEventListener("input", function () {
+    const query = this.value.trim();
+    const container = document.getElementById("groupsContainer");
+    const searchNotice = document.getElementById("searchNotice");
+
+    if (!query) {
+      container.innerHTML = '';
+      searchNotice.style.display = 'block';
+      return;
+    }
+
+    fetch(`/idols/search/?q=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        container.innerHTML = "";
+        searchNotice.style.display = 'none';
+
+        const addGroupCard = (name, gender, members) => {
+          const groupCard = document.createElement("div");
+          groupCard.className = "group-card";
+          const typeClass = gender === "M" ? "boy-group" : "girl-group";
+
+          groupCard.innerHTML = `
+            <div class="group-header">
+              <div class="group-name">${name}</div>
+              <div class="group-type ${typeClass}">
+                ${gender === "M" ? "보이그룹" : "걸그룹"}
+              </div>
+            </div>
+            ${selectedMembers.size >= 2 ? '<div class="selection-limit-notice">최애 멤버는 2명까지만 선택할 수 있습니다!</div>' : ''}
+            <div class="members-grid">
+              ${members.map(member => {
+                const isSelected = selectedMembers.has(`${name}-${member.name}`);
+                const isDisabled = !isSelected && selectedMembers.size >= 2;
+                return `
+                  <button type="button" class="member-toggle ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+                          data-group="${name}" data-member="${member.name}">
+                    ${member.name}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          `;
+          container.appendChild(groupCard);
+        };
+
+        const groups = {};
+        data.members.forEach(member => {
+          const groupName = member.group__name;
+          if (!groups[groupName]) {
+            groups[groupName] = {
+              gender: member.group__gender,
+              members: []
+            };
+          }
+          groups[groupName].members.push(member);
+        });
+
+        Object.entries(groups).forEach(([groupName, info]) => {
+          addGroupCard(groupName, info.gender, info.members);
+        });
+
+        updateSelectedDisplay();
+      });
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      document.getElementById("idolSearch").dispatchEvent(new Event("input")); // 다시 필터링
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
+      const group = e.target.dataset.group;
+      const member = e.target.dataset.member;
+      const key = `${group}-${member}`;
+
+      if (selectedMembers.has(key)) {
+        selectedMembers.delete(key);
+        e.target.classList.remove('selected');
+      } else {
+        if (selectedMembers.size < 2) {
+          selectedMembers.add(key);
+          e.target.classList.add('selected');
+        }
+      }
+
+      updateSelectedDisplay();
+    }
+
+    if (e.target.classList.contains('remove-btn')) {
+      const item = e.target.dataset.item;
+      selectedMembers.delete(item);
+      updateSelectedDisplay();
+      document.getElementById("idolSearch").dispatchEvent(new Event("input"));
+    }
+  });
+
+  document.getElementById("completeBtn").addEventListener("click", function () {
+    if (selectedMembers.size === 0) {
+      alert("최소 1명 이상의 멤버를 선택해주세요.");
+      return;
+    }
+
+    const container = document.getElementById("hiddenInputsContainer");
+    container.innerHTML = "";
+
+    selectedMembers.forEach(item => {
+      const [group, member] = item.split('-');
+
+      const groupInput = document.createElement("input");
+      groupInput.type = "hidden";
+      groupInput.name = "group_name";
+      groupInput.value = group;
+
+      const memberInput = document.createElement("input");
+      memberInput.type = "hidden";
+      memberInput.name = "member_name";
+      memberInput.value = member;
+
+      container.appendChild(groupInput);
+      container.appendChild(memberInput);
+    });
+
+    document.getElementById("memberForm").submit();
+  });
+
+  updateSelectedDisplay();
+});
 </script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+{%endblock%}
 </body>
 </html>
-

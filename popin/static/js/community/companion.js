@@ -15,52 +15,28 @@ function reportBtn() {
 // 메뉴 선택
 const categoryLinks = document.querySelectorAll(".menu a");
 
-categoryLinks.forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault();
-
-    const selectedCategory = link.dataset.category?.trim();  // data-category 값
-    const labelText = link.textContent.trim();                // <a> 안의 텍스트 (예: 뉴진스, 세븐틴)
-    const allCards = document.querySelectorAll(".post-card");
-
-    // 카테고리 필터링
-    filteredCards = Array.from(allCards).filter(card => {
-      const cardCategory = card.dataset.category?.trim();
-      return selectedCategory === "" || selectedCategory === cardCategory;
-    });
-
-    // 결과 없음 메시지 처리
-    const noResults = document.getElementById("noResultsMessage");
-    const pagination = document.querySelector(".pagination");
-
-    if (filteredCards.length === 0) {
-      noResults.textContent = `${labelText}에 해당하는 게시물이 없습니다.`;
-      noResults.style.display = "block";
-
-      allCards.forEach(card => card.style.display = "none");
-
-      if (pagination) {
-        pagination.style.display = "none";
-      }
-    } else {
-      noResults.style.display = "none";
-
-      if (pagination) {
-        pagination.style.display = "block";
-      }
-
-      // 첫 페이지부터 보여주기
-      showPage(1);
-    }
-  });
-});
-
 
 
 document.addEventListener("DOMContentLoaded", function () {
   const modalImage = document.getElementById('modalImage');
   let currentImageIndex = 0;
   let imageList = [];
+  let selectedCategory = "";
+
+  // 카테고리 링크 이벤트 리스너 (기존 밖에 있던 부분을 여기에 통합)
+  const categoryLinks = document.querySelectorAll(".menu a");
+  categoryLinks.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+
+      categoryLinks.forEach(l => l.parentElement.classList.remove("active"));
+      link.parentElement.classList.add("active");
+
+      selectedCategory = link.dataset.category?.trim() || "";
+
+      applyFilters();  // 카테고리 선택 후 필터 적용 & 페이지네이션 갱신
+    });
+  });
 
   const imageModal = document.getElementById('imageModal');
   const prevBtn = document.getElementById('prevBtn');
@@ -76,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let filteredCards = [];
   let currentPage = 1;
-  const itemsPerPage = 3;
+  const itemsPerPage = 2;
 
   // 이미지 썸네일 클릭 시 모달 띄우기
   if (modalImage && document.getElementById('modalPostImages')) {
@@ -237,27 +213,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 페이지네이션 함수
   function showPage(pageNumber) {
-    currentPage = pageNumber;
-    const startIndex = (pageNumber - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+  currentPage = pageNumber;
+  const startIndex = (pageNumber - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
-    document.querySelectorAll(".post-card").forEach(card => {
-      card.style.display = "none";
-    });
+  document.querySelectorAll(".post-card").forEach(card => {
+    card.style.display = "none";
+  });
 
-    const cardsToShow = filteredCards.slice(startIndex, endIndex);
-    cardsToShow.forEach(card => {
-      card.style.display = "block";
-    });
+  const cardsToShow = filteredCards.slice(startIndex, endIndex);
+  cardsToShow.forEach(card => {
+    card.style.display = "block";
+  });
 
-    const pagination = document.querySelector(".pagination");
-    if (pagination) {
-      const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
-      createPageNumberButtons(pagination, totalPages);
-    }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const pagination = document.querySelector(".pagination");
+  if (pagination) {
+    const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+    
+    // 게시물이 없으면 페이지네이션 아예 숨김
+    if (filteredCards.length <= itemsPerPage) {
+    pagination.style.display = "none";
+  } else {
+    pagination.style.display = "flex";
+    createPageNumberButtons(pagination, totalPages);
   }
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
   function createPageNumberButtons(pagination, totalPages) {
     const maxVisiblePages = 5;
@@ -267,7 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const firstBtn = document.createElement("a");
     firstBtn.href = "#";
     firstBtn.textContent = "«";
-    // firstBtn.className = currentPage === 1 ? "disabled" : "";
+    firstBtn.className = currentPage === 1 ? "disabled" : "";
     firstBtn.addEventListener("click", e => {
       e.preventDefault();
       if (currentPage !== 1) showPage(1);
@@ -278,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevBtn = document.createElement("a");
     prevBtn.href = "#";
     prevBtn.textContent = "‹";
-    // prevBtn.className = currentPage === 1 ? "disabled" : "";
+    prevBtn.className = currentPage === 1 ? "disabled" : "";
     prevBtn.addEventListener("click", e => {
       e.preventDefault();
       if (currentPage > 1) showPage(currentPage - 1);
@@ -316,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const nextBtn = document.createElement("a");
     nextBtn.href = "#";
     nextBtn.textContent = "›";
-    // nextBtn.className = currentPage === totalPages ? "disabled" : "";
+    nextBtn.className = currentPage === totalPages ? "disabled" : "";
     nextBtn.addEventListener("click", e => {
       e.preventDefault();
       if (currentPage < totalPages) showPage(currentPage + 1);
@@ -327,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const lastBtn = document.createElement("a");
     lastBtn.href = "#";
     lastBtn.textContent = "»";
-    // lastBtn.className = currentPage === totalPages ? "disabled" : "";
+    lastBtn.className = currentPage === totalPages ? "disabled" : "";
     lastBtn.addEventListener("click", e => {
       e.preventDefault();
       if (currentPage !== totalPages) showPage(totalPages);
@@ -336,55 +319,107 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function applyFilters() {
-    const searchMode = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
+  const searchMode = document.querySelector(".toggle-btn.active")?.dataset.type || "general";
+  const keyword = (searchMode === "general" ? generalInput?.value : tagInput?.value || "").toLowerCase().trim();
+  const selectedRegion = regionFilter?.value;
+  const selectedState = stateFilter?.value;
 
-    const keyword = (searchMode === "general" ? generalInput?.value : tagInput?.value || "").toLowerCase().trim();
-    const selectedRegion = regionFilter?.value;
-    const selectedState = stateFilter?.value;
+  const postCards = Array.from(document.querySelectorAll(".post-card"));
+  const noResults = document.getElementById("noResultsMessage");
+  const pagination = document.querySelector(".pagination");
 
-    const postCards = Array.from(document.querySelectorAll(".post-card"));
+  filteredCards = postCards.filter(card => {
+    let showCard = true;
 
-    filteredCards = postCards.filter(card => {
-      let showCard = true;
-
-      if (keyword) {
-        if (searchMode === "general") {
-          const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
-          const artist = card.querySelector(".artist")?.textContent.toLowerCase() || "";
-          showCard = title.includes(keyword) || artist.includes(keyword);
-        } else {
-          const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase().replace('#', '').trim());
-          showCard = tags.some(tag => tag.includes(keyword));
-        }
-      }
-
-      if (showCard && selectedRegion && selectedRegion !== "") {
-        const region = card.querySelector(".region")?.textContent.trim().toLowerCase() || "";
-        showCard = region.includes(selectedRegion.toLowerCase());
-      }
-
-      if (showCard && selectedState && selectedState !== "") {
-        const state = card.querySelector(".post-status")?.textContent.trim() || "";
-        showCard = state === selectedState;
-      }
-
-      return showCard;
-    });
-
-    // 해당게시글없다 문구
-      const noResults = document.getElementById("noResultsMessage");
-        if (filteredCards.length === 0) {
-          noResults.style.display = "block";
-        } else {
-          noResults.style.display = "none";
-        }
-
-    if (filteredCards.length === 0 && !keyword && !selectedRegion && !selectedState) {
-      filteredCards = postCards;
+    if (selectedCategory && selectedCategory !== "") {
+      const cardCategory = card.dataset.category?.trim() || "";
+      showCard = showCard && (selectedCategory === cardCategory);
     }
 
-    showPage(1);
+    if (showCard && keyword) {
+      if (searchMode === "general") {
+        const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
+        showCard = title.includes(keyword);
+      } else {
+        const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.toLowerCase().replace('#', '').trim());
+        showCard = tags.some(tag => tag.includes(keyword));
+      }
+    }
+
+    if (showCard && selectedRegion && selectedRegion !== "") {
+      const region = card.querySelector(".region")?.textContent.trim().toLowerCase() || "";
+      showCard = region.includes(selectedRegion.toLowerCase());
+    }
+
+    if (showCard && selectedState && selectedState !== "") {
+      const state = card.querySelector(".post-status")?.textContent.trim() || "";
+      showCard = state === selectedState;
+    }
+
+    return showCard;
+  });
+
+  // 전체 필터 해제 시 전체 카드 보여줌
+  if (filteredCards.length === 0 && !keyword && !selectedRegion && !selectedState && !selectedCategory) {
+    filteredCards = postCards;
   }
+
+  if (filteredCards.length === 0) {
+    noResults.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+    noResults.style.display = "block";
+    postCards.forEach(card => card.style.display = "none");
+    if (pagination) pagination.style.display = "none";
+    return; // 이 뒤는 실행 안 해도 되므로 바로 리턴
+  } else {
+    noResults.style.display = "none";
+    if (pagination) pagination.style.display = "flex";
+  }
+
+  // 필터된 카드들로 첫 페이지 보여주기
+  showPage(1);
+}
+
+
+categoryLinks.forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+
+    const selectedCategory = link.dataset.category?.trim();  // data-category 값
+    const labelText = link.textContent.trim();                // <a> 안의 텍스트 (예: 뉴진스, 세븐틴)
+    const allCards = document.querySelectorAll(".post-card");
+
+    // 카테고리 필터링
+    filteredCards = Array.from(allCards).filter(card => {
+      const cardCategory = card.dataset.category?.trim();
+      return selectedCategory === "" || selectedCategory === cardCategory;
+    });
+
+    // 결과 없음 메시지 처리
+    const noResults = document.getElementById("noResultsMessage");
+    const pagination = document.querySelector(".pagination");
+
+    if (filteredCards.length === 0) {
+      noResults.textContent = `${labelText}에 해당하는 게시물이 없습니다.`;
+      noResults.style.display = "block";
+
+      allCards.forEach(card => card.style.display = "none");
+
+      if (pagination) {
+        pagination.style.display = "none";
+      }
+    } else {
+      noResults.style.display = "none";
+
+      if (pagination) {
+        pagination.style.display = "block";
+      }
+
+      // 첫 페이지부터 보여주기
+      showPage(1);
+    }
+  });
+});
+
 
   // 초기 설정
   filteredCards = Array.from(document.querySelectorAll(".post-card"));

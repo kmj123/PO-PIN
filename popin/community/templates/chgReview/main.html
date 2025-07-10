@@ -96,7 +96,107 @@
                 <span class="partner_id">{{ review.partner.name }}</span>
                 <span>👁️ {{ review.views }}</span>
               </div>
-               <span class="post-date">{{ review.created_at|date:"Y-m-d" }}</span>
+
+              <span class="post-date">2025-07-02</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">RIIZE</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 5</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#교환</span>
+              <span class="post-tag">#오프라인</span>
+              <span class="post-tag">#riize</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">dududu</span>
+                <span>👁️ 60</span>
+              </div>
+              <span class="post-date">2025-07-04</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">aespa</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 4</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">#집</span>
+              <span class="post-tag">#온라인</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">poca_collector</span>
+                <span>👁️ 88</span>
+              </div>
+              <span class="post-date">2025-07-06</span>
+            </div>
+          </li>
+
+          <li class="board-item">
+            <div class="boardf">
+              <span class="artist">AESPA</span>
+              <span class="onoff off">오프라인</span>
+              <span class="Tway buy">양도</span>
+            </div>
+            <div class="board-item-header">
+              <div class="title-star-wrapper">
+                <h3 class="board-title">완벽한 거래였습니다!</h3>
+                <div class="vertical-line"></div>
+                <span class="star">⭐ 4</span>
+              </div>
+              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
+            </div>
+            <div class="post-tags">
+              <span class="post-tag">앨범</span>
+              <span class="post-tag">오프라인</span>
+              <span class="post-tag">aespa</span>
+            </div>
+            <div class="board-preview">
+              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
+            </div>
+            <div class="post-footer">
+              <div class="board-meta">
+                <span class="writer_id">🙋‍♂️ kpop_lover</span>
+                <span style="font-weight: 500;">⇄</span>
+                <span class="partner_id">riize_collector</span>
+                <span>👁️ 124</span>
+              </div>
+              <span class="post-date">2025-07-07</span>
+
             </div>
           </li>
          {% endfor %}
@@ -142,6 +242,9 @@
                         <img id="modalImage" />
                         <button id="nextBtn">›</button>
                       </div>
+                      <!-- 메뉴에서 해당 게시물이 없을 때 -->
+                      <p id="noResultsMessage" style="display:none; text-align:center; padding:20px; margin-top : 20px;">
+                      </p>
                 </div>
     </div>
   </div>

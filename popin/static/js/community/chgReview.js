@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 페이지네이션 관련 변수
 let currentPage = 1;
-let itemsPerPage = 3;
+let itemsPerPage = 2;
 let filteredCards = [];
 
 // 페이지네이션 메인 함수
@@ -304,12 +304,20 @@ function showCurrentPageCards() {
 function updatePageButtons() {
   const pagination = document.querySelector(".pagination");
   if (!pagination) return;
-  
+
   const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+
+  // ✅ 페이지 수가 1 이하 또는 전체 게시물 수가 한 페이지 이하일 경우 페이지네이션 숨김
+  if (totalPages <= 1 || filteredCards.length <= itemsPerPage) {
+    pagination.innerHTML = "";
+    pagination.style.display = "none";
+    return;
+  } else {
+    pagination.style.display = "flex";
+  }
+
   pagination.innerHTML = "";
-  
-  if (totalPages <= 1) return; // 페이지가 1개 이하면 버튼 표시 안함
-  
+
   createNavigationButtons(pagination, totalPages);
   createPageNumberButtons(pagination, totalPages);
 }
@@ -410,20 +418,28 @@ function resetPagination(newFilteredCards) {
   currentPage = 1;
 
   const container = document.querySelector(".board-list");
+  const noResultsMessage = document.getElementById("noResultsMessage");
+
   if (container) {
-    // 기존 카드 비우고
     container.innerHTML = "";
 
-    // 필터링된 카드들을 다시 append
-    filteredCards.forEach(item => {
-      item.style.display = "none"; // 기본은 숨김
-      container.appendChild(item);
-    });
+    // 게시물 0개일 경우 메시지 표시
+    if (filteredCards.length === 0) {
+      if (noResultsMessage) {
+        noResultsMessage.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+        noResultsMessage.style.display = "block";
+      }
+    } else {
+      if (noResultsMessage) noResultsMessage.style.display = "none";
+      filteredCards.forEach(item => {
+        item.style.display = "none";
+        container.appendChild(item);
+      });
+    }
   }
 
-  showPage(1); // 첫 페이지부터 다시 보여줌
+  showPage(1); // 첫 페이지 보여주기
 }
-
 
 // 초기 실행
 function initializePagination() {

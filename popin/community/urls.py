@@ -14,15 +14,15 @@ urlpatterns = [
     path('write/sharing/', views.write_sharing, name='write_sharing'),
     path('write/status/', views.write_status, name='write_status'),
 
+
     path('', views.main, name='main'),
    
+
 
     
     path('companion/', views.companion, name='companion'),
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
-    
-    
-   
+
 ]
