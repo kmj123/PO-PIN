@@ -785,6 +785,10 @@
             locationInput.placeholder = "현재 위치 사용하려면 클릭";
             locationInput.addEventListener('click', getCurrentLocation);
         });
+        document.getElementById('searchBtn').addEventListener('click', () => {
+        searchNearby();
+     });
+
 
         // 바텀 시트 외부 클릭으로 닫기
         document.addEventListener('click', function(event) {
@@ -793,7 +797,6 @@
                 closeBottomSheet();
             }
         });
-
         // 통계 애니메이션
         function animateStats() {
             const stats = [
