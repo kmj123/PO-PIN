@@ -222,13 +222,13 @@ def block_list(request):
             user = User.objects.get(user_id=user_id)
             block_users = user.initiated_relations.filter(relation_type='BLOCK')
             
+            block_data = []
             for u in block_users :
-                block_data = [
-                    {
+                block_data.append({
                         'user_id': u.to_user.user_id,
                         'name': u.to_user.name,
-                    }
-                ]
+                        'reason': u.reason,
+                    })
 
             return JsonResponse({'blocked_users': block_data})
 
