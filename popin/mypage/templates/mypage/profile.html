@@ -414,52 +414,7 @@
 
             <!--위시리스트-->
             <div id="wishlist" class="tab-content">
-                <div class="section-content">
-                    <a href="/photocard/view/">
-                        <div class="item">
-                            <div class="wishlist">
-                                <div class="wish-list-img">
-                                    <img src="/static/images/mypage/유우시.jfif/">
-                                </div>
-                                <div class="wish-list-txt">
-                                    <span class="badge complete">거래완료</span>
-                                    <h3>NCT 유우시 포토카드
-                                    </h3>
-                                    <p>Map of the Soul: 7</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="/photocard/view/">
-                        <div class="item">
-                            <div class="wishlist">
-                                <div class="wish-list-img">
-                                    <img src="/static/images/mypage/승관.jfif/">
-                                </div>
-                                <div class="wish-list-txt">
-                                    <span class="badge reserved">예약중</span>
-                                    <h3>SEVENTEEN 승관 포토카드
-                                    </h3>
-                                    <p>Map of the Soul: 7</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="/photocard/view/">
-                        <div class="item">
-                            <div class="wishlist">
-                                <div class="wish-list-img">
-                                    <img src="/static/images/mypage/윈터.jpg/">
-                                </div>
-                                <div class="wish-list-txt">
-                                    <h3>AESPA 윈터 포토카드
-                                    </h3>
-                                    <p>Map of the Soul: 7</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                <div class="section-content"></div>
             </div>
 
             <div id="transactions" class="tab-content">
@@ -473,67 +428,11 @@
                 
                 <div class="section-content">
                     <!--판매목록-->
-                    <div id="selling-list" class="transaction-content">
-                        <div class="item">
-                            <h3>BTS 진 포토카드</h3>
-                            <p>25,000원 - Map of the Soul: 7 | 상태: 판매중</p>
-                        </div>
-                        <div class="item">
-                            <h3>블랙핑크 지수 포토카드</h3>
-                            <p>20,000원 - THE ALBUM | 상태: 예약중</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 슈가 포토카드</h3>
-                            <p>30,000원 - Love Yourself | 상태: 판매완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 슈가 포토카드</h3>
-                            <p>30,000원 - Love Yourself | 상태: 판매완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 슈가 포토카드</h3>
-                            <p>30,000원 - Love Yourself | 상태: 판매완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 슈가 포토카드</h3>
-                            <p>30,000원 - Love Yourself | 상태: 판매완료</p>
-                        </div>
-                        <div class="view-all-container">
-                        </div>
-                    </div>
-
+                    <div id="selling-list" class="transaction-content"></div>
                     <!--구매목록-->
-                    <div id="buying-list" class="transaction-content" style="display: none;">
-                        <div class="item">
-                            <h3>BTS 정국 포토카드 구매</h3>
-                            <p>2024.01.18 - 18,000원 | 상태: 거래완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>블랙핑크 로제 포토카드 구매</h3>
-                            <p>2024.01.15 - 22,000원 | 상태: 거래완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>NewJeans 민지 포토카드 구매</h3>
-                            <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
-                        </div>
-                        <div class="view-all-container">
-                        </div>
-                    </div>
+                    <div id="buying-list" class="transaction-content" style="display: none;"></div>
                     <!--교환목록-->
-                    <div id="trading-list" class="transaction-content" style="display: none;">
-                        <div class="item">
-                            <h3>포토카드 교환거래글</h3>
-                            <p>2024.01.18 - 18,000원 | 상태: 거래완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>포토카드 교환거래글</h3>
-                            <p>2024.01.15 - 22,000원 | 상태: 거래완료</p>
-                        </div>
-                        <div class="item">
-                            <h3>포토카드 교환거래글</h3>
-                            <p>2024.01.12 - 15,000원 | 상태: 배송중</p>
-                        </div>
-                    </div>
+                    <div id="trading-list" class="transaction-content" style="display: none;"></div>
                 </div>
             </div>
 
@@ -859,12 +758,13 @@
                         `;
                         albumList.append(albumCard);  
 
-                        $("#mypoca #album-list").append(albumList || "<div>보유한 포토카드가 없습니다.</div>");
+                        albumList.append(albumList || "<div>보유한 포토카드가 없습니다.</div>");
                     }
                 }            
             },
             error: function (xhr, status, error) {
-                console.error("에러 발생:", error);
+                console.error("마이포카 불러오기 실패");
+                albumList.html("<div>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
             }
         });
 
@@ -899,12 +799,108 @@
                 wishList.append(wishdata || "<div>위시리스트 목록이 없습니다.</div>")
             },
             error: function (xhr, status, error) {
-                console.error("에러 발생:", error);
+                console.error("위시리스트 불러오기 실패");
+                wishList.html("<div>위시리스트를 불러오는 데 실패했습니다.</div>");
             }
         });
 
-        // 판매목록 AJAX
-        $.ajax
+        // 판매 목록 AJAX
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('판매목록 불러오기 성공');
+
+                const saleList = $("#transactions #selling-list");
+                saleList.empty();
+
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </div>`).join("");
+
+                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        // 구매 목록 AJAX
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('구매목록 불러오기 성공');
+
+                const buyList = $("#transactions #buying-list");
+                buyList.empty();
+
+                const buyData = data.buy_poca.map(buy => 
+                    `<div class="item">
+                        <h3>${buy.title}</h3>
+                        <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
+                    </div>`).join("");
+                    buyList.append(buyData||"<div>판매목록이 없습니다.</div>");
+
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                buyList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
+        $.ajax({
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                alert('교환목록 불러오기 수정이 필요합니다');
+
+                const saleList = $("#transactions #trading-list");
+                saleList.empty();
+
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </div>`);
+
+                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // 차단한 사용자 목록 AJAX
+        $.ajax({
+            url: "/mypage/block_list/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('차단 사용자 불러오기 성공');
+
+                const saleList = $("#transactions #trading-list");
+                saleList.empty();
+
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </div>`);
+
+                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                //saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
     
     </script>
 
