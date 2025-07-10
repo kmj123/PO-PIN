@@ -287,13 +287,13 @@
                 <li><a href="/home/main/">홈</a></li>
                 <li><a href="/photocard/exchange/">포토카드</a></li>
                 <li><a href="#community">커뮤니티</a></li>
-                <li><a href="#decorate">포카꾸미기</a></li>
-                <li><a href="#customer">고객지원</a></li>
+                <li><a href="/pocadeco/decoMain/">포카꾸미기</a></li>
+                <li><a href="/customer/information/">고객지원</a></li>
             </ul>
             <div class="user-info">
                 <a href="#alarm" class="alarm">🔔</a>
-                <a href="/mypage/profile/" class="username"><span>포카러버123</span>님</a>
-                <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
+                <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
             
@@ -301,15 +301,15 @@
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-user-info">
                     <a href="#alarm" class="alarm">🔔</a>
-                    <a href="/mypage/profile/" class="username"><span>포카러버123</span>님</a>
-                    <a href="#logout" class="logout"><i class="fas fa-sign-out-alt"></i></a>
+                    <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
+                    <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
                 <ul class="mobile-menu-list">
                     <li><a href="/home/main/">홈</a></li>
                     <li><a href="/photocard/exchange/">포토카드</a></li>
                     <li><a href="#community">커뮤니티</a></li>
-                    <li><a href="#decorate">포카꾸미기</a></li>
-                    <li><a href="#customer">고객지원</a></li>
+                    <li><a href="/pocadeco/decoMain/">포카꾸미기</a></li>
+                    <li><a href="/customer/information/">고객지원</a></li>
                 </ul>
             </div>
         </nav>
