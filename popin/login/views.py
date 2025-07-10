@@ -136,6 +136,7 @@ def loginp(request):
             user = User.objects.get(user_id=user_id)
             if check_password(password, user.password):
                 request.session['user_id'] = user.user_id
+                request.session['nickname'] = user.nickname
                 return redirect('home:main')  # 홈 또는 메인 페이지
             else:
                 messages.error(request, "비밀번호가 일치하지 않습니다.")
@@ -217,3 +218,13 @@ def loginCPW(request):
             messages.error(request, '해당 사용자를 찾을 수 없습니다.')
 
     return render(request, "login-changePW.html")
+
+#로그아웃
+def logout(request):
+    try:
+        del request.session['user_id']  # 로그인 세션 제거
+    except KeyError:
+        pass  # 세션에 'user_id'가 없어도 에러 없이 넘어감
+
+    return redirect('/')  # 로그인 페이지로 이동
+

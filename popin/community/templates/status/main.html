@@ -20,13 +20,13 @@
     <div class="menu">
       <h3>카테고리</h3>
       <ul>
-        <li class="board"><a href="">전체보기</a></li>
-        <li><a href="">콘서트</a></li>
-        <li><a href="">팝업스토어</a></li>
-        <li><a href="">팬사인회</a></li>
-        <li><a href="">전시회</a></li>
-        <li><a href="">굿즈샵</a></li>
-        <li><a href="">기타</a></li>
+        <li class="board"><a href="#" data-category="전체보기">전체보기</a></li>
+        <li><a href="#" data-category="콘서트">콘서트</a></li>
+        <li><a href="#" data-category="팝업스토어">팝업스토어</a></li>
+        <li><a href="#" data-category="팬사인회">팬사인회</a></li>
+        <li><a href="#" data-category="전시회">전시회</a></li>
+        <li><a href="#" data-category="굿즈샵">굿즈샵</a></li>
+        <li><a href="#" data-category="기타">기타</a></li>
       </ul>
     </div>
     <div class="dashboard">
@@ -41,7 +41,8 @@
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
 
-        <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색" value="{{ query }}">
+        <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
+
         <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
         <select id="regionFilter" class="filter-select">
           <option value="">지역 선택</option>
@@ -72,12 +73,14 @@
     </form>
 
         <div class="postlist">
-            {% for post in posts %}
-         <div class="post-card" data-category="{{ post.category }}">
+
+          <div class="post-card" data-category="팬사인회" data-imgs="/static/images/landing/wonyoung.jpg">
               <div class="post-header">
                 <span class = "boardf">
-                  <span class = "artist">{{ post.artist }}</span>
-                  <span class = "ptype">{{ post.category }}</span>
+                  <span class = "artist">AESPA</span>
+                  <span class = "region">대구</span>
+                  <span class = "ptype">팬사인회</span>
+
                 </span>
                 <div class="post-title-row">
                    <h3 class="post-title">{{ post.title }}</h3>
@@ -107,34 +110,234 @@
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
-                    <span>👤 {{ post.author.nickname }}</span>
-                        <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
+
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2024-05-03">2024-05-03</span>
+
                   </div>
                   <div class="participants">
                     <span>👁️ {{ post.views }}</span>
                   </div>
               </div>
-          </div>
-            {% empty %}
-              <p>검색 결과가 없습니다.</p>
-            {% endfor %}
-          </div>
-            <button type="button" class="topBtn" id="topBtn">
-          <div class="post-images">
-          {% for image in post.images.all %}
-            <img src="{{ image.image.url }}" alt="첨부 이미지" style="max-width: 100px; max-height: 100px;">
-          {% endfor %}
-        </div>
-          </button>
-               {% endblock %}
-         
-                <!-- 이미지 확대 모달 -->
-                <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
-                  <button id="prevBtn">‹</button>
-                  <img id="modalImage" style="max-width:80%; max-height:80%;" />
-                  <button id="nextBtn">›</button>
+
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                 </div>
-                <div class="pagination">
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 90</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 90</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 90</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 90</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 90</span>
+                  </div>
+              </div>
+            </div>
+            
+              <div class="pagination">
                   <a href="#" title="첫 페이지">«</a>
                   <a href="#" title="이전 페이지">‹</a>
                   <strong>1</strong>
@@ -145,6 +348,36 @@
                   <a href="#" title="다음 페이지">›</a>
                   <a href="#" title="마지막 페이지">»</a>
                 </div>
+           </div>
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <button class="close-btn" onclick="closePostModal()">&times;</button>
+                    <div id="modalPostMeta" class="post-meta-wrapper">
+                      <span id="modalPostArtist" class="artist"></span>
+                      <span id="modalPostRegion" class="region"></span>
+                      <span id="modalPostPtype" class="ptype"></span>
+                    </div>
+                    <h2 id="modalPostTitle">제목</h2>
+                    <div class = "modall">
+                      <div id="modalPostTags" class="post-tags"></div>
+                      <p id="modalPostCreated"></p>
+                    </div>
+                    <p id="modalPostDate">📅 날짜</p>
+                    <p id="modalPostPlace">📍 장소</p>
+                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
+                      설명 내용
+                    </div>
+                    <div id="modalPostImages" style="display:flex; gap:10px;"></div>
+                </div>
+                </div>
+
+                <!-- 이미지 확대 모달 -->
+                <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
+                  <button id="prevBtn">‹</button>
+                  <img id="modalImage" style="max-width:80%; max-height:80%;" />
+                  <button id="nextBtn">›</button>
+                </div>
+                
             </div>
           </div>
         
@@ -152,4 +385,9 @@
   </body>
 
 <!--//상단헤더-->
+
+</body>
+</html>
+
+
 

@@ -32,13 +32,13 @@
                         </button>
                     </div>
                     <div class="profile-info">
-                        <h1 style="text-align:center;">{{user.name}}</h1>
-                        <h3 style="margin-bottom:20px;">"포카모으기를 좋아하는 포카 덕후"</h3>
+                        <h1 style="text-align:center;">{{nickname}}</h1>
+                        <h3 style="margin-bottom:20px;">"{{introduction}}"</h3>
                         <br>
                         
                         <div class="stats">
                             <div class="stat">
-                                <div class="stat-number">{{user.selling_photocards.count}}</div>
+                                <div class="stat-number">{{selling_photocards}}</div>
                                 <div>보유 포카</div>
                             </div>
                             <div class="stat">
@@ -46,7 +46,7 @@
                                 <div>교환 완료</div>
                             </div>
                             <div class="stat">
-                                <div class="stat-number">{{user.manners_score}}</div>
+                                <div class="stat-number">{{manners_score}}</div>
                                 <div>평점</div>
                             </div>
                         </div>
@@ -61,9 +61,9 @@
             <div class="tabs-wrapper">
                 <div class="tabs">
                     <button class="tab active " onclick="showTab('keywords')">키워드</button>
-                    <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    <button class="tab" onclick="showTab('recent')">최근본글</buttㄴon>
                     <button class="tab" onclick="showTab('cards')">마이 포카</button>
-                    <button class="tab" onclick="showTab('wishlist')">위시리스트</button>
+                    <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
                     <button class="tab" onclick="showTab('transactions')">포토카드</button>
                     <button class="tab" onclick="showTab('reviews')">후기글</button>
                     <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
@@ -74,16 +74,25 @@
             <div id="keywords" class="tab-content active">
                 <div class="section-content">
                     <div class="item">
-                        <h3>관심 키워드</h3>
-                        <p>#정국포카 #로제포카 #한정판 #시그네쳐 #러키드로우</p>
+                        <h3>관심 그룹 키워드</h3>
+                        <p>
+                            {%for group in groups%}
+                                #{{group.name}}
+                            {%endfor%}
+                        </p>
                     </div>
                     <div class="item">
-                        <h3>알림 키워드</h3>
-                        <p>#BTS #BLACKPINK #NewJeans #포카교환 #급구</p>
+                        <h3>관심 멤버 키워드</h3>
+                        <p>
+                            {%for member in members%}
+                                #{{member.name}}
+                            {%endfor%}
+                        </p>
                     </div>
                 </div>
             </div>
 
+            <!--최신본글-->
             <div id="recent" class="tab-content">
                 <div class="section-content">
                     <div class="item">
@@ -101,6 +110,7 @@
                 </div>
             </div>
 
+            <!--마이포카-->
             <div id="cards" class="tab-content">
                 <div class="cards-header">
                     <button class="back-btn" onclick="showAlbumList()" style="display: none;">← 앨범 목록으로</button>

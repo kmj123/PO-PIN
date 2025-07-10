@@ -1,7 +1,6 @@
-{% extends "header_login.html" %}
 {% load static %}
-{% block content %}
 <title>{% block title %}포토카드 상세{% endblock %}</title>
+<meta name='csrf-token' content='{{csrf_token}}'>
 <style>
     .content {
         background: rgba(255, 255, 255, 0.95);
@@ -34,7 +33,7 @@
 
     .icons {width:70px; display:flex; justify-content: space-between;}
 
-    #heart{cursor:pointer;}
+    .pocanavi i{cursor:pointer;}
 
     .red{color:red;}
 
@@ -106,6 +105,10 @@
         width:183px; height:284px; border-radius:5px;
     }
 
+    .card-info {
+        width:250px;
+    }
+
     .card-info h4 {
         font-size: 1.1rem;
         font-weight: 600;
@@ -115,7 +118,8 @@
 
     .card-meta {
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
+        padding:0 40px;
         align-items: center;
         margin-bottom: 1rem;
     }
@@ -155,6 +159,7 @@
     #map-bottomSheet {
         position: fixed;
         width:100%;
+        max-height:400px;
         left:50%;
         transform: translateX(-50%);
         justify-content: center;
@@ -167,7 +172,7 @@
         transition: transform 0.3s ease; /* 애니메이션 */
         display:inline-block;
         align-items:center;
-        width:550px; height:250px;
+        width:550px;
         z-index: 106;
     }
 
@@ -283,11 +288,29 @@
 
 <script>
     $(document).ready(function() {
-        // 찜버튼 //
+        // 위시버튼 //
         $("#heart").click(function() {
-            if ($(this).hasClass("fal fa-heart")) {
-            $(this).removeClass("fal fa-heart").addClass("fas fa-heart red");} 
-            else {$(this).removeClass("fas fa-heart red").addClass("fal fa-heart");}
+            let pno = {{info.pno}}
+            let csrfToken = $('meta[name="csrf-token"]').attr('content')
+
+            $.ajax({
+                url: '/photocard/toggle_wish/' + pno + '/',
+                type: 'POST',
+                headers: { 'X-CSRFToken': csrfToken },
+                data: { action: 'action' }, // 클릭한 버튼 상태에 따른 액션
+                success: function(response) {
+                    // 위시 상태에 따른 새로 갱신된 찜 수 반영
+                    $(".wish_count").text(response.new_like_count);
+                    if (response.action === 'increased') {
+                        $("#heart").removeClass("fal fa-heart").addClass("fas fa-heart red");
+                    } else {
+                        $("#heart").removeClass("fas fa-heart red").addClass("fal fa-heart");
+                    }
+                },
+                error: function() {
+                    alert("실패");
+                }
+            });
         });
         
         // 공유하기 //
@@ -331,11 +354,16 @@
 </script>
 
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <div class="content">
         <div class="content_background">
             <div class="pocanavi">
                 <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
-                <div class="icons"><i class="fal fa-heart" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
+                <div class="icons"><i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i><i class="fal fa-share-square share-icon"></i></div>
                 <!-- 오버레이 (바텀시트 외부) -->
                 <div class="share-overlay" id="share-overlay" onclick="toggleBottomSheet()"></div>
 
@@ -348,16 +376,26 @@
             </div>
             <div class="cardItem">
                 <div class="card-image"><img src="/media/{{info.image}}"></div>
-                <div class="card-info">
+                <div class="card-info" style="margin:0 auto;">
                     <h4>{{info.member}}</h4>
                     <div class="card-meta">
-                        <span class="card-album">{{info.album}}</span>&ensp;
-                        <span class="card-likes">❤️ 27</span>
+                        <span class="card-album">{{info.album}}</span>
+                        <span class="card-likes">
+                            ❤️ <span class="wish_count">{{info.wish_count}}</span> 
+                        </span>
                     </div>
                     <div class="card-tags">
-                        <span class="tag">교환</span>
-                        <span class="tag">럭키드로우</span>
-                        <span class="tag">하자없음</span>
+                        <span class="tag">{{info.trade_type}}</span>
+                        <span class="tag">{{info.category}}</span>
+                        <span class="tag">
+                            {% if info.poca_state == "상" %}
+                                하자없음
+                            {% elif info.poca_state == "중" %}
+                                상태보통
+                            {% else %}
+                                하자있음
+                            {% endif %}
+                        </span>
                     </div>
                     <div class="card-location">📍 {{info.place}}</div>
                 </div>
@@ -366,44 +404,54 @@
             <div id="map" style="width:100%;height:350px;"></div>
             <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=685921f3c75dcb3652a49e7cdce9673d"></script>
             <script>
-            var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-                mapOption = { 
-                    center: new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}), // 지도의 중심좌표 - 올림픽공원역
-                    level: 4 // 지도의 확대 레벨
-                };
+                var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+                    mapOption = { 
+                        center: new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}), // 지도의 중심좌표
+                        level: 4 // 지도의 확대 레벨
+                    };
 
-            var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+                var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-            var imageSrc = '/static/images/share/pin.png', // 마커이미지의 주소입니다
-                imageSize = new kakao.maps.Size(50, 50), // 마커이미지의 크기입니다
-                imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-                
-            // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
-            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
-                markerPosition = new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}); // 마커가 표시될 위치입니다
+                var imageSrc = '/static/images/share/pin.png', // 마커이미지의 주소입니다
+                    imageSize = new kakao.maps.Size(50, 50), // 마커이미지의 크기입니다
+                    imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                    
+                // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+                var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption),
+                    markerPosition = new kakao.maps.LatLng({{info.latitude}}, {{info.longitude}}); // 마커가 표시될 위치입니다
 
-            // 마커를 생성합니다
-            var marker = new kakao.maps.Marker({
-                position: markerPosition, 
-                image: markerImage // 마커이미지 설정 
-            });
+                // 마커를 생성합니다
+                var marker = new kakao.maps.Marker({
+                    position: markerPosition, 
+                    image: markerImage // 마커이미지 설정 
+                });
 
-            // 마커가 지도 위에 표시되도록 설정합니다
-            marker.setMap(map);
+                // 마커가 지도 위에 표시되도록 설정합니다
+                marker.setMap(map);
             </script>
 
             <div id="map-bottomSheet" class="map-bottom-sheet">
                 <div class="map-info">
                     <div class="closebutton"><h3>거래 정보</h3> <button style="background:none; border: none;" onclick="closeMapBottomSheet()">✕</button></div>
                     <div class="poca-seller">거래자 아이디 : {{info.seller.user_id}}</div>
+                    <div class="poca-title">게시글 제목 : {{info.title}}</div>
                     <div class="poca-place">거래 장소 : {{info.place}}</div>
                     <div class="poca-type">거래 방식 : {{info.trade_type}}</div>
+                    {% if info.price %}
+                        <div class="poca-price">가격: {{info.price}}원</div>
+                    {% endif %}
+                    {% if info.description %}
+                        <div class="poca-description">상세설명 : {{info.description}}</div>    
+                    {% endif %}
                     <div class="poca-available">거래 가능 일자 : {{info.available_at}}</div>
                     <div class="poca-created">등록 일자 : {{info.created_at|date:'Y년 m월 d일 A h:i'}}</div>
                     <div class="poca-state">포토카드 상태 : {{info.poca_state}}</div>
                     <div class="poca-tag">
-                        <span>럭키드로우</span>
-                        <span>사운드웨이브</span>
+                        {% if info.tag %}
+                            {% for tag in tags %}
+                                <span>{{tag}}</span>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -440,4 +488,3 @@
             </script>
         </div>
     </div>
-{% endblock content %}

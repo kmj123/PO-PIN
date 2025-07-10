@@ -280,22 +280,11 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <a href="#" class="btn btn-outline">로그인</a>
-        <a href="#" class="btn btn-primary">회원가입</a>
-      </div>
-    </nav>
-  </header>
+  {% if request.session.user_id %}
+    {% include "header_login.html" %}
+  {% else %}
+    {% include "header_logout.html" %}
+  {% endif %}
 
   <main class="main-content">
     <div class="about-container">

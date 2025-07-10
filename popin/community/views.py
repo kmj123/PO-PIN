@@ -78,6 +78,7 @@ from signupFT.models import User  # 사용자 모델 import
 
 def write_companion(request):
     if request.method == "POST":
+
         try:
             # 1. 사용자
             user_id = request.session.get('user_id')
@@ -109,15 +110,18 @@ def write_companion(request):
                 author=user,
             )
 
+
             # 5. 태그 처리
             tag_list = [tag.strip().lstrip('#') for tag in tags.split(',') if tag.strip()]
             for tag_name in tag_list:
                 tag_obj, _ = CompanionTag.objects.get_or_create(name=tag_name)
                 post.tags.add(tag_obj)
 
+
             # 6. 이미지 저장
             for file in request.FILES.getlist('images'):
                 CompanionImage.objects.create(post=post, image=file)
+
 
             return redirect('community:companion')
         except Exception as e:
@@ -137,6 +141,7 @@ from signupFT.models import User  # 사용자 모델 import
 from datetime import datetime
 
 def write_proxy(request):
+
     if request.method == "POST":
         title = request.POST.get("title")
         artist = request.POST.get("artist")
@@ -158,6 +163,7 @@ def write_proxy(request):
         user_id = request.session.get("user_id")
         if not user_id:
             return redirect("login")  # 로그인 안 되어 있으면 로그인 페이지로
+
 
         try:
             user = User.objects.get(user_id=user_id)
