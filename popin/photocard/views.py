@@ -194,6 +194,90 @@ def toggle_wish(request, pno):
     # 일반적인 요청에는 포토카드 교환 페이지로 리다이렉트
     return redirect('/photocard/exchange/')
 
+def modify(request, pno):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = User.objects.get(user_id=user_id) # 사용자
+    photo_qs = Photocard.objects.get(pno=pno) # 수정 포토카드 게시글
+    print(request.POST)
+    
+    
+    # 사용자 아이디와 수정 포토카드 게시글의 판매자가 같을 시 True
+    if user.user_id == photo_qs.seller.user_id :
+        try:
+            if request.method == "GET":
+                
+                tags = photo_qs.tag.split(',') if photo_qs.tag else []
+                context = {
+                    'category_choices': Photocard.CATEGORY_CHOICES,
+                    'poca_state_choices': Photocard.P_STATE_CHOICES,
+                    'trade_type_choices': Photocard.TRADE_CHOICES,
+                    'place_choices': Photocard.PLACE_CHOICES,
+                    'trade_state_choices' : Photocard.TRADE_STATE_CHOICES,
+                    'photocard': photo_qs,
+                    'tags':tags,
+                }
+                    
+                return render(request, 'modify.html', context)
+            
+            # 포토카드 상세정보 수정
+            elif request.method == "POST":
+                photo_qs.title = request.POST.get('title') # 제목
+                photo_qs.image = request.FILES.get('image') # 이미지
+                
+                photo_qs.category=request.POST.get('album_type') # 카테고리 (공방, 앨범)
+                photo_qs.album=request.POST.get('album') # 활동 시기 앨범 (1집, 2집)
+                
+                group=request.POST.get('group') # 그룹
+                member=request.POST.get('member') # 멤버
+                member_obj = Member.objects.get(name=member, group__name=group)
+                photo_qs.member = member_obj
+                
+                photo_qs.poca_state=request.POST.get('poca_state') # 포카 하자 상태
+                
+                photo_qs.trade_type=request.POST.get('trade_type') # 거래 방식
+                    
+                tags=request.POST.getlist('tag', []) # 태그 리스트
+                photo_qs.tag = ','.join(tags) # 하나의 문자열로 태그 전환
+                
+                if photo_qs.trade_type =="판매":
+                    photo_qs.price = request.POST.get('price','') # 가격
+                photo_qs.description = request.POST.get('description','') # 상세 설명
+                
+                photo_qs.place=request.POST.get('place') # 장소 (올공, 더현대)
+                
+                photo_qs.sell_state = "중"
+                
+                # 거래 가능일
+                if request.POST.get('available_at') == "" :
+                    available_at = str(date.today())
+                else:
+                    available_at = request.POST.get('available_at')
+                
+                photo_qs.available_at = available_at 
+                
+                #거래 위치 위도 경도
+                # 위치 문자열 -> 숫자열로 전환
+                lat = request.POST.get('latitude')
+                lng = request.POST.get('longitude')
+
+                photo_qs.latitude = float(lat) if lat else None
+                photo_qs.longitude = float(lng) if lng else None
+                
+                # 새로 설정한 값 수정
+                photo_qs.save()
+                
+                # 수정 완료 후 리다이렉트
+                return redirect('/photocard/exchange')
+        except User.DoesNotExist:
+            return redirect('login:main')  # 예외 상황 대비
+    else: 
+        # 사용자 아이디와 판매자 아이디가 일치하지 않을 경우 리다이렉트
+        return redirect('/photocard/exchange')
+
 
 # 포토카드 거래글 작성
 def write(request):
