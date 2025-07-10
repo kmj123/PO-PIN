@@ -13,4 +13,7 @@ urlpatterns = [
     path('delete/<int:pno>/', views.delete, name='delete'),
     path('wish/<int:pno>/', views.wish, name='wish'),
     path('toggle_wish/<int:pno>/', views.toggle_wish, name='toggle_wish'),
+    
+    path('location/', views.location, name='location'),
+    path('location2/', views.location2, name='location2'),
 ]
