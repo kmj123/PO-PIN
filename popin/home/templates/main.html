@@ -372,12 +372,7 @@
                     // 공지사항 제목 애니메이션
                     const noticeContent = document.querySelector('.notice-content');
                     const noticeTitle = document.querySelector('.noticetitle');
-                    const titles = [
-                        "올바른 포카교환 생활",
-                        "말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목",
-                        "포카 교환은 즐거운 경험입니다",
-                        "새로운 포토카드 교환 기회!",
-                    ];
+                    const titles = {{ titles|safe }};
                     let currentIndex = 0;
 
                     // 제목 변경 함수
