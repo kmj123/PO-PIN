@@ -363,7 +363,7 @@
                                 <div class="noticetag">NOTICE</div>
                                 <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
                             </div>
-                            <a href="#noticeAll" class="noticeall">전체보기</a>
+                            <a href="/customer/notice/" class="noticeall">전체보기</a>
                         </div>
                     </div>
                 </div>
@@ -459,11 +459,12 @@
                     </div>
                     {% for r in recent %}
                         <div class="post-item">
-                            {%if r.category == "판매" or r.category == "교환" %}
-                                <a href="/photocard/detail/{{r.id}}">
-                            {%elif r.category == "포카 꾸미기" %}
-                                <a href="/pocadeco/view/{{r.id}}/"> {# 추후 생성 #}
-                            {%endif%}
+                            <a href="
+                            {% if r.category == '판매' or r.category == '교환'%}
+                                /photocard/detail/{{ r.id }}/
+                            {% elif r.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ r.id }}/
+                            {% endif %}">
                                 <div class="post-content">
                                     <div class="post-title">{{r.title}}</div>
                                     <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
