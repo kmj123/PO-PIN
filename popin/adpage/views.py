@@ -56,6 +56,7 @@ def main(request) :
 
             # 정렬된 결과로 리스트 준비
             sorted_months = sorted(list(month_set))
+            all_counts = [count_data[m]['판매'] + count_data[m]['교환'] for m in sorted_months]
             sale_counts = [count_data[m]['판매'] for m in sorted_months]
             exchange_counts = [count_data[m]['교환'] for m in sorted_months]
             
@@ -69,6 +70,7 @@ def main(request) :
                 'total_users':total_users,  # 전체 사용자
                 'block_users':block_users, # 차단 사용자
                 'months':sorted_months, # 월별 거래 통계 (month)
+                'all' : all_counts, # 월별 거래 통계 (총판)
                 'sell':sale_counts, # 월별 거래 통계 (판매)
                 'exchange':exchange_counts, # 월별 거래 통계 (교환)
             }
