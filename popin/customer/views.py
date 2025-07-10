@@ -43,7 +43,7 @@ def filter_notice(request):
                 'created_at': n.created_at.strftime('%Y-%m-%d'),
                 'views': n.views,
                 'notice_type': n.notice_type,
-            } for n in notices.order_by('-created_at')]
+            } for n in notices.order_by('-is_pinned','-created_at')]
 
             return JsonResponse({'notices': notice_list})
         except Exception as e:
