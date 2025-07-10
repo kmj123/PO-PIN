@@ -13,11 +13,299 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <title>{%block title%}마이페이지{%endblock%}</title>
     </head>
+    <style>
+    .modal{
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content{
+            border-radius: 8px;
+            width: 90%;
+            max-width: 850px;
+            background-color: #ffff;
+            FONT-WEIGHT: 200;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .close {
+        position: block;
+        top: 10px;
+        right: 16px;
+        font-size: 28px;
+        cursor: pointer;
+        }
+        /*검색css*/
+
+        .search-container {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        }
+
+        .search-box {
+        padding: 12px 20px;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        font-size: 16px;
+        width: 100%;
+        transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .filter-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+        }
+
+        .filter-btn {
+        padding: 8px 16px;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+        background: #667eea;
+        color: white;
+        }
+
+        .selected-count {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+        color: #333;
+        font-weight: bold;
+        }
+
+        .selected-members {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        }
+
+        .selected-members h3 {
+        margin-bottom: 15px;
+        color: #333;
+        }
+
+        .selected-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        }
+
+        .selected-item {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding:15px;
+        border-radius: 15px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        }
+
+        .remove-btn {
+        background: rgba(255, 255, 255, 0.3);
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        color: white;
+        font-size: 12px;
+        }
+
+        .search-noticeBox {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border: 2px dashed #667eea;
+        border-radius: 20px;
+        margin: 20px 0;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-notice .icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        display: block;
+        }
+
+        .search-notice .main-text {
+        color: #667eea;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        }
+
+        .search-notice .sub-text {
+        font-size: 14px;
+        color: #999;
+        }
+
+        .groups-container {
+            display: grid;
+            gap: 20px;
+            max-height: 400px;
+            overflow-y: scroll;
+        }
+
+        .group-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .group-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+        }
+
+        .group-name {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #333;
+        }
+
+        .group-type {
+        padding: 5px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        }
+
+        .boy-group {
+        background: #e3f2fd;
+        color: #1976d2;
+        }
+
+        .girl-group {
+        background: #fce4ec;
+        color: #c2185b;
+        }
+
+        .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+        }
+
+        .member-toggle {
+        padding: 8px 12px;
+        border: 2px solid #ddd;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+        }
+
+        .member-toggle:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+        }
+
+        .member-toggle.selected {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-color: #667eea;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .member-toggle.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+        }
+
+        .selection-limit-notice {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 14px;
+        }
+        .btn {
+        width: 100%;
+        padding: 1rem;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        }
+
+        .btn-primary:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        }
+
+    </style>
 
     <script>
+
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+            }
+            }
+            return cookieValue;
+        }
+
         //모달창 스크립트
         document.addEventListener('DOMContentLoaded', function () {
-            const modalOpenButton = document.getElementById('favorite-btn');
+            const modalOpenButton = document.getElementById('profile_modal');
             const modalSaveButton = document.getElementById('favorite-btnSave');
             const modalCloseButton = document.getElementById('favorite-btnClose');
             const modal = document.getElementById('modalContainer');
@@ -175,74 +463,6 @@
             }
         }
         
-
-        // 포토카드 데이터 (실제로는 서버에서 가져올 데이터)
-        const photocardData = {
-            'bts-mots7': {
-                title: 'BTS - Map of the Soul: 7',
-                cards: [
-                    { id: 1, member: 'RM', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 2, member: '진', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 3, member: '슈가', type: '포토카드', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 4, member: '제이홉', type: '일반', img: '/static/images/mypage/사쿠야.jfif/' },
-                    { id: 5, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
-                    { id: 6, member: '정국', type: '한정판', img: '/static/images/mypage/도영.jfif/' },
-                    { id: 7, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
-                    { id: 8, member: '정국', type: '한정판', img: '/static/images/mypage/윈터.jpg/' },
-                    { id: 9, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
-                    { id: 10, member: '정국', type: '한정판', img: '/static/images/mypage/승관.jfif/' },
-                ]
-            },
-            'bp-thealbum': {
-                title: 'BLACKPINK - THE ALBUM',
-                cards: [
-                    { id: 1, member: '로제', type: '일반', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=ROSE' },
-                    { id: 2, member: '리사', type: '포토카드', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=LISA' },
-                    { id: 3, member: '제니', type: '한정판', img: 'https://via.placeholder.com/120x150/e91e63/ffffff?text=JENNIE' }
-                ]
-            },
-            'bts-ly': {
-                title: 'BTS - Love Yourself: Her',
-                cards: [
-                    { id: 1, member: '지민', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JIMIN' },
-                    { id: 2, member: 'V', type: '포토카드', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=V' },
-                    { id: 3, member: '정국', type: '일반', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=JK' },
-                    { id: 4, member: 'RM', type: '한정판', img: 'https://via.placeholder.com/120x150/9c27b0/ffffff?text=RM' }
-                ]
-            },
-            'nj-omg': {
-                title: 'NewJeans - OMG',
-                cards: [
-                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI' },
-                    { id: 2, member: '하니', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HANNI' },
-                    { id: 3, member: '다니엘', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=DANIELLE' },
-                    { id: 4, member: '해린', type: '한정판', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HAERIN' },
-                    { id: 5, member: '혜인', type: '일반', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=HYEIN' },
-                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/4caf50/ffffff?text=MINJI2' }
-                ]
-            },
-            'nj-getup': {
-                title: 'NewJeans - Get Up',
-                cards: [
-                    { id: 1, member: '민지', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI' },
-                    { id: 2, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI' },
-                    { id: 3, member: '다니엘', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE' },
-                    { id: 4, member: '해린', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HAERIN' },
-                    { id: 5, member: '혜인', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HYEIN' },
-                    { id: 6, member: '민지', type: '포토카드', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=MINJI2' },
-                    { id: 7, member: '하니', type: '일반', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=HANNI2' },
-                    { id: 8, member: '다니엘', type: '한정판', img: 'https://via.placeholder.com/120x150/ff9800/ffffff?text=DANIELLE2' }
-                ]
-            },
-            'bp-bornpink': {
-                title: 'BLACKPINK - Born Pink',
-                cards: [
-                    { id: 1, member: '지수', type: '일반', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=JISOO' },
-                    { id: 2, member: '로제', type: '한정판', img: 'https://via.placeholder.com/120x150/f44336/ffffff?text=ROSE' }
-                ]
-            }
-        };
-
         // 앨범 -> 
         function showPhotoCards(albumId) {
             const albumData = photocardData[albumId];
@@ -304,6 +524,7 @@
                 }
             });
         });
+
     </script>
 
     <body>
@@ -312,22 +533,22 @@
         <form>
             <div class="profile-card">
                 <div class="profile-header">
-                    <div class="polaroid">
+                    <div class="polaroid" id="profile_modal">
                         <div class="polaroid-image">
                             <!--클릭시 프로필변경페이지 이동-->
-                            <a href="/mypage/update_profile/">
-                                <img src='/media/{{profile_image}}/' alt="{{profile_image}}">
-                            </a>
+                            <img src='/media/{{profile_image}}/' alt='{{profile_image}}'>
                         </div>
                         
                         <!-- 프로필 수정 모달창 오픈 -->
                         <button id="favorite-btn" type="button">
-                            <img src="/static/images/mypage/svt_logo.jfif/" alt="group_logo">
+                            {% for group in groups %}
+                                <img src="/media/{{ group.image.url }}/" alt="{{ group.name }}">
+                            {% endfor %}
                         </button>
                     </div>
                     <div class="profile-info">
-                        <h1 style="text-align:center;">{{nickname}}</h1>
-                        <h3 style="margin-bottom:20px;">"{{introduction}}"</h3>
+                        <h1>{{nickname}}</h1>
+                        <h3>"{{introduction}}"</h3>
                         <br>
                         
                         <div class="stats">
@@ -565,18 +786,7 @@
                 </div>
 
                 <div class="section-content">
-                    <div id="blocked-user" class="blocked-content">
-                        <div class="item">
-                            <h3>스팸유저123</h3>
-                            <button class="unblock-btn">차단해제</button>
-                            <p>차단 사유: 스팸 메시지 반복 발송</p>
-                        </div>
-                        <div class="item">
-                            <h3>사기꾼456</h3>
-                            <button class="unblock-btn">차단해제</button>
-                            <p>차단 사유: 거래 약속 불이행</p>
-                        </div>
-                    </div>
+                    <div id="blocked-user" class="blocked-content"> </div>
                 </div>
 
                 <div class="section-content">
@@ -614,29 +824,69 @@
                         <div class="profile_img_container">
                             <div class="profile_img_wrapper">
                                 <div class="previous_container" id="previous_container" style="cursor:pointer;">
-                                    <img id="previousImage" src="/static/images/mypage/도영.jfif/" class="profile_image" alt="프로필 이미지">
+                                    <img id="previousImage" src="/media/{{ profile_image }}/" class="profile_image" alt="프로필 이미지">
                                 </div>
                                 <input type="file" id="profile-img-input" name="profile_image" class="fileType" accept="image/*" style="display:none;">
                             </div>
-                                <div class="preview-container" id="previewContainer" style="display:none;">
-                                    <img id="previewImage" class="preview-image" alt="미리보기">
-                                </div>
+                            <div class="preview-container" id="previewContainer" style="display:none;">
+                                <img id="previewImage" class="preview-image" alt="미리보기">
+                            </div>
                         </div>
                         <div class="myinfo">
                             <div class="myinfo-profile">
                                 <label for="nickname">닉네임</label>
-                                <input type="text" id="nickname" name="nickname">
+                                <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
                             </div>
                             <div class="myinfo-profile">
                                 <label for="mybias">최애변경</label>
-                                <input type="text" id="mybias" name="mybias">
+                                {% for group,member in bias_pairs %}
+                                <div class="mybias_input">
+                                        <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
+                                </div>
+                                    {% endfor %}
                             </div>
+                                    <!--아티스트 검색 모달창-->
+                                    <div id="searchModal" class="modal" >
+                                        <div class="modal-content">
+                                            <span id="searchModalOpenClose" class="close">&times;</span>
+                                            <form id="memberSearchForm" method="POST" action="{% url 'signup:member_select' %}">
+                                                {% csrf_token %}
+                                                <div class="search-container">
+                                                    <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+                                                    <input type="hidden" name="group_name" id="selectedGroup">
+                                                    <input type="hidden" name="member_name" id="selectedMember">
+
+                                                    <div class="filter-buttons">
+                                                        <button type="button" class="filter-btn" data-filter="all">전체</button>
+                                                        <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                                                        <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="selected-members" id="selectedMembers" style="display: none;">
+                                                    <h3>🌟 선택된 멤버</h3>
+                                                    <div class="selected-list" id="selectedList"></div>
+                                                </div>
+
+                                                <div class="search-noticeBox" id="searchNotice">
+                                                    <span class="icon">🔍</span>
+                                                    <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+                                                    <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
+                                                </div>
+                                                
+                                                <div class="groups-container" id="groupsContainer"></div>
+                                                <div id="hiddenInputsContainer"></div>
+                                                <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                            
                             <div class="myinfo-profile">
                                 <label for="myself">자기소개</label>
-                                <input type="text" id="myself" name="myself">
+                                <input type="text" id="myself" name="myself" value="{{ introduction}}">
                             </div>
                             <div class="myinfo-profile">
-                                <button id="favorite-btnSave" type="button">변경사항 저장</button>
+                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
                             </div>
                         </div>
                     </div>
@@ -713,11 +963,11 @@
                     </div>  
                 </div>`).join("");
 
-                recentList.html(cardsHtml || "<div>최근 본 글이 없습니다.</div>");
+                recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
             },
             error: function () {
                 console.error("최근 본 글 불러오기 실패");
-                recentList.html("<div>최근 본 글을 불러오는 데 실패했습니다.</div>");
+                recentList.html("<div class='error-content'>최근 본 글을 불러오는 데 실패했습니다.</div>");
             }
         });
 
@@ -758,13 +1008,13 @@
                         `;
                         albumList.append(albumCard);  
 
-                        albumList.append(albumList || "<div>보유한 포토카드가 없습니다.</div>");
+                        albumList.append(albumList || "<div class='error-content'>보유한 포토카드가 없습니다.</div>");
                     }
                 }            
             },
             error: function (xhr, status, error) {
                 console.error("마이포카 불러오기 실패");
-                albumList.html("<div>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
+                albumList.html("<div class='error-content'>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
             }
         });
 
@@ -796,11 +1046,11 @@
                             </div>
                         </div>
                     </a>`).join("");
-                wishList.append(wishdata || "<div>위시리스트 목록이 없습니다.</div>")
+                wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
             },
             error: function (xhr, status, error) {
                 console.error("위시리스트 불러오기 실패");
-                wishList.html("<div>위시리스트를 불러오는 데 실패했습니다.</div>");
+                wishList.html("<div class='error-content'>위시리스트를 불러오는 데 실패했습니다.</div>");
             }
         });
 
@@ -822,10 +1072,10 @@
                         <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
                     </div>`).join("");
 
-                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+                saleList.append(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
             }, error: function(xhr, status, error){
                 console.error("판매목록 불러오기 실패");
-                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+                saleList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
         // 구매 목록 AJAX
@@ -845,11 +1095,11 @@
                         <h3>${buy.title}</h3>
                         <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
                     </div>`).join("");
-                    buyList.append(buyData||"<div>판매목록이 없습니다.</div>");
+                    buyList.append(buyData||"<div class='error-content'>판매목록이 없습니다.</div>");
 
             }, error: function(xhr, status, error){
                 console.error("판매목록 불러오기 실패");
-                buyList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+                buyList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
         // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
@@ -859,7 +1109,7 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                alert('교환목록 불러오기 수정이 필요합니다');
+                console.log('교환목록 불러오기 수정이 필요합니다');
 
                 const saleList = $("#transactions #trading-list");
                 saleList.empty();
@@ -870,10 +1120,10 @@
                         <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
                     </div>`);
 
-                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+                saleList.append(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
             }, error: function(xhr, status, error){
                 console.error("판매목록 불러오기 실패");
-                saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+                saleList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
         
@@ -889,7 +1139,7 @@
 
         // 블랙리스트 - 차단한 사용자 목록 AJAX
         $.ajax({
-            url: "/mypage/block_list/",
+            url: "/mypage/blocklist/",
             type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
@@ -904,15 +1154,220 @@
                         <h3>${user.user_id}${user.name}</h3>
                         <button class="unblock-btn">차단해제</button>
                         <p>차단 사유: 스팸 메시지 반복 발송</p>
-                    </div>`);
+                    </div>`).join("");
 
-                blockData.append(blockData||"<div>차단 사용자 없습니다.</div>");
+                blocked_user.append(blockData||"<div class='error-content'>차단 사용자 없습니다.</div>");
             }, error: function(xhr, status, error){
                 console.error("차단 사용자 불러오기 실패");
-                //blockData.html("<div>차단 사용자 불러오는 데 실패했습니다.</div>");
+                blocked_user.html("<div class='error-content'>차단 사용자 불러오는 데 실패했습니다.</div>");
             }
         });
     
+        $('#profileForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: '/mypage/update_profile/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+            'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
+            },
+            success: function(response) {
+                alert("프로필 수정 성공");
+            },
+            error: function(xhr) {
+                alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+            }
+        });
+        });
+s
+
+
+
+
+        // 아티스트 검색 모달창
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById('searchModal');
+        const searchModalOpen = document.getElementById('searchModalOpen');
+        const searchModalClose = document.getElementById('searchModalOpenClose');
+        const searchInput = document.getElementById('idolSearch');
+        const completeBtn = document.getElementById('completeBtn');
+        const groupsContainer = document.getElementById('groupsContainer');
+        const searchNotice = document.getElementById('searchNotice');
+        const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
+        const memberGrid = document.querySelector('.mybias_input');
+        
+        const mybiasInput = document.getElementById("mybias");
+        mybiasInput.addEventListener("click", () => {
+            searchModal.style.display = "block";
+
+            // 검색 초기화
+            searchInput.value = '';
+            searchInput.focus();
+            groupsContainer.innerHTML = '';
+            searchNotice.style.display = 'block';
+            selectedMember = null;
+            completeBtn.disabled = true;
+
+            // 전체 로딩
+            fetch(`/idols/search/?q=`)
+                .then(res => res.json())
+                .then(data => {
+                    allData = data.members;
+                    renderGroups();
+                });
+        });  
+        
+        // 모달 닫기
+        searchModalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', e => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+
+
+        // 검색 처리
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            if (!query) {
+                groupsContainer.innerHTML = '';
+                searchNotice.style.display = 'block';
+                return;
+            }
+
+            // api query
+            fetch(`/idols/search/?q=${query}`)
+                .then(res => res.json())
+                .then(data => {
+                    groupsContainer.innerHTML = '';
+                    searchNotice.style.display = 'none';
+                    completeBtn.disabled = true;
+
+                    // 검색된 결과가 1명일 경우
+                    if (data.members.length === 1) {
+                        const member = data.members[0];
+                        selectedMember = {
+                            group: member.group__name,
+                            member: member.name
+                        };
+                        renderSingleResult(member);
+                        completeBtn.disabled = false;
+                        return;
+                    }
+
+                    // 검색된 결과가 여러명 경우
+                    const groups = {};
+                    data.members.forEach(m => {
+                        const group = m.group__name;
+                        if (!groups[group]) {
+                            groups[group] = { gender: m.group__gender, members: [] };
+                        }
+                        groups[group].members.push(m);
+                    });
+
+                    Object.entries(groups).forEach(([groupName, info]) => {
+                        const groupCard = document.createElement('div');
+                        groupCard.className = 'group-card';
+                        const typeClass = info.gender === "M" ? "boy-group" : "girl-group";
+
+                        groupCard.innerHTML = `
+                            <div class="group-header">
+                                <div class="group-name">${groupName}</div>
+                                <div class="group-type ${typeClass}">
+                                    ${info.gender === "M" ? "보이그룹" : "걸그룹"}
+                                </div>
+                            </div>
+                            <div class="members-grid">
+                                ${info.members.map(member => {
+                                    const isSelected = selectedMember && selectedMember.group === groupName && selectedMember.member === member.name;
+                                    return `
+                                        <button type="button" class="member-toggle ${isSelected ? 'selected' : ''}"
+                                            data-group="${groupName}" data-member="${member.name}">
+                                            ${member.name}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                        groupsContainer.appendChild(groupCard);
+                    });
+                });
+        });
+
+        // 단일 결과 렌더링
+        function renderSingleResult(member) {
+            groupsContainer.innerHTML = `
+                <div class="group-card">
+                    <div class="group-header">
+                        <div class="group-name">${member.group__name}</div>
+                        <div class="group-type ${member.group__gender === "M" ? "boy-group" : "girl-group"}">
+                            ${member.group__gender === "M" ? "보이그룹" : "걸그룹"}
+                        </div>
+                    </div>
+                    <div class="members-grid">
+                        <button type="button" class="member-toggle selected"
+                            data-group="${member.group__name}" data-member="${member.name}">
+                            ${member.name}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 버튼 클릭으로 멤버 선택
+        groupsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('member-toggle')) {
+                const group = e.target.dataset.group;
+                const member = e.target.dataset.member;
+
+                selectedMember = { group, member };
+                completeBtn.disabled = false;
+
+                // 버튼 상태 갱신
+                document.querySelectorAll('.member-toggle').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            }
+        });
+
+        // 완료 버튼 클릭
+        completeBtn.addEventListener('click', () => {
+            if (!selectedMember) return;
+
+            // hidden input 생성
+            hiddenInputsContainer.innerHTML = `
+                <input type="hidden" name="group" value="${selectedMember.group}">
+                <input type="hidden" name="member" value="${selectedMember.member}">
+            `;
+
+            // 메인 페이지에 렌더링
+            memberGrid.innerHTML = `
+                    <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}" readonly style="cursor: pointer;">
+            `;
+
+            modal.style.display = 'none';
+        });
+
+        // 필터 버튼 처리
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                searchInput.dispatchEvent(new Event('input'));
+            });
+        });
+
+    });
+
     </script>
 
 {%endblock%}

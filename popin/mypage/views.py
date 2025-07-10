@@ -7,6 +7,7 @@ from collections import defaultdict
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
+from idols.models import Member, Group
 
 def profile(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -31,6 +32,7 @@ def profile(request):
             'profile_image':user.profile_image, # 프로필 이미지
             'members': user.bias_member.all(), # 최애 멤버 (member.group.name으로 최애 그룹 이름 접근 가능)
             'groups': user.bias_group.all(), # 최애 그룹
+            'bias_pairs': zip(user.bias_group.all(), user.bias_member.all())  # ✅ 그룹-멤버 쌍
             }
         
         
@@ -215,6 +217,7 @@ def trade(request):
 def block_list(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
+        
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
 
@@ -222,6 +225,8 @@ def block_list(request):
             user = User.objects.get(user_id=user_id)
             block_users = user.initiated_relations.filter(relation_type='BLOCK')
             
+            # 차단 사용자 리스트 저장용
+            block_data = []
             for u in block_users :
                 block_data = [
                     {
@@ -250,11 +255,24 @@ def update_profile(request):
             # 텍스트 데이터는 request.POST에서
             user.nickname = request.POST.get('nickname', user.nickname)
             user.introduction = request.POST.get('introduction', user.introduction)
-
+        
             # 파일은 request.FILES에서
             profile_img = request.FILES.get('profile_image')
             if profile_img:
                 user.profile_image = profile_img
+                
+            # 최애 멤버/그룹
+            member_name = request.POST.get('member')
+            group_name = request.POST.get('group')
+
+            if member_name and group_name:
+                try:
+                    group = Group.objects.get(name=group_name)
+                    member = Member.objects.get(name=member_name, group=group)
+                    user.bias_group.set([group])   # bias_group은 many-to-many
+                    user.bias_member.set([member]) # bias_member도 many-to-many
+                except (Group.DoesNotExist, Member.DoesNotExist):
+                    return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
                 
             print(user)
             

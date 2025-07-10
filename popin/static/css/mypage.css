@@ -43,6 +43,8 @@
     margin-bottom: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     height: 100%;
+    width: 350px;
+    margin: 0 auto;
 }
 
 .profile-header {
@@ -74,6 +76,7 @@
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
     color: #333;
+    text-align:center;
 }
 
 .profile-info h3 {
@@ -81,6 +84,7 @@
     font-weight: normal;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+    padding: 20px;
 }
 
 .stats {
@@ -295,7 +299,7 @@
     position: relative;
     transform: rotate(-1deg);
     cursor:pointer;
-    height: 307px;
+    height: 333px;
 }
 
 .polaroid:nth-child(even) {
@@ -309,7 +313,7 @@
 
 .polaroid-image {
     width: 100%;
-    height: 200px;
+    height: 221px;
     background: #f8f9fa;
     border-radius: 4px;
     overflow: hidden;
@@ -320,9 +324,8 @@
 .polaroid-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: fill;
     border-radius: 4px;
-    object-fit: cover;
     object-position: center;
 }
 
@@ -734,13 +737,14 @@ a{
 .profileContent{
     display: flex;
     flex-direction: column;
-    width: 80%;
-    margin-left: 11%;
+    width: 95%;
+    height: 78%;
 }
 
 .profileContent label{
     margin: 5px;
     width: 27%;
+    text-align: center;
 }
 
 .profileContent input {
@@ -774,6 +778,7 @@ a{
 
 .myinfo-profile{
     display:flex;
+    margin: 10px;
 }
 
 .wish-list-txt h3{
@@ -829,4 +834,11 @@ textarea{
     border-color: #667eea;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     transform: translateY(-2px);
+}
+
+.error-content{
+    padding: 100px;
+    text-align: center;
+    font-size: 23px;
+    font-weight: 600;
 }
