@@ -4,9 +4,11 @@ from django.shortcuts import render,redirect
 from signupFT.models import User
 from photocard.models import Photocard
 from pocadeco.models import DecoratedPhotocard
+from adpage.models import Notice
 
 from django.db.models import Count
 from django.core.paginator import Paginator
+import json
 
 
 def main(request):
@@ -17,6 +19,10 @@ def main(request):
 
     try:
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
+        
+        # 공지사항 최신글 (임시)
+        notices = Notice.objects.all().order_by('is_pinned','-created_at')[:4]
+        notice_titles = [notice.title for notice in notices]
         
         # 전체 게시글
         total_photocard = Photocard.objects.all().count() 
@@ -59,7 +65,6 @@ def main(request):
                 'hit' : recent_exchange.hit,
             })
             
-        
         if recent_sale:
             recent.append({
                 'id': recent_sale.pno,
@@ -78,9 +83,7 @@ def main(request):
                 'created_at' : recent_deco.created_at,
                 'hit' : recent_deco.hit,
             })
-        
-        print(recent)
-        
+            
         context = {
             'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
             'photocards': photocards, # 최근 인기 포토카드
@@ -88,7 +91,8 @@ def main(request):
             'total_user':total_user,  # 활성 사용자
             'completed_photocard':completed_photocard, #교환 완료
             'total_decopoca':total_decopoca,
-            'recent':recent
+            'recent':recent,
+            'titles': json.dumps(notice_titles),
         }
         
         return render(request, 'main.html', context)

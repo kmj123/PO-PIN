@@ -1,3 +1,4 @@
+
 {% load static %}
 <!--상단 헤더-->
 
@@ -387,65 +388,65 @@
         }
 
         @media (max-width: 768px) {
-        .main-content {
-            flex-direction: column;
+            .main-content {
+                flex-direction: column;
+            }
+            .content{
+                width:100%;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .sort-buttons {
+                justify-content: center;
+            }
+            
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            .photo-card{
+                width:100%;
+            }
         }
-        .content{
-            width:100%;
-        }
-        
-        .sidebar {
-            width: 100%;
-        }
-        
-        .navbar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-        
-        .sort-buttons {
-            justify-content: center;
-        }
-        
-        .photo-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        }
-        .photo-card{
-            width:100%;
-        }
+                /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 40px;
     }
-        /* 페이지네이션 */
-        .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin-top: 40px;
-        }
 
-        .page-btn {
-        padding: 10px 15px;
-        border: 2px solid #667eea;
-        border-radius: 10px;
-        background: white;
-        color: #667eea;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        }
+    .page-btn {
+      padding: 10px 15px;
+      border: 2px solid #667eea;
+      border-radius: 10px;
+      background: white;
+      color: #667eea;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
 
-        .page-btn:hover,
-        .page-btn.active {
-        background: #667eea;
-        color: white;
-        transform: translateY(-2px);
-        }
+    .page-btn:hover,
+    .page-btn.active {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
 
-        .page-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        }
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     </style>
 </head>
@@ -458,16 +459,7 @@
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
-                <div class="searc
-                    <h3 class="filter-title" id="select_artist">아티스트 선택</h3>
-                    <input type="text" class="search-input" placeholder="검색어를 입력해주세요" id="artistSearch">
-                    <div class="search-results" id="searchResults"></div>
-                    <div id="selectedArtist"></div>
-                </div>
-                <div class="filter-section" id="selectmember" style="display:none;">
-                    <h3 class="filter-title">멤버 필터</h3>
-                    <div id="groupsList">
-                        <!-- 선택된 그룹의 멤버 리스트가 여기에 표시됩니다 --
+                <div class="search-section">
                     <h3 class="filter-title" id="select_artist">검색어 입력</h3>
                     <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
                     <div class="search-results" id="searchResults"></div>
@@ -476,7 +468,7 @@
                 <div class="filter-section" id="selectgroup" style="display:none;">
                     <h3 class="filter-title">그룹 필터</h3>
                     <div id="groupsList">
-                        <!-- 조회된 그룹 리스트 표시 --
+                        <!-- 조회된 그룹 리스트 표시 -->
                     </div>
                 </div>
 
@@ -498,15 +490,6 @@
                         <h1>포토카드 꾸미기 게시판</h1>
                         <p>나만의 포토카드를 꾸미고 공유해보세요!</p>
                     </div>
-                    
-                </div>
-
-                <div class="photo-section">
-                    <!-- photoGrid 안에 직접 렌더링 -->
-                    <div class="photo-grid" id="photoGrid">
-                        <!-- JS에서 렌더링 -->
-                    </div>
-                </div>
                 </div>
 
                 <!--데코포카 리스트-->
@@ -514,41 +497,40 @@
                     <div class="photo-grid" id="photoGrid">
                         {%for deco in decoList %}
                         <div class="photo-card" data-id="{{deco.user}}">
-                            <a href="/pocadeco/view/{{deco.id}}/">
-                                <div class="photo-image">
-                                    {%if deco.result_image %}
-                                        <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
-                                {%else%}
-                                        <img src="🎨 포토카드" alt="🎨 포토카드"> 
-                                {%endif%}
+                            <div class="photo-image">
+                                {%if deco.result_image %}
+                                    <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                               {%else%}
+                                    <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                               {%endif%}
+                            </div>
+                            <div class="photo-info">
+                                <div class="photo-title">{{deco.title}}</div>
+                                <div class="photo-meta">
+                                    <span>{{deco.user}}</span>
+                                    <span>{{deco.created_at|date:"Y-m-d"}}</span>
                                 </div>
-                                <div class="photo-info">
-                                    <div class="photo-title">{{deco.title}}</div>
-                                    <div class="photo-meta">
-                                        <span>{{deco.user}}</span>
-                                        <span>{{deco.created_at}}</span>
-                                    </div>
-                                    <!--미구현-->
-                                    <div class="photo-tags">
-                                        <span class="tag">{{deco.group}}</span>
-                                        <span class="tag">{{deco.member}}</span>
-                                        {%for tag in deco.tags%}
-                                            <span class="tag">{{tag}}</span>
-                                        {%endfor%}
-                                    </div>
-                                    <div class="photo-stats">
-                                        <div class="stat-item">
-                                            <span>👀</span>
-                                            <span>{{deco.hit}}</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span>❤️</span>
-                                            <span>{{deco.likes}}</span>
-                                        </div>
-                                    </div>
-                                    <!--미구현-->
+                                <!--미구현-->
+                                <div class="photo-tags">
+                                    <span class="tag">{{deco.group}}</span>
+                                    <span class="tag">{{deco.member}}</span>
+                                    {%for tag in deco.tags%}
+                                        <span class="tag">{{tag}}</span>
+                                    {%endfor%}
+
                                 </div>
-                            </a>
+                                <div class="photo-stats">
+                                    <div class="stat-item">
+                                        <span>👀</span>
+                                        <span>{{deco.hit}}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span>❤️</span>
+                                        <span>{{deco.likes}}</span>
+                                    </div>
+                                </div>
+                                <!--미구현-->
+                            </div>
                         </div>
                         {%endfor%}
                         <!-- JS에서 렌더링 -->
@@ -571,308 +553,12 @@
     </div>
 
     <script>
-        // 샘플 데이터
-        const sampleData = [
-            {
-                id: 1,
-                title: "지민 포토카드 꾸미기",
-                author: "ARMY_123",
-                date: "2024-07-01",
-                views: 1250,
-                likes: 89,
-                group: "BTS",
-                member: "지민",
-                image: null
-            },
-            {
-                id: 2,
-                title: "윈터 생일 기념 카드",
-                author: "MY_Winter",
-                date: "2024-06-30",
-                views: 890,
-                likes: 156,
-                group: "aespa",
-                member: "윈터",
-                image: null
-            },
-            {
-                id: 3,
-                title: "정국 골든 테마",
-                author: "JK_Golden",
-                date: "2024-06-29",
-                views: 2100,
-                likes: 234,
-                group: "BTS",
-                member: "정국",
-                image: null
-            },
-            {
-                id: 4,
-                title: "카리나 블랙맘바 컨셉",
-                author: "aespa_fan",
-                date: "2024-06-28",
-                views: 1850,
-                likes: 198,
-                group: "aespa",
-                member: "카리나",
-                image: null
-            },
-            {
-                id: 5,
-                title: "RM 인디고 앨범 테마",
-                author: "Namjoon_Art",
-                date: "2024-06-27",
-                views: 1420,
-                likes: 167,
-                group: "BTS",
-                member: "RM",
-                image: null
-            },
-            {
-                id: 6,
-                title: "지젤 힙합 바이브",
-                author: "Giselle_Hip",
-                date: "2024-06-26",
-                views: 920,
-                likes: 112,
-                group: "aespa",
-                member: "지젤",
-                image: null
-            }
-        ];
-
-        const groups = {
-            "BTS": ["RM", "진", "슈가", "제이홉", "지민", "뷔", "정국"],
-            "aespa": ["카리나", "지젤", "윈터", "닝닝"],
-            "BLACKPINK": ["지수", "제니", "로제", "리사"],
-            "NewJeans": ["민지", "하니", "다니엘", "해린", "혜인"],
-            "IVE": ["안유진", "가을", "레이", "원영", "리즈", "이서"]
-        };
-
-        let currentData = [...sampleData];
-        let currentSort = 'latest';
-        let selectedGroup = null;
-        let selectedMember = null;
-
-        // DOM 요소들
-        const photosection = document.getElementById('photo-section');
-        const photoGrid = document.getElementById('photoGrid');
-        const groupsList = document.getElementById('groupsList');
-        const artistSearch = document.getElementById('artistSearch');
         // DOM 요소들
         const searchInput = document.getElementById('searchInput');
-
         const searchResults = document.getElementById('searchResults');
         const selectedArtistDiv = document.getElementById('selectedArtist');
         const sortOptions = document.querySelectorAll('input[name="sort"]');
         const selectmember = document.getElementById('selectmember');
-
-        // 초기화
-        function init() {
-            renderPhotos(currentData);
-            setupEventListeners();
-        }
-
-        // 아티스트 검색 결과 렌더링
-        function renderSearchResults(searchTerm) {
-            if (!searchTerm.trim()) {
-                searchResults.classList.remove('show');
-                return;
-            }
-
-            const filteredGroups = Object.keys(groups).filter(group => 
-                group.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-
-            if (filteredGroups.length === 0) {
-                searchResults.innerHTML = '<div class="search-item">검색 결과가 없습니다.</div>';
-            } else {
-                searchResults.innerHTML = filteredGroups.map(group => `
-                    <div class="search-item" data-group="${group}">
-                        ${group}
-                    </div>
-                `).join('');
-            }
-            
-            searchResults.classList.add('show');
-        }
-
-        // 선택된 아티스트 표시
-        function showSelectedArtist(group) {
-            selectedArtistDiv.innerHTML = `
-                <div class="selected-artist">
-                    <span>${group}</span>
-                    <button class="remove-artist" onclick="removeSelectedArtist()">×</button>
-                </div>
-            `;
-            artistSearch.value = '';
-            searchResults.classList.remove('show');
-            selectmember.style.display="block";
-            renderMembersList(group);
-        }
-
-        // 선택된 아티스트 제거
-        function removeSelectedArtist() {
-            selectedArtistDiv.innerHTML = '';
-            groupsList.innerHTML = '';
-            selectedGroup = null;
-            selectedMember = null;
-            currentData = filterData();
-            renderPhotos(currentData);
-        }
-
-        // 멤버 리스트 렌더링
-        function renderMembersList(group) {
-            groupsList.innerHTML = `
-                <div class="group-item">
-                    <div class="members-list open">
-                        <div class="member-item ${!selectedMember ? 'selected' : ''}" data-group="${group}" data-member="">
-                            전체 멤버
-                        </div>
-                        ${groups[group].map(member => `
-                            <div class="member-item ${selectedMember === member ? 'selected' : ''}" data-group="${group}" data-member="${member}">
-                                ${member}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        // 포토카드 렌더링
-        function renderPhotos(data) {
-            if (data.length === 0) {
-                photoGrid.innerHTML = '<div class="no-results">조건에 맞는 포토카드가 없습니다.</div>';
-                return;
-            }
-
-            photoGrid.innerHTML = data.map(photo => `
-                <div class="photo-card" data-id="${photo.id}">
-                    <div class="photo-image">
-                        ${photo.image ? `<img src="${photo.image}" alt="${photo.title}">` : '🎨 포토카드'}
-                    </div>
-                    <div class="photo-info">
-                        <div class="photo-title">${photo.title}</div>
-                        <div class="photo-meta">
-                            <span>@${photo.author}</span>
-                            <span>${photo.date}</span>
-                        </div>
-                        <div class="photo-tags">
-                            <span class="tag">${photo.group}</span>
-                            <span class="tag">${photo.member}</span>
-                        </div>
-                        <div class="photo-stats">
-                            <div class="stat-item">
-                                <span>👁️</span>
-                                <span>${photo.views.toLocaleString()}</span>
-                            </div>
-                            <div class="stat-item">
-                                <span>❤️</span>
-                                <span>${photo.likes}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        // 데이터 정렬
-        function sortData(data, sortType) {
-            const sorted = [...data];
-            switch (sortType) {
-                case 'latest':
-                    return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
-                case 'popularity':
-                    return sorted.sort((a, b) => b.likes - a.likes);
-                case 'views':
-                    return sorted.sort((a, b) => b.views - a.views);
-                default:
-                    return sorted;
-            }
-        }
-
-        // 데이터 필터링
-        function filterData() {
-            let filtered = [...sampleData];
-            
-            if (selectedGroup && selectedMember) {
-                filtered = filtered.filter(photo => 
-                    photo.group === selectedGroup && photo.member === selectedMember
-                );
-            } else if (selectedGroup) {
-                filtered = filtered.filter(photo => photo.group === selectedGroup);
-            }
-            
-            return sortData(filtered, currentSort);
-        }
-
-        // 이벤트 리스너 설정
-        function setupEventListeners() {
-            // 정렬 옵션
-            sortOptions.forEach(option => {
-                option.addEventListener('change', (e) => {
-                    currentSort = e.target.value;
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                });
-            });
-
-            // 아티스트 검색
-            artistSearch.addEventListener('input', (e) => {
-                renderSearchResults(e.target.value);
-            });
-
-            // 검색 결과 클릭
-            searchResults.addEventListener('click', (e) => {
-                if (e.target.classList.contains('search-item') && e.target.dataset.group) {
-                    const group = e.target.dataset.group;
-                    selectedGroup = group;
-                    selectedMember = null;
-                    showSelectedArtist(group);
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                }
-            });
-
-            // 멤버 선택
-            groupsList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('member-item')) {
-                    // 멤버 선택
-                    document.querySelectorAll('.member-item').forEach(item => {
-                        item.classList.remove('selected');
-                    });
-                    
-                    e.target.classList.add('selected');
-                    selectedMember = e.target.dataset.member || null;
-                    
-                    currentData = filterData();
-                    renderPhotos(currentData);
-                }
-            });
-
-            // 검색창 외부 클릭 시 검색 결과 숨기기
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.search-section')) {
-                    searchResults.classList.remove('show');
-                }
-            });
-
-            // 업로드 버튼
-            document.querySelector('.upload-btn').addEventListener('click', () => {
-                location.href="{%url 'photocard:write' %}";
-            });
-
-            // 포토카드 클릭
-            photoGrid.addEventListener('click', (e) => {
-                const card = e.target.closest('.photo-card');
-                if (card) {
-                    const photoId = card.dataset.id;
-                    alert(`포토카드 ID ${photoId} 상세보기`);
-                }
-            });
-        }
-
-        // 초기화 실행
-        init();
         const photosection = document.getElementById('photo-section');
         const photoGrid = document.getElementById('photoGrid');
         const groupsList = document.getElementById('groupsList');
@@ -920,6 +606,8 @@
 
             renderResults(filtered);
         });
+
     </script>
+
 </body>
 </html>
