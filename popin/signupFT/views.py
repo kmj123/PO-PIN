@@ -59,7 +59,7 @@ def send_verification_email(request):
                     )
             request.session['verification_code'] = code
             request.session['verification_email'] = email
-            
+            print(code)
             return JsonResponse({'success': True})
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
