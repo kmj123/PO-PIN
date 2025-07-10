@@ -132,20 +132,17 @@ def recent(request):
 
     # 카테고리 필터링
     if category == '교환':
-        filtered_posts = Photocard.objects.filter(trade_type='교환').order_by('-created_at')
+        filtered_posts = [p for p in posts if p['category'] == '교환']
     elif category == '판매':
-        filtered_posts = Photocard.objects.filter(trade_type='판매').order_by('-created_at')
+        filtered_posts = [p for p in posts if p['category'] == '판매']
     elif category == '포카 꾸미기':
-        filtered_posts = DecoratedPhotocard.objects.all().order_by('-created_at')
+        filtered_posts = [p for p in posts if p['category'] == '포카 꾸미기']
     else:
         filtered_posts = posts  # '전체'일때 모든 게시글을 표시
 
     # 검색어 필터링
     if searchinput:
-        if category == "전체":
-            filtered_posts = [p for p in filtered_posts if searchinput.lower() in p['title'].lower()]
-        else:
-            filtered_posts = filtered_posts.filter(title__icontains=searchinput)
+        filtered_posts = [p for p in filtered_posts if searchinput.lower() in p['title'].lower()]
     
     # 페이지네이터
     paginator = Paginator(filtered_posts, 5)
