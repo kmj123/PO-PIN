@@ -77,53 +77,42 @@ def view(request, pno):
 def exchange(request):
     # 기본 데이터 로드
     groupMember = Member.objects.select_related('group').all()
-    
-    # GET 요청에서 필터 값 가져오기
-    selected_trade = request.GET.get('trade_type', '전체')
-    selected_state = request.GET.get('sell_state', '전체')
-    selected_place = request.GET.get('place', '전체')
-    selected_members = request.GET.getlist('members[]')
 
-    # 쿼리 파라미터 받아오기
-    idol_names = request.GET.getlist('idol')
-    place = request.GET.get('place')
-    category = request.GET.get('category')
-    sort = request.GET.get('sort')
+    # GET 요청에서 필터 값 가져오기
+    searchgroup = request.GET.get('searhgroup', '')
+    selected_members = request.GET.getlist('selectedMembers')
+    trade = request.GET.get('trade', '전체')
+    place = request.GET.get('place', '전체')
 
     # 전체 포토카드 리스트 불러오기
     photocards = Photocard.objects.filter(sell_state="중", buy_state=None).annotate(wish_count=Count('wished_by_users')).order_by('-hit')
-    
+
     if searchgroup:
         photocards = photocards.filter(member__group__name=searchgroup)
-    
-    # 멤버 선택 처리
-    if selected_members and '전체' not in selected_members:
+
+    # 선택된 멤버가 있으면 필터링
+    if selected_members:
         photocards = photocards.filter(member__name__in=selected_members)
 
-    # 아이돌, 카테고리 필터링 (필요시 추가)
-    if idol_names:
-        photocards = photocards.filter(member__name__in=idol_names)
+    # 선택된 필터 값에 따라 포토카드 필터링
+    if trade != '전체':
+        photocards = photocards.filter(trade_type=trade)
 
-    if category:
-        photocards = photocards.filter(category=category)
-
-    # 좋아요 순 정렬 옵션 적용
-    if sort == 'likes':
-        photocards = photocards.order_by('-wish_count')
+    if place != '전체':
+        photocards = photocards.filter(place=place)
 
     # 필터링된 포토카드를 템플릿에 전달
     context = {
         'list': groupMember,
         'photocards': photocards,
         'trade_choices': Photocard.TRADE_CHOICES,
-        'state_choices': Photocard.TRADE_STATE_CHOICES,
         'place_choices': Photocard.PLACE_CHOICES,
         'trade':trade,
         'place':place,
         'searchgroup':searchgroup,
         'selected_members':selected_members,
     }
-    
+
     return render(request, 'exchange.html', context)
 
 def detail(request, pno):
