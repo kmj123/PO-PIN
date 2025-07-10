@@ -59,12 +59,16 @@
       <div class = "comment">
         대리구매는 신뢰할 수 있는 사용자와 진행하시고, 거래 전 충분한 소통을 권장합니다.
       </div>
+
+      <form method="GET" action="{% url 'community:proxy' %}">
       <div class="search-filter-container">
         <div class="search-toggle">
           <button class="toggle-btn active" data-type="general">일반 검색</button>
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
+
         <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
+
         <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
 
         <select id="stateFilter" class="filter-select">
@@ -79,8 +83,10 @@
             <option value = "조회순">조회순</option>
         </select>
       </div>
+    </form>
         <div class="postlist">
           <!-- 동행 카드들 -->
+
           <div class="post-card" 
           data-category="BLACKPINK" 
           data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
@@ -88,58 +94,59 @@
               <span class = "boardf">
                 <span class = "artist">BLACKPINK</span>
                 <span class = "ptype">전시회</span>
+
               </span>
               <div class="post-title-row">
-                <h3 class="post-title">엔시티 위시 전시회 엠디 대리구매</h3>
+                   <h3 class="post-title">{{ post.title }}</h3>
                 <div class="post-right">
-                  <span class="post-status status-urgent">긴급모집</span>
+                     <span class="post-status {{ post.status|lower }}">{{ post.status }}</span>
                   <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                 </div>
               </div>
-              <div class="post-tags">
-                <span class="post-tag">#전시회</span>
-                <span class="post-tag">#NCTWISH</span>
-                <span class="post-tag">#이태원</span>
+             <div class="post-tags">
+              {% for tag in post.tags.all %}
+                <span class="post-tag">#{{ tag.name }}</span>
+              {% endfor %}
+                
               </div>
             </div>
               
               <div class="post-info">
                   <div class="info-date">
                       <span class="info-icon">📅</span>
-                      <span>2024년 7월 25일 (목) 18:00</span>
+                      <span>{{ post.event_date|date:"Y년 m월 d일 (D) H:i" }}</span>
                   </div>
                   <div class="info-place">
                       <span class="info-icon">📍</span>
-                      <span>언더스탠드에비뉴</span>
+                      <span>{{ post.location }}</span>
                   </div>
                   <div class="info-people">
                       <span class="info-icon">👥</span>
-                      <span>3/5명 (모집중)</span>
+                      <span>{{ post.current_people }}/{{ post.max_people }}명 ({{ post.status }})</span>
                   </div>
                   <div class="info-mon">
                       <span class="info-icon">💰</span>
-                      <span>개당 수고비 0.1</span>
+                      <span>{{ post.reward }}</span>
                   </div>
               </div>
               
-              <div class="post-description">
-                  썸머 오브 위시 엠디 댈구합니다 엽서,핀버튼 장당 수고비 0.3 나머지 수고비 0.5  인당 3개까지 구매 가능
-              </div>
+              <div class="post-description">{{ post.description }}</div>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
-                      <span>👤 wintercute</span>
-                      <span class="post-meta">2024-07-05</span>
+                      <span>👤 {{ post.author.nickname }}</span>
+                      <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
                   </div>
                   <div class="participants">
-                      <span>👁️ 100</span>
-                      <span>💬 23</span>
+                      <span>👁️{{ post.views }}</span>
+                      <span>💬 {{ post.comments_count }}</span>
                   </div>
               </div>
               <div class="post-actions">
                   <button class="join-btn active">채팅하기</button>
               </div>
           </div>
+
           <div class="post-card" 
           data-category="EXO" 
           data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
@@ -431,7 +438,9 @@
                 <button class="join-btn active">채팅하기</button>
               </div>
             </div>
+
           </div>      
+
             <div class="pagination">
             <a href="#" title="첫 페이지">«</a>
             <a href="#" title="이전 페이지">‹</a>
