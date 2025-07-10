@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -154,6 +158,29 @@
         margin-top: 15px;
         width: 90%;
       }
+       .datetime-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+     input.wlong, textarea.tta, input.fileType, select.select-box {
+      width: calc(90%);
+      padding: 10px;
+      margin-right:20px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    input.wlong:focus, textarea.tta:focus, input.fileType:focus, select.select-box:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    .datetime-group input {
+      width: auto;
+      padding: 8px;
+    }
       .file-item {
         display: flex;
         justify-content: space-between;
@@ -220,19 +247,8 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#">홈</a></li>
-        <li><a href="#">포카교환</a></li>
-        <li><a href="#">커뮤니티</a></li>
-        <li><a href="#">포카꾸미기</a></li>
-        <li><a href="#">고객지원</a></li>
-      </ul>
-      <a href="#" class="home"><i class="fi-rr-caret-left"></i>이전으로</a>
-    </nav>
-  </header>
+
+
 
   <div class="Bboard">
     <div class="dash-top">
@@ -242,12 +258,12 @@
     <table class="writebox">
       <tbody>
         <tr>
-          <th><label for="artist">제목</label></th>
-          <td><input type="text" id="artist" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
+          <th><label for="title">제목</label></th>
+          <td><input type="text" id="title" name="title" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
         </tr>
         <tr>
       <th><label for="artist">아티스트</label></th>
-      <td><input type="text" id="artist" placeholder="예: NewJeans" /></td>
+      <td><input type="text" id="artist" name="artist" placeholder="예: NewJeans" /></td>
     </tr>
         <tr>
           <th>유형</th>
@@ -259,25 +275,47 @@
               <button type="button" data-type="굿즈샵">굿즈샵</button>
               <button type="button" data-type="기타">기타</button>
             </div>
+            <input type="hidden" name="category" id="categoryInput">
           </td>
         </tr>
         <tr>
           <th><label for="location">위치</label></th>
-          <td><input type="text" id="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
+          <td><input type="text" id="location" name="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
         </tr>
+
+        <tr>
+
+          <th scope="row">날짜 및 시간</th>
+          <td>
+            <div class="datetime-group">
+              <input type="date" id="eventDate"name="eventDate" required>
+              <input type="time" id="eventTime" name="eventTime" required>
+            </div>
+          </td>
+       <tr>
+          <th scope="row"><label for="max_people"> 모집 인원</label></th>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+
+       </tr>
         <tr>
           <th><label for="content">본문</label></th>
           <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+
         </tr>
+
+      <tr>
+          <th><label for="content">본문</label></th>
+          <td><textarea id="content" name="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+      </tr> 
         <tr>
           <th><label for="tags">태그</label></th>
-          <td><input type="text" id="tags" placeholder="#태그1, #태그2" /></td>
+          <td><input type="text" id="tags" name="tags" placeholder="#태그1, #태그2" /></td>
         </tr>
         <tr>
           <th scope="row">사진 첨부</th>
           <td>
             <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+              <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display: none;">
               <div class="upload-icon">📷</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
@@ -290,12 +328,14 @@
     </table>
 
     <div class="btn">
-      <button type="button" id="submitBtn">확인</button>
+      <button type="submit" id="submitBtn">확인</button>
       <button type="button" id="cancelBtn">취소</button>
     </div>
   </div>
+</form>
 
   <script>
+    document.getElementById('categoryInput').value = selectedType;
     const toggleButtons = document.querySelectorAll('.type-toggle button');
     let selectedType = '';
 
@@ -447,5 +487,6 @@ function formatFileSize(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
   </script>
+{%endblock%}
 </body>
 </html>

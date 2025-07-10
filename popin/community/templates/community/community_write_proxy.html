@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -299,23 +303,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="banner-right">
-        <a href="#" class="home">
-          <i class="fi-rr-caret-left"></i>이전으로
-        </a>
-      </div>
-    </nav>
-  </header>
 
   <div class="Bboard">
     <div class="notice">
@@ -329,48 +316,47 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목</label></th>
-          <td><input type="text" class="wlong" id="title" placeholder="대리구매 제목을 입력해주세요"/></td>
+          <td><input type="text" class="wlong" id="title" name="title" placeholder="대리구매 제목을 입력해주세요"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="artist">아티스트</label></th>
-          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력해주세요"/></td>
+          <td><input type="text" class="wlong" id="artist"name="artist" placeholder="아티스트명을 입력해주세요"/></td>
         </tr>
-
         <tr>
           <th scope="row">날짜 및 시간</th>
           <td>
             <div class="datetime-group">
-              <input type="date" id="eventDate" required>
-              <input type="time" id="eventTime" required>
+              <input type="date" id="eventDate"name="eventDate" required>
+              <input type="time" id="eventTime" name="eventTime" required>
             </div>
           </td>
         </tr>
         <tr>
           <th scope="row"><label for="location">장소</label></th>
-          <td><input type="text" class="wlong" id="location" placeholder="대리구매 장소를 입력해주세요"/></td>
+          <td><input type="text" class="wlong" id="location"  name="location" placeholder="대리구매 장소를 입력해주세요"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="maxParticipants">최대 모집 인원</label></th>
-          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요"/></td>
+          <td><input type="number" class="wlong" id="maxParticipants" name="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요"/></td>
         </tr>
 
         <tr>
           <th scope="row"><label for="fee">수고비</label></th>
-          <td><input type="text" class="wlong" id="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)"/></td>
+          <td><input type="text" class="wlong" id="fee"name="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="content">본문</label></th>
-          <td><textarea class="tta" id="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요."></textarea></td>
+          <td><textarea class="tta" id="content"name="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요."></textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" placeholder="#대리구매 #아이돌 #콘서트 등"/></td>
+          <td><input type="text" class="wlong" id="tags" name="tags"  placeholder="#대리구매 #아이돌 #콘서트 등"/></td>
         </tr>
         <tr>
           <th scope="row">사진 첨부</th>
           <td>
             <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+              <input type="file" id="fileInput" name="images"  multiple accept="image/*" style="display: none;">
               <div class="upload-icon">📷</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
@@ -383,11 +369,11 @@
     </table>
 
     <div class="btn">
-      <button type="button" value="write">확인</button>
+      <button type="submit" value="write">확인</button>
       <button type="button" value="cancel">취소</button>
     </div>
   </div>
-
+</form>
   <script>
     let selectedFiles = [];
 
@@ -534,5 +520,6 @@
       });
     }
   </script>
+  {%endblock%}
 </body>
 </html>

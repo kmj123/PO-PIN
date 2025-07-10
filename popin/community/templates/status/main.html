@@ -2,7 +2,7 @@
 {% load static %}
 <!--상단 헤더-->
 {%block content%}
-<!DOCTYPE html>
+
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -15,6 +15,7 @@
   </style>
 </head>
 <body>
+
   <div class="list">
     <div class="menu">
       <h3>카테고리</h3>
@@ -32,13 +33,16 @@
       <div class="top">
         <h3>현황공유</h3>
       </div>
+      <form method="GET" action="{% url 'community:status' %}">
       <div class="line"></div>
         <div class="search-filter-container">
         <div class="search-toggle">
           <button class="toggle-btn active" data-type="general">일반 검색</button>
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
+
         <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
+
         <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
         <select id="regionFilter" class="filter-select">
           <option value="">지역 선택</option>
@@ -64,51 +68,58 @@
           <option value="">정렬</option>
           <option value="최신순">최신순</option>
           <option value="조회순">조회순</option>
-        </select>
+        </select> 
       </div>
+    </form>
+
         <div class="postlist">
+
           <div class="post-card" data-category="팬사인회" data-imgs="/static/images/landing/wonyoung.jpg">
               <div class="post-header">
                 <span class = "boardf">
                   <span class = "artist">AESPA</span>
                   <span class = "region">대구</span>
                   <span class = "ptype">팬사인회</span>
+
                 </span>
                 <div class="post-title-row">
-                  <h3 class="post-title">IVE 공개팬사인회 사람</h3>
+                   <h3 class="post-title">{{ post.title }}</h3>
                   <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                 </div>
                 <div class="post-tags">
-                  <span class="post-tag">#팬사인회</span>
-                  <span class="post-tag">#IVE</span>
-                  <span class="post-tag">#강남</span>
+                  {% for tag in post.tags.all %}
+                    <span class="post-tag">#{{ tag.name }}</span>
+                  {% endfor %}
                 </div>
               </div>
               
               <div class="post-info">
                   <div class="info-date">
                       <span class="info-date">📅</span>
-                      <span>2024년 7월 25일 (목) 18:00</span>
+                       <span>{{ post.event_datetime|date:"Y년 m월 d일 (D) H:i" }}</span>
                   </div>
                   <div class="info-place">
                       <span class="info-place">📍</span>
-                      <span>강남구 CGV</span>
+                      <span> {{ post.place }}</span>
                   </div>
               </div>
               
               <div class="post-description">
-                  공팬 지금 사람 개많음 삼층가서봐야됨
+                   {{ post.content|truncatewords:20 }}
               </div>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
+
                       <span>👤 dive_forever</span>
                       <span class="post-meta" data-date="2024-05-03">2024-05-03</span>
+
                   </div>
                   <div class="participants">
-                      <span>👁️ 67</span>
+                    <span>👁️ {{ post.views }}</span>
                   </div>
               </div>
+
             </div>
           <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
               <div class="post-header">
@@ -189,7 +200,93 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 dive_forever</span>
-                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                      <span class="post-meta" data-date="2024-05-08">2024-05-08</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 503</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date="2025-04-07">2025-04-07</span>
+                  </div>
+                  <div class="participants">
+                      <span>👁️ 2</span>
+                  </div>
+              </div>
+            </div>
+          <div class="post-card" data-category="기타" data-imgs="/static/images/landing/wonyoung.jpg">
+              <div class="post-header">
+                <span class = "boardf">
+                  <span class = "artist">EXO</span>
+                  <span class = "region">서울</span>
+                  <span class = "ptype">팬미팅</span>
+                </span>
+                <div class="post-title-row">
+                  <h3 class="post-title">엑소 팬미팅 엠디</h3>
+                  <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                </div>
+                <div class="post-tags">
+                  <span class="post-tag">#전시회</span>
+                  <span class="post-tag">#EXO</span>
+                  <span class="post-tag">#강남</span>
+                </div>
+              </div>
+              
+              <div class="post-info">
+                  <div class="info-date">
+                      <span class="info-date">📅</span>
+                      <span>2024년 7월 25일 (목) 18:00</span>
+                  </div>
+                  <div class="info-place">
+                      <span class="info-place">📍</span>
+                      <span>강남구 CGV</span>
+                  </div>
+              </div>
+              
+              <div class="post-description">
+                엑소엑소엑소엑소엑소엑소 예~ 살며시 입맞춘 엑스는 키스 동그랗게 안은 오는 허그 혹시 벌써 ~ 알고 있을까 ~ 워어 하루하루 몰래 쓴 편지! 그렇게 끄트막에 적엇찌~~
+              </div>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 dive_forever</span>
+                      <span class="post-meta" data-date = "2025-05-03">2025-05-03</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 90</span>
@@ -232,7 +329,7 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 dive_forever</span>
-                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                      <span class="post-meta" data-date = "2025-05-04">2025-05-04</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 90</span>
@@ -275,7 +372,7 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 dive_forever</span>
-                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                      <span class="post-meta" data-date = "2025-03-03">2025-03-03</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 90</span>
@@ -318,7 +415,7 @@
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 dive_forever</span>
-                      <span class="post-meta" data-date="2025-05-03">2025-05-03</span>
+                      <span class="post-meta" data-date = "2024-12-12">2024-12-12</span>
                   </div>
                   <div class="participants">
                       <span>👁️ 90</span>
@@ -359,20 +456,26 @@
                     <div id="modalPostImages" style="display:flex; gap:10px;"></div>
                 </div>
                 </div>
+
                 <!-- 이미지 확대 모달 -->
                 <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
                   <button id="prevBtn">‹</button>
                   <img id="modalImage" style="max-width:80%; max-height:80%;" />
                   <button id="nextBtn">›</button>
                 </div>
-                
+                  <!-- 메뉴에서 해당 게시물이 없을 때 -->
+                  <p id="noResultsMessage" style="display:none; text-align:center; padding:20px;">
+                  </p>
             </div>
           </div>
+        
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
   </body>
-{%endblock%}
+
 <!--//상단헤더-->
+
 </body>
 </html>
+
 
 

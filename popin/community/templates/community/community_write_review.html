@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -377,23 +381,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="banner-right">
-        <a href="#" class="home">
-          <i class="fi-rr-caret-left"></i>이전으로
-        </a>
-      </div>
-    </nav>
-  </header>
 
   <form method="POST"  action="{% url 'community:write_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
@@ -498,7 +485,6 @@
       <button type="button" value="cancel">취소</button>
     </div>
   </div>
-
 </form>
   
 <script>
@@ -730,6 +716,9 @@
       }
     });
   }
+
+  
 </script>
+{%endblock%}
 </body>
 </html>

@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -311,23 +315,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="banner-right">
-        <a href="#" class="home">
-          <i class="fi-rr-caret-left"></i>이전으로
-        </a>
-      </div>
-    </nav>
-  </header>
 
   <form method="POST"  action="{% url 'community:write_sharing' %}" enctype="multipart/form-data">
     {% csrf_token %}
@@ -349,11 +336,10 @@
           <th scope="row"><label for="artist">아티스트</label></th>
           <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: NewJeans"/></td>
         </tr>
-        
-        <tr>
-          <th scope="row"><label for="type">종류</label></th>
+         <tr>
+          <th scope="row"><label for="category">종류</label></th>
           <td>
-            <select id="type" class="wlong" name="category">
+            <select id="category" class="wlong" name="category">
               <option value="">선택하세요</option>
               <option value="앨범">앨범</option>
               <option value="굿즈">굿즈</option>
@@ -361,6 +347,18 @@
             </select>
           </td>
         </tr>
+        <tr>
+  <th scope="row"><label for="type">나눔 형태</label></th>
+  <!--  -->
+  <td>
+    <select id="type" class="wlong" name="type" required>
+      <option value="온라인">온라인</option>
+      <option value="오프라인">오프라인</option>
+    </select>
+  </td>
+</tr>
+
+  <!--  -->
         <tr>
           <th scope="row"><label for="location">위치</label></th>
           <td><input type="text" class="wlong" name="location" id="location" placeholder="예: 서울 강남구"/></td>
@@ -553,7 +551,9 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(data => {
       alert("게시글이 성공적으로 등록되었습니다.");
-      window.location.href = "{% url 'sharing:main' %}";
+
+      window.location.href = '{% url 'community:write_sharing' %}';
+
     })
     .catch(error => {
       console.error("❌ 오류:", error);
@@ -565,9 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.history.back();
   });
 });
-
-
-
- </script>
+</script>
+{%endblock%}
 </body>
 </html>

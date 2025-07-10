@@ -363,7 +363,7 @@
                                 <div class="noticetag">NOTICE</div>
                                 <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
                             </div>
-                            <a href="#noticeAll" class="noticeall">전체보기</a>
+                            <a href="/customer/notice/" class="noticeall">전체보기</a>
                         </div>
                     </div>
                 </div>
@@ -372,12 +372,7 @@
                     // 공지사항 제목 애니메이션
                     const noticeContent = document.querySelector('.notice-content');
                     const noticeTitle = document.querySelector('.noticetitle');
-                    const titles = [
-                        "올바른 포카교환 생활",
-                        "말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목 말줄임표 테스트용 긴 제목",
-                        "포카 교환은 즐거운 경험입니다",
-                        "새로운 포토카드 교환 기회!",
-                    ];
+                    const titles = {{ titles|safe }};
                     let currentIndex = 0;
 
                     // 제목 변경 함수
@@ -423,7 +418,7 @@
                         <div class="stat-label">교환 완료</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">345</div>
+                        <div class="stat-number">{{total_decopoca}}</div>
                         <div class="stat-label">포카 꾸미기</div>
                     </div>
                 </div>
@@ -459,12 +454,17 @@
                     </div>
                     {% for r in recent %}
                         <div class="post-item">
-                            <a href="/photocard/detail/{{r.pno}}">
+                            <a href="
+                            {% if r.category == '판매' or r.category == '교환'%}
+                                /photocard/detail/{{ r.id }}/
+                            {% elif r.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ r.id }}/
+                            {% endif %}">
                                 <div class="post-content">
                                     <div class="post-title">{{r.title}}</div>
-                                    <div class="post-meta">{{r.seller}} • {{r.created_at}} • 조회 {{r.hit}}</div>
+                                    <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
                                 </div>
-                                <div class="post-category">{{r.trade_type}}</div>
+                                <div class="post-category">{{r.category}}</div>
                             </a>
                         </div>
                     {% endfor %}

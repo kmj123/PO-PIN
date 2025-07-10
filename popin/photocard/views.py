@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from signupFT.models import User
 from photocard.models import Photocard
@@ -7,6 +7,8 @@ from photocard.models import TempWish
 
 from django.db.models import Count
 from datetime import date
+
+from django.http import JsonResponse
 
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
@@ -89,19 +91,10 @@ def exchange(request):
     sort = request.GET.get('sort')
 
     # 전체 포토카드 리스트 불러오기
-    photocards = Photocard.objects.select_related('member__group').annotate(
-        wish_count=Count('wished_by_users')
-    )
-
-    # 선택된 필터 값에 따라 포토카드 필터링
-    if selected_trade != '전체':
-        photocards = photocards.filter(trade_type=selected_trade)
+    photocards = Photocard.objects.filter(sell_state="중", buy_state=None).annotate(wish_count=Count('wished_by_users')).order_by('-hit')
     
-    if selected_state == '거래중':
-        photocards = photocards.filter(sell_state=selected_state)
-    
-    if selected_place != '전체':
-        photocards = photocards.filter(place=selected_place)
+    if searchgroup:
+        photocards = photocards.filter(member__group__name=searchgroup)
     
     # 멤버 선택 처리
     if selected_members and '전체' not in selected_members:
@@ -125,6 +118,10 @@ def exchange(request):
         'trade_choices': Photocard.TRADE_CHOICES,
         'state_choices': Photocard.TRADE_STATE_CHOICES,
         'place_choices': Photocard.PLACE_CHOICES,
+        'trade':trade,
+        'place':place,
+        'searchgroup':searchgroup,
+        'selected_members':selected_members,
     }
     
     return render(request, 'exchange.html', context)
@@ -145,12 +142,69 @@ def detail(request, pno):
         request.session['latest_poca'] = latest_list
             
     # pno 포토카드 불러오기
-    qs = Photocard.objects.get(pno=pno)
+    qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
+    is_wish = TempWish.objects.filter(user=user_id, photocard=qs).exists()
+    
+    qs.hit += 1
+    qs.save()
+    
+    if not qs.latitude and not qs.longitude:
+        if qs.place == "올림픽공원":
+            qs.latitude = 37.51784192112613
+            qs.longitude = 127.1276152266286
+        elif qs.place == "상암":
+            qs.latitude = 37.580534952338624
+            qs.longitude = 126.89203603891819
+        elif qs.place == "더현대":
+            qs.latitude = 37.52586982023892
+            qs.longitude = 126.92844895447732
+        elif qs.place == "고척":
+            qs.latitude = 37.49823024363382
+            qs.longitude = 126.86710307179943
+        elif qs.place == "인스파이어":
+            qs.latitude = 37.46667138168973
+            qs.longitude = 126.39058501167706
+        elif qs.place == "홍대":
+            qs.latitude = 37.55683650372744
+            qs.longitude = 126.9237735042553
     
     # 포토카드 상세정보 반환
-    context = {"info":qs}
+    if qs.tag:
+        tags = qs.tag.split(",")
+        context = {"info":qs, "is_wish":is_wish, "tags":tags}
+    else:
+        context = {"info":qs, "is_wish":is_wish}
+
     
     return render(request, 'pocadetail.html', context)
+
+def toggle_wish(request, pno):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = get_object_or_404(User, user_id=user_id)
+    photocard = get_object_or_404(Photocard, pno=pno)
+
+    temp_wish = TempWish.objects.filter(user=user, photocard=photocard).first()
+    
+    if temp_wish:
+        temp_wish.delete()
+        action = 'decreased'
+    else:
+        TempWish.objects.create(user=user, photocard=photocard)
+        action = 'increased'
+        
+    wish_count = photocard.wished_by_users.count()
+    
+    # ajax 요청에 대해서는 JSON 응답을 반환
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'action': action, 'new_like_count': wish_count})
+
+    # 일반적인 요청에는 포토카드 교환 페이지로 리다이렉트
+    return redirect('/photocard/exchange/')
+
 
 # 포토카드 거래글 작성
 def write(request):

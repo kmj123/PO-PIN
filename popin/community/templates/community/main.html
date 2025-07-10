@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -469,23 +473,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community" style="color: #667eea;">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <a href="#" class="btn btn-outline">로그인</a>
-        <a href="#" class="btn btn-primary">회원가입</a>
-      </div>
-    </nav>
-  </header>
-
   <div class="community-container">
     <div class="page-header">
       <h1>커뮤니티</h1>
@@ -526,8 +513,11 @@
           </div>
         </div>
         <div class="board-action">
+
+
           <a href="{% url 'community:write_review' %}" class="action-btn btn-write">후기 작성</a>
           <a href="{% url 'community:chgReview' %}" class="action-btn btn-view">후기 보기</a>
+
         </div>
       </div>
 
@@ -733,5 +723,6 @@
       </div>
     </div>
   </div>
+  {%endblock%}
 </body>
 </html>

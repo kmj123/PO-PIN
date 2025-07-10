@@ -272,13 +272,18 @@ def noticeW(request) :
         admin = User.objects.get(user_id=user_id, state=0) # 로그인한 사용
         
         if request.method == "GET":
-            return render(request,"admin/notice_view.html")
+            return render(request,"admin/notice_write.html")
         elif request.method == "POST":
             notice_type = request.POST.get('notice_type')
             title = request.POST.get('title')
             is_pinned = True if request.POST.get('is_pinned') == 'on' else False
             content = request.POST.get('content')
             images = request.FILES.getlist('images')
+            
+            print("=====================")
+            print("작성 정보: ")
+            print(notice_type, title, is_pinned, content, images)
+            print("=====================")
             
             notice = Notice.objects.create(notice_type=notice_type, title=title, is_pinned=is_pinned, content=content)
             
