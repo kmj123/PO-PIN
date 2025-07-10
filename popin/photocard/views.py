@@ -403,3 +403,8 @@ def location(request):
 def location2(request):
         return render(request, 'location2.html')
 
+def location(request):
+    return render(request, 'location.html')
+
+def location2(request):
+    return render(request, 'location2.html')
