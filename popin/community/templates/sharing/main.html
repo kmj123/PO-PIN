@@ -13,6 +13,8 @@
   <title>나눔</title>
 </head>
 <body>
+  
+ <form method="GET" action="{% url 'community:sharing' %}" class="search-form">
   <div class="list">
     <div class = 'group'>
 
@@ -57,11 +59,12 @@
       </div>
       <div class="line"></div>
       <div class="box">
-          <div><p>1,234</p><a>진행 중인 나눔</a></div>
-          <div><p>5,678</p><a>완료된 나눔</a></div>
-          <div><p>12</p><a>이번 주 나눔</a></div>
+          <div><p>{{ ongoing_count }}</p><a>진행 중인 나눔</a></div>
+          <div><p>{{ completed_count }}</p><a>완료된 나눔</a></div>
+          <div><p>{{ weekly_count }}</p><a>이번 주 나눔</a></div>
         </div>
       <div class="search-filter-container">
+        
       <div class="search-toggle">
         <button class="toggle-btn active" data-type="general">일반 검색</button>
         <button class="toggle-btn" data-type="tag">태그 검색</button>
@@ -84,53 +87,55 @@
         <div class="postlist">
           <!-- 동행 카드들 -->
           <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
+
               <div class="post-header">
               <span class = "boardf">
-                <span class = "artist">AESPA</span>
-                <span class = "stype">앨범</span>
+                <span class="artist">{{ post.artist }}</span>
+                <span class="stype">{{ post.category }}</span>
               </span>
               <div class="post-title-row">
-                <h3 class="post-title">에스파 더티워크 앨범 나눔</h3>
+                <h3 class="post-title">{{ post.title }}</h3>
                 <div class="post-right">
                   <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
                 </div>
               </div>
               <div class="post-tags">
-                <span class="post-tag">#앨범</span>
-                <span class="post-tag">#aespa</span>
-                <span class="post-tag">#오프라인</span>
+                 {% for tag in post.tags.all %}
+                      <span class="post-tag">#{{ tag.name }}</span>
+                 {% endfor %}
               </div>
             </div>
               
               <div class="post-info">
                   <div class="info-date">
                       <span class="info-icon">📅</span>
-                      <span>2024년 7월 25일 (목) 18:00</span>
+                    <span>{{ post.share_date|date:"Y년 m월 d일 (D) H:i" }}</span>
                   </div>
                   <div class="info-place">
                       <span class="info-icon">📍</span>
-                      <span>등촌동 SBS홀</span>
+                    <span>{{ post.location }}</span>
                   </div>
                   <div class="info-check">
                       <span class="info-icon">✅</span>
-                      <span>에스파 위버스 멤버쉽 확인</span>
+                       <span>{{ post.requirement }}</span>
                   </div>
               </div>
               
               <div class="post-description">
-                  에스파 앨범 나눔합니다
+                   {{ post.content|truncatechars:100 }}
               </div>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
-                      <span>👤 wintercute</span>
-                      <span class="post-meta">2025-01-01</span>
+                        <span>👤 {{ post.author.nickname }}</span>
+                        <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
                     </div>
                     <div class="participants">
-                      <span>👁️ 67</span>
+                      <span>👁️ {{ post.views }}</span>
                     </div>
               </div>
           </div>
+
           <div class="post-card" data-category="aespa" data-imgs="/static/images/test/sharing.jpg">
               <div class="post-header">
               <span class = "boardf">
@@ -275,6 +280,7 @@
                     </div>
               </div>
           </div>
+
           {% for i in ""|center:30 %}
           <div class="post-card" data-category="NCT">
               <div class="post-header">
@@ -452,6 +458,7 @@
                     </div>
                     <div id="modalPostImages" style="display:flex; gap:10px;"></div>
                   </div>
+
                     <!-- 이미지 확대 모달 -->
                 <div id="imageModal" class="modal" style="display:none; justify-content:center; align-items:center;">
                   <button id="prevBtn">‹</button>
