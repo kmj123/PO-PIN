@@ -348,10 +348,10 @@ def noticeR(request, notice_id) :
     
     except User.DoesNotExist:
         return redirect('login:loginp')  # 로그인 안 되어있거나 권한 없으면 로그인 페이지로    
-    except Exception as e:
-        # 에러 로그 찍어보세요 (디버깅용)
-        print(f"Error: {e}")
-        return redirect('home:main')
+    # except Exception as e:
+    #     # 에러 로그 찍어보세요 (디버깅용)
+    #     print(f"Error: {e}")
+    #     return redirect('home:main')
     
 def noticeD(request, notice_id) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
