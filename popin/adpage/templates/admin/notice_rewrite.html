@@ -445,7 +445,7 @@
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
                 <div class="file-upload">
-                  <input type="file" class="file-input" id="file" name="file" accept="image/*,.pdf,.doc,.docx">
+                  <input type="file" class="file-input" id="file" name="file" accept="image/*,.pdf,.doc,.docx" multiple>
                   <div class="current-file">현재 파일: popin.jpg</div>
                 </div>
               </td>
@@ -484,7 +484,6 @@
       
       // 수정 확인
       if (confirm('공지사항을 수정하시겠습니까?')) {
-        // 여기서 실제 수정 로직 처리
         alert('수정이 완료되었습니다.');
         // 목록 페이지로 이동
         // window.location.href = '공지사항 목록 페이지 URL';
@@ -495,9 +494,11 @@
     document.getElementById('file').addEventListener('change', function(e) {
       const fileInput = e.target;
       const currentFileDiv = document.querySelector('.current-file');
-      
+
       if (fileInput.files.length > 0) {
-        currentFileDiv.textContent = `새 파일: ${fileInput.files[0].name}`;
+        // 여러 파일 이름 표시 (예: 파일1.jpg, 파일2.pdf ...)
+        const fileNames = Array.from(fileInput.files).map(f => f.name).join(', ');
+        currentFileDiv.textContent = `선택한 파일: ${fileNames}`;
       } else {
         currentFileDiv.textContent = '현재 파일: popin.jpg';
       }

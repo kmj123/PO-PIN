@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+import json
 
 from collections import defaultdict
 
-from signupFT.models import User
+from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
 
@@ -15,12 +16,23 @@ def profile(request):
     
     try:
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
-        completed = Photocard.objects.filter(seller=user.user_id, sell_state = "후", buy_state = "후").count()
-        print(user)
+        completed = Photocard.objects.filter(seller=user, sell_state = "후", buy_state = "후").count()
+        
         context = {
-            'user':user,
-            'completed':completed,
+            # 수정 시 닉네임, 자기소개, 프로필 이미지, 최애 멤버는 프로필에서 불러온 정보로 모달에 넘겨 주세요!
+            # 수정할 시에는 update_profile ajax 통신!
+            # 첫 프로필 진입으로 키워드 부분이 보여질 경우 해당 members, groups 반환 바랍니다
+            
+            'nickname':user.nickname, # 닉네임
+            'introduction':user.introduction, # 자기소개
+            'selling_photocards':user.selling_photocards.count(), # 보유 포카 수
+            'completed':completed, # 교환 완료 수
+            'manners_score':user.manners_score, # 평점
+            'profile_image':user.profile_image, # 프로필 이미지
+            'members': user.bias_member.all(), # 최애 멤버 (member.group.name으로 최애 그룹 이름 접근 가능)
+            'groups': user.bias_group.all(), # 최애 그룹
             }
+        
         
         return render(request,'mypage/profile.html', context)
     
@@ -226,11 +238,61 @@ def block_list(request):
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
 # 프로필 수정 (수정중)
-def update(request):
-    user_id = request.session['user_id']
-    user = User.objects.get(user_id=user_id)
-    
-    context = {
-        'user':user
-    }
-    return render(request, 'mypage/update.html', context)
+def update_profile(request):
+    if request.method == 'POST':
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return JsonResponse({'message': '로그인 필요'}, status=401)
+        
+        try:
+            user = User.objects.get(user_id=user_id)
+
+            # 텍스트 데이터는 request.POST에서
+            user.nickname = request.POST.get('nickname', user.nickname)
+            user.introduction = request.POST.get('introduction', user.introduction)
+
+            # 파일은 request.FILES에서
+            profile_img = request.FILES.get('profile_image')
+            if profile_img:
+                user.profile_image = profile_img
+                
+            print(user)
+            
+            user.save()
+            return JsonResponse({'message': '프로필 수정 완료'})
+        except Exception as e:
+            return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)
+
+    return JsonResponse({'message': '허용되지 않은 메서드입니다.'}, status=405)
+
+def update_blocklist(request):
+    if request.method == 'POST':
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return JsonResponse({'message': '로그인 필요'}, status=401)
+        
+        try:
+            from_user = User.objects.get(user_id=user_id) # 현재 로그인한 유저 
+            
+            body = json.loads(request.body)
+            id = body.get('id')
+            to_user = User.objects.get(user_id = id) # 차단한 유저 
+            
+            
+            relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
+            if not relation:
+                return JsonResponse({'error': '관계를 찾을 수 없습니다.'}, status=404)
+            else:
+                relation.delete()
+                block_data = [
+                        {
+                            'user_id': to_user.name,
+                            'message': to_user.name + " 을 차단 해제하였습니다.",
+                        }
+                    ]
+            return JsonResponse({'blocked_users': block_data})
+
+        except User.DoesNotExist:
+            return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
+
+    return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)

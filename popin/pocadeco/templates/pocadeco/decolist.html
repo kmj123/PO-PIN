@@ -1,7 +1,5 @@
-{% extends 'header_login.html'%}
 {% load static %}
 <!--상단 헤더-->
-{%block content%}
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -50,7 +48,7 @@
             align-items: center;
         }
 
-        .btn {
+        .btn1 {
             padding: 10px 20px;
             border: none;
             border-radius: 8px;
@@ -66,17 +64,17 @@
             border-radius: 100px;
         }
 
-        .btn img{
+        .btn1 img{
             width:100%;
             height:100%;
         }
 
-        .btn:hover {
+        .btn1:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn.active {
+        .btn1.active {
             background: linear-gradient(45deg, #764ba2, #667eea);
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.6);
         }
@@ -389,73 +387,78 @@
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
-            .content{
-                width:100%;
-            }
-            
-            .sidebar {
-                width: 100%;
-            }
-            
-            .navbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .sort-buttons {
-                justify-content: center;
-            }
-            
-            .photo-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            }
-            .photo-card{
-                width:100%;
-            }
+        .main-content {
+            flex-direction: column;
         }
-                /* 페이지네이션 */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 40px;
+        .content{
+            width:100%;
+        }
+        
+        .sidebar {
+            width: 100%;
+        }
+        
+        .navbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .sort-buttons {
+            justify-content: center;
+        }
+        
+        .photo-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+        .photo-card{
+            width:100%;
+        }
     }
+        /* 페이지네이션 */
+        .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-top: 40px;
+        }
 
-    .page-btn {
-      padding: 10px 15px;
-      border: 2px solid #667eea;
-      border-radius: 10px;
-      background: white;
-      color: #667eea;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
+        .page-btn {
+        padding: 10px 15px;
+        border: 2px solid #667eea;
+        border-radius: 10px;
+        background: white;
+        color: #667eea;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        }
 
-    .page-btn:hover,
-    .page-btn.active {
-      background: #667eea;
-      color: white;
-      transform: translateY(-2px);
-    }
+        .page-btn:hover,
+        .page-btn.active {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        }
 
-    .page-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        .page-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        }
 
     </style>
 </head>
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
-                <div class="search-section">
+                <div class="searc
                     <h3 class="filter-title" id="select_artist">아티스트 선택</h3>
                     <input type="text" class="search-input" placeholder="검색어를 입력해주세요" id="artistSearch">
                     <div class="search-results" id="searchResults"></div>
@@ -464,7 +467,16 @@
                 <div class="filter-section" id="selectmember" style="display:none;">
                     <h3 class="filter-title">멤버 필터</h3>
                     <div id="groupsList">
-                        <!-- 선택된 그룹의 멤버 리스트가 여기에 표시됩니다 -->
+                        <!-- 선택된 그룹의 멤버 리스트가 여기에 표시됩니다 --
+                    <h3 class="filter-title" id="select_artist">검색어 입력</h3>
+                    <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
+                    <div class="search-results" id="searchResults"></div>
+                    <div id="selectedArtist"></div>
+                </div>
+                <div class="filter-section" id="selectgroup" style="display:none;">
+                    <h3 class="filter-title">그룹 필터</h3>
+                    <div id="groupsList">
+                        <!-- 조회된 그룹 리스트 표시 --
                     </div>
                 </div>
 
@@ -478,7 +490,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn" style="width:100%;">검색하기</button>
+                <button type="submit" class="btn1" style="width:100%;" id="searchBtn">검색하기</button>
             </div>
             <div class="content">
                 <div class="navbar">
@@ -495,6 +507,54 @@
                         <!-- JS에서 렌더링 -->
                     </div>
                 </div>
+                </div>
+
+                <!--데코포카 리스트-->
+                <div class="photo-section">
+                    <div class="photo-grid" id="photoGrid">
+                        {%for deco in decoList %}
+                        <div class="photo-card" data-id="{{deco.user}}">
+                            <a href="/pocadeco/view/{{deco.id}}/">
+                                <div class="photo-image">
+                                    {%if deco.result_image %}
+                                        <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                                {%else%}
+                                        <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                                {%endif%}
+                                </div>
+                                <div class="photo-info">
+                                    <div class="photo-title">{{deco.title}}</div>
+                                    <div class="photo-meta">
+                                        <span>{{deco.user}}</span>
+                                        <span>{{deco.created_at}}</span>
+                                    </div>
+                                    <!--미구현-->
+                                    <div class="photo-tags">
+                                        <span class="tag">{{deco.group}}</span>
+                                        <span class="tag">{{deco.member}}</span>
+                                        {%for tag in deco.tags%}
+                                            <span class="tag">{{tag}}</span>
+                                        {%endfor%}
+                                    </div>
+                                    <div class="photo-stats">
+                                        <div class="stat-item">
+                                            <span>👀</span>
+                                            <span>{{deco.hit}}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>❤️</span>
+                                            <span>{{deco.likes}}</span>
+                                        </div>
+                                    </div>
+                                    <!--미구현-->
+                                </div>
+                            </a>
+                        </div>
+                        {%endfor%}
+                        <!-- JS에서 렌더링 -->
+                    </div>
+                </div>
+
                 <div class="pagination">
                     <button class="page-btn" disabled>‹</button>
                     <a href="#" class="page-btn active">1</a>
@@ -507,7 +567,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn upload-btn"><img src="/static/images/write_icon.png/"></button>
+        <button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button>
     </div>
 
     <script>
@@ -599,6 +659,9 @@
         const photoGrid = document.getElementById('photoGrid');
         const groupsList = document.getElementById('groupsList');
         const artistSearch = document.getElementById('artistSearch');
+        // DOM 요소들
+        const searchInput = document.getElementById('searchInput');
+
         const searchResults = document.getElementById('searchResults');
         const selectedArtistDiv = document.getElementById('selectedArtist');
         const sortOptions = document.querySelectorAll('input[name="sort"]');
@@ -810,7 +873,53 @@
 
         // 초기화 실행
         init();
+        const photosection = document.getElementById('photo-section');
+        const photoGrid = document.getElementById('photoGrid');
+        const groupsList = document.getElementById('groupsList');
+
+        let debounceTimer = null;
+        let currentResults = [];
+
+          const keyword = [
+            "승관",
+            "데코",
+            "차은우",
+            "내가"
+        ];
+
+        // 키워드를 searchInput에 입력
+        // 입력된 키워드가 포함된 데코포토 리스트 출력
+        // 키워드 => 포토카드 제목, 이미지 파일명, 아이디, 닉네임
+
+          function renderResults(filteredList) {
+            searchResults.innerHTML = ""; // 초기화
+            if (filteredList.length === 0) {
+            searchResults.innerHTML = "<p>검색 결과가 없습니다.</p>";
+            return;
+            }
+            const ul = document.createElement("ul");
+            filteredList.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            ul.appendChild(li);
+            });
+            searchResults.appendChild(ul);
+        }
+
+        searchBtn.addEventListener("click", () => {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+            searchResults.innerHTML = "<p>검색어를 입력해주세요.</p>";
+            return;
+            }
+
+            // 키워드를 포함하는 항목 필터링
+            const filtered = keyword.filter(artist =>
+            artist.toLowerCase().includes(keyword)
+            );
+
+            renderResults(filtered);
+        });
     </script>
-{%endblock%}
 </body>
 </html>

@@ -1,9 +1,10 @@
 from django.db import models
-from django.conf import settings
+from signupFT.models import User
+from idols.models import Member
 
 # 꾸민 포카 한 건
 class DecoratedPhotocard(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="decorated_photocards")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="decorated_photocards")
     title = models.CharField("포카 이름", max_length=100)
     base_image = models.ImageField("원본 포카", upload_to="decorated/base/")
     result_image = models.ImageField("꾸민 이미지 결과", upload_to="decorated/result/", blank=True, null=True)
@@ -20,6 +21,13 @@ class DecoratedPhotocard(models.Model):
     border_color = models.CharField("테두리 색상", max_length=20, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # 멤버
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="decorated_photocards", null=True)
+    # 태그
+    tag = models.CharField(max_length=100, null=True, blank=True)
+    # 조회수
+    hit = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return f"{self.user} - {self.title}"
@@ -34,3 +42,14 @@ class StickerPlacement(models.Model):
 
     def __str__(self):
         return f"Sticker {self.emoji} on {self.photocard.title}"
+    
+    
+# 데코 포토카드 위시
+class DecoWish(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deco_wished_photocards')
+    DecoratedPhotocard = models.ForeignKey(DecoratedPhotocard, on_delete=models.CASCADE, related_name='wished_by_users')
+    class Meta:
+        unique_together = ('user', 'DecoratedPhotocard')
+    
+    def __str__(self):
+        return f'{self.user.user_id} | {self.DecoratedPhotocard.id}'

@@ -120,7 +120,7 @@
                     justify-content: center; 
                     align-items: center;     
                     width : 250px;
-                    height : 220px;
+                    height : 120px;
                     background : white;
                     border-radius : 15px;
                     margin : 10px 0 auto;
@@ -158,6 +158,7 @@
       border-radius: 10px;
       border: 2px solid #ccc;
       outline: none;
+      padding-left : 12px;
     }
     .filter .searchBtn {
       height: 35px;
@@ -323,7 +324,6 @@
       box-shadow: none;
     }
     a{text-decoration : none;}
-    table{}
   </style>
 </head>
 <body>
@@ -360,19 +360,19 @@
           <div class="filt">
             <select>
               <option value="">전체 게시판</option>
-              <option value="">교환후기</option>
-              <option value="">나눔</option>
-              <option value="">대리구매</option>
-              <option value="">현황공유</option>
-              <option value="">동행</option>
+              <option value="교환후기">교환후기</option>
+              <option value="나눔">나눔</option>
+              <option value="대리구매">대리구매</option>
+              <option value="현황공유">현황공유</option>
+              <option value="동행">동행</option>
             </select>
             <select class="state">
               <option value="">게시글 상태</option>
               <option>정상</option>
-              <option>신고</option>
+              <option>대기</option>
               <option>삭제</option>
             </select>
-            <input type="text" class="search" placeholder="  게시글 제목, 작성자, 내용 검색...">
+            <input type="text" class="search" placeholder="게시글 제목, 작성자 검색...">
             <input type="button" class="searchBtn" value="검색">
           </div>
         </div>
@@ -406,11 +406,41 @@
               <td>ㅁㅁ</td>
               <td>2025-06-25</td>
               <td>3</td>
-              <td>신고</td>
+              <td>대기</td>
             </tr>
             <tr>
               <td><input type="checkbox" class="row-checkbox"></td>
               <td>gijklmnop</td>
+              <td>동행</td>
+              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
+              <td>ㅁㄴㅇㄹ</td>
+              <td>2025-06-25</td>
+              <td>0</td>
+              <td>정상</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-checkbox"></td>
+              <td>giop</td>
+              <td>동행</td>
+              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
+              <td>ㅁㄴㅇㄹ</td>
+              <td>2025-06-25</td>
+              <td>0</td>
+              <td>정상</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-checkbox"></td>
+              <td>gip</td>
+              <td>동행</td>
+              <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
+              <td>ㅁㄴㅇㄹ</td>
+              <td>2025-06-25</td>
+              <td>0</td>
+              <td>정상</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="row-checkbox"></td>
+              <td>gop</td>
               <td>동행</td>
               <td><a href="{% url 'adpage:postV' %}">ㅇㅇ콘 동행구해요</a></td>
               <td>ㅁㄴㅇㄹ</td>
@@ -518,6 +548,231 @@
 
     // 초기 상태 설정
     updateSelectedCount();
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const selectBoard = document.querySelector(".filter select:nth-child(1)");
+  const selectState = document.querySelector(".filter select.state");
+  const searchInput = document.querySelector(".filter .search");
+  const searchBtn = document.querySelector(".filter .searchBtn");
+
+  const tbody = document.querySelector("tbody");
+  const allRows = Array.from(tbody.querySelectorAll("tr"));
+
+  let filteredRows = allRows;
+  let currentPage = 1;
+  const itemsPerPage = 4;
+
+  // 필터 및 검색 조건에 맞게 행 필터링
+  function filterRows() {
+    const boardFilter = selectBoard.value.trim();
+    const stateFilter = selectState.value.trim();
+    const keyword = searchInput.value.trim().toLowerCase();
+
+    filteredRows = allRows.filter(row => {
+      const cells = row.querySelectorAll("td");
+      const boardText = cells[2].textContent.trim();
+      const titleText = cells[3].textContent.trim().toLowerCase();
+      const authorText = cells[4].textContent.trim().toLowerCase();
+      const contentText = ""; // 게시글 내용이 테이블에 없으면 제외
+      const stateText = cells[7].textContent.trim();
+
+      // 게시판 필터 (빈 값이면 전체)
+      const boardMatch = !boardFilter || boardFilter === "" || boardText === boardFilter;
+
+      // 상태 필터 (빈 값이면 전체)
+      const stateMatch = !stateFilter || stateFilter === "" || stateText === stateFilter;
+
+      // 검색어가 제목, 작성자에 포함되는지
+      const keywordMatch =
+        keyword === "" ||
+        titleText.includes(keyword) ||
+        authorText.includes(keyword) 
+      return boardMatch && stateMatch && keywordMatch;
+    });
+
+    currentPage = 1; // 필터링할 때 항상 1페이지부터 보여주기
+    updateTable();
+  }
+
+  // 테이블에 현재 페이지에 맞는 행만 보여주기
+  function updateTable() {
+    // 전체 행 숨기기
+    allRows.forEach(row => (row.style.display = "none"));
+
+    // 현재 페이지에 맞는 행만 표시
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const pageRows = filteredRows.slice(startIndex, endIndex);
+
+    pageRows.forEach(row => (row.style.display = ""));
+
+    updatePagination();
+    updateSelectedCount(); // 체크박스 선택 개수 초기화
+  }
+
+  // 페이지네이션 버튼 업데이트
+  function updatePagination() {
+    const pagination = document.querySelector(".pagination");
+    pagination.innerHTML = "";
+
+    const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+    if (totalPages === 0) {
+      pagination.textContent = "검색 결과가 없습니다.";
+      return;
+    }
+
+    function createButton(label, clickHandler) {
+      const a = document.createElement("a");
+      a.href = "#";
+      a.textContent = label;
+      a.style.margin = "0 5px";
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        clickHandler();
+      });
+      return a;
+    }
+
+    // 첫, 이전 버튼
+    pagination.appendChild(createButton("«", () => showPage(1)));
+    pagination.appendChild(createButton("‹", () => {
+      if (currentPage > 1) showPage(currentPage - 1);
+    }));
+
+    const maxVisiblePages = 5;
+    let startPage, endPage;
+    if (totalPages <= maxVisiblePages) {
+      startPage = 1;
+      endPage = totalPages;
+    } else {
+      const half = Math.floor(maxVisiblePages / 2);
+      if (currentPage <= half) {
+        startPage = 1;
+        endPage = maxVisiblePages;
+      } else if (currentPage + half >= totalPages) {
+        startPage = totalPages - maxVisiblePages + 1;
+        endPage = totalPages;
+      } else {
+        startPage = currentPage - half;
+        endPage = currentPage + half;
+        if (maxVisiblePages % 2 === 0) endPage--;
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      if (i === currentPage) {
+        const strong = document.createElement("strong");
+        strong.textContent = i;
+        pagination.appendChild(strong);
+      } else {
+        pagination.appendChild(createButton(i, () => showPage(i)));
+      }
+    }
+
+    // 다음, 마지막 버튼
+    pagination.appendChild(createButton("›", () => {
+      if (currentPage < totalPages) showPage(currentPage + 1);
+    }));
+    pagination.appendChild(createButton("»", () => showPage(totalPages)));
+  }
+
+  function showPage(pageNumber) {
+    currentPage = pageNumber;
+    updateTable();
+  }
+
+  // 체크박스 관련 - 선택 개수 업데이트
+  const selectAllCheckbox = document.getElementById('selectAll');
+  const deleteBtn = document.getElementById('deleteBtn');
+  const selectedCount = document.getElementById('selectedCount');
+
+  function updateSelectedCount() {
+    // 필터링 된 페이지에 표시된 체크박스만 고려
+    const visibleCheckboxes = filteredRows
+      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+      .map(row => row.querySelector('.row-checkbox'));
+
+    const checkedBoxes = visibleCheckboxes.filter(cb => cb.checked);
+    const count = checkedBoxes.length;
+
+    selectedCount.textContent = `(${count}개 선택됨)`;
+    deleteBtn.disabled = count === 0;
+
+    // 전체 선택 체크박스 상태
+    if (count === 0) {
+      selectAllCheckbox.indeterminate = false;
+      selectAllCheckbox.checked = false;
+    } else if (count === visibleCheckboxes.length) {
+      selectAllCheckbox.indeterminate = false;
+      selectAllCheckbox.checked = true;
+    } else {
+      selectAllCheckbox.indeterminate = true;
+    }
+  }
+
+  // 전체 선택 체크박스 이벤트 (현재 페이지만 선택)
+  selectAllCheckbox.addEventListener('change', function () {
+    const visibleCheckboxes = filteredRows
+      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+      .map(row => row.querySelector('.row-checkbox'));
+
+    visibleCheckboxes.forEach(cb => cb.checked = this.checked);
+    updateSelectedCount();
+  });
+
+  // 개별 체크박스 이벤트 (현재 페이지)
+  function addCheckboxListeners() {
+    filteredRows.forEach(row => {
+      const cb = row.querySelector('.row-checkbox');
+      if (cb) {
+        cb.addEventListener('change', updateSelectedCount);
+      }
+    });
+  }
+
+  // 삭제 버튼 클릭 이벤트 (현재 페이지에서 선택된 것만 삭제)
+  deleteBtn.addEventListener('click', () => {
+    const visibleCheckboxes = filteredRows
+      .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+      .map(row => row.querySelector('.row-checkbox'))
+      .filter(cb => cb.checked);
+
+    if (visibleCheckboxes.length === 0) return;
+
+    if (confirm(`선택된 ${visibleCheckboxes.length}개의 게시글을 삭제하시겠습니까?`)) {
+      visibleCheckboxes.forEach(cb => {
+        const row = cb.closest('tr');
+        row.remove();
+        // 원본 배열(allRows)에서도 제거
+        const indexAll = allRows.indexOf(row);
+        if (indexAll > -1) allRows.splice(indexAll, 1);
+      });
+
+      // 다시 필터링 후 테이블 갱신
+      filterRows();
+      alert(`${visibleCheckboxes.length}개의 게시글이 삭제되었습니다.`);
+    }
+  });
+
+  // 검색 버튼 클릭시 필터링 실행
+  searchBtn.addEventListener('click', filterRows);
+
+  // 필터 셀렉트 바뀔 때도 필터링 실행
+  selectBoard.addEventListener('change', filterRows);
+  selectState.addEventListener('change', filterRows);
+
+  searchInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    filterRows();
+  }
+  });
+
+  // 초기 셋업
+  addCheckboxListeners();
+  filterRows();
+});
+
   </script>
 </body>
 </html>

@@ -351,7 +351,7 @@
           </tbody>
         </table>
         <div class = "btn">
-            <button type = "button" value = "delete">삭제</button>
+            <button type = "button" value = "delete" onclick = "deleteBtn()">삭제</button>
             <a href = "{% url 'adpage:post' %}"><button type = "button" value = "back">이전</button></a>
           </div>
       </div>
@@ -361,4 +361,14 @@
     </div>
   </div>
 </body>
+<script>
+  function deleteBtn(){
+    if(confirm("해당 게시글을 삭제하시겠습니까?")){
+      alert("삭제되었습니다.");
+    }
+    else{
+      alert("취소되었습니다.");
+    }
+  }
+</script>
 </html>

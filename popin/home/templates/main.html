@@ -151,6 +151,8 @@
         box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
     }
 
+    .photo-card a{text-decoration:none;}
+
     .photo-image {
         width: 100%;
         height: 284px;
@@ -227,9 +229,6 @@
     }
     
     .post-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
         padding: 15px 0;
         border-bottom: 1px solid #f0f0f0;
         transition: all 0.3s ease;
@@ -238,6 +237,14 @@
 
     .post-item:last-child {
         border-bottom: none;
+    }
+
+    .post-item a{
+        text-decoration:none; 
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
     }
 
     .post-item:hover {
@@ -356,7 +363,7 @@
                                 <div class="noticetag">NOTICE</div>
                                 <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
                             </div>
-                            <a href="#noticeAll" class="noticeall">전체보기</a>
+                            <a href="/customer/notice/" class="noticeall">전체보기</a>
                         </div>
                     </div>
                 </div>
@@ -404,19 +411,19 @@
                     
                 <div class="quick-stats">
                     <div class="stat-card">
-                        <div class="stat-number">1,234</div>
+                        <div class="stat-number">{{total_photocard}}</div>
                         <div class="stat-label">전체 게시글</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">567</div>
+                        <div class="stat-number">{{total_user}}</div>
                         <div class="stat-label">활성 사용자</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">890</div>
+                        <div class="stat-number">{{completed_photocard}}</div>
                         <div class="stat-label">교환 완료</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">345</div>
+                        <div class="stat-number">{{total_decopoca}}</div>
                         <div class="stat-label">포카 꾸미기</div>
                     </div>
                 </div>
@@ -425,19 +432,21 @@
                 <div class="photo-grid">
                     {% for photocard in photocards %}
                     <div class="photo-card">
-                        <div class="photo-image"><img src="/media/{{photocard.image}}"></div>
-                        <div class="photo-info">
-                            <div class="photo-title">{{photocard.member.group.name}} {{photocard.member.name}}</div>
-                            <div class="photo-tags">
-                                <span class="photo-tag">{{photocard.trade_type}}</span>
-                                <span class="photo-tag">{{photocard.category}}</span>
+                        <a href="/photocard/detail/{{photocard.pno}}/">
+                            <div class="photo-image"><img src="/media/{{photocard.image}}"></div>
+                            <div class="photo-info">
+                                <div class="photo-title">{{photocard.member.group.name}} {{photocard.member.name}}</div>
+                                <div class="photo-tags">
+                                    <span class="photo-tag">{{photocard.trade_type}}</span>
+                                    <span class="photo-tag">{{photocard.category}}</span>
+                                </div>
+                                <div class="photo-stats">
+                                    <span>❤️ {{photocard.wish_count}}</span>
+                                    <span>📍 {{photocard.place}}</span>
+                                    <!-- <span>💬 8</span> -->
+                                </div>
                             </div>
-                            <div class="photo-stats">
-                                <span>❤️ {{photocard.wish_count}}</span>
-                                <span>📍 {{photocard.place}}</span>
-                                <!-- <span>💬 8</span> -->
-                            </div>
-                        </div>
+                        </a>
                     </div>
                     {% endfor %}
                 </div>
@@ -448,41 +457,22 @@
                         <h2 class="section-title">최신 게시글</h2>
                         <a href="/home/recent/" class="more-btn">더보기</a>
                     </div>
-                    <div class="post-item">
-                        <div class="post-content">
-                            <div class="post-title">NewJeans 하니 포토카드 교환해요!</div>
-                            <div class="post-meta">kpop_lover • 5분 전 • 조회 23</div>
+                    {% for r in recent %}
+                        <div class="post-item">
+                            <a href="
+                            {% if r.category == '판매' or r.category == '교환'%}
+                                /photocard/detail/{{ r.id }}/
+                            {% elif r.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ r.id }}/
+                            {% endif %}">
+                                <div class="post-content">
+                                    <div class="post-title">{{r.title}}</div>
+                                    <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
+                                </div>
+                                <div class="post-category">{{r.category}}</div>
+                            </a>
                         </div>
-                        <div class="post-category">교환</div>
-                    </div>
-                    <div class="post-item">
-                        <div class="post-content">
-                            <div class="post-title">BLACKPINK 리사 포토카드 판매합니다</div>
-                            <div class="post-meta">generous_fan • 12분 전 • 조회 45</div>
-                        </div>
-                        <div class="post-category">판매</div>
-                    </div>
-                    <div class="post-item">
-                        <div class="post-content">
-                            <div class="post-title">BTS 정국 포토카드 판매</div>
-                            <div class="post-meta">army_collector • 23분 전 • 조회 67</div>
-                        </div>
-                        <div class="post-category">판매</div>
-                    </div>
-                    <div class="post-item">
-                        <div class="post-content">
-                            <div class="post-title">IVE 안유진 포카 교환 구해요</div>
-                            <div class="post-meta">creative_diver • 35분 전 • 조회 89</div>
-                        </div>
-                        <div class="post-category">교환</div>
-                    </div>
-                    <div class="post-item">
-                        <div class="post-content">
-                            <div class="post-title">포카 정리합니다</div>
-                            <div class="post-meta">happy_trader • 1시간 전 • 조회 112</div>
-                        </div>
-                        <div class="post-category">판매</div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

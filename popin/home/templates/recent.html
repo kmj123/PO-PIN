@@ -41,6 +41,8 @@
         flex: 1;
     }
 
+    .post-content a{text-decoration:none;}
+
     .post-title {
         font-size: 16px;
         font-weight: 500;
@@ -140,6 +142,7 @@
                                 <option value="전체" {% if request.GET.category == '전체'%}selected{%endif%}>전체</option>
                                 <option value="교환" {% if request.GET.category == '교환'%}selected{%endif%}>교환</option>
                                 <option value="판매" {% if request.GET.category == '판매'%}selected{%endif%}>판매</option>
+                                <option value="포카 꾸미기" {% if request.GET.category == '포카 꾸미기'%}selected{%endif%}>포카 꾸미기</option>
                             </select>
                             <div class="searchtitle">
                                 <input type="text" size="16" name="searchinput" id="searchinput" value="{{ request.GET.searchinput }}">
@@ -151,10 +154,17 @@
                 {% for post in page_num %}
                     <div class="post-item">
                         <div class="post-content" data-category="{{ post.category }}">
-                            <div class="post-title">{{ post.title }}</div>
-                            <div class="post-meta">{{ post.writer_id }} • {{ post.createDate }} • 조회 {{ post.hit }}
-                                <div class="post-category">{{ post.category }}</div>
-                            </div>
+                            <a href="
+                            {% if post.category == '판매' or post.category == '교환'%}
+                                /photocard/detail/{{ post.id }}/
+                            {% elif post.category == '포카 꾸미기' %}
+                                /pocadeco/view/{{ post.id }}/
+                            {% endif %}">
+                                <div class="post-title">{{ post.title }}</div>
+                                <div class="post-meta">{{ post.user }} • {{ post.created_at }} • 조회 {{ post.hit }}
+                                    <div class="post-category">{{ post.category }}</div>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 {% empty %}

@@ -71,11 +71,6 @@
             color : #764ba2;
             border : 2px solid  #764ba2;
         }
-        .menu li:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: rgba(255, 255, 255, 0.95);
-            cursor: pointer; 
-            }
         .menu .board{
             background : linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color : rgba(255, 255, 255, 0.95);
@@ -375,17 +370,17 @@
           <tbody>
             <tr>
               <th scope="row"><label for="board">공지 유형</label></th>
-              <td>일반</td>
+              <td>{{notice.notice_type}}</td>
             </tr>
             <tr>
               <th scope="row"><label for="title">제목</label></th>
-              <td>포핀 이용 안내</td>
+              <td>{{notice.title}}</td>
             </tr>
             <tr>
               <th scope="row"><label for="fix">상단고정</label></th>
               <td>
                 <div class="custom-checkbox">
-                  <input type="checkbox" id="fix" checked/>
+                  <input type="checkbox" id="fix" {%if notice.is_pinned == True%}checked{%endif%}/>
                 </div>
               </td>
             </tr>
@@ -393,29 +388,47 @@
               <th scope="row"><label for="content">상세 내용</label></th>
               <td>
                 <div class="content-text">
-                  포핀은 현장교환을 주로 하는 어쩌구입니다.<br>
-                  가나다라마바사
+                  {{notice.content}}
                 </div>
               </td>
             </tr>
-            <tr>
+            {% comment %} <tr>
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
                 <div class="file-info">
-                  <span>popin.jpg</span>
+                  <ul>
+                    {% for file in notice.files.all %}
+                      <li><a href="{{ file.url }}" target="_blank">{{ file.name }}</a></li>
+                    {% empty %}
+                      <li>첨부파일이 없습니다.</li>
+                    {% endfor %}
+                  </ul>
                 </div>
               </td>
-            </tr>
+            </tr> {% endcomment %}
           </tbody>
         </table>
       </div>
       
-      <div class="btn">
-        <button type="button" onclick="location.href='{% url 'adpage:noticeR' %}'" value="update">수정</button>
-        <button type="button" value="delete">삭제</button>
-        <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
-      </div>
+      {% comment %} <form method = "post" action = "{% url 'adpage:noticeD' notice.id %}" id = "deleteFrm"> {% endcomment %}
+        <div class="btn">
+          <button type="button" onclick="location.href='{% url 'adpage:noticeR' notice.id %}'" value="update">수정</button>
+          <button type="button" onclick = "deleteBtn()" value="delete">삭제</button>
+          <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
+        </div>
+      {% comment %} </form> {% endcomment %}
     </div>
   </div>
 </body>
+<script>
+  function deleteBtn(){
+    if (confirm("게시물을 삭제하시겠습니까?")){
+      document.getElementById('deleteFrm').submit();
+      alert("삭제되었습니다.");
+    }
+    else{
+      alert("취소되었습니다.");
+    }
+  }
+</script>
 </html>
