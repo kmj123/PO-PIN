@@ -876,8 +876,18 @@
                 saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
+        
+        // 내가 쓴 후기글
 
-        // 차단한 사용자 목록 AJAX
+        // 내가 받은 후기글
+
+        // 커뮤니티 - 동행글
+
+        // 커뮤니티 - 나눔글
+
+        // 커뮤니티 - 대리구매
+
+        // 블랙리스트 - 차단한 사용자 목록 AJAX
         $.ajax({
             url: "/mypage/block_list/",
             type: "POST",
@@ -886,19 +896,20 @@
             success: function(data){
                 console.log('차단 사용자 불러오기 성공');
 
-                const saleList = $("#transactions #trading-list");
-                saleList.empty();
+                const blocked_user = $("#blocked #blocked-user");
+                blocked_user.empty();
 
-                const saleData = data.sell_poca.map(sell => 
+                const blockData = data.blocked_users.map(user => 
                     `<div class="item">
-                        <h3>${sell.title}</h3>
-                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                        <h3>${user.user_id}${user.name}</h3>
+                        <button class="unblock-btn">차단해제</button>
+                        <p>차단 사유: 스팸 메시지 반복 발송</p>
                     </div>`);
 
-                saleList.append(saleData||"<div>판매목록이 없습니다.</div>");
+                blockData.append(blockData||"<div>차단 사용자 없습니다.</div>");
             }, error: function(xhr, status, error){
-                console.error("판매목록 불러오기 실패");
-                //saleList.html("<div>판매목록을 불러오는 데 실패했습니다.</div>");
+                console.error("차단 사용자 불러오기 실패");
+                //blockData.html("<div>차단 사용자 불러오는 데 실패했습니다.</div>");
             }
         });
     
