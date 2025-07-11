@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from django.http import JsonResponse
 import json
 
@@ -166,7 +167,7 @@ def trade(request):
             
             sell_poca = Photocard.objects.filter(seller=user, trade_type="판매").exclude(sell_state='전')
             buy_poca = Photocard.objects.filter(buyer=user, trade_type="판매").exclude(buy_state='전')
-            exchange_poca = Photocard.objects.filter(trade_type="교환").exclude(buy_state='전')
+            exchange_poca = Photocard.objects.exclude(buy_state='전').filter(Q(seller=user) | Q(buyer=user), trade_type="교환")
 
             sell_data = [
                 {
