@@ -85,6 +85,19 @@ def exchange(request):
     place = request.GET.get('place', '전체')
 
     # 전체 포토카드 리스트 불러오기
+    photocards = Photocard.objects.select_related('member__group').annotate(
+        wish_count=Count('wished_by_users')
+    )
+
+    # 선택된 필터 값에 따라 포토카드 필터링
+    if selected_trade != '전체':
+        photocards = photocards.filter(trade_type=selected_trade)
+    
+    if selected_state == '거래중':
+        photocards = photocards.filter(sell_state=selected_state)
+    
+    if selected_place != '전체':
+        photocards = photocards.filter(place=selected_place)
     photocards = Photocard.objects.filter(sell_state="중", buy_state=None).annotate(wish_count=Count('wished_by_users')).order_by('-hit')
 
     if searchgroup:
@@ -131,33 +144,11 @@ def detail(request, pno):
         request.session['latest_poca'] = latest_list
             
     # pno 포토카드 불러오기
-    qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
+    qs = Photocard.objects.get(pno=pno)
     is_wish = TempWish.objects.filter(user=user_id, photocard=qs).exists()
     
-    qs.hit += 1
-    qs.save()
-    
-    if not qs.latitude and not qs.longitude:
-        if qs.place == "올림픽공원":
-            qs.latitude = 37.51784192112613
-            qs.longitude = 127.1276152266286
-        elif qs.place == "상암":
-            qs.latitude = 37.580534952338624
-            qs.longitude = 126.89203603891819
-        elif qs.place == "더현대":
-            qs.latitude = 37.52586982023892
-            qs.longitude = 126.92844895447732
-        elif qs.place == "고척":
-            qs.latitude = 37.49823024363382
-            qs.longitude = 126.86710307179943
-        elif qs.place == "인스파이어":
-            qs.latitude = 37.46667138168973
-            qs.longitude = 126.39058501167706
-        elif qs.place == "홍대":
-            qs.latitude = 37.55683650372744
-            qs.longitude = 126.9237735042553
-    
     # 포토카드 상세정보 반환
+    context = {"info":qs}
     if qs.tag:
         tags = qs.tag.split(",")
         context = {"info":qs, "is_wish":is_wish, "tags":tags}
@@ -478,9 +469,9 @@ def wish(request, pno):
     
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
-
+    
 def location(request):
-    return render(request, 'location.html')
+        return render(request, 'location.html')
 
 def location2(request):
-    return render(request, 'location2.html')
+        return render(request, 'location2.html')

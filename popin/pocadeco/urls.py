@@ -6,7 +6,10 @@ app_name = 'pocadeco'
 
 urlpatterns = [
     path('main/', views.main, name='main'), 
+    path('decolist/', views.decolist, name='decolist'), 
+
     # path('mydecolist/', views.mydecolist, name='mydecolist'), 
     path('decoMain/', views.decoMain, name='decoMain'), 
     path('view/<int:id>/', views.view, name='view'), 
+
 ]

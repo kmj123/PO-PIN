@@ -582,4 +582,3 @@ def status(request):
         'query': query  # 검색어 유지
     }
     return render(request, 'status/main.html', context)
-
