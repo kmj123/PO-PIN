@@ -35,8 +35,7 @@ def profile(request):
             'groups': user.bias_group.all(), # 최애 그룹
             'bias_pairs': zip(user.bias_group.all(), user.bias_member.all())  # ✅ 그룹-멤버 쌍
             }
-        
-        
+
         return render(request,'mypage/profile.html', context)
     
     except User.DoesNotExist:
@@ -278,6 +277,8 @@ def update_profile(request):
             # 최애 멤버/그룹
             member_name = request.POST.get('member')
             group_name = request.POST.get('group')
+            new_nickname = request.POST.get('nickname')
+            request.session['nickname'] = new_nickname            
 
             if member_name and group_name:
                 try:
@@ -291,6 +292,7 @@ def update_profile(request):
             print(user)
             
             user.save()
+            return redirect('/mypage/profile')
             return JsonResponse({'message': '프로필 수정 완료'})
         except Exception as e:
             return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)
@@ -309,7 +311,6 @@ def update_blocklist(request):
             body = json.loads(request.body)
             id = body.get('id')
             to_user = User.objects.get(user_id = id) # 차단한 유저 
-            
             
             relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
             if not relation:

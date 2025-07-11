@@ -17,21 +17,16 @@
 @media (max-width: 768px) {
 .main {
     max-width: 1200px;
-    padding: 0 1rem;
-    display: flex;
     flex-wrap:wrap;
-    gap:1rem;
     flex-direction: column;
-    padding: 1rem;
     }       
 }
 
 .main {
     display: flex;
     gap: 2rem;
-    padding: 0 1rem;
+    padding: 20px;
     justify-content: center;
-    margin-top: 20px;
 }
 
 
@@ -43,7 +38,7 @@
     margin-bottom: 2rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     height: 100%;
-    width: 350px;
+    width: 398px;
     margin: 0 auto;
 }
 
@@ -82,7 +77,6 @@
 .profile-info h3 {
     color: #666;
     font-weight: normal;
-    margin-bottom: 1rem;
     font-size: 0.9rem;
     padding: 20px;
 }
@@ -118,7 +112,7 @@
 
 /* 웹 브라우저용 스크롤바 스타일링 */
 .tabs::-webkit-scrollbar {
-    height: 6px;
+    height: none;
 }
 
 .tab {
@@ -185,16 +179,9 @@
     display: block;
 }
 
-/* .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-} */
-
 .section-content{
     /*스크롤*/
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
@@ -299,7 +286,9 @@
     position: relative;
     transform: rotate(-1deg);
     cursor:pointer;
-    height: 333px;
+    height: 400px;
+    width: 280px;
+    margin: 0 auto;
 }
 
 .polaroid:nth-child(even) {
@@ -313,7 +302,7 @@
 
 .polaroid-image {
     width: 100%;
-    height: 221px;
+    height: 80%;
     background: #f8f9fa;
     border-radius: 4px;
     overflow: hidden;
@@ -338,7 +327,7 @@
 #favorite-btn {
     width: 60px;  /* 원하는 버튼 크기로 조정 */
     height: 60px;
-    border: none;
+    border: 1px solid black;
     border-radius: 50%; /* 원형 버튼 */
     padding: 0;
     cursor: pointer;
@@ -777,8 +766,7 @@ a{
 }
 
 .myinfo-profile{
-    display:flex;
-    margin: 10px;
+    padding:4px;
 }
 
 .wish-list-txt h3{
