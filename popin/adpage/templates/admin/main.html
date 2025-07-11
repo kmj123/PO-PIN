@@ -205,11 +205,11 @@
       <div class="line"></div>
       <div class="box">
         <div>
-          <p>1,234</p>
+          <p>{{total_users}}</p>
           <a>전체 사용자</a>
         </div>
         <div>
-          <p>5,678</p>
+          <p>{{total_photocards}}</p>
           <a>전체 게시글</a>
         </div>
         <div>
@@ -217,7 +217,7 @@
           <a>대기중인 신고</a>
         </div>
         <div>
-          <p>8</p>
+          <p>{{block_users}}</p>
           <a>차단 사용자</a>
         </div>
       </div>
@@ -236,21 +236,21 @@
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['1월', '2월', '3월', '4월', '5월', '6월'],
+          labels: {{months}},
           datasets: [
             {
               label: '전체 거래량',
-              data: [160, 200, 220, 210, 270, 260],
+              data: {{all}},
               backgroundColor: 'rgba(54, 162, 235, 0.7)' // 파랑
             },
             {
               label: '교환',
-              data: [100, 120, 150, 130, 170, 160],
+              data: {{exchange}},
               backgroundColor: 'rgba(102, 126, 234, 0.7)' // 보라
             },
             {
-              label: '양도',
-              data: [60, 80, 70, 80, 100, 100],
+              label: '판매',
+              data: {{sell}},
               backgroundColor: 'rgba(255, 159, 64, 0.7)' // 주황
             }
           ]
