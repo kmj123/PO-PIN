@@ -327,21 +327,6 @@ function saveDecoration() {
     }).then(canvas => {
         const dataUrl = canvas.toDataURL("image/png");
         const gallery = document.getElementById('myGallery');
-        
-        if (gallery) {
-            const now = new Date().toISOString().split('T')[0];
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.innerHTML = `
-                <img src="${dataUrl}" alt="${title}" />
-                <div class="gallery-info">
-                    <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${title}</div>
-                    <div class="gallery-date">${now}</div>
-                </div>
-                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-            `;
-            gallery.prepend(item);
-        }
 
         // 서버에 데이터 전송
         fetch('/pocadeco/save_decopoca/', {
@@ -360,9 +345,27 @@ function saveDecoration() {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
+                const gallery = document.getElementById('myGallery');
+                if (gallery) {
+                    const now = new Date().toISOString().split('T')[0];
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.setAttribute('data-id', data.id);  // 여기서 서버 응답 id 사용
+
+                    item.innerHTML = `
+                        <img src="${data.result_image}" alt="${data.title}" />
+                        <div class="gallery-info">
+                            <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${data.title}</div>
+                            <div class="gallery-date">${now}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+                    `;
+                    gallery.prepend(item);
+                }
+
                 console.log('서버에 저장되었습니다.');
             } else {
-                alert('서버 저장 실패');
+                alert('서버 저장 실패: ' + data.reason);
             }
         })
         .catch(error => {

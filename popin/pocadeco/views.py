@@ -163,6 +163,7 @@ def save_decopoca(request):
             # 응답 구성
             response_data = {
                 'status': 'success',
+                'id': deco.id,
                 'nickname': deco.user.nickname,
                 'title': deco.title,
                 'result_image': deco.result_image.url,
