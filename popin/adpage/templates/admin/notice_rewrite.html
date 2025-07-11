@@ -407,57 +407,62 @@
         <hr>
       </div>
 
-      <form class="form-container">
+      <form action="{% url 'adpage:noticeR' notice.id %}" method="POST" enctype="multipart/form-data" name="updateFrm">
+        {% csrf_token %}
         <table class="writebox">
           <tbody>
             <tr>
               <th scope="row"><label for="board">공지 유형</label></th>
               <td>
-                <select class="form-select" id="board" name="board">
-                    <option value="general">일반</option>
-                    <option value="notice">점검</option>
-                    <option value="qna">업데이트</option>
+                <select class="form-select" id="board" name="notice_type">
+                    <option value="일반" {%if notice.notice_type == "일반" %}selected{%endif%}>일반</option>
+                    <option value="점검" {%if notice.notice_type == "점검" %}selected{%endif%}>점검</option>
+                    <option value="업데이트" {%if notice.notice_type == "업데이트" %}selected{%endif%}>업데이트</option>
                 </select>
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="title">제목</label></th>
               <td>
-                <input type="text" class="form-input" id="title" name="title" value="포핀 이용 안내" placeholder="제목을 입력하세요">
+                <input type="text" class="form-input" id="title" name="title" value="{{notice.title}}" placeholder="제목을 입력하세요">
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="fix">상단고정</label></th>
               <td>
                 <div class="custom-checkbox">
-                  <input type="checkbox" id="fix" name="fix" checked/>
+                  <input type="checkbox" id="fix" name="is_pinned" {%if notice.is_pinned == True %}checked{%endif%}/>
                 </div>
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="content">상세 내용</label></th>
               <td>
-                <textarea class="form-textarea" id="content" name="content" placeholder="내용을 입력하세요">포핀은 현장교환을 주로 하는 어쩌구입니다.
-가나다라마바사</textarea>
+                <textarea class="form-textarea" id="content" name="content" placeholder="내용을 입력하세요">{{notice.content}}</textarea>
               </td>
             </tr>
             <tr>
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
                 <div class="file-upload">
-                  <input type="file" class="file-input" id="file" name="file" accept="image/*,.pdf,.doc,.docx" multiple>
-                  <div class="current-file">현재 파일: popin.jpg</div>
+                  <input type="file" class="file-input" id="file" name="images" accept="image/*,.pdf,.doc,.docx" multiple>
+                  <div class="current-file">현재 파일: 
+                    {%for image in images%}
+                      {{image.image}}
+                    {%endfor%}
+                  </div>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-      </form>
       
-      <div class="btn">
-        <button type="submit">수정 완료</button>
-        <button type="button" onclick="history.back()">취소</button>
-      </div>
+      
+        <div class="btn">
+          <button type="submit">수정 완료</button>
+          <button type="button" onclick="history.back()">취소</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -485,8 +490,7 @@
       // 수정 확인
       if (confirm('공지사항을 수정하시겠습니까?')) {
         alert('수정이 완료되었습니다.');
-        // 목록 페이지로 이동
-        // window.location.href = '공지사항 목록 페이지 URL';
+        updateFrm.submit()
       }
     });
 

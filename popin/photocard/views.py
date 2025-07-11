@@ -479,3 +479,8 @@ def wish(request, pno):
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
 
+def location(request):
+    return render(request, 'location.html')
+
+def location2(request):
+    return render(request, 'location2.html')
