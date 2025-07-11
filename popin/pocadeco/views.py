@@ -82,12 +82,14 @@ def decolist(request):
     context = {'decoList': deco_list, 'page_num':page_num, 'sort':sort, 'searchInput':searchInput}
     return render(request,'pocadeco/decolist.html', context)
 
+# 데코포카 생성 페이지
 def main(request):
     return render(request, 'pocadeco/main.html')
 
 def mydecolist(request):
     return render(request, 'pocadeco/mydecolist.html')
 
+# 데코포카 상세보기 페이지
 def view(reqeust, id):
     decophotocard = DecoratedPhotocard.objects.get(id=id)
     tags = decophotocard.tag.split(',')
@@ -102,6 +104,3 @@ def view(reqeust, id):
         'like' : decophotocard.wished_by_users.count(),
     }
     return render(reqeust, 'pocadeco/view.html', context)
-  
-def decolist(request):
-    return render(request, 'pocadeco/decolist.html')
