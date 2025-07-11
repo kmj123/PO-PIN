@@ -10,7 +10,7 @@ from django.db.models import Count
 from datetime import date
 
 # 데코포토 전체 리스트
-def decoMain(request):
+def decolist(request):
     # 전체 데코포토 리스트 불러오기
     decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(
     wish_count=Count('wished_by_users')
@@ -61,16 +61,16 @@ def decoMain(request):
 
     
     context = {'decoList': deco_list}
-    return render(request,'pocadeco/decoMain.html', context)
+    return render(request,'pocadeco/decolist.html', context)
 
+# 데코포카 생성 페이지
 def main(request):
     return render(request, 'pocadeco/main.html')
-def decolist(request):
-    return render(request, 'pocadeco/decolist.html')
 
 def mydecolist(request):
     return render(request, 'pocadeco/mydecolist.html')
 
+# 데코포카 상세보기 페이지
 def view(reqeust, id):
     decophotocard = DecoratedPhotocard.objects.get(id=id)
     tags = decophotocard.tag.split(',')
@@ -85,6 +85,3 @@ def view(reqeust, id):
         'like' : decophotocard.wished_by_users.count(),
     }
     return render(reqeust, 'pocadeco/view.html', context)
-  
-def decolist(request):
-    return render(request, 'pocadeco/decolist.html')
