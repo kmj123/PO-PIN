@@ -5,6 +5,7 @@ import json
 
 from collections import defaultdict
 
+from idols.models import Group
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
@@ -18,6 +19,12 @@ def profile(request):
     try:
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
         completed = Photocard.objects.filter(seller=user, sell_state = "후", buy_state = "후").count()
+        first_group = user.bias_group.all().first()
+
+        if first_group:
+            group_logo = first_group.group_logo if first_group.group_logo else None
+        else:
+            group_logo = None
         
         context = {
             # 수정 시 닉네임, 자기소개, 프로필 이미지, 최애 멤버는 프로필에서 불러온 정보로 모달에 넘겨 주세요!
@@ -26,6 +33,7 @@ def profile(request):
             
             'nickname':user.nickname, # 닉네임
             'introduction':user.introduction, # 자기소개
+            'group_logo': group_logo, # 그룹 로고 이미지
             'selling_photocards':user.selling_photocards.count(), # 보유 포카 수
             'completed':completed, # 교환 완료 수
             'manners_score':user.manners_score, # 평점
