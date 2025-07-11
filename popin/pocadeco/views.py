@@ -9,12 +9,14 @@ from pocadeco.models import DecoratedPhotocard
 from django.db.models import Count
 from datetime import date
 
+from django.core.paginator import Paginator
+
 # 데코포토 전체 리스트
-def decoMain(request):
+# 데코포토 전체 리스트
+def decolist(request):
     # 전체 데코포토 리스트 불러오기
-    decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(
-    wish_count=Count('wished_by_users')
-)
+    decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(wish_count=Count('wished_by_users'))
+    searchInput = request.GET.get("search-input")
     
     # 필터용 쿼리 파라미터 받아오기
     searchgroup = request.GET.getlist('searchgroup')
@@ -28,45 +30,60 @@ def decoMain(request):
     # 선택된 멤버가 있으면 필터링
     if selected_members:
         decoratedpoca = decoratedpoca.filter(member__name__in=selected_members)
+    
+    if searchInput:
+        decoratedpoca = decoratedpoca.filter(title__icontains=searchInput)
+    
     # 최신글 순 정렬 옵션 적용
-    if sort == 'created_at':
-        decoratedpoca = decoratedpoca.annotate('created_at')
+    if sort == '최신순':
+        decoratedpoca = decoratedpoca.order_by('-created_at')
     # 좋아요 순 정렬 옵션 적용
-    if sort == 'likes':
+    if sort == '인기순':
         decoratedpoca = decoratedpoca.annotate(wish_count=Count('wished_by_users')).order_by('-wish_count')
     # 조회수 정렬 옵션 적용
-    elif sort == 'hit':
+    elif sort == '조회순':
         decoratedpoca = decoratedpoca.order_by('-hit')
         
-    deco_list = []
-    for poca in decoratedpoca:
-        if poca.tag:  # None이 아니고 빈 문자열도 아님
-            tags = poca.tag.split(',')
-        else:
-            tags = []  # 빈 리스트로 처리
+    # 페이지네이터
+    paginator = Paginator(decoratedpoca, 4)
+    page = int(request.GET.get('page',1))
+    page_num = paginator.get_page(page)
         
-        deco_list.append({
-            'id': poca.id,
-            'title':poca.title,
-            'result_image': poca.result_image,
-            'user' : poca.user.nickname,
-            'created_at': poca.created_at.strftime('%Y-%m-%d'),
-            'hit': poca.hit,
-            'member': poca.member.name,
-            'group': poca.member.group.name,
-            'tags': tags,
-            'likes': poca.wish_count,
-        })
+    deco_list = []
+    for poca in page_num.object_list:
+        if poca.tag:
+            tags = poca.tag.split(',')
+            deco_list.append({
+                'id': poca.id,
+                'title':poca.title,
+                'result_image': poca.result_image,
+                'user' : poca.user.nickname,
+                'created_at': poca.created_at.strftime('%Y-%m-%d'),
+                'hit': poca.hit,
+                'member': poca.member.name,
+                'group': poca.member.group.name,
+                'tags': tags,
+                'likes': poca.wish_count,
+            })
+        else:
+            deco_list.append({
+                'id': poca.id,
+                'title':poca.title,
+                'result_image': poca.result_image,
+                'user' : poca.user.nickname,
+                'created_at': poca.created_at.strftime('%Y-%m-%d'),
+                'hit': poca.hit,
+                'member': poca.member.name,
+                'group': poca.member.group.name,
+                'likes': poca.wish_count,
+            })
         print(deco_list)
-
     
-    context = {'decoList': deco_list}
-    return render(request,'pocadeco/decoMain.html', context)
+    context = {'decoList': deco_list, 'page_num':page_num, 'sort':sort, 'searchInput':searchInput}
+    return render(request,'pocadeco/decolist.html', context)
 
 def main(request):
     return render(request, 'pocadeco/main.html')
-def decolist(request):
-    return render(request, 'pocadeco/decolist.html')
 
 def mydecolist(request):
     return render(request, 'pocadeco/mydecolist.html')
