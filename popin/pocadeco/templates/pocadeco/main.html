@@ -51,30 +51,16 @@
                         </div>
                         <input type="file" id="galleryInput" accept="image/*" />
                         <div class="gallery-grid" id="myGallery">
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/hanni.jpg' %}" alt="New Jeans Hanni" />
+                            {%for mydeco in mydecolist%}
+                            <div class="gallery-item" data-id="{{ mydeco.id }}">
+                                <img src="/media/{{mydeco.result_image}}" alt="New Jeans Hanni" />
                                 <div class="gallery-info">
-                                    <div class="gallery-title">New Jeans 하니</div>
-                                    <div class="gallery-date">2024-06-12</div>
+                                    <div class="gallery-title">{{mydeco.title}}</div>
+                                    <div class="gallery-date">{{mydeco.date}}</div>
                                 </div>
                                 <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
                             </div>
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/yushi.jpg' %}" alt="NCT Wish Yushi" />
-                                <div class="gallery-info">
-                                    <div class="gallery-title">NCT Wish 유우시</div>
-                                    <div class="gallery-date">2024-06-11</div>
-                                </div>
-                                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/wonbin.jpg' %}" alt="RIIZE 원빈" />
-                                <div class="gallery-info">
-                                    <div class="gallery-title">RIIZE 원빈</div>
-                                    <div class="gallery-date">2024-06-10</div>
-                                </div>
-                                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-                            </div>
+                            {%endfor%}
                         </div>
                     </div>
                 </div>
@@ -454,7 +440,38 @@ function handleGalleryAdd(event) {
 
 // 갤러리 아이템 삭제
 function deleteGalleryItem(btn) {
+    const itemEl = btn.closest('.gallery-item');  // 가장 가까운 gallery-item div
+    const decoid = itemEl.getAttribute('data-id');
+
+    if (!decoid) {
+        alert('삭제할 ID를 찾을 수 없습니다.');
+        return;
+    }
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     if (confirm("이 포토카드를 갤러리에서 삭제하시겠습니까?")) {
+        // 서버에 데이터 전송
+        fetch('/pocadeco/delete_decopoca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ id: decoid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('서버 통신 중 오류:', error);
+            alert('서버 통신 중 오류가 발생했습니다.');
+        });
+
         btn.parentElement.remove();
     }
 }

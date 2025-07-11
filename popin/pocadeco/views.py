@@ -68,8 +68,31 @@ def decolist(request):
 
 # 데코포카 생성 페이지
 def main(request):
-    
-    return render(request, 'pocadeco/main.html')
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+
+    try:
+        user = User.objects.get(user_id=user_id)
+        
+        mydeco = DecoratedPhotocard.objects.filter(user=user).order_by('-created_at')
+        
+        mydecolist = []
+        for mypoca in mydeco:
+            mydecolist.append({
+                'id': mypoca.id,
+                'title': mypoca.title,
+                'date': mypoca.created_at,
+                'result_image':mypoca.result_image,
+            })
+            
+        context = {
+            'mydecolist':mydecolist,
+        }
+        return render(request, 'pocadeco/main.html', context)
+    except User.DoesNotExist:
+            return redirect('login:main')  # 예외 상황 대비
 
 def mydecolist(request):
     return render(request, 'pocadeco/mydecolist.html')
@@ -140,11 +163,11 @@ def save_decopoca(request):
             # 응답 구성
             response_data = {
                 'status': 'success',
-                'nickname': user.nickname,
+                'nickname': deco.user.nickname,
                 'title': deco.title,
                 'result_image': deco.result_image.url,
-                'group': member.group.name,
-                'member': member.name,
+                'group': deco.member.group.name,
+                'member': deco.member.name,
             }
             return JsonResponse(response_data)
 
@@ -153,3 +176,41 @@ def save_decopoca(request):
 
     else:
         return JsonResponse({'status': 'fail', 'reason': '허용되지 않은 요청'}, status=405)
+def delete_decopoca(request):
+    if request.method == 'POST':
+        # 세션에서 user_id 가져오기
+        user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+        if not user_id:
+            return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+
+        try:
+            user = User.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return redirect('login:main')  # 예외 상황 대비
+
+        try:
+            print("접근 시작 ㅎㅎ")
+            
+            data = json.loads(request.body)
+            
+            id = data.get('id')
+
+            if not id :
+                return JsonResponse({'status': 'fail', 'reason': '필수 정보 누락'}, status=400)
+            
+            mydeco = DecoratedPhotocard.objects.get(id=id, user=user)
+            
+            mydeco.delete()
+            
+            print("완료 ㅎㅎ")
+
+            # 응답 구성
+            response_data = {
+                'status': 'success',
+                'message': "데코포카 " + id + "번 을 삭제했습니다",
+            }
+            return JsonResponse(response_data)
+
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
