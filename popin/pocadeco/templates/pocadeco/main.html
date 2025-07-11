@@ -7,6 +7,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>포카꾸미기 - PO-PIN</title>
     <link
       rel="stylesheet"
@@ -50,30 +51,16 @@
                         </div>
                         <input type="file" id="galleryInput" accept="image/*" />
                         <div class="gallery-grid" id="myGallery">
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/hanni.jpg' %}" alt="New Jeans Hanni" />
+                            {%for mydeco in mydecolist%}
+                            <div class="gallery-item" data-id="{{ mydeco.id }}">
+                                <img src="/media/{{mydeco.result_image}}" alt="New Jeans Hanni" />
                                 <div class="gallery-info">
-                                    <div class="gallery-title">New Jeans 하니</div>
-                                    <div class="gallery-date">2024-06-12</div>
+                                    <div class="gallery-title">{{mydeco.title}}</div>
+                                    <div class="gallery-date">{{mydeco.date}}</div>
                                 </div>
                                 <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
                             </div>
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/yushi.jpg' %}" alt="NCT Wish Yushi" />
-                                <div class="gallery-info">
-                                    <div class="gallery-title">NCT Wish 유우시</div>
-                                    <div class="gallery-date">2024-06-11</div>
-                                </div>
-                                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="{% static 'images/pocadeco/wonbin.jpg' %}" alt="RIIZE 원빈" />
-                                <div class="gallery-info">
-                                    <div class="gallery-title">RIIZE 원빈</div>
-                                    <div class="gallery-date">2024-06-10</div>
-                                </div>
-                                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-                            </div>
+                            {%endfor%}
                         </div>
                     </div>
                 </div>
@@ -330,6 +317,8 @@ function saveDecoration() {
         return;
     }
 
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     html2canvas(canvasEl, {
         useCORS: true,
         allowTaint: true,
@@ -338,21 +327,52 @@ function saveDecoration() {
     }).then(canvas => {
         const dataUrl = canvas.toDataURL("image/png");
         const gallery = document.getElementById('myGallery');
-        
-        if (gallery) {
-            const now = new Date().toISOString().split('T')[0];
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            item.innerHTML = `
-                <img src="${dataUrl}" alt="${title}" />
-                <div class="gallery-info">
-                    <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${title}</div>
-                    <div class="gallery-date">${now}</div>
-                </div>
-                <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
-            `;
-            gallery.prepend(item);
-        }
+
+        // 서버에 데이터 전송
+        fetch('/pocadeco/save_decopoca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({
+                title: title,
+                image: dataUrl,
+                group: "아일릿", // 임시 그룹 멤버 하드코딩 (수정해주세요!!)
+                member: "모카",
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const gallery = document.getElementById('myGallery');
+                if (gallery) {
+                    const now = new Date().toISOString().split('T')[0];
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.setAttribute('data-id', data.id);  // 여기서 서버 응답 id 사용
+
+                    item.innerHTML = `
+                        <img src="${data.result_image}" alt="${data.title}" />
+                        <div class="gallery-info">
+                            <div class="gallery-title" ondblclick="makeTitleEditable(this.parentElement)">${data.title}</div>
+                            <div class="gallery-date">${now}</div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteGalleryItem(this)">×</button>
+                    `;
+                    gallery.prepend(item);
+                }
+
+                console.log('서버에 저장되었습니다.');
+            } else {
+                alert('서버 저장 실패: ' + data.reason);
+            }
+        })
+        .catch(error => {
+            console.error('서버 저장 중 오류:', error);
+            alert('서버 저장 중 오류가 발생했습니다.');
+        });
+
     }).catch(error => {
         console.error('저장 중 오류가 발생했습니다:', error);
         alert('저장 중 오류가 발생했습니다.');
@@ -423,7 +443,38 @@ function handleGalleryAdd(event) {
 
 // 갤러리 아이템 삭제
 function deleteGalleryItem(btn) {
+    const itemEl = btn.closest('.gallery-item');  // 가장 가까운 gallery-item div
+    const decoid = itemEl.getAttribute('data-id');
+
+    if (!decoid) {
+        alert('삭제할 ID를 찾을 수 없습니다.');
+        return;
+    }
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     if (confirm("이 포토카드를 갤러리에서 삭제하시겠습니까?")) {
+        // 서버에 데이터 전송
+        fetch('/pocadeco/delete_decopoca/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ id: decoid })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                console.log(data.message);
+            } else {
+                alert(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('서버 통신 중 오류:', error);
+            alert('서버 통신 중 오류가 발생했습니다.');
+        });
+
         btn.parentElement.remove();
     }
 }
