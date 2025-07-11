@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.db.models import Q
 from django.http import JsonResponse
 import json
 
@@ -166,8 +167,9 @@ def trade(request):
         try:
             user = User.objects.get(user_id=user_id)
             
-            sell_poca = Photocard.objects.filter(seller=user).exclude(sell_state='전')
-            buy_poca = Photocard.objects.filter(buyer=user).exclude(buy_state='전')
+            sell_poca = Photocard.objects.filter(seller=user, trade_type="판매").exclude(sell_state='전')
+            buy_poca = Photocard.objects.filter(buyer=user, trade_type="판매").exclude(buy_state='전')
+            exchange_poca = Photocard.objects.exclude(buy_state='전').filter(Q(seller=user) | Q(buyer=user), trade_type="교환")
 
             sell_data = [
                 {
@@ -194,10 +196,24 @@ def trade(request):
                 }
                 for photocard in buy_poca
             ]
+            
+            exchange_data = [
+                {
+                    'title': photocard.title,
+                    'trade_type': photocard.trade_type,
+                    'trade_state': photocard.sell_state,
+                    'album': photocard.album,
+                    'image_url': photocard.image.url if photocard.image else '',
+                    'pno': photocard.pno,
+                    'member': photocard.member.name if photocard.member else '',
+                }
+                for photocard in exchange_poca
+            ]
 
             return JsonResponse({
                 'sell_poca': sell_data,
                 'buy_poca': buy_data,
+                'exchange_poca':exchange_data,
             })
 
         except User.DoesNotExist:
@@ -225,15 +241,13 @@ def block_list(request):
             user = User.objects.get(user_id=user_id)
             block_users = user.initiated_relations.filter(relation_type='BLOCK')
             
-            # 차단 사용자 리스트 저장용
             block_data = []
             for u in block_users :
-                block_data = [
-                    {
+                block_data.append({
                         'user_id': u.to_user.user_id,
                         'name': u.to_user.name,
-                    }
-                ]
+                        'reason': u.reason,
+                    })
 
             return JsonResponse({'blocked_users': block_data})
 

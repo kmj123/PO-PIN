@@ -97,6 +97,8 @@ class UserRelation(models.Model):
         choices=RELATION_CHOICES,
         verbose_name="관계 유형"
     )
+    
+    reason = models.TextField(null=True, blank=True, verbose_name="신고 사유")  # 신고 사유 저장 필드
 
     class Meta:
         unique_together = ('from_user', 'to_user', 'relation_type')
