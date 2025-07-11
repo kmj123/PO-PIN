@@ -40,7 +40,11 @@ def decoMain(request):
         
     deco_list = []
     for poca in decoratedpoca:
-        tags = poca.tag.split(',')
+        if poca.tag:  # None이 아니고 빈 문자열도 아님
+            tags = poca.tag.split(',')
+        else:
+            tags = []  # 빈 리스트로 처리
+        
         deco_list.append({
             'id': poca.id,
             'title':poca.title,

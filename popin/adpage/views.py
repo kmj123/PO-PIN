@@ -56,6 +56,7 @@ def main(request) :
 
             # 정렬된 결과로 리스트 준비
             sorted_months = sorted(list(month_set))
+            all_counts = [count_data[m]['판매'] + count_data[m]['교환'] for m in sorted_months]
             sale_counts = [count_data[m]['판매'] for m in sorted_months]
             exchange_counts = [count_data[m]['교환'] for m in sorted_months]
             
@@ -69,6 +70,7 @@ def main(request) :
                 'total_users':total_users,  # 전체 사용자
                 'block_users':block_users, # 차단 사용자
                 'months':sorted_months, # 월별 거래 통계 (month)
+                'all' : all_counts, # 월별 거래 통계 (총판)
                 'sell':sale_counts, # 월별 거래 통계 (판매)
                 'exchange':exchange_counts, # 월별 거래 통계 (교환)
             }
@@ -78,7 +80,6 @@ def main(request) :
         except:
             return redirect('home:main')  # 예외 상황 대비
     
-
 def user(request) :
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
@@ -98,7 +99,12 @@ def user(request) :
         state = request.GET.get('state')
         keyword = request.GET.get('keyword')
         
-        user_list = User.objects.all().values('user_id','nickname','email','state') # 전체 유저 리스트
+        user_list = User.objects.annotate(
+            report_count=Count(
+                'received_relations',
+                filter=Q(received_relations__relation_type='REPORT')
+            )
+        ).values('user_id','nickname','email','state','report_count').exclude(state=0)
         
         # 조건부 필터링 (값이 있을 경우에만 필터링)
         if state:

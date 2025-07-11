@@ -90,6 +90,7 @@ class UserRelation(models.Model):
     RELATION_CHOICES = [
         ('FOLLOW', '관심 사용자'),
         ('BLOCK', '차단한 사용자'),
+        ('REPORT', '신고한 사용자'),
     ]
     relation_type = models.CharField(
         max_length=10,
