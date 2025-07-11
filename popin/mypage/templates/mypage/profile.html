@@ -525,9 +525,7 @@
                         
                         <!-- 프로필 수정 모달창 오픈 -->
                         <button id="favorite-btn" type="button">
-                            {% for group in groups %}
-                                <img src="/media/{{ group.image.url }}/" alt="{{ group.name }}">
-                            {% endfor %}
+                            <img src="/media/{{group_logo}}/" alt="group_logo">
                         </button>
                     </div>
                     <div class="profile-info">

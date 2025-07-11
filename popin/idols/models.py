@@ -12,6 +12,8 @@ class Group(models.Model):
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True, verbose_name="그룹 성별")
     debut_date = models.DateField(blank=True, null=True, verbose_name="데뷔일")
+    
+    group_logo = models.ImageField(upload_to='group_logo/', null=True, blank=True, verbose_name="그룹 로고 이미지")
     # 기타 필요한 그룹 정보 필드 추가 가능
     class Meta:
         verbose_name = "아이돌 그룹"
