@@ -247,9 +247,8 @@
   </style>
 </head>
 <body>
-
-
-
+  <form method="POST"  action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
+   {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
       <h2>동행 모집 글 작성</h2>
