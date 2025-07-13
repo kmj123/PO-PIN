@@ -51,16 +51,39 @@ def chgReviewmain(request):
 ################################################################################
 ##교환/판매 상세보기 
 from django.shortcuts import render, get_object_or_404
-from community.models import ExchangeReview,ReviewImage,ReviewTag
+from community.models import ExchangeReview
 
-def chgReviewview(request, post_id):
+def chgReviewview(request, pk):
     post = get_object_or_404(
         ExchangeReview.objects.prefetch_related('tags', 'images'),
-        id=post_id
+        id=pk
     )
-    
-    return render(request, 'community/chgR_view.html', {'post': post})
-    
+
+    # 조회수 증가 (선택)
+    post.views += 1
+    post.save(update_fields=["views"])
+
+    return render(request, 'chgReview/chgR_view.html', {
+        'post': post
+    })
+################################################################################
+from django.shortcuts import render, get_object_or_404, redirect
+from community.models import ExchangeReview
+from signupFT.models import User
+# 교환후기글 수정 
+def chgReview_update(request, pk):
+    post = get_object_or_404(ExchangeReview, id=pk)
+
+    if request.method == "POST":
+        post.title = request.POST.get("title")
+        post.content = request.POST.get("content")
+        post.overall_score = request.POST.get("overall_score")
+        post.save()
+        return redirect('chgReview:chgReviewview', pk=post.id)
+
+    return render(request, 'chgReview/chgR_edit.html', {'post': post})
+
+
    
 ################################################################################
 ## 최근게시글
@@ -582,3 +605,72 @@ def status(request):
         'query': query  # 검색어 유지
     }
     return render(request, 'status/main.html', context)
+
+
+##################
+from django.shortcuts import get_object_or_404, render
+from community.models import CompanionPost, CompanionComment
+from community.models import SharingPost, ProxyPost
+def companion_detail(request, pk):
+    post = get_object_or_404(CompanionPost, pk=pk)
+    post.views += 1
+    post.save(update_fields=["views"])
+
+    return render(request, 'community/companion_detail.html', {
+        'post': post,
+        'title': post.title,
+        'artist': post.artist,
+        'category': post.category,
+        'location': post.location,
+        'content': post.content,
+        'tags': post.tags.all(),
+        'event_date': post.event_date,
+        'max_people': post.max_people,
+        'participants': post.participants.all(),
+        'status': post.status,
+        'images': post.images.all(),
+    })
+
+
+def sharing_detail(request, pk):
+    post = get_object_or_404(SharingPost, pk=pk)
+    post.views += 1
+    post.save(update_fields=["views"])
+
+    return render(request, 'community/sharing_detail.html', {
+        'post': post,
+        'title': post.title,
+        'content': post.content,
+        'artist': post.artist,
+        'requirement': post.requirement,
+        'category': post.category,
+        'type': post.type,
+        'share_date': post.share_date,
+        'location': post.location,
+        'tags': post.tags.all(),
+        'status': post.status,
+        'images': post.images.all(),
+    })
+
+
+def proxy_detail(request, pk):
+    post = get_object_or_404(ProxyPost, pk=pk)
+    post.views += 1
+    post.save(update_fields=["views"])
+
+    return render(request, 'community/proxy_detail.html', {
+        'post': post,
+        'title': post.title,
+        'artist': post.artist,
+        'category': post.category,
+        'status': post.status,
+        'event_date': post.event_date,
+        'location': post.location,
+        'max_people': post.max_people,
+        'reward': post.reward,
+        'description': post.description,
+        'tags': post.tags.all(),
+        'participants': post.participants.all(),
+        'images': post.images.all(),
+    })
+
