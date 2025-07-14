@@ -283,6 +283,7 @@
         box-shadow: none;
         }
 
+<<<<<<< HEAD
         #toast{
             visibility: hidden;
             min-width: 304px;
@@ -310,6 +311,26 @@
     </style>
 
     <script>
+=======
+    </style>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+            }
+            }
+            return cookieValue;
+        }
+
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
         // 프로필 수정 모달창 스크립트
         document.addEventListener('DOMContentLoaded', function () {
             const modalOpenButton = document.getElementById('profile_modal');
@@ -417,6 +438,10 @@
             const WithU = document.getElementById('WithU');
             const Sharing = document.getElementById('Sharing');
             const Insteadbuy = document.getElementById('Insteadbuy');
+<<<<<<< HEAD
+=======
+            const shareNow = document.getElementById('shareNow');
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
             communityTabs.forEach(tab=>{
                 tab.classList.remove('active');
@@ -434,6 +459,11 @@
                 Sharing.style.display="block";
             } else if(type === "Insteadbuy"){
                 Insteadbuy.style.display="block";
+<<<<<<< HEAD
+=======
+            } else if(type === "shareNow"){
+                shareNow.style.display="block";
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
             }
         }
 
@@ -517,6 +547,7 @@
             });
         });
 
+<<<<<<< HEAD
         // toast 기능구현
         function showToast(message, duration = 3000) {
             const toast = document.getElementById("toast");
@@ -534,6 +565,12 @@
     <!--toast용-->
     <div id="toast" class="toast"></div> 
 
+=======
+
+    </script>
+
+    <body>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
     <!--프로필-->
     <main class="main">
         <form>
@@ -542,21 +579,29 @@
                     <div class="polaroid" id="profile_modal">
                         <div class="polaroid-image">
                             <!--클릭시 프로필변경페이지 이동-->
+<<<<<<< HEAD
                             {%if profile_image%}
                             <img src='/media/{{profile_image}}/' alt='{{profile_image}}'>
                             {%else%}
                             <img src='/static/images/no-image.png/' alt='(이미지 없음)' style="object-fit: none;">
                             {%endif%}
+=======
+                            <img src='/media/{{profile_image}}/' alt='{{profile_image}}'>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                         </div>
                         
                         <!-- 프로필 수정 모달창 오픈 -->
                         <button id="favorite-btn" type="button">
+<<<<<<< HEAD
 
                             {%if group_logo %}
                                 <img src="/media/{{group_logo}}/" alt="group_logo">
                             {%else%}
                                 <img src="(로고없음)" alt="(로고없음)"> 
                             {%endif%}
+=======
+                            <img src="/media/{{group_logo}}/" alt="group_logo">
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                         </button>
                     </div>
                     <div class="profile-info">
@@ -584,6 +629,97 @@
         </form>
         <!--//프로필-->
 
+<<<<<<< HEAD
+=======
+        <!--프로필 수정 모달창 구현-->
+        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div id="modalContainer" class="hidden">
+                <div id="modalContent">
+                    <div class="profileTop">
+                        <button id="favorite-btnClose" type="button">
+                            <img src="/static/images/mypage/cancelicon.png" style="width: 40px; height: 40px;">
+                        </button>
+                        <h1>프로필 수정</h1>
+                    </div>
+                    <div class="profileContent">
+                        <label for="profile_image">프로필 이미지</label>
+                        <div class="profile_img_container">
+                            <div class="profile_img_wrapper">
+                                <div class="previous_container" id="previous_container" style="cursor:pointer;">
+                                    <img id="previousImage" src="/media/{{ profile_image }}/" class="profile_image" alt="프로필 이미지">
+                                </div>
+                                <input type="file" id="profile-img-input" name="profile_image" class="fileType" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="preview-container" id="previewContainer" style="display:none;">
+                                <img id="previewImage" class="preview-image" alt="미리보기">
+                            </div>
+                        </div>
+                        <div class="myinfo">
+                            <div class="myinfo-profile">
+                                <label for="nickname">닉네임</label>
+                                <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="mybias">최애변경</label>
+                                {% for group,member in bias_pairs %}
+                                    {%if forloop.first%}
+                                <div class="mybias_input">
+                                    <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
+                                </div>
+                                {%endif%}
+                                {% endfor %}
+                            </div>
+                            <!--아티스트 검색 모달창-->
+                            <div id="searchModal" class="modal" >
+                                <div class="modal-content">
+                                    <span id="searchModalOpenClose" class="close">&times;</span>
+                                    <form id="memberSearchForm" method="POST" action="{% url 'signup:member_select' %}">
+                                        {% csrf_token %}
+                                        <div class="search-container">
+                                            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
+                                            <input type="hidden" name="group_name" id="selectedGroup">
+                                            <input type="hidden" name="member_name" id="selectedMember">
+
+                                            <div class="filter-buttons">
+                                                <button type="button" class="filter-btn" data-filter="all">전체</button>
+                                                <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
+                                                <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="selected-members" id="selectedMembers" style="display: none;">
+                                            <h3>🌟 선택된 멤버</h3>
+                                            <div class="selected-list" id="selectedList"></div>
+                                        </div>
+
+                                        <div class="search-noticeBox" id="searchNotice">
+                                            <span class="icon">🔍</span>
+                                            <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
+                                            <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
+                                        </div>
+                                        
+                                        <div class="groups-container" id="groupsContainer"></div>
+                                        <div id="hiddenInputsContainer"></div>
+                                        <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
         <div class="content">
             <div class="tabs-wrapper">
@@ -686,6 +822,7 @@
                             <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
                         </div>
+<<<<<<< HEAD
                         <div class="item review-item">
                             <h3>신뢰할 수 있는 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
                             <p>설명과 동일한 상태의 포카를 받았어요. 추천합니다! - 카드수집러님</p>
@@ -694,6 +831,8 @@
                             <h3>좋은 거래였습니다<span class="rating">⭐⭐⭐⭐</span></h3>
                             <p>소통이 원활하고 약속 시간도 잘 지켜주셨어요. - 포카러님</p>
                         </div>
+=======
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                         <div class="view-all-container">
                         </div>
                     </div>
@@ -734,6 +873,10 @@
                         <button class="community-tab active" onclick="showCommunityTab('WithU')">동행</button>
                         <button class="community-tab " onclick="showCommunityTab('Sharing')">나눔</button>
                         <button class="community-tab " onclick="showCommunityTab('Insteadbuy')">대리구매</button>
+<<<<<<< HEAD
+=======
+                        <button class="community-tab " onclick="showCommunityTab('shareNow')">현황공유</button>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                     </div>
                 </div>
 
@@ -788,6 +931,26 @@
                         </div>
                     </div> 
                 </div>
+<<<<<<< HEAD
+=======
+                <!--현황공유-->
+                <div class="section-content">
+                    <div id="shareNow" class="community-content" style="display: none;">
+                        <div class="item">
+                            <h3>현황공유</h3>
+                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
+                        </div>
+                        <div class="item">
+                            <h3>현황공유</h3>
+                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
+                        </div>
+                        <div class="item">
+                            <h3>현황공유</h3>
+                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
+                        </div>
+                    </div> 
+                </div>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
             </div>
 
             <!--블랙리스트-->
@@ -821,6 +984,7 @@
             <!--//블랙리스트-->
         </div>
     </main>
+<<<<<<< HEAD
     
         <!--프로필 수정 모달창 구현-->
         <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
@@ -906,6 +1070,8 @@
                 </div>
             </div>
         </form>
+=======
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
 
     <script>
@@ -972,6 +1138,7 @@
                     const dateType = card.created_at.split('T')[0];
 
                     return `
+<<<<<<< HEAD
                     <div class="item" data-pno="${ card.pno }">
                         <a href="/photocard/detail/${card.pno}">
                             <div>
@@ -980,6 +1147,14 @@
                             </div> 
                         </a> 
                     </div>
+=======
+                        <div class="item">
+                            <div>
+                                <h3>${card.title}</h3>
+                                <p>${dateType} - ${card.album}</p>
+                            </div>  
+                        </div>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                         `;
                     }).join("");
 
@@ -1060,21 +1235,35 @@
                 wishList.empty();
 
                 const wishdata = data.wishlist.map(wish => 
+<<<<<<< HEAD
                     `<div class="item">
                         <a href="/photocard/detail/${wish.pno}">
+=======
+                    `<a href="/photocard/view/">
+                        <div class="item">
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                             <div class="wishlist">
                                 <div class="wish-list-img">
                                     <img src=${wish.image_url}>
                                 </div>
                                 <div class="wish-list-txt">
+<<<<<<< HEAD
                                     <span class="badge reserved">거래${wish.trade_state}</span>
+=======
+                                    <span class="badge reserved">${wish.trade_state}</span>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                                     <h3>${wish.title}
                                     </h3>
                                     <p>${wish.album}</p>
                                 </div>
                             </div>
+<<<<<<< HEAD
                         </a>
                     </div>`).join("");
+=======
+                        </div>
+                    </a>`).join("");
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                 wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
             },
             error: function (xhr, status, error) {
@@ -1097,10 +1286,15 @@
 
                 const saleData = data.sell_poca.map(sell => 
                     `<div class="item">
+<<<<<<< HEAD
                     <a href="/photocard/detail/${sell.pno}">
                         <h3>${sell.title}</h3>
                         <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
                     </a>
+=======
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                     </div>`).join("");
 
                 saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
@@ -1123,10 +1317,15 @@
 
                 const buyData = data.buy_poca.map(buy => 
                     `<div class="item">
+<<<<<<< HEAD
                     <a href="/photocard/detail/${buy.pno}">
                         <h3>${buy.title}</h3>
                         <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
                     </a>
+=======
+                        <h3>${buy.title}</h3>
+                        <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                     </div>`).join("");
                     buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
 
@@ -1149,10 +1348,15 @@
 
                 const exchangeData = data.exchange_poca.map(exchange => 
                     `<div class="item">
+<<<<<<< HEAD
                     <a href="/photocard/detail/${exchange.pno}">
                         <h3>${exchange.title}</h3>
                         <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
                     </a>
+=======
+                        <h3>${exchange.title}</h3>
+                        <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                     </div>`).join("");
 
                  exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
@@ -1162,7 +1366,39 @@
             }
         });
         
+<<<<<<< HEAD
         // 내가 쓴 후기글
+=======
+        // 내가 받은 후기글
+        $.ajax({
+            url: "/mypage/review/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('내가쓴 후기글 불러오기 성공');
+
+                const reviewList = $("#transactions #exchange-list");
+                exchangeList.empty();
+
+                const exchangeData = data.exchange_poca.map(exchange => 
+                    `<div class="item">
+                        <h3>${exchange.title}</h3>
+                        <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
+                    </div>`).join("")
+                    <div class="item review-item">
+                            <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
+                        </div>
+                    ;
+
+                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("교환목록 불러오기 실패");
+                exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
         // 내가 받은 후기글
 
@@ -1172,6 +1408,7 @@
 
         // 커뮤니티 - 대리구매
 
+<<<<<<< HEAD
         // 유저정보 가져오기
         function getCookie(name) {
             let cookieValue = null;
@@ -1222,26 +1459,71 @@
             const userId = $item.data('user-id');
 
             if (!confirm("정말 차단을 해제하시겠습니까?")) return;
+=======
+        // 블랙리스트 - 차단한 사용자 목록 AJAXs
+        $.ajax({
+            url: "/mypage/blocklist/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('차단 사용자 불러오기 성공');
+
+                const blockuserList = $("#blocked #blocked-user");
+                blockuserList.empty();
+
+                const blockData = data.blocked_users.map(user => 
+                    `<div class="item" data-user-id="${user.user_id}">
+                        <h3>${user.user_id} - ${user.name}</h3>
+                        <button class="unblock-btn" data-user-id="${user.user_id}">차단해제</button>
+                        <p>차단 사유: ${user.reason}</p>
+                    </div>`).join("");
+
+                blockuserList.append(blockData||"<div class='error-content'>차단 사용자 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("차단 사용자 불러오기 실패",xhr,status,error);
+                blockuserList.html("<div class='error-content'>차단 사용자 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // 동적으로 생성된 요소에는 이벤트 위임 방식 사용
+        $(document).on("click", ".unblock-btn", function () {
+            const id = $(this).closest('.item').data('user-id');
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
             $.ajax({
                 url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
                 type: 'POST',
+<<<<<<< HEAD
                 data: JSON.stringify({ id: userId }),  // JSON 형식으로 전송
+=======
+                data: JSON.stringify({ id: id }),  // JSON 형식으로 전송
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                 contentType: 'application/json',
                 headers: {
                 'X-CSRFToken': getCookie('csrftoken')
                 },
                 success: function(response) {
+<<<<<<< HEAD
                     showToast('차단해제가 처리되었습니다.');
                     loadBlockedUsers();
                 },
                 error: function(xhr) {
                     $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
                         console.log('error')
+=======
+                $('#result').text(response.blocked_users?.[0]?.message || '성공적으로 처리되었습니다.');
+                console.log('success')
+                },
+                error: function(xhr) {
+                $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
+                    console.log('error')
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                 }
             });
         });
 
+<<<<<<< HEAD
         $(document).ready(function(){
             loadBlockedUsers();
         });
@@ -1271,6 +1553,35 @@
                 }
             });
         });
+=======
+
+        // 블랙리스트 - 차단 글 목록 AJAX
+
+        // 프로필 수정 업데이트 AJAX
+        $('#profileForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: '/mypage/update_profile/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+            'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
+            },
+            success: function(response) {
+                alert("프로필 수정 성공");
+            },
+            error: function(xhr) {
+                alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+            }
+        });
+        });
+
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
 
 
@@ -1286,7 +1597,10 @@
             const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
             const memberGrid = document.querySelector('.mybias_input');
             
+<<<<<<< HEAD
             const mybiasInput = document.querySelector(".mybias_input");
+=======
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
             mybiasInput.addEventListener("click", () => {
                 searchModal.style.display = "block";
 
@@ -1434,8 +1748,16 @@
 
                 // 메인 페이지에 렌더링
                 memberGrid.innerHTML = `
+<<<<<<< HEAD
                         <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}" readonly style="cursor: pointer;">
                 `;
+=======
+                        <div class="mybias_input">
+                            <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}"
+                        </div>
+
+                        `;
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
                 modal.style.display = 'none';
             });
@@ -1452,11 +1774,25 @@
 
         });
 
+<<<<<<< HEAD
 
+=======
+        // 차단해제 버튼 클릭 이벤트
+        document.querySelectorAll('.unblock-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(confirm('정말 차단을 해제하시겠습니까?')) {
+                    this.parentElement.remove();
+                }
+            });
+        });
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
     </script>
 
 {%endblock%}
 <!--//상단헤더-->
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 </body>
 </html>

@@ -32,7 +32,7 @@
 
     .pocanavi button{border:none; background:transparent; padding:0;}
 
-    .icons {width:100px; display:flex; justify-content: space-between;}
+    .icons {display:flex; justify-content: space-between;}
 
     .icons a{color:#333;}
 
@@ -121,7 +121,7 @@
 
     .card-meta {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         padding:0 40px;
         align-items: center;
         margin-bottom: 1rem;
@@ -132,12 +132,20 @@
         font-size: 0.9rem;
     }
 
-    .card-likes {
-        display: flex;
-        align-content: center;
+    .card-meta > .card-likes{display:flex; justify-content:space-between; width:200px; font-size: 0.8rem;}
+
+    .card-likes div{margin:0;}
+
+    .hit {
+        gap: 0.3rem;
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .wish_count {
         gap: 0.3rem;
         color: #e74c3c;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
     }
 
     .card-tags {
@@ -295,7 +303,6 @@
         $("#heart").click(function() {
             let pno = {{info.pno}}
             let csrfToken = $('meta[name="csrf-token"]').attr('content')
-            console.log('csrfToken : ', csrfToken);
 
             $.ajax({
                 url: '/photocard/toggle_wish/' + pno + '/',
@@ -363,15 +370,16 @@
     {% else %}
         {% include "header_logout.html" %}
     {% endif %}
-    <!--
-        <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
-    -->
+
     <div class="content">
         <div class="content_background">
             <div class="pocanavi">
                 <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
-                <div class="icons">
+                <div class="icons" style="{% if is_user %} width:120px {% else %} width:55px; {% endif %}">
+                    {% if is_user %}
                     <a href="/photocard/modify/{{info.pno}}/"><i class="fas fa-pencil"></i></a>
+                    <a href="/photocard/delete/{{info.pno}}/"><i class="fal fa-trash-alt"></i></a>
+                    {% endif %}
                     <i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i>
                     <i class="fal fa-share-square share-icon"></i>
                 </div>
@@ -391,8 +399,11 @@
                     <h4>{{info.member}}</h4>
                     <div class="card-meta">
                         <span class="card-album">{{info.album}}</span>
+                    </div>
+                    <div class="card-meta">
                         <span class="card-likes">
-                            ❤️ <span class="wish_count">{{info.wish_count}}</span> 
+                            <div>👀 <span class="hit">{{info.hit}}</span></div>
+                            <div>❤️ <span class="wish_count">{{info.wish_count}}</span></div>
                         </span>
                     </div>
                     <div class="card-tags">

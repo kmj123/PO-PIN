@@ -94,26 +94,30 @@ document.addEventListener("DOMContentLoaded", function () {
   // 후기 카드 클릭 시 모달 열기
   if (postList) {
     postList.addEventListener("click", (e) => {
-      const card = e.target.closest(".post-card");
-      if (!card) return;
+    const card = e.target.closest(".post-card");
+    if (!card) return;
 
-      if (e.target.closest('.report-btn') || e.target.closest('.join-btn')) return;
+    if (e.target.closest('.report-btn') || e.target.closest('.join-btn')) return;
 
-      const artistText = card.querySelector(".artist")?.textContent.trim();
-      const regionText = card.querySelector(".region")?.textContent.trim();
-      const ptypeText = card.querySelector(".ptype")?.textContent.trim();
-      const title = card.querySelector(".post-title")?.textContent.trim();
-      const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
-      const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
-      const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
-      const desc = card.querySelector(".post-description")?.textContent.trim();
-      const wdate = card.querySelector(".post-meta")?.textContent.trim();
-      const imgListStr = card.getAttribute("data-imgs") || "";
-      const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
+    const artistText = card.querySelector(".artist")?.textContent.trim();
+    const regionText = card.querySelector(".region")?.textContent.trim();
+    const ptypeText = card.querySelector(".ptype")?.textContent.trim();
+    const title = card.querySelector(".post-title")?.textContent.trim();
+    const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim();
+    const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim();
+    const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim();
+    
+    const modalContent = card.querySelector(".post-modal")?.textContent.trim();
+    const desc = card.querySelector(".post-content")?.textContent.trim() || 
+                 card.querySelector(".post-description")?.textContent.trim();
+    
+    const wdate = card.querySelector(".post-meta")?.textContent.trim();
+    const imgListStr = card.getAttribute("data-imgs") || "";
+    const tags = Array.from(card.querySelectorAll(".post-tag")).map(tag => tag.textContent.replace('#', '').trim());
 
-      openPostModal(artistText, regionText, ptypeText, title, date, place, people, desc, imgListStr, tags, wdate);
-    });
-  }
+    openPostModal(artistText, regionText, ptypeText, title, date, place, people, desc, imgListStr, tags, wdate);
+  });
+}
 
   function openPostModal(artistText, regionText, ptypeText, title, date, place, people, desc, imgListStr = "", tags = [], wdate = "") {
     const artistEl = document.getElementById("modalPostArtist");
