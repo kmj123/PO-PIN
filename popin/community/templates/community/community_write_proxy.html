@@ -9,7 +9,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>카뮤니티| 대리구매 작성</title>
+  <title>커뮤니티| 대리구매 작성</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -309,53 +309,52 @@
       </div>
     </div>
 
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
     <table class="writebox">
       <tbody>
         <tr>
-          <form method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
-          <th scope="row"><label for="title">제목</label></th>
+          <th><label for="title">제목</label></th>
           <td><input type="text" class="wlong" id="title" name="title" placeholder="대리구매 제목을 입력해주세요"/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="artist">아티스트</label></th>
-          <td><input type="text" class="wlong" id="artist"name="artist" placeholder="아티스트명을 입력해주세요"/></td>
+          <th><label for="artist">아티스트</label></th>
+          <td><input type="text" class="wlong" id="artist" name="artist" placeholder="아티스트명을 입력해주세요"/></td>
         </tr>
         <tr>
-          <th scope="row">날짜 및 시간</th>
+          <th>날짜 및 시간</th>
           <td>
             <div class="datetime-group">
-              <input type="date" id="eventDate"name="eventDate" required>
+              <input type="date" id="eventDate" name="eventDate" required>
               <input type="time" id="eventTime" name="eventTime" required>
             </div>
           </td>
         </tr>
         <tr>
-          <th scope="row"><label for="location">장소</label></th>
-          <td><input type="text" class="wlong" id="location"  name="location" placeholder="대리구매 장소를 입력해주세요"/></td>
+          <th><label for="location">장소</label></th>
+          <td><input type="text" class="wlong" id="location" name="location" placeholder="대리구매 장소를 입력해주세요"/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="maxParticipants">최대 모집 인원</label></th>
-          <td><input type="number" class="wlong" id="maxParticipants" name="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요"/></td>
-        </tr>
-
-        <tr>
-          <th scope="row"><label for="fee">수고비</label></th>
-          <td><input type="text" class="wlong" id="fee"name="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)"/></td>
+          <th><label for="max_people">최대 모집 인원</label></th>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요"/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="content">본문</label></th>
-          <td><textarea class="tta" id="content"name="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요."></textarea></td>
+          <th><label for="fee">수고비</label></th>
+          <td><input type="text" class="wlong" id="fee" name="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)"/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" name="tags"  placeholder="#대리구매 #아이돌 #콘서트 등"/></td>
+          <th><label for="content">본문</label></th>
+          <td><textarea class="tta" id="content" name="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요."></textarea></td>
         </tr>
         <tr>
-          <th scope="row">사진 첨부</th>
+          <th><label for="tags">태그</label></th>
+          <td><input type="text" class="wlong" id="tags" name="tags" placeholder="#대리구매 #아이돌 #콘서트 등"/></td>
+        </tr>
+        <tr>
+          <th>사진 첨부</th>
           <td>
             <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" name="images"  multiple accept="image/*" style="display: none;">
+              <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display: none;">
               <div class="upload-icon">📷</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
@@ -371,9 +370,14 @@
       <button type="submit" value="write">확인</button>
       <button type="button" value="cancel">취소</button>
     </div>
-  </div>
-</form>
- <script>
+  </form>
+</div>
+<script>
+const postUrl = "{% url 'community:write_proxy' %}";
+  const redirectUrl = "{% url 'community:proxy' %}";
+</script>
+
+<script>
 let selectedFiles = [];
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -384,25 +388,21 @@ document.addEventListener("DOMContentLoaded", function () {
 function setupFileUpload() {
   const fileUploadArea = document.getElementById('fileUploadArea');
   const fileInput = document.getElementById('fileInput');
-  const fileList = document.getElementById('fileList');
 
   fileUploadArea.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 
-  fileInput.addEventListener('change', function() {
-    handleFiles(this.files);
-  });
-
-  fileUploadArea.addEventListener('dragover', function(e) {
+  fileUploadArea.addEventListener('dragover', function (e) {
     e.preventDefault();
     this.classList.add('dragover');
   });
 
-  fileUploadArea.addEventListener('dragleave', function(e) {
+  fileUploadArea.addEventListener('dragleave', function (e) {
     e.preventDefault();
     this.classList.remove('dragover');
   });
 
-  fileUploadArea.addEventListener('drop', function(e) {
+  fileUploadArea.addEventListener('drop', function (e) {
     e.preventDefault();
     this.classList.remove('dragover');
     handleFiles(e.dataTransfer.files);
@@ -424,14 +424,12 @@ function displayFile(file) {
   const fileItem = document.createElement('div');
   fileItem.className = 'file-item';
 
-  const fileSize = formatFileSize(file.size);
-
   fileItem.innerHTML = `
     <div class="file-info">
       <div class="file-icon">📷</div>
       <div>
         <div class="file-name">${file.name}</div>
-        <div class="file-size">${fileSize}</div>
+        <div class="file-size">${formatFileSize(file.size)}</div>
       </div>
     </div>
     <span class="file-remove" onclick="removeFile('${file.name}')">×</span>
@@ -441,7 +439,6 @@ function displayFile(file) {
 }
 
 function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -450,10 +447,8 @@ function formatFileSize(bytes) {
 
 function removeFile(fileName) {
   selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-  const fileItems = document.querySelectorAll('.file-item');
-  fileItems.forEach(item => {
-    const fileNameElement = item.querySelector('.file-name');
-    if (fileNameElement && fileNameElement.textContent === fileName) {
+  document.querySelectorAll('.file-item').forEach(item => {
+    if (item.querySelector('.file-name').textContent === fileName) {
       item.remove();
     }
   });
@@ -462,12 +457,8 @@ function removeFile(fileName) {
 
 function updateFileCount() {
   const fileCount = document.getElementById('fileCount');
-  if (selectedFiles.length > 0) {
-    fileCount.style.display = 'block';
-    fileCount.textContent = `총 ${selectedFiles.length}개 파일 선택됨`;
-  } else {
-    fileCount.style.display = 'none';
-  }
+  fileCount.style.display = selectedFiles.length > 0 ? 'block' : 'none';
+  fileCount.textContent = `총 ${selectedFiles.length}개 파일 선택됨`;
 }
 
 function setupButtons() {
@@ -475,20 +466,20 @@ function setupButtons() {
   const cancelButton = document.querySelector('button[value="cancel"]');
 
   writeButton.addEventListener("click", function (e) {
-    e.preventDefault(); // 폼 기본 제출 막기
+    e.preventDefault();
 
     const title = document.getElementById("title").value.trim();
     const artist = document.getElementById("artist").value.trim();
     const eventDate = document.getElementById("eventDate").value;
     const eventTime = document.getElementById("eventTime").value;
     const location = document.getElementById("location").value.trim();
-    const maxParticipants = document.getElementById("maxParticipants").value;
+    const max_people = document.getElementById("max_people").value;
     const fee = document.getElementById("fee").value.trim();
     const content = document.getElementById("content").value.trim();
     const tags = document.getElementById("tags").value.trim();
 
-    // 필수 입력 검사
-    if (!title || !artist || !eventDate || !eventTime || !location || !maxParticipants || !content) {
+    if (!title || !artist || !eventDate || !eventTime || !location || !
+    max_people || !content) {
       alert("필수 항목을 모두 입력해주세요.");
       return;
     }
@@ -499,33 +490,36 @@ function setupButtons() {
     formData.append("eventDate", eventDate);
     formData.append("eventTime", eventTime);
     formData.append("location", location);
-    formData.append("maxParticipants", maxParticipants);
+    formData.append("max_people", max_people);
     formData.append("fee", fee);
     formData.append("content", content);
     formData.append("tags", tags);
 
-    // 이미지들 추가
     selectedFiles.forEach(file => {
-      formData.append("images", file);
+      formData.append("images", file);  // name이 images[]
     });
 
-    fetch("{% url 'community:write_proxy' %}", {
+    fetch(postUrl, {
       method: "POST",
       headers: {
         "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value,
       },
       body: formData,
     })
-    .then(response => {
-      if (!response.ok) throw new Error("서버 오류 발생");
+    .then(async response => {
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("서버 응답 오류:", errorText);
+        throw new Error("서버 오류 발생");
+      }
       return response.text();
     })
     .then(data => {
       alert("게시글이 성공적으로 등록되었습니다.");
-      window.location.href = "{% url 'community:proxy' %}";
+      window.location.href = redirectUrl;
     })
     .catch(error => {
-      console.error("❌ 오류:", error);
+      console.error("등록 오류:", error);
       alert("등록 중 오류가 발생했습니다.");
     });
   });
@@ -537,7 +531,6 @@ function setupButtons() {
   });
 }
 </script>
-
-  {%endblock%}
+{% endblock %}
 </body>
 </html>

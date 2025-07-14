@@ -460,32 +460,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
   writeButton.addEventListener("click", function (e) {
     e.preventDefault();
+
     const title = document.getElementById("title").value.trim();
     const artist = document.getElementById("artist").value.trim();
     const type = document.getElementById("type").value;
+    const category = document.getElementById("category").value;
     const location = document.getElementById("location").value.trim();
     const datetime = document.getElementById("datetime").value;
+    const requirement = document.getElementById("requirements").value.trim();
     const content = document.getElementById("content").value.trim();
     const tags = document.getElementById("tags").value.trim();
 
-    if (!title || !artist || !type || !location || !datetime || !content) {
+    if (!title || !artist || !type || !category || !location || !datetime || !requirement || !content) {
       alert("필수 항목을 모두 입력해주세요.");
       return;
     }
 
+    const csrfToken = document.querySelector('input[name=csrfmiddlewaretoken]').value;
     const form = new FormData();
     form.append("title", title);
     form.append("artist", artist);
     form.append("type", type);
+    form.append("category", category);
     form.append("location", location);
-    form.append("event_date", datetime);
+    form.append("share_date", datetime);
+    form.append("requirement", requirement);
     form.append("content", content);
     form.append("tags", tags);
     selectedFiles.forEach(file => form.append("images", file));
 
-    fetch("{% url 'community:write_companion' %}", {
+    fetch("{% url 'community:write_sharing' %}", {
       method: 'POST',
-      headers: { "X-CSRFToken": '{{ csrf_token }}' },
+      headers: {
+        "X-CSRFToken": csrfToken
+      },
       body: form
     })
     .then(res => {
@@ -493,8 +501,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return res.text();
     })
     .then(() => {
-      alert("동행 모집글이 성공적으로 등록되었습니다!");
-      window.location.href = "{% url 'community:companion' %}";
+      alert("나눔 모집글이 성공적으로 등록되었습니다!");
+      window.location.href = "{% url 'community:sharing' %}";
     })
     .catch(err => {
       console.error(err);
@@ -505,6 +513,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cancelButton.addEventListener("click", () => window.history.back());
 });
 </script>
+
 {%endblock%}
 </body>
 </html>

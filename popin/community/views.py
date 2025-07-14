@@ -61,8 +61,6 @@ def chgReviewview(request, post_id):
     
     return render(request, 'community/chgR_view.html', {'post': post})
     
-   
-################################################################################
 def recent(request):
     def annotate_type(qs, type_name):
         for post in qs:
@@ -86,7 +84,6 @@ def recent(request):
         'page_obj': page_obj,
     })
 
-#############################################################################
 # 동행모집글 작성
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -491,41 +488,35 @@ from django.utils import timezone
 from .models import ProxyPost, ProxyStatus
 
 def proxy(request):
-    # 🔍 검색어 받기
+    # :돋보기: 검색어 받기
     query = request.GET.get('q', '')  # 일반 검색어
-
-    # 🔎 기본 queryset
+    # :렌즈가_오른쪽_위에_있는_확대경: 기본 queryset
     all_posts = ProxyPost.objects.all()
-
+    # :돋보기: 검색 필터 (:흰색_확인_표시: description으로 수정)
     if query:
         all_posts = all_posts.filter(
             Q(title__icontains=query) |
-            Q(content__icontains=query)
+            Q(description__icontains=query)  # :흰색_확인_표시: 수정된 부분
         )
-
     all_posts = all_posts.order_by('-created_at')
-
-    # 📊 통계 계산
-    ongoing_count = ProxyPost.objects.count()  # 조건 추가 가능
+    # :막대_차트: 통계 계산
+    ongoing_count = ProxyPost.objects.count()
     completed_count = ProxyPost.objects.filter(status=ProxyStatus.DEADLINE).count()
     weekly_count = ProxyPost.objects.filter(
         created_at__week=timezone.now().isocalendar()[1]
     ).count()
-
-    # 📄 페이지네이션
+    # :글씨가_쓰여진_페이지: 페이지네이션
     paginator = Paginator(all_posts, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
-    # 💬 템플릿 전달
+    # :말풍선: 템플릿 전달
     context = {
         'posts': page_obj,
         'ongoing_count': ongoing_count,
         'completed_count': completed_count,
         'weekly_count': weekly_count,
-        'query': query,  # 🔁 HTML에서 검색어 유지용
+        'query': query,
     }
-
     return render(request, 'proxy/main.html', context)
 #############################################################################################
 ##### 나눔 게시판

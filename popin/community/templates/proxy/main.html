@@ -86,7 +86,7 @@
     </form>
         <div class="postlist">
           <!-- 동행 카드들 -->
-
+          {% for post in posts %}
           <div class="post-card" 
           data-category="BLACKPINK" 
           data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
@@ -146,7 +146,7 @@
                   <button class="join-btn active">채팅하기</button>
               </div>
           </div>
-
+          {% endfor %}
           <div class="post-card" 
           data-category="EXO" 
           data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
