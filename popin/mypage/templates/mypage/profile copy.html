@@ -27,14 +27,12 @@
 
         .modal-content{
             border-radius: 8px;
-            width: 100%;
-            max-width: 100%;
+            width: 90%;
+            max-width: 850px;
             background-color: #ffff;
             FONT-WEIGHT: 200;
-            /* margin: 20px auto; */
-            padding: 65px;
-            max-height: 100%;
-            overflow-y: auto;
+            margin: 20px auto;
+            padding: 20px;
         }
 
         .close {
@@ -171,6 +169,8 @@
         .groups-container {
             display: grid;
             gap: 20px;
+            max-height: 400px;
+            overflow-y: scroll;
         }
 
         .group-card {
@@ -274,17 +274,6 @@
         cursor: pointer;
         transition: all 0.3s ease;
         text-align: center;
-        }
-
-        .btn-primary {
-        background: linear-gradient(45deg, #667eea, #764ba2);
-        color: white;
-        margin-top: 1.5rem;
-        }
-
-        .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
         .btn-primary:disabled {
@@ -529,7 +518,7 @@
         });
 
         // toast 기능구현
-        function showToast(message, duration = 2000) {
+        function showToast(message, duration = 3000) {
             const toast = document.getElementById("toast");
             toast.textContent = message;
             toast.className = "show";
@@ -539,16 +528,6 @@
                 toast.className = toast.className.replace("show", "");
             }, duration);   
         }
-
-        
-        // 차단해제 버튼 클릭 이벤트
-        document.querySelectorAll('.unblock-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if(confirm('정말 차단을 해제하시겠습니까?')) {
-                    this.parentElement.remove();
-                }
-            });
-        });
     </script>
 
     <body>
@@ -873,16 +852,11 @@
                                 <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
                             </div>
                             <div class="myinfo-profile">
-                                <label for="mybias">마이 아티스트</label>
-                                {% for group,member in bias_pairs %}
-                                    {%if forloop%}
-                                    <div class="mybias_input">
-                                    <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                    {%endif%}
+                                <label for="mybias">최애변경</label>
+                                <div class="mybias_input">
+                                    <input type="text" id="mybias" name="mybias" value="{{ group_name }} - {{member.name}}" readonly style="cursor: pointer;">
                                 </div>
-                                {% endfor %}
                             </div>
-
                             <!--아티스트 검색 모달창-->
                             <div id="searchModal" class="modal" >
                                 <div class="modal-content">
@@ -891,10 +865,8 @@
                                         {% csrf_token %}
                                         <div class="search-container">
                                             <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
-                                            <input type="hidden" name="favorite_group" id="selectedGroup">
-                                            <input type="hidden" name="favorite_member" id="selectedMember">
-                                            <input type="hidden" name="second_group" id="selectedGroup">
-                                            <input type="hidden" name="second_member" id="selectedMember">
+                                            <input type="hidden" name="group_name" id="selectedGroup">
+                                            <input type="hidden" name="member_name" id="selectedMember">
 
                                             <div class="filter-buttons">
                                                 <button type="button" class="filter-btn" data-filter="all">전체</button>
@@ -902,8 +874,7 @@
                                                 <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
                                             </div>
                                         </div>
-
-                                        <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
+                                        
 
                                         <div class="selected-members" id="selectedMembers" style="display: none;">
                                             <h3>🌟 선택된 멤버</h3>
@@ -937,562 +908,552 @@
         </form>
 
 
-<script>
-    // 파일업로드 관련
-    const imageuploadContainer = document.getElementById('previous_container');
-    const imageInput = document.getElementById('profile-img-input');
-    const previewContainer = document.getElementById('previewContainer');
-    const previewImage = document.getElementById('previewImage');
-    const previousImage = document.getElementById('previousImage');
+    <script>
+        // 파일업로드 관련
+        const imageuploadContainer = document.getElementById('previous_container');
+        const imageInput = document.getElementById('profile-img-input');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+        const previousImage = document.getElementById('previousImage');
 
-    imageuploadContainer.addEventListener('click',()=>imageInput.click());
+        imageuploadContainer.addEventListener('click',()=>imageInput.click());
 
-    imageuploadContainer.addEventListener('dragover',(e)=>{
-        e.preventDefault();
-        imageuploadContainer.classList.add('dragover');
-    });
+        imageuploadContainer.addEventListener('dragover',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.add('dragover');
+        });
 
-    imageuploadContainer.addEventListener('dragleave',(e)=>{
-        e.preventDefault();
-        imageuploadContainer.classList.remove('dragover');
-    });
+        imageuploadContainer.addEventListener('dragleave',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+        });
 
-    imageuploadContainer.addEventListener('drop',(e)=>{
-        e.preventDefault();
-        imageuploadContainer.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if(files.length > 0 ){
-            handleFile(files[0]);
-        }
-    });
-
-    imageInput.addEventListener('change',(e)=>{
-        if(e.target.files.length>0){
-            handleFile(e.target.files[0]);
-        }
-    });
-
-    // 이미지 미리보기 함수
-    function handleFile(file) {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewImage.src = e.target.result;
-                previewContainer.style.display = "block";
-                previousImage.style.display = "none"; // 기존 이미지 숨김
-            };
-            reader.readAsDataURL(file);
-        } else {
-            alert("이미지 파일만 업로드할 수 있습니다.");
-        }
-    }
-
-    // #Recent AJAX
-    $.ajax({
-        url: "/mypage/latest/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        success: function (data) {
-            console.log('최근 게시글 연결 성공')
-
-            const recentList = $("#recent .section-content");
-            
-            const cardsHtml = data.photocards.map(card => {
-                const dateType = card.created_at.split('T')[0];
-
-                return `
-                <div class="item" data-pno="${ card.pno }">
-                    <a href="/photocard/detail/${card.pno}">
-                        <div>
-                            <h3>${card.title}</h3>
-                            <p>${dateType} - ${card.album}</p>
-                        </div> 
-                    </a> 
-                </div>
-                    `;
-                }).join("");
-
-            recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
-        },
-        error: function () {
-            console.error("최근 본 글 불러오기 실패");
-            recentList.html("<div class='error-content'>최근 본 글을 불러오는 데 실패했습니다.</div>");
-        }
-    });
-
-    // #mypoca AJAX
-    $.ajax({
-        url: "/mypage/mypoca/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        dataType: "json",
-        success: function (data) {
-            console.log("받은 데이터:", data.group_album_dict);
-
-            const albumList = $("#mypoca #album-list");
-            albumList.empty(); // 기존 목록 비우기
-
-            const groupAlbumDict = data.group_album_dict;
-            let hasPhotocards = false;  // 포토카드 존재 여부 체크
-
-            for (let groupName in groupAlbumDict) {
-                const albumMap = groupAlbumDict[groupName];
-
-                for (let albumName in albumMap) {
-                    const photocards = albumMap[albumName];
-
-                    if(!photocards || photocards.length === 0) continue;
-                    hasPhotocards = true;
-
-                    const firstCard = photocards[0]; // 대표 이미지
-                    const imageUrl = firstCard.image_url || '{/static/images/default.jpg}';
-                    const cardCount = photocards.length;
-
-                    const albumCard = `
-                        <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
-                            <div class="album-cover">
-                                <img src="${imageUrl}" alt="${albumName}">
-                            </div>
-                            <div class="album-info">
-                                <h4>${albumName}</h4>
-                                <p>${groupName}</p>
-                                <span class="card-count">${cardCount}장</span>
-                            </div>
-                        </div>
-                    `;
-
-                    albumList.append(albumCard);
-                }
-
+        imageuploadContainer.addEventListener('drop',(e)=>{
+            e.preventDefault();
+            imageuploadContainer.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if(files.length > 0 ){
+                handleFile(files[0]);
             }
-            // 포토카드가 없는 경우
-            if(!hasPhotocards) {
-                $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드가 없습니다.</div>");
-            }            
-        },
-        error: function (xhr, status, error) {
-            console.error("마이포카 불러오기 실패");
-            $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
-        }
-    });
+        });
 
-    // #wishlist AJAX
-    $.ajax({
-        url: "/mypage/wishlist/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        dataType: 'json',
-        success: function(data){
-            console.log('위시리스트 연결 성공',data.wishlist);
-            // 기존 목록 비우기
-            const wishList = $("#wishlist .section-content");
-            wishList.empty();
+        imageInput.addEventListener('change',(e)=>{
+            if(e.target.files.length>0){
+                handleFile(e.target.files[0]);
+            }
+        });
 
-            const wishdata = data.wishlist.map(wish => 
-                `<div class="item">
-                    <a href="/photocard/detail/${wish.pno}">
-                        <div class="wishlist">
-                            <div class="wish-list-img">
-                                <img src=${wish.image_url}>
-                            </div>
-                            <div class="wish-list-txt">
-                                <span class="badge reserved">거래${wish.trade_state}</span>
-                                <h3>${wish.title}
-                                </h3>
-                                <p>${wish.album}</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>`).join("");
-            wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
-        },
-        error: function (xhr, status, error) {
-            console.error("위시리스트 불러오기 실패");
-            wishList.html("<div class='error-content'>위시리스트를 불러오는 데 실패했습니다.</div>");
-        }
-    });
-
-    // 판매 목록 AJAX
-    $.ajax({
-        url: "/mypage/trade/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        dataType: "json",
-        success: function(data){
-            console.log('판매목록 불러오기 성공');
-
-            const saleList = $("#transactions #selling-list");
-            saleList.empty();
-
-            const saleData = data.sell_poca.map(sell => 
-                `<div class="item">
-                <a href="/photocard/detail/${sell.pno}">
-                    <h3>${sell.title}</h3>
-                    <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
-                </a>
-                </div>`).join("");
-
-            saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
-        }, error: function(xhr, status, error){
-            console.error("판매목록 불러오기 실패");
-            saleList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
-        }
-    });
-    // 구매 목록 AJAX
-    $.ajax({
-        url: "/mypage/trade/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        dataType: "json",
-        success: function(data){
-            console.log('구매목록 불러오기 성공');
-
-            const buyList = $("#transactions #buying-list");
-            buyList.empty();
-
-            const buyData = data.buy_poca.map(buy => 
-                `<div class="item">
-                <a href="/photocard/detail/${buy.pno}">
-                    <h3>${buy.title}</h3>
-                    <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
-                </a>
-                </div>`).join("");
-                buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
-
-        }, error: function(xhr, status, error){
-            console.error("판매목록 불러오기 실패");
-            buyList.html("<div class='error-content'>구매목록을 불러오는 데 실패했습니다.</div>");
-        }
-    });
-    // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
-    $.ajax({
-        url: "/mypage/trade/",
-        type: "POST",
-        headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-        dataType: "json",
-        success: function(data){
-            console.log('교환목록 불러오기 성공');
-
-            const exchangeList = $("#transactions #exchange-list");
-            exchangeList.empty();
-
-            const exchangeData = data.exchange_poca.map(exchange => 
-                `<div class="item">
-                <a href="/photocard/detail/${exchange.pno}">
-                    <h3>${exchange.title}</h3>
-                    <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
-                </a>
-                </div>`).join("");
-
-                exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
-        }, error: function(xhr, status, error){
-            console.error("교환목록 불러오기 실패");
-            exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
-        }
-    });
-    
-    // 내가 쓴 후기글
-
-    // 내가 받은 후기글
-
-    // 커뮤니티 - 동행글
-
-    // 커뮤니티 - 나눔글
-
-    // 커뮤니티 - 대리구매
-
-    // 유저정보 가져오기
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
+        // 이미지 미리보기 함수
+        function handleFile(file) {
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = "block";
+                    previousImage.style.display = "none"; // 기존 이미지 숨김
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert("이미지 파일만 업로드할 수 있습니다.");
             }
         }
-        }
-        return cookieValue;
-    }
 
-    // 블랙리스트 - 차단한 사용자 목록 AJAX
-    function loadBlockedUsers() {
+        // #Recent AJAX
         $.ajax({
-            url: "/mypage/blocklist/",
+            url: "/mypage/latest/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            success: function (data) {
+                console.log('최근 게시글 연결 성공')
+
+                const recentList = $("#recent .section-content");
+                
+                const cardsHtml = data.photocards.map(card => {
+                    const dateType = card.created_at.split('T')[0];
+
+                    return `
+                    <div class="item" data-pno="${ card.pno }">
+                        <a href="/photocard/detail/${card.pno}">
+                            <div>
+                                <h3>${card.title}</h3>
+                                <p>${dateType} - ${card.album}</p>
+                            </div> 
+                        </a> 
+                    </div>
+                        `;
+                    }).join("");
+
+                recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
+            },
+            error: function () {
+                console.error("최근 본 글 불러오기 실패");
+                recentList.html("<div class='error-content'>최근 본 글을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // #mypoca AJAX
+        $.ajax({
+            url: "/mypage/mypoca/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function (data) {
+                console.log("받은 데이터:", data.group_album_dict);
+
+                const albumList = $("#mypoca #album-list");
+                albumList.empty(); // 기존 목록 비우기
+
+                const groupAlbumDict = data.group_album_dict;
+                let hasPhotocards = false;  // 포토카드 존재 여부 체크
+
+                for (let groupName in groupAlbumDict) {
+                    const albumMap = groupAlbumDict[groupName];
+
+                    for (let albumName in albumMap) {
+                        const photocards = albumMap[albumName];
+
+                        if(!photocards || photocards.length === 0) continue;
+                        hasPhotocards = true;
+
+                        const firstCard = photocards[0]; // 대표 이미지
+                        const imageUrl = firstCard.image_url || '{/static/images/default.jpg}';
+                        const cardCount = photocards.length;
+
+                        const albumCard = `
+                            <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
+                                <div class="album-cover">
+                                    <img src="${imageUrl}" alt="${albumName}">
+                                </div>
+                                <div class="album-info">
+                                    <h4>${albumName}</h4>
+                                    <p>${groupName}</p>
+                                    <span class="card-count">${cardCount}장</span>
+                                </div>
+                            </div>
+                        `;
+
+                        albumList.append(albumCard);
+                    }
+
+                }
+                // 포토카드가 없는 경우
+                if(!hasPhotocards) {
+                    $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드가 없습니다.</div>");
+                }            
+            },
+            error: function (xhr, status, error) {
+                console.error("마이포카 불러오기 실패");
+                $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // #wishlist AJAX
+        $.ajax({
+            url: "/mypage/wishlist/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: 'json',
+            success: function(data){
+                console.log('위시리스트 연결 성공',data.wishlist);
+                // 기존 목록 비우기
+                const wishList = $("#wishlist .section-content");
+                wishList.empty();
+
+                const wishdata = data.wishlist.map(wish => 
+                    `<div class="item">
+                        <a href="/photocard/detail/${wish.pno}">
+                            <div class="wishlist">
+                                <div class="wish-list-img">
+                                    <img src=${wish.image_url}>
+                                </div>
+                                <div class="wish-list-txt">
+                                    <span class="badge reserved">거래${wish.trade_state}</span>
+                                    <h3>${wish.title}
+                                    </h3>
+                                    <p>${wish.album}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>`).join("");
+                wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
+            },
+            error: function (xhr, status, error) {
+                console.error("위시리스트 불러오기 실패");
+                wishList.html("<div class='error-content'>위시리스트를 불러오는 데 실패했습니다.</div>");
+            }
+        });
+
+        // 판매 목록 AJAX
+        $.ajax({
+            url: "/mypage/trade/",
             type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('차단 사용자 불러오기 성공');
+                console.log('판매목록 불러오기 성공');
 
-                const blockuserList = $("#blocked #blocked-user");
-                blockuserList.empty();
+                const saleList = $("#transactions #selling-list");
+                saleList.empty();
 
-                const blockData = data.blocked_users.map(user => 
-                    `<div class="item" data-user-id="${user.user_id}">
-                        <h3>${user.user_id} - ${user.name}</h3>
-                        <button class="unblock-btn" data-user-id="${user.user_id}">차단해제</button>
-                        <p>차단 사유: ${user.reason}</p>
+                const saleData = data.sell_poca.map(sell => 
+                    `<div class="item">
+                    <a href="/photocard/detail/${sell.pno}">
+                        <h3>${sell.title}</h3>
+                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    </a>
                     </div>`).join("");
 
-                blockuserList.append(blockData||"<div class='error-content'>차단 사용자 없습니다.</div>");
+                saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
             }, error: function(xhr, status, error){
-                console.error("차단 사용자 불러오기 실패",xhr,status,error);
-                blockuserList.html("<div class='error-content'>차단 사용자 불러오는 데 실패했습니다.</div>");
+                console.error("판매목록 불러오기 실패");
+                saleList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
-    };
-
-    // 동적으로 생성된 요소에는 이벤트 위임 방식 사용
-    $(document).on("click", ".unblock-btn", function () {
-        const $item = $(this).closest('.item');
-        const userId = $item.data('user-id');
-
-        if (!confirm("정말 차단을 해제하시겠습니까?")) return;
-
+        // 구매 목록 AJAX
         $.ajax({
-            url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
-            type: 'POST',
-            data: JSON.stringify({ id: userId }),  // JSON 형식으로 전송
-            contentType: 'application/json',
-            headers: {
-            'X-CSRFToken': getCookie('csrftoken')
-            },
-            success: function(response) {
-                showToast('차단해제가 처리되었습니다.');
-                loadBlockedUsers();
-            },
-            error: function(xhr) {
-                $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
-                    console.log('error')
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('구매목록 불러오기 성공');
+
+                const buyList = $("#transactions #buying-list");
+                buyList.empty();
+
+                const buyData = data.buy_poca.map(buy => 
+                    `<div class="item">
+                    <a href="/photocard/detail/${buy.pno}">
+                        <h3>${buy.title}</h3>
+                        <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
+                    </a>
+                    </div>`).join("");
+                    buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
+
+            }, error: function(xhr, status, error){
+                console.error("판매목록 불러오기 실패");
+                buyList.html("<div class='error-content'>구매목록을 불러오는 데 실패했습니다.</div>");
             }
         });
-    });
-
-    $(document).ready(function(){
-        loadBlockedUsers();
-    });
-
-    // 블랙리스트 - 차단 글 목록 AJAX
-    
-    // 프로필 수정 업데이트 AJAX
-    $('#profileForm').on('submit', function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
+        // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
         $.ajax({
-            url: '/mypage/update_profile/',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-            'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
-            },
-            success: function(response) {
-                alert("프로필 수정 성공");
-            },
-            error: function(xhr) {
-                alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+            url: "/mypage/trade/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('교환목록 불러오기 성공');
+
+                const exchangeList = $("#transactions #exchange-list");
+                exchangeList.empty();
+
+                const exchangeData = data.exchange_poca.map(exchange => 
+                    `<div class="item">
+                    <a href="/photocard/detail/${exchange.pno}">
+                        <h3>${exchange.title}</h3>
+                        <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
+                    </a>
+                    </div>`).join("");
+
+                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("교환목록 불러오기 실패");
+                exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
             }
         });
-    });
-
-
-
-    // 아티스트 검색 모달창
-    document.addEventListener("DOMContentLoaded", () => {
-        const modal = document.getElementById('searchModal');
-        const searchModalOpen = document.getElementById('searchModalOpen');
-        const searchModalClose = document.getElementById('searchModalOpenClose');
-        const searchInput = document.getElementById('idolSearch');
-        const completeBtn = document.getElementById('completeBtn');
-        const groupsContainer = document.getElementById('groupsContainer');
-        const searchNotice = document.getElementById('searchNotice');
-        const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
-        const memberGrid = document.querySelector('.mybias_input');
-
-            let selectedMembers = new Set();
-            let currentFilter = 'all';
         
-        const mybiasInput = document.querySelector(".mybias_input");
-        mybiasInput.addEventListener("click", () => {
-            searchModal.style.display = "block";
+        // 내가 쓴 후기글
 
-            // 검색 초기화
-            searchInput.value = '';
-            searchInput.focus();
-            groupsContainer.innerHTML = '';
-            searchNotice.style.display = 'block';
-            selectedMember = null;
-            completeBtn.disabled = true;
+        // 내가 받은 후기글
 
-        });  
-        
-        // 모달 닫기
-        searchModalClose.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
+        // 커뮤니티 - 동행글
 
-        window.addEventListener('click', e => {
-            if (e.target === modal) modal.style.display = 'none';
-        });
+        // 커뮤니티 - 나눔글
 
-        function updateSelectedDisplay() {
-            const count = document.getElementById('selectedCount');
-            const container = document.getElementById('selectedMembers');
-            const list = document.getElementById('selectedList');
-            count.textContent = selectedMembers.size;
+        // 커뮤니티 - 대리구매
 
-            if (selectedMembers.size === 0) {
-            container.style.display = 'none';
-            completeBtn.disabled = true;
-            } else {
-            container.style.display = 'block';
-            completeBtn.disabled = false;
-            list.innerHTML = Array.from(selectedMembers).map(item => {
-                const [group, member] = item.split('-');
-                return `
-                <div class="selected-item">
-                    <span>${group} - ${member}</span>
-                    <button class="remove-btn" data-item="${item}">×</button>
-                </div>
-                `;
-            }).join('');
-            }
-        }
-        groupsContainer.addEventListener('click', e => {
-            if (e.target.classList.contains('remove-btn')) {
-                const item = e.target.dataset.item;
-                selectedMembers.delete(item);
-                updateSelectedDisplay();
-                // 버튼에서 selected 클래스 제거
-                document.querySelectorAll('.member-toggle').forEach(btn => {
-                    const key = `${btn.dataset.group}-${btn.dataset.member}`;
-                    if (key === item) {
-                        btn.classList.remove('selected');
-                    }
-                });
-            }
-        });
-
-        // 검색 처리
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.trim();
-            if (!query) {
-                groupsContainer.innerHTML = '';
-                searchNotice.style.display = 'block';
-                return;
-            }
-
-            // api query
-            fetch(`/idols/search/?q=${query}`)
-                .then(res => res.json())
-                .then(data => {
-                    groupsContainer.innerHTML = '';
-                    searchNotice.style.display = 'none';
-                    completeBtn.disabled = true;
-
-
-                    // 검색된 결과가 여러명 경우
-                    const groups = {};
-                    data.members.forEach(m => {
-                        const group = m.group__name;
-                        if (!groups[group]) {
-                            groups[group] = { gender: m.group__gender, members: [] };
-                        }
-                        groups[group].members.push(m);
-                    });
-
-                    Object.entries(groups).forEach(([groupName, info]) => {
-                        const groupCard = document.createElement('div');
-                        groupCard.className = 'group-card';
-                        const typeClass = info.gender === "M" ? "boy-group" : "girl-group";
-
-                        groupCard.innerHTML = `
-                            <div class="group-header">
-                                <div class="group-name">${groupName}</div>
-                                <div class="group-type ${typeClass}">
-                                    ${info.gender === "M" ? "보이그룹" : "걸그룹"}
-                                </div>
-                            </div>
-                            <div class="members-grid">
-                                ${info.members.map(member => {
-                                    const isSelected = selectedMember && selectedMember.group === groupName && selectedMember.member === member.name;
-                                    return `
-                                        <button type="button" class="member-toggle ${isSelected ? 'selected' : ''}"
-                                            data-group="${groupName}" data-member="${member.name}">
-                                            ${member.name}
-                                        </button>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `;
-                        groupsContainer.appendChild(groupCard);
-                    });
-                });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('member-toggle') && !e.target.classList.contains('disabled')) {
-            const group = e.target.dataset.group;
-            const member = e.target.dataset.member;
-            const key = `${group}-${member}`;
-
-            if (selectedMembers.has(key)) {
-                selectedMembers.delete(key);
-                e.target.classList.remove('selected');
-            } else {
-                if (selectedMembers.size < 2) {
-                selectedMembers.add(key);
-                e.target.classList.add('selected');
+        // 유저정보 가져오기
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
                 }
             }
-
-            updateSelectedDisplay();
             }
+            return cookieValue;
+        }
 
-            if (e.target.classList.contains('remove-btn')) {
-            const item = e.target.dataset.item;
-            selectedMembers.delete(item);
-            updateSelectedDisplay();
-            document.getElementById("idolSearch").dispatchEvent(new Event("input"));
-            }
-        });
+        // 블랙리스트 - 차단한 사용자 목록 AJAX
+        function loadBlockedUsers() {
+            $.ajax({
+                url: "/mypage/blocklist/",
+                type: "POST",
+                headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+                dataType: "json",
+                success: function(data){
+                    console.log('차단 사용자 불러오기 성공');
 
-        // 완료 버튼 클릭
-        completeBtn.addEventListener('click', () => {
-            if (!selectedMember) return;
+                    const blockuserList = $("#blocked #blocked-user");
+                    blockuserList.empty();
 
-            // hidden input 생성
-            hiddenInputsContainer.innerHTML += `
-                <input type="hidden" name="group" value="${selectedMember.group}">
-                <input type="hidden" name="member" value="${selectedMember.member}">
-            `;
+                    const blockData = data.blocked_users.map(user => 
+                        `<div class="item" data-user-id="${user.user_id}">
+                            <h3>${user.user_id} - ${user.name}</h3>
+                            <button class="unblock-btn" data-user-id="${user.user_id}">차단해제</button>
+                            <p>차단 사유: ${user.reason}</p>
+                        </div>`).join("");
 
-            // 메인 페이지에 렌더링
-            memberGrid.innerHTML += `
-                    <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}" readonly style="cursor: pointer;">
-            `;
-            modal.style.display = 'none';
-        });
+                    blockuserList.append(blockData||"<div class='error-content'>차단 사용자 없습니다.</div>");
+                }, error: function(xhr, status, error){
+                    console.error("차단 사용자 불러오기 실패",xhr,status,error);
+                    blockuserList.html("<div class='error-content'>차단 사용자 불러오는 데 실패했습니다.</div>");
+                }
+            });
+        };
 
-        // 필터 버튼 처리
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                searchInput.dispatchEvent(new Event('input'));
+        // 동적으로 생성된 요소에는 이벤트 위임 방식 사용
+        $(document).on("click", ".unblock-btn", function () {
+            const $item = $(this).closest('.item');
+            const userId = $item.data('user-id');
+
+            if (!confirm("정말 차단을 해제하시겠습니까?")) return;
+
+            $.ajax({
+                url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
+                type: 'POST',
+                data: JSON.stringify({ id: userId }),  // JSON 형식으로 전송
+                contentType: 'application/json',
+                headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+                },
+                success: function(response) {
+                    showToast('차단해제가 처리되었습니다.');
+                    loadBlockedUsers();
+                },
+                error: function(xhr) {
+                    $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
+                        console.log('error')
+                }
             });
         });
 
-    });
+        $(document).ready(function(){
+            loadBlockedUsers();
+        });
 
-</script>
+        // 블랙리스트 - 차단 글 목록 AJAX
+        
+        // 프로필 수정 업데이트 AJAX
+        $('#profileForm').on('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: '/mypage/update_profile/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
+                },
+                success: function(response) {
+                    alert("프로필 수정 성공");
+                },
+                error: function(xhr) {
+                    alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+                }
+            });
+        });
+
+
+
+        // 아티스트 검색 모달창
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById('searchModal');
+            const searchModalOpen = document.getElementById('searchModalOpen');
+            const searchModalClose = document.getElementById('searchModalOpenClose');
+            const searchInput = document.getElementById('idolSearch');
+            const completeBtn = document.getElementById('completeBtn');
+            const groupsContainer = document.getElementById('groupsContainer');
+            const searchNotice = document.getElementById('searchNotice');
+            const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
+            const memberGrid = document.querySelector('.mybias_input');
+            
+            const mybiasInput = document.querySelector(".mybias_input");
+            mybiasInput.addEventListener("click", () => {
+                searchModal.style.display = "block";
+
+                // 검색 초기화
+                searchInput.value = '';
+                searchInput.focus();
+                groupsContainer.innerHTML = '';
+                searchNotice.style.display = 'block';
+                selectedMember = null;
+                completeBtn.disabled = true;
+
+                // 전체 로딩
+                fetch(`/idols/search/?q=`)
+                    .then(res => res.json())
+                    .then(data => {
+                        allData = data.members;
+                        renderGroups();
+                    });
+            });  
+            
+            // 모달 닫기
+            searchModalClose.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            window.addEventListener('click', e => {
+                if (e.target === modal) modal.style.display = 'none';
+            });
+
+
+            // 검색 처리
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim();
+                if (!query) {
+                    groupsContainer.innerHTML = '';
+                    searchNotice.style.display = 'block';
+                    return;
+                }
+
+                // api query
+                fetch(`/idols/search/?q=${query}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        groupsContainer.innerHTML = '';
+                        searchNotice.style.display = 'none';
+                        completeBtn.disabled = true;
+
+                        // 검색된 결과가 1명일 경우
+                        if (data.members.length === 1) {
+                            const member = data.members[0];
+                            selectedMember = {
+                                group: member.group__name,
+                                member: member.name
+                            };
+                            renderSingleResult(member);
+                            completeBtn.disabled = false;
+                            return;
+                        }
+
+                        // 검색된 결과가 여러명 경우
+                        const groups = {};
+                        data.members.forEach(m => {
+                            const group = m.group__name;
+                            if (!groups[group]) {
+                                groups[group] = { gender: m.group__gender, members: [] };
+                            }
+                            groups[group].members.push(m);
+                        });
+
+                        Object.entries(groups).forEach(([groupName, info]) => {
+                            const groupCard = document.createElement('div');
+                            groupCard.className = 'group-card';
+                            const typeClass = info.gender === "M" ? "boy-group" : "girl-group";
+
+                            groupCard.innerHTML = `
+                                <div class="group-header">
+                                    <div class="group-name">${groupName}</div>
+                                    <div class="group-type ${typeClass}">
+                                        ${info.gender === "M" ? "보이그룹" : "걸그룹"}
+                                    </div>
+                                </div>
+                                <div class="members-grid">
+                                    ${info.members.map(member => {
+                                        const isSelected = selectedMember && selectedMember.group === groupName && selectedMember.member === member.name;
+                                        return `
+                                            <button type="button" class="member-toggle ${isSelected ? 'selected' : ''}"
+                                                data-group="${groupName}" data-member="${member.name}">
+                                                ${member.name}
+                                            </button>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            `;
+                            groupsContainer.appendChild(groupCard);
+                        });
+                    });
+            });
+
+            // 단일 결과 렌더링
+            function renderSingleResult(member) {
+                groupsContainer.innerHTML = `
+                    <div class="group-card">
+                        <div class="group-header">
+                            <div class="group-name">${member.group__name}</div>
+                            <div class="group-type ${member.group__gender === "M" ? "boy-group" : "girl-group"}">
+                                ${member.group__gender === "M" ? "보이그룹" : "걸그룹"}
+                            </div>
+                        </div>
+                        <div class="members-grid">
+                            <button type="button" class="member-toggle selected"
+                                data-group="${member.group__name}" data-member="${member.name}">
+                                ${member.name}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 버튼 클릭으로 멤버 선택
+            groupsContainer.addEventListener('click', (e) => {
+                if (e.target.classList.contains('member-toggle')) {
+                    const group = e.target.dataset.group;
+                    const member = e.target.dataset.member;
+
+                    selectedMember = { group, member };
+                    completeBtn.disabled = false;
+
+                    // 버튼 상태 갱신
+                    document.querySelectorAll('.member-toggle').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    e.target.classList.add('selected');
+                }
+            });
+
+            // 완료 버튼 클릭
+            completeBtn.addEventListener('click', () => {
+                if (!selectedMember) return;
+
+                // hidden input 생성
+                hiddenInputsContainer.innerHTML = `
+                    <input type="hidden" name="group" value="${selectedMember.group}">
+                    <input type="hidden" name="member" value="${selectedMember.member}">
+                `;
+
+                // 메인 페이지에 렌더링
+                memberGrid.innerHTML = `
+                        <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}" readonly style="cursor: pointer;">
+                `;
+
+                modal.style.display = 'none';
+            });
+
+            // 필터 버튼 처리
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    searchInput.dispatchEvent(new Event('input'));
+                });
+            });
+
+        });
+
+
+    </script>
 
 {%endblock%}
 <!--//상단헤더-->

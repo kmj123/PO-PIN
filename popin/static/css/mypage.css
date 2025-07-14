@@ -327,7 +327,7 @@
 #favorite-btn {
     width: 60px;  /* 원하는 버튼 크기로 조정 */
     height: 60px;
-    border: 1px solid black;
+    border: none;
     border-radius: 50%; /* 원형 버튼 */
     padding: 0;
     cursor: pointer;
@@ -694,8 +694,8 @@ a{
 #modalContent {
     background-color: #ffffff;
     width: 500px;
-    height: 700px;
-    padding: 2rem;
+    height: 764px;
+    padding: 1rem;
     border-radius: 30px;
     position: relative;
 }

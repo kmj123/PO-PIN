@@ -303,7 +303,7 @@ def write(request):
             )
             
             # redirect로 이동
-            return redirect('/photocard/list')
+            return redirect('/photocard/exchange')
             
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
