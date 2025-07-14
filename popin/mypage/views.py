@@ -359,12 +359,15 @@ def update_profile(request):
             new_nickname = request.POST.get('nickname')
             request.session['nickname'] = new_nickname            
 
+            group = []
+            member = []
+            
             if member_name and group_name:
                 try:
                     group = Group.objects.get(name=group_name)
                     member = Member.objects.get(name=member_name, group=group)
-                    user.bias_group.set(group_list)   # bias_group은 many-to-many
-                    user.bias_member.set(member_list) # bias_member도 many-to-many
+                    user.bias_group.set(group)   # bias_group은 many-to-many
+                    user.bias_member.set(member) # bias_member도 many-to-many
                 except (Group.DoesNotExist, Member.DoesNotExist):
                     return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
                 

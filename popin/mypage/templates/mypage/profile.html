@@ -575,16 +575,12 @@
                         
                         <!-- 프로필 수정 모달창 오픈 -->
                         <button id="favorite-btn" type="button">
-<<<<<<< HEAD
 
                             {%if group_logo %}
                                 <img src="/media/{{group_logo}}/" alt="group_logo">
                             {%else%}
                                 <img src="(로고없음)" alt="(로고없음)"> 
                             {%endif%}
-=======
-                            <img src="/media/{{group_logo}}/" alt="group_logo">
->>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                         </button>
                     </div>
                     <div class="profile-info">
@@ -917,7 +913,6 @@
             <!--//블랙리스트-->
         </div>
     </main>
-<<<<<<< HEAD
     
         <!--프로필 수정 모달창 구현-->
         <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
@@ -1011,8 +1006,6 @@
                 </div>
             </div>
         </form>
-=======
->>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
 
 
 <script>
@@ -1079,14 +1072,14 @@
                 const dateType = card.created_at.split('T')[0];
 
                 return `
-                <div class="item" data-pno="${ card.pno }">
-                    <a href="/photocard/detail/${card.pno}">
-                        <div>
-                            <h3>${card.title}</h3>
-                            <p>${dateType} - ${card.album}</p>
-                        </div> 
-                    </a> 
-                </div>
+                    <div class="item" data-pno="${ card.pno }">
+                        <a href="/photocard/detail/${card.pno}">
+                            <div>
+                                <h3>${card.title}</h3>
+                                <p>${dateType} - ${card.album}</p>
+                            </div> 
+                        </a> 
+                    </div>
                     `;
                 }).join("");
 
@@ -1168,7 +1161,7 @@
 
             const wishdata = data.wishlist.map(wish => 
                 `<div class="item">
-                    <a href="/photocard/detail/${wish.pno}">
+                    <a href="/photocard/detail/${wish.pno}/">
                         <div class="wishlist">
                             <div class="wish-list-img">
                                 <img src=${wish.image_url}>
@@ -1295,10 +1288,8 @@
         return cookieValue;
     }
 
-<<<<<<< HEAD
     // 블랙리스트 - 차단한 사용자 목록 AJAX
     function loadBlockedUsers() {
-=======
         // #Recent AJAX
         $.ajax({
             url: "/mypage/latest/",
@@ -1608,17 +1599,17 @@
             success: function(data){
                 console.log('동행글 불러오기 성공');
 
-                const companionList = $("#community #WithU");
-                companionList.empty();
+                const proxyList = $("#community #proxy");
+                proxyList.empty();
 
 
-                const companionData = data.companion.map(companion => {
+                const proxyData = data.proxy.map(proxy => {
                     `<div class="item">
-                        <h3>${companion.title}</h3>
-                        <p>${companion.created_at} - 조회수: ${companion.views} | 댓글: ${companion.comments_count}</p>
+                        <h3>${proxy.title}</h3>
+                        <p>${proxy.created_at} - 조회수: ${proxy.views} | 댓글: ${proxy.comments_count}</p>
                     </div>`}).join("");
 
-                    companionList.html(companionData||"<div class='error-content'>동행글이 없습니다.</div>");
+                    proxyList.html(proxyData||"<div class='error-content'>동행글이 없습니다.</div>");
             }, error: function(xhr, status, error){
                 console.error("동행글 불러오기 실패");
                 $("#reviews #received-reviews").html("<div class='error-content'>동행글을 불러오는 데 실패했습니다.</div>");
@@ -1626,7 +1617,6 @@
         });
 
         // 블랙리스트 - 차단한 사용자 목록 AJAXs
->>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
         $.ajax({
             url: "/mypage/blocklist/",
             type: "POST",
@@ -1820,7 +1810,6 @@
                         groupCard.className = 'group-card';
                         const typeClass = info.gender === "M" ? "boy-group" : "girl-group";
 
-<<<<<<< HEAD
                         groupCard.innerHTML = `
                             <div class="group-header">
                                 <div class="group-name">${groupName}</div>
@@ -1842,32 +1831,6 @@
                         `;
                         groupsContainer.appendChild(groupCard);
                     });
-=======
-                // hidden input 생성
-                hiddenInputsContainer.innerHTML = `
-                    <input type="hidden" name="group" value="${selectedMember.group}">
-                    <input type="hidden" name="member" value="${selectedMember.member}">
-                `;
-
-                // 메인 페이지에 렌더링
-                memberGrid.innerHTML = `
-                        <div class="mybias_input">
-                            <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}"
-                        </div>
-
-                        `;
-
-                modal.style.display = 'none';
-            });
-
-            // 필터 버튼 처리
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    searchInput.dispatchEvent(new Event('input'));
->>>>>>> 6eb94a251ddeeb4a223f6c10fb3c69cfc3ffa34d
                 });
         });
 
