@@ -361,10 +361,34 @@
                         <div class="page-notice">
                             <div class="notice-content">
                                 <div class="noticetag">NOTICE</div>
-                                <a href="#notice" class="noticetitle">올바른 포카교환 생활</a>
+                                <a href="#notice" class="noticetitle"></a>
                             </div>
                             <a href="/customer/notice/" class="noticeall">전체보기</a>
                         </div>
+                    </div>
+                </div>
+
+                <div class="subway">
+                    <div class="subway_title"><h2>막차 알림</h2></div>
+                    <div class="subway_info">
+                        {% for d in dlist %}
+                            <div>
+                                {{d.station_name}}
+                            </div>
+                            <div>
+                                종착역 {{d.subway_name}}
+                            </div>
+                            <div>
+                                출발시간 {{d.left_time}}
+                            </div>
+                            <div>
+                                {% if d.inout == '1' %} 상행내선
+                                {% elif d.inout == '2' %} 하행외선
+                                {% endif %}
+                            </div>
+                            {% comment %} <div>{{d.week_tag}}</div> {% endcomment %}
+                            <div>------------------------------------</div>
+                        {% endfor %}
                     </div>
                 </div>
 
