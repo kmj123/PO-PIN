@@ -814,71 +814,19 @@
 
                 <!--동행글-->
                 <div class="section-content">
-                    <div id="WithU" class="community-content">
-                        <div class="item">
-                            <h3>BTS 동행</h3>
-                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 동행</h3>
-                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
-                        </div>
-                        <div class="item">
-                            <h3>BTS 동행</h3>
-                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
-                        </div>
-                    </div> 
+                    <div id="WithU" class="community-content"></div> 
                 </div>
                 <!--나눔글-->
                 <div class="section-content">
-                    <div id="Sharing" class="community-content" style="display: none;">
-                        <div class="item">
-                            <h3>포토카드 나눔</h3>
-                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
-                        </div>
-                        <div class="item">
-                            <h3>포토카드 나눔</h3>
-                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
-                        </div>
-                        <div class="item">
-                            <h3>포토카드 나눔</h3>
-                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
-                        </div>
-                    </div> 
+                    <div id="Sharing" class="community-content" style="display: none;"></div> 
                 </div>
                 <!--대리구매-->
                 <div class="section-content">
-                    <div id="Insteadbuy" class="community-content" style="display: none;">
-                        <div class="item">
-                            <h3>앨범 대리구매</h3>
-                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
-                        </div>
-                        <div class="item">
-                            <h3>앨범 대리구매</h3>
-                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
-                        </div>
-                        <div class="item">
-                            <h3>앨범 대리구매</h3>
-                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
-                        </div>
-                    </div> 
+                    <div id="Insteadbuy" class="community-content" style="display: none;"></div> 
                 </div>
                 <!--현황공유-->
                 <div class="section-content">
-                    <div id="shareNow" class="community-content" style="display: none;">
-                        <div class="item">
-                            <h3>현황공유</h3>
-                            <p>2024.01.20 - 조회수: 234 | 댓글: 12</p>
-                        </div>
-                        <div class="item">
-                            <h3>현황공유</h3>
-                            <p>2024.01.18 - 조회수: 456 | 댓글: 28</p>
-                        </div>
-                        <div class="item">
-                            <h3>현황공유</h3>
-                            <p>2024.01.15 - 조회수: 123 | 댓글: 8</p>
-                        </div>
-                    </div> 
+                    <div id="shareNow" class="community-content" style="display: none;"></div> 
                 </div>
             </div>
 
@@ -1072,16 +1020,14 @@
                 const dateType = card.created_at.split('T')[0];
 
                 return `
-                    <div class="item" data-pno="${ card.pno }">
-                        <a href="/photocard/detail/${card.pno}">
+                    <a href="/photocard/detail/${ card.pno }">
+                        <div class="item" data-pno="${ card.pno }">
                             <div>
                                 <h3>${card.title}</h3>
                                 <p>${dateType} - ${card.album}</p>
                             </div> 
-                        </a> 
-                    </div>
-                    `;
-                }).join("");
+                        </div>
+                    </a>`}).join("");
 
             recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
         },
@@ -1120,6 +1066,7 @@
                     const cardCount = photocards.length;
 
                     const albumCard = `
+                    <a href="/photocard/detail/${firstCard.pno}">
                         <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
                             <div class="album-cover">
                                 <img src="${imageUrl}" alt="${albumName}">
@@ -1130,6 +1077,7 @@
                                 <span class="card-count">${cardCount}장</span>
                             </div>
                         </div>
+                    </a>
                     `;
 
                     albumList.append(albumCard);
@@ -1161,7 +1109,7 @@
 
             const wishdata = data.wishlist.map(wish => 
                 `<div class="item">
-                    <a href="/photocard/detail/${wish.pno}/">
+                    <a href="/photocard/detail/${wish.pno}">
                         <div class="wishlist">
                             <div class="wish-list-img">
                                 <img src=${wish.image_url}>
@@ -1261,16 +1209,6 @@
             exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
         }
     });
-    
-    // 내가 쓴 후기글
-
-    // 내가 받은 후기글
-
-    // 커뮤니티 - 동행글
-
-    // 커뮤니티 - 나눔글
-
-    // 커뮤니티 - 대리구매
 
     // 유저정보 가져오기
     function getCookie(name) {
@@ -1287,204 +1225,6 @@
         }
         return cookieValue;
     }
-
-    // 블랙리스트 - 차단한 사용자 목록 AJAX
-    function loadBlockedUsers() {
-        // #Recent AJAX
-        $.ajax({
-            url: "/mypage/latest/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            success: function (data) {
-                console.log('최근 게시글 연결 성공')
-
-                const recentList = $("#recent .section-content");
-                
-                const cardsHtml = data.photocards.map(card => {
-                    const dateType = card.created_at.split('T')[0];
-
-                    return `
-                        <div class="item">
-                            <div>
-                                <h3>${card.title}</h3>
-                                <p>${dateType} - ${card.album}</p>
-                            </div>  
-                        </div>
-                        `;
-                    }).join("");
-
-                recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
-            },
-            error: function () {
-                console.error("최근 본 글 불러오기 실패");
-                recentList.html("<div class='error-content'>최근 본 글을 불러오는 데 실패했습니다.</div>");
-            }
-        });
-
-        // #mypoca AJAX
-        $.ajax({
-            url: "/mypage/mypoca/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function (data) {
-                console.log("받은 데이터:", data.group_album_dict);
-
-                const albumList = $("#mypoca #album-list");
-                albumList.empty(); // 기존 목록 비우기
-
-                const groupAlbumDict = data.group_album_dict;
-                let hasPhotocards = false;  // 포토카드 존재 여부 체크
-
-                for (let groupName in groupAlbumDict) {
-                    const albumMap = groupAlbumDict[groupName];
-
-                    for (let albumName in albumMap) {
-                        const photocards = albumMap[albumName];
-
-                        if(!photocards || photocards.length === 0) continue;
-                        hasPhotocards = true;
-
-                        const firstCard = photocards[0]; // 대표 이미지
-                        const imageUrl = firstCard.image_url || '{/static/images/default.jpg}';
-                        const cardCount = photocards.length;
-
-                        const albumCard = `
-                            <div class="album-card" onclick="showPhotoCards('${groupName}-${albumName}')">
-                                <div class="album-cover">
-                                    <img src="${imageUrl}" alt="${albumName}">
-                                </div>
-                                <div class="album-info">
-                                    <h4>${albumName}</h4>
-                                    <p>${groupName}</p>
-                                    <span class="card-count">${cardCount}장</span>
-                                </div>
-                            </div>
-                        `;
-
-                        albumList.append(albumCard);
-                    }
-
-                }
-                // 포토카드가 없는 경우
-                if(!hasPhotocards) {
-                    $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드가 없습니다.</div>");
-                }            
-            },
-            error: function (xhr, status, error) {
-                console.error("마이포카 불러오기 실패");
-                $("#mypoca .section-content").html("<div class='error-content'>보유한 포토카드를 불러오는 데 실패했습니다.</div>");
-            }
-        });
-
-        // #wishlist AJAX
-        $.ajax({
-            url: "/mypage/wishlist/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: 'json',
-            success: function(data){
-                console.log('위시리스트 연결 성공',data.wishlist);
-                // 기존 목록 비우기
-                const wishList = $("#wishlist .section-content");
-                wishList.empty();
-
-                const wishdata = data.wishlist.map(wish => 
-                    `<a href="/photocard/view/">
-                        <div class="item">
-                            <div class="wishlist">
-                                <div class="wish-list-img">
-                                    <img src=${wish.image_url}>
-                                </div>
-                                <div class="wish-list-txt">
-                                    <span class="badge reserved">${wish.trade_state}</span>
-                                    <h3>${wish.title}
-                                    </h3>
-                                    <p>${wish.album}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>`).join("");
-                wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
-            },
-            error: function (xhr, status, error) {
-                console.error("위시리스트 불러오기 실패");
-                wishList.html("<div class='error-content'>위시리스트를 불러오는 데 실패했습니다.</div>");
-            }
-        });
-
-        // 판매 목록 AJAX
-        $.ajax({
-            url: "/mypage/trade/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('판매목록 불러오기 성공');
-
-                const saleList = $("#transactions #selling-list");
-                saleList.empty();
-
-                const saleData = data.sell_poca.map(sell => 
-                    `<div class="item">
-                        <h3>${sell.title}</h3>
-                        <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
-                    </div>`).join("");
-
-                saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("판매목록 불러오기 실패");
-                saleList.html("<div class='error-content'>판매목록을 불러오는 데 실패했습니다.</div>");
-            }
-        });
-        // 구매 목록 AJAX
-        $.ajax({
-            url: "/mypage/trade/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('구매목록 불러오기 성공');
-
-                const buyList = $("#transactions #buying-list");
-                buyList.empty();
-
-                const buyData = data.buy_poca.map(buy => 
-                    `<div class="item">
-                        <h3>${buy.title}</h3>
-                        <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
-                    </div>`).join("");
-                    buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
-
-            }, error: function(xhr, status, error){
-                console.error("판매목록 불러오기 실패");
-                buyList.html("<div class='error-content'>구매목록을 불러오는 데 실패했습니다.</div>");
-            }
-        });
-        // 교환 목록 AJAX => 실제 교환목록 리스트로 수정 필요
-        $.ajax({
-            url: "/mypage/trade/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('교환목록 불러오기 성공');
-
-                const exchangeList = $("#transactions #exchange-list");
-                exchangeList.empty();
-
-                const exchangeData = data.exchange_poca.map(exchange => 
-                    `<div class="item">
-                        <h3>${exchange.title}</h3>
-                        <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
-                    </div>`).join("");
-
-                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("교환목록 불러오기 실패");
-                exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
-            }
-        });
         
         // 내가 받은 후기글
         $.ajax({
@@ -1500,10 +1240,13 @@
 
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
+                    <a hred="/community/chgReview/view/${received.post_id}">
                         <h3>작성자: ${received.writer}</h3>
                         <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
                         <p>${received.title} - ${received.content}</p>
-                    </div>`).join("");
+                    </a>
+                    </div>
+                    `).join("");
 
                     receivedList.html(receivedData||"<div class='error-content'>받은 후기글 없습니다.</div>");
             }, error: function(xhr, status, error){
@@ -1525,10 +1268,12 @@
 
                 const writtenData = data.written_reviews.map(written => 
                     `<div class="item">
+                    <a hred="/community/chgReview/view/${written.post_id}">
                         <h3>제목: ${written.title} </h3>
                         <p>작성자 : ${written.partner__nickname}</p>
                         <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
                         <p class=".review-content">${written.content}</p>
+                    </a>
                     </div>`).join("");
 
                     writtenList.html(writtenData||"<div class='error-content'>쓴 후기글  없습니다.</div>");
@@ -1553,9 +1298,12 @@
 
                 const companionData = data.companion.map(companion => {
                     `<div class="item">
+                    <a href="/community/companion/view/">
                         <h3>${companion.title}</h3>
                         <p>${companion.created_at} - 조회수: ${companion.views} | 댓글: ${companion.comments_count}</p>
-                    </div>`}).join("");
+                    </a>
+                    </div>
+                    `}).join("");
 
                     companionList.html(companionData||"<div class='error-content'>동행글이 없습니다.</div>");
             }, error: function(xhr, status, error){
@@ -1573,17 +1321,19 @@
             success: function(data){
                 console.log('나눔글 불러오기 성공');
 
-                const sharingList = $("#community #WithU");
+                const sharingList = $("#community #Sharing");
                 sharingList.empty();
 
-
+                            
                 const sharingData = data.sharing.map(sharing => {
                     `<div class="item">
+                    <a href="/community/sharing/view/">
                         <h3>${sharing.title}</h3>
                         <p>${sharing.created_at} - 조회수: ${sharing.views} | 댓글: ${sharing.comments_count}</p>
+                    </a>
                     </div>`}).join("");
 
-                    sharingList.html(sharingData||"<div class='error-content'>나눔글이 없습니다.</div>");
+                sharingList.html(sharingData||"<div class='error-content'>나눔글이 없습니다.</div>");
             }, error: function(xhr, status, error){
                 console.error("나눔글 불러오기 실패");
                 $("#reviews #received-reviews").html("<div class='error-content'>나눔글을 불러오는 데 실패했습니다.</div>");
@@ -1597,26 +1347,57 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('동행글 불러오기 성공');
+                console.log('대리구매글 불러오기 성공');
 
-                const proxyList = $("#community #proxy");
-                proxyList.empty();
+                const InsteadbuyList = $("#community #Insteadbuy");
+                InsteadbuyList.empty();
 
 
-                const proxyData = data.proxy.map(proxy => {
+                const InsteadbuyData = data.proxy.map(proxy => {
                     `<div class="item">
+                    <a href="/community/proxy/view/">
                         <h3>${proxy.title}</h3>
                         <p>${proxy.created_at} - 조회수: ${proxy.views} | 댓글: ${proxy.comments_count}</p>
-                    </div>`}).join("");
+                    </a>
+                    </div>
+                    `}).join("");
 
-                    proxyList.html(proxyData||"<div class='error-content'>동행글이 없습니다.</div>");
+                    InsteadbuyList.html(InsteadbuyData||"<div class='error-content'>대리구매글이 없습니다.</div>");
             }, error: function(xhr, status, error){
-                console.error("동행글 불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>동행글을 불러오는 데 실패했습니다.</div>");
+                console.error("대리구매글 불러오기 실패");
+                $("#reviews #received-reviews").html("<div class='error-content'>대리구매글을 불러오는 데 실패했습니다.</div>");
             }
         });
+        // 커뮤니티 - 현황공유
+        /*
+        $.ajax({
+            url: "/mypage/review/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('현황공유글 불러오기 성공');
 
-        // 블랙리스트 - 차단한 사용자 목록 AJAXs
+                const shareNowList = $("#community #shareNow");
+                shareNowList.empty();
+
+
+                const shareNowData = data.shareNow.map(shareNow => {
+                    `<div class="item">
+                        <h3>${shareNow.title}</h3>
+                        <p>${shareNow.created_at} - 조회수: ${shareNow.views} | 댓글: ${shareNow.comments_count}</p>
+                    </div>`}).join("");
+
+                    shareNowList.html(shareNowData||"<div class='error-content'>현황공유글이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("현황공유글 불러오기 실패");
+                $("#reviews #received-reviews").html("<div class='error-content'>현황공유글을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+        */
+
+    // 블랙리스트 - 차단한 사용자 목록 AJAX
+    function loadBlockedUsers() {
         $.ajax({
             url: "/mypage/blocklist/",
             type: "POST",
@@ -1673,7 +1454,65 @@
         loadBlockedUsers();
     });
 
-    // 블랙리스트 - 차단 글 목록 AJAX
+    /*
+    // 블랙리스트 - 신고한 글 목록 AJAX
+    function loadBlockedPosts() {
+        $.ajax({
+            url: "/mypage/blocklist/",
+            type: "POST",
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            dataType: "json",
+            success: function(data){
+                console.log('신고한 글 불러오기 성공');
+
+                const blockpostList = $("#blocked #blocked-post");
+                blockpostList.empty();
+
+                const blockpostData = data.blocked_post.map(post => 
+                    `<div class="item" data-user-id="${post.user_id}">
+                        <h3>${post.user_id} - ${post.name}</h3>
+                        <button class="unblock-btn post" data-user-id="${post.user_id}">차단해제</button>
+                        <p>차단 사유: ${post.reason}</p>
+                    </div>`).join("");
+
+                blockpostList.append(blockpostData||"<div class='error-content'>신고한 글이 없습니다.</div>");
+            }, error: function(xhr, status, error){
+                console.error("신고한 글 불러오기 실패",xhr,status,error);
+                blockpostList.html("<div class='error-content'>신고한 글을 불러오는 데 실패했습니다.</div>");
+            }
+        });
+    };
+
+    // 동적으로 생성된 요소에는 이벤트 위임 방식 사용
+    $(document).on("click", ".unblock-btn post", function () {
+        const $item = $(this).closest('.item');
+        const userId = $item.data('user-id');
+
+        if (!confirm("정말 차단을 해제하시겠습니까?")) return;
+
+        $.ajax({
+            url: '/mypage/update_blocklist/',  // URL은 실제 프로젝트에 맞게 수정
+            type: 'POST',
+            data: JSON.stringify({ id: userId }),  // JSON 형식으로 전송
+            contentType: 'application/json',
+            headers: {
+            'X-CSRFToken': getCookie('csrftoken')
+            },
+            success: function(response) {
+                showToast('차단해제가 처리되었습니다.');
+                loadBlockedUsers();
+            },
+            error: function(xhr) {
+                $('#result').text('오류: ' + (xhr.responseJSON?.error || xhr.responseJSON?.message || '요청 실패'));
+                    console.log('error')
+            }
+        });
+    });
+
+    $(document).ready(function(){
+        loadBlockedUsers();
+    });
+    */
     
     // 프로필 수정 업데이트 AJAX
     $('#profileForm').on('submit', function(e) {
