@@ -587,13 +587,13 @@
                             </div>
                             <div class="myinfo-profile">
                                 <label for="mybias">최애변경</label>
-                                <div class="mybias_input">
-                                    {% for group,member in bias_pairs %}
+                                {% for group,member in bias_pairs %}
                                     {%if forloop.first%}
+                                <div class="mybias_input">
                                     <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                    {%endif%}
-                                    {% endfor %}
                                 </div>
+                                {%endif%}
+                                {% endfor %}
                             </div>
                             <!--아티스트 검색 모달창-->
                             <div id="searchModal" class="modal" >
@@ -741,12 +741,42 @@
                 
                 <!--내가 받은 거래 후기-->
                 <div class="section-content">
-                    <div id="received-reviews" class="review-content"></div>
+                    <div id="received-reviews" class="review-content">
+                        <div class="item review-item">
+                            <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
+                        </div>
+                        <div class="view-all-container">
+                        </div>
+                    </div>
                 </div>
 
                 <!--내가 쓴 후기-->
                 <div class="section-content">
-                    <div id="written-reviews" class="review-content" style="display: none;"></div>
+                    <div id="written-reviews" class="review-content" style="display: none;">
+                        <div class="item review-item">
+                            <h3>완벽한 거래였어요<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카매니아님과의 거래 - 포장 상태 완벽하고 소통도 좋았습니다!</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>믿고 거래할 수 있는 분<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>카드수집러님과의 거래 - 시간 약속 잘 지키시고 친절하세요</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="item review-item">
+                            <h3>만족스러운 거래<span class="rating">⭐⭐⭐⭐</span></h3>
+                            <p>포카러님과의 거래 - 설명 그대로의 상태로 잘 받았습니다</p>
+                        </div>
+                        <div class="view-all-container">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1111,133 +1141,41 @@
         
         // 내가 받은 후기글
         $.ajax({
-            url: "/mypage/reviews/received/",
+            url: "/mypage/review/",
             type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('받은 후기글 불러오기 성공');
+                console.log('내가쓴 후기글 불러오기 성공');
 
-                const receivedList = $("#reviews #received-reviews");
-                receivedList.empty();
+                const reviewList = $("#transactions #exchange-list");
+                exchangeList.empty();
 
-                const receivedData = data.received_reviews.map(received => 
+                const exchangeData = data.exchange_poca.map(exchange => 
                     `<div class="item">
-                        <h3>작성자: ${received.writer}</h3>
-                        <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
-                        <p>${received.title} - ${received.content}</p>
-                    </div>`).join("");
+                        <h3>${exchange.title}</h3>
+                        <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
+                    </div>`).join("")
+                    <div class="item review-item">
+                            <h3>친절하고 빠른 거래<span class="rating">⭐⭐⭐⭐⭐</span></h3>
+                            <p>포카 상태도 좋고 포장도 꼼꼼히 해주셔서 감사했습니다! - 포카매니아님</p>
+                        </div>
+                    ;
 
-                    receivedList.html(receivedData||"<div class='error-content'>받은 후기글 없습니다.</div>");
+                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
             }, error: function(xhr, status, error){
-                console.error("받은 후기글 불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>받은 후기글 불러오는 데 실패했습니다.</div>");
+                console.error("교환목록 불러오기 실패");
+                exchangeList.html("<div class='error-content'>교환목록을 불러오는 데 실패했습니다.</div>");
             }
         });
-        // 내가 쓴 후기글
-        $.ajax({
-            url: "/mypage/reviews/written/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('쓴 후기글 불러오기 성공');
 
-                const writtenList = $("#reviews #written-reviews");
-                writtenList.empty();
-
-                const writtenData = data.written_reviews.map(written => 
-                    `<div class="item">
-                        <h3>제목: ${written.title} </h3>
-                        <p>작성자 : ${written.partner__nickname}</p>
-                        <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
-                        <p class=".review-content">${written.content}</p>
-                    </div>`).join("");
-
-                    writtenList.html(writtenData||"<div class='error-content'>쓴 후기글  없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("쓴 후기글  불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>쓴 후기글  불러오는 데 실패했습니다.</div>");
-            }
-        });
+        // 내가 받은 후기글
 
         // 커뮤니티 - 동행글
-        $.ajax({
-            url: "/mypage/review/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('동행글 불러오기 성공');
-
-                const companionList = $("#community #WithU");
-                companionList.empty();
-
-
-                const companionData = data.companion.map(companion => {
-                    `<div class="item">
-                        <h3>${companion.title}</h3>
-                        <p>${companion.created_at} - 조회수: ${companion.views} | 댓글: ${companion.comments_count}</p>
-                    </div>`}).join("");
-
-                    companionList.html(companionData||"<div class='error-content'>동행글이 없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("동행글 불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>동행글을 불러오는 데 실패했습니다.</div>");
-            }
-        });
 
         // 커뮤니티 - 나눔글
-        $.ajax({
-            url: "/mypage/review/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('나눔글 불러오기 성공');
-
-                const sharingList = $("#community #WithU");
-                sharingList.empty();
-
-
-                const sharingData = data.sharing.map(sharing => {
-                    `<div class="item">
-                        <h3>${sharing.title}</h3>
-                        <p>${sharing.created_at} - 조회수: ${sharing.views} | 댓글: ${sharing.comments_count}</p>
-                    </div>`}).join("");
-
-                    sharingList.html(sharingData||"<div class='error-content'>나눔글이 없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("나눔글 불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>나눔글을 불러오는 데 실패했습니다.</div>");
-            }
-        });
 
         // 커뮤니티 - 대리구매
-        $.ajax({
-            url: "/mypage/review/",
-            type: "POST",
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            dataType: "json",
-            success: function(data){
-                console.log('동행글 불러오기 성공');
-
-                const companionList = $("#community #WithU");
-                companionList.empty();
-
-
-                const companionData = data.companion.map(companion => {
-                    `<div class="item">
-                        <h3>${companion.title}</h3>
-                        <p>${companion.created_at} - 조회수: ${companion.views} | 댓글: ${companion.comments_count}</p>
-                    </div>`}).join("");
-
-                    companionList.html(companionData||"<div class='error-content'>동행글이 없습니다.</div>");
-            }, error: function(xhr, status, error){
-                console.error("동행글 불러오기 실패");
-                $("#reviews #received-reviews").html("<div class='error-content'>동행글을 불러오는 데 실패했습니다.</div>");
-            }
-        });
 
         // 블랙리스트 - 차단한 사용자 목록 AJAXs
         $.ajax({
@@ -1330,7 +1268,6 @@
             const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
             const memberGrid = document.querySelector('.mybias_input');
             
-            const mybiasInput = document.querySelector(".mybias_input");
             mybiasInput.addEventListener("click", () => {
                 searchModal.style.display = "block";
 
