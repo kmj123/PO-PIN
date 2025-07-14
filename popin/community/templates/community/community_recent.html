@@ -410,10 +410,7 @@
     }
   </style>
 </head>
-
 <body>
-  <form method="POST"  action="{% url 'community:write_recent' %}" enctype="multipart/form-data">
-  {% csrf_token %}
   <header class="header">
     <nav class="nav">
       <div class="logo">PO-PIN</div>
@@ -579,7 +576,7 @@
       <button class="page-btn">›</button>
     </div>
   </div>
-</form>
+
   <script>
     // 필터 버튼 기능
     document.querySelectorAll('.filter-btn').forEach(btn => {
