@@ -415,39 +415,37 @@
                 width:100%;
             }
         }
-                /* 페이지네이션 */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 40px;
-    }
+        /* 페이지네이션 */
 
-    .page-btn {
-      padding: 10px 15px;
-      border: 2px solid #667eea;
-      border-radius: 10px;
-      background: white;
-      color: #667eea;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-    }
+        .page-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top:20px;
+        }
 
-    .page-btn:hover,
-    .page-btn.active {
-      background: #667eea;
-      color: white;
-      transform: translateY(-2px);
-    }
+        .page-num li{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            text-decoration: none;
+            color: #666;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
 
-    .page-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+        .page-num li.active, .page-num li.active:hover{
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
 
+        .page-num li:hover{background: #f0f0f0;}
+
+        .page-num a{text-decoration:none; color:#333;}
     </style>
 </head>
 <body>
@@ -459,31 +457,33 @@
     <div class="container">
         <div class="main-content">
             <div class="sidebar">
-                <div class="search-section">
-                    <h3 class="filter-title" id="select_artist">검색어 입력</h3>
-                    <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
-                    <div class="search-results" id="searchResults"></div>
-                    <div id="selectedArtist"></div>
-                </div>
-                <div class="filter-section" id="selectgroup" style="display:none;">
-                    <h3 class="filter-title">그룹 필터</h3>
-                    <div id="groupsList">
-                        <!-- 조회된 그룹 리스트 표시 -->
+                <form method="get" action="/pocadeco/decoMain/">
+                    <div class="search-section">
+                        <h3 class="filter-title" id="select_artist">검색어 입력</h3>
+                        <input type="text" id="searchInput" class="search-input" name="search-input" placeholder="검색어를 입력해주세요">
+                        <div class="search-results" id="searchResults"></div>
+                        <div id="selectedArtist"></div>
                     </div>
-                </div>
+                    <div class="filter-section" id="selectgroup" style="display:none;">
+                        <h3 class="filter-title">그룹 필터</h3>
+                        <div id="groupsList">
+                            <!-- 조회된 그룹 리스트 표시 -->
+                        </div>
+                    </div>
 
-                <div class="sort-section">
-                    <h3 class="filter-title">정렬 옵션</h3>
-                    <div class="sort-options">
-                        <select>
-                            <option value="latest">최신순</option>
-                            <option value="popular">인기순</option>
-                            <option value="views">관심도순</option>
-                        </select>
+                    <div class="sort-section">
+                        <h3 class="filter-title">정렬 옵션</h3>
+                        <div class="sort-options">
+                            <select name="sort" id="sort">
+                                <option value="최신순" {% if request.GET.sort == "최신순" %}selected{% endif %}>최신순</option>
+                                <option value="인기순" {% if request.GET.sort == "인기순" %}selected{% endif %}>인기순</option>
+                                <option value="조회순" {% if request.GET.sort == "조회순" %}selected{% endif %}>조회순</option>
+                            </select>
+                        </div>
                     </div>
+                    <button type="submit" class="btn1" style="width:100%;" id="searchBtn">검색하기</button>
                 </div>
-                <button type="submit" class="btn1" style="width:100%;" id="searchBtn">검색하기</button>
-            </div>
+            </form>
             <div class="content">
                 <div class="navbar">
                     <div class="navbar-header">
@@ -496,57 +496,75 @@
                 <div class="photo-section">
                     <div class="photo-grid" id="photoGrid">
                         {%for deco in decoList %}
-                        <div class="photo-card" data-id="{{deco.user}}">
-                            <div class="photo-image">
-                                {%if deco.result_image %}
-                                    <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
-                               {%else%}
-                                    <img src="🎨 포토카드" alt="🎨 포토카드"> 
-                               {%endif%}
-                            </div>
-                            <div class="photo-info">
-                                <div class="photo-title">{{deco.title}}</div>
-                                <div class="photo-meta">
-                                    <span>{{deco.user}}</span>
-                                    <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                            <div class="photo-card" data-id="{{deco.user}}">
+                                <div class="photo-image">
+                                    {%if deco.result_image %}
+                                        <img src="/media/{{deco.result_image}}/" alt={{deco.title}}> 
+                                    {%else%}
+                                            <img src="🎨 포토카드" alt="🎨 포토카드"> 
+                                    {%endif%}
                                 </div>
-                                <!--미구현-->
-                                <div class="photo-tags">
-                                    <span class="tag">{{deco.group}}</span>
-                                    <span class="tag">{{deco.member}}</span>
-                                    {%for tag in deco.tags%}
-                                        <span class="tag">{{tag}}</span>
-                                    {%endfor%}
+                                <div class="photo-info">
+                                    <div class="photo-title">{{deco.title}}</div>
+                                    <div class="photo-meta">
+                                        <span>{{deco.user}}</span>
+                                        <span>{{deco.created_at|date:"Y-m-d"}}</span>
+                                    </div>
+                                    <!--미구현-->
+                                    <div class="photo-tags">
+                                        <span class="tag">{{deco.group}}</span>
+                                        <span class="tag">{{deco.member}}</span>
+                                        {%for tag in deco.tags%}
+                                            <span class="tag">{{tag}}</span>
+                                        {%endfor%}
 
-                                </div>
-                                <div class="photo-stats">
-                                    <div class="stat-item">
-                                        <span>👀</span>
-                                        <span>{{deco.hit}}</span>
                                     </div>
-                                    <div class="stat-item">
-                                        <span>❤️</span>
-                                        <span>{{deco.likes}}</span>
+                                    <div class="photo-stats">
+                                        <div class="stat-item">
+                                            <span>👀</span>
+                                            <span>{{deco.hit}}</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span>❤️</span>
+                                            <span>{{deco.likes}}</span>
+                                        </div>
                                     </div>
+                                    <!--미구현-->
                                 </div>
-                                <!--미구현-->
                             </div>
-                        </div>
-                        {%endfor%}
-                        <!-- JS에서 렌더링 -->
+                        {% empty %}
+                            <p>검색된 게시글이 없습니다.</p>
+                            <!-- JS에서 렌더링 -->
+                        {% endfor %}
                     </div>
                 </div>
 
-                <div class="pagination">
-                    <button class="page-btn" disabled>‹</button>
-                    <a href="#" class="page-btn active">1</a>
-                    <a href="#" class="page-btn">2</a>
-                    <a href="#" class="page-btn">3</a>
-                    <a href="#" class="page-btn">4</a>
-                    <a href="#" class="page-btn">5</a>
-                    <button class="page-btn">›</button>
-                    </div>
-                </div>
+                
+                <ul class="page-num">
+                    {% if page_num.has_previous %}
+                        <a href="?page=1&search-input={{searchInput}}&sort={{sort}}"><li>«</li></a>
+                        <a href="?page={{page_num.previous_page_number}}&search-input={{searchInput}}&sort={{sort}}"><li>‹</i></li></a>
+                    {% else %}
+                        <li>«</li>
+                        <li>‹</i></li>
+                    {% endif %}
+
+                    {% for num in page_num.paginator.page_range%}
+                        {% if page_num.number == num %}
+                            <li class="active">{{num}}</li>
+                        {% else %}
+                            <a href="?page={{num}}&search-input={{searchInput}}&sort={{sort}}"><li>{{num}}</li></a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_num.has_next %}
+                        <a href="?page={{page_num.next_page_number}}&search-input={{searchInput}}&sort={{sort}}"><li>›</i></li></a>
+                        <a href="?page={{page_num.paginator.num_pages}}&search-input={{searchInput}}&sort={{sort}}"><li>»</i></li></a>
+                    {% else %}
+                        <li>›</li>
+                        <li>»</li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
         <button class="btn1 upload-btn"><img src="/static/images/write_icon.png/"></button>
