@@ -760,13 +760,12 @@ a{
     width: 150px;
     height: 180px;
     border-radius: 25%;
-    margin-bottom: 15px;
     object-fit: cover;
     object-position: center;
 }
 
 .myinfo-profile{
-    padding:4px;
+    padding:0px;
 }
 
 .wish-list-txt h3{
