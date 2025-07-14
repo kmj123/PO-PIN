@@ -613,19 +613,20 @@
                 
                 <div class="chat-items">
                     {%for room in rooms%}
-                        <div class="chat-item active" data-room-id="{{ room.id }}" onclick="selectChat(this)"  >
-                            <div class="chat-avatar">애</div>
+                        <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" onclick="selectChat(this)"  >
+                            <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
                             <div class="chat-info">
                                 <div class="chat-name">{{room.nickname}}</div>
                                 <div class="chat-preview">{{room.last_message}}</div>
                             </div>
                             <div class="chat-meta">
                                 <div class="chat-time">{{room.last_timestamp|date:"h:i"}}</div>
-                                <div class="unread-badge">{{room.read_count}}</div>
+                                {%if room.read_count != 0%}
+                                    <div class="unread-badge">{{room.read_count}}</div>
+                                {%endif%}
                             </div>
                         </div>
                     {%endfor%}
-                
                 </div>
             </div>
 
@@ -714,10 +715,16 @@
             element.classList.add('active');
 
             const roomName = element.dataset.roomId;
+            const roomNickname = element.dataset.roomNickname;
 
             // 채팅창 초기화
             const messagesContainer = document.getElementById('messagesContainer');
             messagesContainer.innerHTML = '';
+
+            const nameContainer = document.querySelector('.chat-header-name');
+            const avatarContainer = document.querySelector('.chat-header-avatar');
+            nameContainer.textContent = roomNickname;
+            avatarContainer.textContent = roomNickname.slice(0, 1);
 
             // ① 이전 채팅 불러오기
             fetch(`/chatting/fetch-messages/${roomName}/`)
