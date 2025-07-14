@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -411,25 +415,9 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community" style="color: #667eea;">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <a href="#" class="btn btn-outline">로그인</a>
-        <a href="#" class="btn btn-primary">회원가입</a>
-      </div>
-    </nav>
-  </header>
 
   <div class="activity-container">
-    <a href="#" class="back-btn">← 커뮤니티로 돌아가기</a>
+    <a href="#" class="back-btn" onclick="location.href='/community/'" >← 커뮤니티로 돌아가기</a>
     
     <div class="page-header">
       <h1>최근 커뮤니티 활동</h1>
@@ -453,131 +441,72 @@
     </div>
 
     <div class="activity-board">
-      <ul class="activity-list">
-        <li class="activity-item">
-          <div class="activity-icon">⭐</div>
-          <div class="activity-content">
-            <div class="activity-title">윳냥이님과의 교환 후기 등록</div>
-            <div class="activity-meta">교환후기 · 별점 5.0 · 댓글 3개</div>
-            <div class="activity-description">상태 좋은 포카로 교환해주셔서 감사합니다. 포장도 깔끔하게 해주시고 시간도 잘 지켜주셨어요!</div>
-          </div>
-          <div class="activity-status status-completed">완료</div>
-          <div class="activity-time">2분 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">🎁</div>
-          <div class="activity-content">
-            <div class="activity-title">홍대 리쿠 생일 카페 포카 나눔</div>
-            <div class="activity-meta">오프라인 나눔 · 15개 남음 · 댓글 8개</div>
-            <div class="activity-description">7월 3일 홍대역 1번 출구 앞에서 리쿠 생일 기념 포카 나눔합니다. 선착순이니 서둘러주세요!</div>
-          </div>
-          <div class="activity-status status-active">진행중</div>
-          <div class="activity-time">15분 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">📊</div>
-          <div class="activity-content">
-            <div class="activity-title">스테디 팝업 대기 50명 현황</div>
-            <div class="activity-meta">현황 공유 · 실시간 · 댓글 12개</div>
-            <div class="activity-description">현재 스테디 팝업 대기줄 50명 정도입니다. 포카 재고는 충분한 것 같아요. 날씨가 더우니 물 챙겨오세요!</div>
-          </div>
-          <div class="activity-status status-urgent">긴급</div>
-          <div class="activity-time">23분 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">👥</div>
-          <div class="activity-content">
-            <div class="activity-title">7/15 라이즈 콘서트 동행 구함</div>
-            <div class="activity-meta">동행 모집 · 여 · 20대 · 댓글 5개</div>
-            <div class="activity-description">라이즈 콘서트 함께 갈 동행 구합니다. 20대 여성 선호하며, 콘서트 전에 카페에서 만나서 이야기해요!</div>
-          </div>
-          <div class="activity-status status-active">모집중</div>
-          <div class="activity-time">1시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">🛒</div>
-          <div class="activity-content">
-            <div class="activity-title">위시 전시회 MD 대리구매</div>
-            <div class="activity-meta">대리구매 · 인당 2개 제한 · 댓글 15개</div>
-            <div class="activity-description">위시 전시회 MD 대리구매 해드립니다. 포카홀더 5000원, 포스터 8000원입니다. 수고비는 개당 1000원입니다.</div>
-          </div>
-          <div class="activity-status status-active">모집중</div>
-          <div class="activity-time">3시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">⭐</div>
-          <div class="activity-content">
-            <div class="activity-title">쿨미호님과의 교환 후기</div>
-            <div class="activity-meta">교환후기 · 별점 4.5 · 댓글 2개</div>
-            <div class="activity-description">빠른 배송 감사합니다. 포카 상태도 설명한 것과 동일했어요. 다음에 또 교환하고 싶네요!</div>
-          </div>
-          <div class="activity-status status-completed">완료</div>
-          <div class="activity-time">4시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">🎁</div>
-          <div class="activity-content">
-            <div class="activity-title">신촌 NCT 팝업 포카 나눔 완료</div>
-            <div class="activity-meta">오프라인 나눔 · 완료 · 댓글 25개</div>
-            <div class="activity-description">신촌 NCT 팝업에서 포카 나눔 완료했습니다! 많은 분들이 와주셔서 감사했어요. 다음에 또 기회가 되면 나눔 진행하겠습니다.</div>
-          </div>
-          <div class="activity-status status-completed">완료</div>
-          <div class="activity-time">5시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">📊</div>
-          <div class="activity-content">
-            <div class="activity-title">아이브 럭키드로우 현장 현황</div>
-            <div class="activity-meta">현황 공유 · 완료 · 댓글 18개</div>
-            <div class="activity-description">아이브 럭키드로우 현장 현황입니다. 총 200명 정도 대기 중이고, 당첨 확률은 약 10% 정도로 예상됩니다.</div>
-          </div>
-          <div class="activity-status status-completed">완료</div>
-          <div class="activity-time">6시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">👥</div>
-          <div class="activity-content">
-            <div class="activity-title">뉴진스 팬사인회 동행 모집 완료</div>
-            <div class="activity-meta">동행 모집 · 완료 · 댓글 7개</div>
-            <div class="activity-description">뉴진스 팬사인회 동행 모집 완료되었습니다. 함께 가실 분과 연락 완료했어요. 즐거운 시간 되길 바랍니다!</div>
-          </div>
-          <div class="activity-status status-completed">완료</div>
-          <div class="activity-time">8시간 전</div>
-        </li>
-
-        <li class="activity-item">
-          <div class="activity-icon">🛒</div>
-          <div class="activity-content">
-            <div class="activity-title">세븐틴 MD 대리구매 마감</div>
-            <div class="activity-meta">대리구매 · 마감 · 댓글 32개</div>
-            <div class="activity-description">세븐틴 MD 대리구매 인원이 모두 찼습니다. 참여해주신 모든 분들께 감사드리며, 안전하게 구매해서 전달드리겠습니다.</div>
-          </div>
-          <div class="activity-status status-closed">마감</div>
-          <div class="activity-time">10시간 전</div>
-        </li>
-      </ul>
+    <ul class="activity-list">
+  {% for post in page_obj %}
+    <li class="activity-item">
+      <!-- post.post_type 을 기반으로 분기 처리 -->
+      <div class="activity-icon">
+        {% if post.post_type == 'review' %}⭐
+        {% elif post.post_type == 'sharing' %}🎁
+        {% elif post.post_type == 'proxy' %}🛒
+        {% elif post.post_type == 'status' %}📊
+        {% elif post.post_type == 'companion' %}👥
+        {% endif %}
+      </div>
+      <div class="activity-content">
+        <div class="activity-title">{{ post.title }}</div>
+        <div class="activity-meta">
+          {{ post.post_type }} · 댓글 {{ post.comment_count|default:"0" }}개
+        </div>
+        <div class="activity-description">{{ post.content|truncatechars:80 }}</div>
+      </div>
+      <div class="activity-time">{{ post.created_at|timesince }} 전</div>
+    </li>
+  {% endfor %}
+</ul>
     </div>
+<div class="pagination">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">‹</a>
+  {% else %}
+    <button class="page-btn" disabled>‹</button>
+  {% endif %}
 
-    <div class="pagination">
-      <button class="page-btn" disabled>‹</button>
-      <a href="#" class="page-btn active">1</a>
-      <a href="#" class="page-btn">2</a>
-      <a href="#" class="page-btn">3</a>
-      <a href="#" class="page-btn">4</a>
-      <a href="#" class="page-btn">5</a>
-      <button class="page-btn">›</button>
-    </div>
+  {% for page_num in page_obj.paginator.page_range %}
+    {% if page_obj.number == page_num %}
+      <a href="?page={{ page_num }}" class="page-btn active">{{ page_num }}</a>
+    {% else %}
+      <a href="?page={{ page_num }}" class="page-btn">{{ page_num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="page-btn">›</a>
+  {% else %}
+    <button class="page-btn" disabled>›</button>
+  {% endif %}
+</div>
+   
   </div>
 
   <script>
+
+    // 필터 버튼
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const selectedType = this.dataset.type;  // 예: 'review'
+        const currentSort = document.querySelector('.sort-select').value;
+        window.location.href = `?type=${selectedType}&sort=${currentSort}`;
+      });
+    });
+
+    // 정렬 드롭다운
+    document.querySelector('.sort-select').addEventListener('change', function () {
+      const selectedSort = this.value;
+      const activeBtn = document.querySelector('.filter-btn.active');
+      const selectedType = activeBtn ? activeBtn.dataset.type : 'all';
+      window.location.href = `?type=${selectedType}&sort=${selectedSort}`;
+    });
     // 필터 버튼 기능
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -603,5 +532,6 @@
       });
     });
   </script>
+  {%endblock%}
 </body>
 </html>
