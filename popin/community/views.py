@@ -63,10 +63,28 @@ def chgReviewview(request, post_id):
     
    
 ################################################################################
-## 최근게시글
 def recent(request):
-    
-    return render(request, 'community/community_recent.html')
+    def annotate_type(qs, type_name):
+        for post in qs:
+            post.post_type = type_name
+        return qs
+    posts = sorted(
+        chain(
+            annotate_type(ExchangeReview.objects.all(), 'review'),
+            annotate_type(SharingPost.objects.all(), 'sharing'),
+            annotate_type(ProxyPost.objects.all(), 'proxy'),
+            annotate_type(CompanionPost.objects.all(), 'companion'),
+            annotate_type(StatusPost.objects.all(), 'status'),
+        ),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+    paginator = Paginator(posts, 10)  # 한 페이지당 10개씩
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'community/community_recent.html', {
+        'page_obj': page_obj,
+    })
 
 #############################################################################
 # 동행모집글 작성

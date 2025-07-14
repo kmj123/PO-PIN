@@ -153,6 +153,7 @@
             {% else %}
               <button class="join-btn active">채팅하기</button>
             {% endif %}
+            
           </div>
 
           <div class="post-card" data-category="팬사인회" data-imgs="/static/images/landing/wonyoung.jpg,/static/images/landing/wonyoung.jpg">
@@ -422,7 +423,7 @@
                 <button class="join-btn active" id = "chatBtn">채팅하기</button>
               </div>
             </div>
-          
+
             <div class="pagination">
                   <a href="#" title="첫 페이지">«</a>
                   <a href="#" title="이전 페이지">‹</a>
@@ -469,6 +470,7 @@
                 </p>
             </div>
           </div>
+          {% endfor %}
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
           {% endblock content %}
         </body>

@@ -128,11 +128,6 @@
       color: #333;
     }
 
-    .line {
-      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
-      margin: 20px auto 0 auto;
-    }
-
     table.writebox {
       width: 880px;
       border-collapse: separate;
@@ -390,8 +385,9 @@
 </head>
 <body>
 
-
   <div class="Bboard">
+  <form method="POST" enctype="multipart/form-data" id="statusForm">
+    {% csrf_token %}
     <div class="notice">
       <div class="dash-top">
         <h2>현황공유 작성</h2>
@@ -433,7 +429,7 @@
           <td><input type="text" class="wlong" id="location" name="location" placeholder="예: 강남구 CGV" required/></td>
         </tr>
         <tr>
-          <th scope="row"><label for="region">지역</label></th>
+          <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
           <td>
             <select id="region" name="region" class="wlong" style="width: calc(80% - 10px); padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
               <option value="">지역 선택</option>
@@ -488,8 +484,9 @@
       <button type="button" class="btn-submit" onclick="submitForm()">현황공유 등록</button>
       <button type="button" class="btn-cancel" onclick="goBack()">취소</button>
     </div>
+  </form>
   </div>
-</form>
+
 
   <script>
     let uploadedImages = [];
@@ -662,13 +659,17 @@
     form.append('images', imageData.file);
   });
 
+
+  const region = document.getElementById('region').value;
+
   // 필수 항목 체크
-  if (!form.get('title') || !form.get('artist') || !form.get('category') || 
+  if (!form.get('title') || !form.get('artist') || !form.get('category') || !form.get('region') ||
       !form.get('event_datetime') || !form.get('location') || !form.get('content')) {
     alert('필수 항목을 모두 입력해주세요.');
     return;
   }
 
+  form.append('region', region); 
   // 실제 전송
   fetch("{% url 'community:write_status' %}", {
     method: 'POST',
@@ -680,7 +681,7 @@
   .then(response => {
     if (response.ok) {
       alert('현황공유가 성공적으로 등록되었습니다!');
-      window.location.href = "{% url 'community:main' %}"; // 목록 페이지 등으로 이동
+      window.location.href = "{% url 'community:status' %}"; // 목록 페이지 등으로 이동
     } else {
       return response.text().then(text => { throw new Error(text); });
     }
@@ -688,6 +689,9 @@
   .catch(error => {
     console.error('에러 발생:', error);
     alert('저장 중 오류가 발생했습니다.');
+  });
+    cancelButton.addEventListener("click", function () {
+    window.history.back();
   });
 }
   </script>
