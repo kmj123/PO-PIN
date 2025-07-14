@@ -613,14 +613,14 @@
                 
                 <div class="chat-items">
                     {%for room in rooms%}
-                    <div class="chat-item active" onclick="selectChat({{room.id}})"  >
+                    <div class="chat-item active" data-room-id="{{ room.id }}" onclick="selectChat(this)"  >
                         <div class="chat-avatar">애</div>
                         <div class="chat-info">
                             <div class="chat-name">{{room.host_user.nickname}}</div>
                             <div class="chat-preview">{{room.last_message}}</div>
                         </div>
                         <div class="chat-meta">
-                            <div class="chat-time">{{room.last_timestamp}}</div>
+                            <div class="chat-time">{{room.last_timestamp|date:"h:i"}}</div>
                             <div class="unread-badge">2</div>
                         </div>
                     </div>
@@ -702,68 +702,104 @@
         </div>
     </div>
 
-    <script>
-        let currentChat = 'user1';
+    <script type="text/javascript">
+        const currentUserId = "{{ request.session.user_id|escapejs }}";
+        let chatSocket = null;  // 현재 연결된 WebSocket
         let isTyping = false;
 
-        function goBack() {
-            window.history.back();
-        }
-
-        function selectChat(userId) {
-            // Remove active class from all chat items
+        function selectChat(element) {
             document.querySelectorAll('.chat-item').forEach(item => {
                 item.classList.remove('active');
             });
-            
-            // Add active class to selected chat
-            event.currentTarget.classList.add('active');
-            
-            currentChat = userId;
-            loadChatMessages(userId);
+            element.classList.add('active');
+
+            const roomName = element.dataset.roomId;
+
+            // 채팅창 초기화
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '';
+
+            // ① 이전 채팅 불러오기
+            fetch(`/chatting/fetch-messages/${roomName}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.messages) {
+                        data.messages.forEach(msg => {
+                            addMessage(msg.message, msg.user_id === currentUserId, false, msg.timestamp);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('이전 메시지 불러오기 실패:', err);
+                });
+
+            // ② 이전 소켓 연결 종료
+            if (chatSocket) {
+                chatSocket.close();
+            }
+
+            // ③ 새로운 소켓 연결
+            chatSocket = new WebSocket(`ws://${window.location.host}/ws/chatting/${roomName}/`);
+
+            chatSocket.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                const { message, user_id, timestamp } = data;
+                addMessage(message, user_id === currentUserId, false, timestamp);
+            };
+
+            chatSocket.onclose = (e) => {
+                console.error('Chat socket closed unexpectedly');
+            };
         }
 
-        function loadChatMessages(userId) {
-            // This would typically load messages from a server
-            // For demo purposes, we'll just update the chat header
-            const chatNames = {
-                'user1': '애햄이',
-                'user2': '떵쿠노',
-                'user3': '정보콩',
-                'user4': '또오꾸마공화국주민'
-            };
-            
-            const chatAvatars = {
-                'user1': '애',
-                'user2': '떵',
-                'user3': '정',
-                'user4': '또'
-            };
-            
-            document.querySelector('.chat-header-name').textContent = chatNames[userId];
-            document.querySelector('.chat-header-avatar').textContent = chatAvatars[userId];
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message || !chatSocket || chatSocket.readyState !== WebSocket.OPEN) return;
+
+            chatSocket.send(JSON.stringify({ message }));
+
+            input.value = '';
+            input.style.height = 'auto';
+            document.getElementById('sendBtn').disabled = true;
+            hideTypingIndicator();
         }
 
-        function searchChats(event) {
-            const searchTerm = event.target.value.toLowerCase();
-            const chatItems = document.querySelectorAll('.chat-item');
-            
-            chatItems.forEach(item => {
-                const name = item.querySelector('.chat-name').textContent.toLowerCase();
-                const preview = item.querySelector('.chat-preview').textContent.toLowerCase();
-                
-                if (name.includes(searchTerm) || preview.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        function addMessage(text, isSent = false, isPhoto = false, customTime = null) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+
+            let timeString = customTime;
+            if (!timeString) {
+                const now = new Date();
+                timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                            now.getMinutes().toString().padStart(2, '0');
+            }
+
+            let messageContent = isPhoto ? `
+                <div class="photo-message">
+                    <div class="photo-placeholder">\ud83d\udcf8</div>
+                </div>
+            ` : `<div class="message-bubble">${text}</div>`;
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isSent ? '나' : '상대'}</div>
+                <div class="message-content">
+                    ${messageContent}
+                    <div class="message-time">${timeString}</div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
         function handleInput() {
             const input = document.getElementById('messageInput');
             const sendBtn = document.getElementById('sendBtn');
-            
+
             if (input.value.trim()) {
                 sendBtn.disabled = false;
                 showTypingIndicator();
@@ -771,8 +807,7 @@
                 sendBtn.disabled = true;
                 hideTypingIndicator();
             }
-            
-            // Auto-resize textarea
+
             input.style.height = 'auto';
             input.style.height = Math.min(input.scrollHeight, 120) + 'px';
         }
@@ -784,84 +819,10 @@
             }
         }
 
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            // Add message to chat
-            addMessage(message, true);
-            
-            // Clear input
-            input.value = '';
-            input.style.height = 'auto';
-            document.getElementById('sendBtn').disabled = true;
-            
-            // Hide typing indicator
-            hideTypingIndicator();
-            
-            // Simulate response after a delay
-            setTimeout(() => {
-                simulateResponse();
-            }, 1000 + Math.random() * 2000);
-        }
-
-        function addMessage(text, isSent = false, isPhoto = false) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
-            
-            const now = new Date();
-            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
-                              now.getMinutes().toString().padStart(2, '0');
-            
-            let messageContent;
-            if (isPhoto) {
-                messageContent = `
-                    <div class="photo-message">
-                        <div class="photo-placeholder">📸</div>
-                    </div>
-                `;
-            } else {
-                messageContent = `<div class="message-bubble">${text}</div>`;
-            }
-            
-            messageDiv.innerHTML = `
-                <div class="message-avatar">${isSent ? '나' : '김'}</div>
-                <div class="message-content">
-                    ${messageContent}
-                    <div class="message-time">${timeString}</div>
-                </div>
-            `;
-            
-            messagesContainer.insertBefore(messageDiv, document.getElementById('typingIndicator'));
-            
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function simulateResponse() {
-            const responses = [
-                "네, 좋아요!",
-                "언제 시간 되세요?",
-                "사진 잘 봤어요! 👍",
-                "교환 조건이 어떻게 되나요?",
-                "좋은 아이디어네요!",
-                "내일 오후는 어떠세요?",
-                "감사합니다! 😊"
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            addMessage(randomResponse, false);
-        }
-
         function showTypingIndicator() {
             if (!isTyping) {
                 isTyping = true;
-                setTimeout(() => {
-                    document.getElementById('typingIndicator').style.display = 'flex';
-                }, 500);
+                document.getElementById('typingIndicator').style.display = 'flex';
             }
         }
 
@@ -871,7 +832,6 @@
         }
 
         function attachPhoto() {
-            // Simulate photo attachment
             addMessage('', true, true);
         }
 
@@ -880,4 +840,9 @@
         }
 
         function sendEmoji() {
-            const emojis = ['😊', '👍', '❤️', '😢', '😂', '🔥', '
+            const emojis = ['😊', '👍', '❤️', '😢', '😂', '🔥'];
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            document.getElementById('messageInput').value += emoji;
+            handleInput();
+        }
+    </script>

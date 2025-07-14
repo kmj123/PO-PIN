@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 import json
+
+
 from .models import ChatMessage, ChatRoom
 from photocard.models import Photocard
-
 from signupFT.models import User
 
 
@@ -84,3 +86,26 @@ def start_chat(request):
     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def fetch_messages(request, room_id):
+    if not request.session.get("user_id"):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        room = ChatRoom.objects.get(id=room_id)
+    except ChatRoom.DoesNotExist:
+        return JsonResponse({'error': 'Room not found'}, status=404)
+
+    messages = ChatMessage.objects.filter(room=room).order_by('timestamp')
+    data = []
+    for msg in messages:
+        data.append({
+            'user_id': msg.send_user.user_id,
+            'message': msg.message,
+            'timestamp': msg.timestamp.strftime("%p %I:%M")
+                        .replace("AM", "오전")
+                        .replace("PM", "오후")
+        })
+        
+    print(data);
+    return JsonResponse({'messages': data})
