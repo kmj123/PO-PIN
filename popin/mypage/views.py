@@ -228,12 +228,8 @@ def trade(request):
 
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
-# # 후기글
-# def review(request):
-#     return JsonResponse()
-#####################################################################
-# 커뮤니티 작성글
 
+# #커뮤니티 작성글(동행, 나눔, 대리구매) 
 def review(request):
     user_id = request.session.get("user_id")
     if not user_id:
@@ -264,7 +260,7 @@ def review(request):
     except User.DoesNotExist:
         return JsonResponse({"error": "사용자 없음"}, status=404)
 ###########################################
-
+#내가쓴 교환판매후기
 
 def my_written_reviews(request):
     user_id = request.session.get("user_id")
@@ -274,7 +270,7 @@ def my_written_reviews(request):
         'id', 'title', 'created_at', 'overall_score'
     )
     return JsonResponse({'written_reviews': list(reviews)})
-
+# 내가받은 교환판매후기 
 def my_received_reviews(request):
     user_id = request.session.get("user_id")
     user = get_object_or_404(User, user_id=user_id)
