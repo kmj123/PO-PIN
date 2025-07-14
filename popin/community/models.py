@@ -82,6 +82,7 @@ class ExchangeReview(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    report_count = models.PositiveIntegerField("신고 수", null=True, blank=True, default=0)   
     def __str__(self):
         return f"[{self.title}] {self.writer} → {self.partner}"
 
@@ -150,6 +151,7 @@ class CompanionPost(models.Model):
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
     comments_count = models.PositiveIntegerField("댓글 수", default=0)
+    report_count = models.PositiveIntegerField("신고 수", null=True, blank=True, default=0)
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -228,6 +230,7 @@ class ProxyPost(models.Model):
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
     comments_count = models.PositiveIntegerField("댓글 수", default=0)
+    report_count = models.PositiveIntegerField("신고 수", null=True, blank=True, default=0)
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -301,7 +304,7 @@ class SharingPost(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
-
+    report_count = models.PositiveIntegerField("신고 수", null=True, blank=True, default=0)
     def __str__(self):
         return f"[{self.title}] by {self.author}"
 
@@ -372,6 +375,7 @@ class StatusPost(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    report_count = models.PositiveIntegerField("신고 수", null=True, blank=True, default=0)
     class Meta:
         verbose_name = "현황 공유"
         verbose_name_plural = "현황 공유"
