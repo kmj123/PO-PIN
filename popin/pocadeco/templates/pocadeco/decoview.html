@@ -30,7 +30,7 @@
 
     .pocanavi button{border:none; background:transparent; padding:0;}
 
-    .icons {width:120px; display:flex; justify-content: space-between;}
+    .icons {width:55px; display:flex; justify-content: space-between;}
 
     .icons a{color:#333;}
 
@@ -44,7 +44,7 @@
         background:#fff;
         overflow: hidden;
         transition: all 0.3s ease;
-        padding:30px;
+        padding:27px;
     }
 
     .result_img {
@@ -90,6 +90,8 @@
         color: #666;
     }
 
+    .create_at{font-size:12px;}
+
     .photo-tags {
         display: flex;
         flex-wrap: wrap;
@@ -120,6 +122,7 @@
         justify-content: space-between;
         font-size: 13px;
         color: #888;
+        margin-top:20px;
     }
 
     .stat-item {
@@ -205,7 +208,9 @@
 
             .content_background{width:90%;}
 
-            .pocatrade{width:100%;}
+            .deco-item {max-width:100%; padding:10px;}
+
+            .result_img, .photo-info{width:100%;}
 
             .share-bottom-sheet{max-width:500px;}
             
@@ -234,12 +239,11 @@
     $(document).ready(function() {
         // 위시버튼 //
         $("#heart").click(function() {
-            let pno = {{info.pno}}
-            let csrfToken = $('meta[name="csrf-token"]').attr('content')
-            console.log('csrfToken : ', csrfToken);
+            let id = {{id}};
+            let csrfToken = $('meta[name="csrf-token"]').attr('content');
 
             $.ajax({
-                url: '/photocard/toggle_wish/' + pno + '/',
+                url: '/pocadeco/toggle_wish/' + id + '/',
                 type: 'POST',
                 headers: { 'X-CSRFToken': csrfToken },
                 data: { action: 'action' }, // 클릭한 버튼 상태에 따른 액션
@@ -309,8 +313,6 @@
             <div class="pocanavi">
                 <button onclick="window.history.back();"><i class="fal fa-chevron-left"></i></button>
                 <div class="icons">
-                    <a href="/pocadeco/main/"><i class="fas fa-pencil"></i></a>
-                    <a href="#"><i class="fal fa-trash-alt"></i></a>
                     <i class="{% if is_wish %}fas fa-heart red{% else %}fal fa-heart{% endif %}" id="heart"></i>
                     <i class="fal fa-share-square share-icon"></i>
                 </div>
@@ -330,6 +332,7 @@
                     <div class="photo-title">{{title}}</div>
                     <div class="photo-meta">
                         <span>{{nickname}}</span>
+                        <span class="create_at">{{created_at|date:"Y-m-d h:i"}}</span>
                     </div>
                     <div class="photo-tags">
                         <span class="tag">{{group}}</span>
@@ -347,7 +350,7 @@
                             <span>👀</span><span>{{hit}}</span>
                         </div>
                         <div class="stat-item">
-                            <span>❤️</span><span>{{like}}</span>
+                            <span>❤️</span><span class="wish_count">{{like}}</span>
                         </div>
                     </div>
                 </div>
