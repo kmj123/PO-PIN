@@ -616,7 +616,7 @@
                     <div class="chat-item active" data-room-id="{{ room.id }}" onclick="selectChat(this)"  >
                         <div class="chat-avatar">애</div>
                         <div class="chat-info">
-                            <div class="chat-name">{{room.host_user.nickname}}</div>
+                            <div class="chat-name">{%if request.session.nickname == room.host_user.nickname%}{{room.guest_user.nickname}}{%else%}{{room.host_user.nickname}}{%endif%}</div>
                             <div class="chat-preview">{{room.last_message}}</div>
                         </div>
                         <div class="chat-meta">
