@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import JsonResponse
 import json
-
 from collections import defaultdict
-
 from idols.models import Group
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
+from community.models import CompanionPost, SharingPost, ProxyPost
+from django.shortcuts import get_object_or_404
+from community.models import ExchangeReview
 
 def profile(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -232,9 +233,6 @@ def trade(request):
 #     return JsonResponse()
 #####################################################################
 # 커뮤니티 작성글
-from django.http import JsonResponse
-from community.models import CompanionPost, SharingPost, ProxyPost
-from signupFT.models import User
 
 def review(request):
     user_id = request.session.get("user_id")
@@ -266,10 +264,7 @@ def review(request):
     except User.DoesNotExist:
         return JsonResponse({"error": "사용자 없음"}, status=404)
 ###########################################
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from community.models import ExchangeReview
-from signupFT.models import User
+
 
 def my_written_reviews(request):
     user_id = request.session.get("user_id")

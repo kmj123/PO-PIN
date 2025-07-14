@@ -1,8 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import SharingPost, SharingTag, SharingImage
-from django.core.paginator import Paginator
 from django.db.models import Avg
 from datetime import datetime, timedelta
 from django.core.files.storage import default_storage
@@ -11,12 +10,27 @@ from django.http import HttpResponse
 from community.models import ExchangeReview, ReviewImage, ReviewTag
 from signupFT.models import User  # 너의 커스텀 유저 모델 import
 from django.contrib import messages
-
+from .models import CompanionPost, CompanionTag, CompanionImage
+from django.views.decorators.csrf import csrf_exempt
+from community.models import ProxyPost, ProxyImage, ProxyTag
+from django.utils.timezone import make_aware
+from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
+from community.models import StatusPost, StatusImage, StatusTag
+from itertools import chain
+from operator import attrgetter
+from django.db.models import Q
+from django.core.paginator import Paginator
+from .models import ProxyStatus
+from community.models import SharingStatus  
+from community.models import CompanionPost, CompanionComment
+from django.utils import timezone
+from community.models import  StatusStatus 
 
 User = get_user_model()
 #########  urls.py 순서대로 정리함 
 
-from django.db.models import Q
+
 
 def chgReviewmain(request):
     today = datetime.today()
@@ -50,8 +64,6 @@ def chgReviewmain(request):
 
 ################################################################################
 ##교환/판매 상세보기 
-from django.shortcuts import render, get_object_or_404
-from community.models import ExchangeReview
 
 def chgReviewview(request, pk):
     post = get_object_or_404(
@@ -67,9 +79,7 @@ def chgReviewview(request, pk):
         'post': post
     })
 ################################################################################
-from django.shortcuts import render, get_object_or_404, redirect
-from community.models import ExchangeReview
-from signupFT.models import User
+
 # 교환후기글 수정 
 def chgReview_update(request, pk):
     post = get_object_or_404(ExchangeReview, id=pk)
@@ -93,11 +103,6 @@ def recent(request):
 
 #############################################################################
 # 동행모집글 작성
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from datetime import datetime
-from .models import CompanionPost, CompanionTag, CompanionImage
-from signupFT.models import User  # 사용자 모델 import
 
 def write_companion(request):
     if request.method == "POST":
@@ -156,12 +161,6 @@ def write_companion(request):
   ########################################################################################## 
     
 ## 대리구매글 작성
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from community.models import ProxyPost, ProxyImage, ProxyTag
-from signupFT.models import User  # 사용자 모델 import
-from datetime import datetime
 
 def write_proxy(request):
 
@@ -289,13 +288,6 @@ def write_review(request):
 #########################################
 
 #나눔 
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from django.db import transaction
-from django.utils.timezone import make_aware
-from datetime import datetime
-from signupFT.models import User
-from .models import SharingPost, SharingTag, SharingImage
 
 def write_sharing(request):
     if request.method == 'POST':
@@ -369,13 +361,7 @@ def write_sharing(request):
     return render(request, 'community/community_write_sharing.html')
 #################################################################
 
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.dateparse import parse_datetime
-from community.models import StatusPost, StatusImage, StatusTag
-from signupFT.models import User
-
+ 
 @csrf_exempt
 def write_status(request):
     if request.method == 'POST':
@@ -436,9 +422,6 @@ def write_status(request):
 
 #######################################################################
 # 메인페이지
-from itertools import chain
-from operator import attrgetter
-from .models import SharingPost, CompanionPost, ProxyPost
 
 def main(request):
     all_posts = sorted(
@@ -453,11 +436,6 @@ def main(request):
     return render(request, 'community/main.html', {'posts': all_posts})
 
 #########################################
-from .models import CompanionPost
-from django.utils import timezone
-from django.db.models import Q
-from django.core.paginator import Paginator
-from django.shortcuts import render
 
 def companion(request):
     query = request.GET.get('q', '')  # 검색어 받아오기
@@ -490,10 +468,6 @@ def companion(request):
     return render(request, 'companion/main.html', context)
 ###########################################################################
 ##### 대리구매 게시판
-from django.shortcuts import render
-from django.core.paginator import Paginator
-from django.utils import timezone
-from .models import ProxyPost, ProxyStatus
 
 def proxy(request):
     # 🔍 검색어 받기
@@ -534,10 +508,6 @@ def proxy(request):
     return render(request, 'proxy/main.html', context)
 #############################################################################################
 ##### 나눔 게시판
-from django.db.models import Q
-from django.utils import timezone
-from django.core.paginator import Paginator
-from community.models import SharingPost, SharingStatus  
 
 def sharing(request):
     # 1. 검색어 가져오기
@@ -569,10 +539,6 @@ def sharing(request):
     return render(request, 'sharing/main.html', context)
  #####################################################   
 
-from django.db.models import Q
-from django.utils import timezone
-from django.core.paginator import Paginator
-from community.models import StatusPost, StatusStatus  
 ##### 현황공유 게시판
 
 def status(request):
@@ -608,9 +574,8 @@ def status(request):
 
 
 ##################
-from django.shortcuts import get_object_or_404, render
-from community.models import CompanionPost, CompanionComment
-from community.models import SharingPost, ProxyPost
+
+
 def companion_detail(request, pk):
     post = get_object_or_404(CompanionPost, pk=pk)
     post.views += 1
