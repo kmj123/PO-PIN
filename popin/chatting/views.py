@@ -58,7 +58,7 @@ def start_chat(request):
         category = body.get('category')
         post_id = body.get('post_id')
         
-        print(category, post_id)
+        print(category, post_id, flush=True)
         
         user_id = request.session.get('user_id')  # 현재 로그인한 사용자
         if category == "exchange" or category == "sale":
@@ -66,10 +66,11 @@ def start_chat(request):
                 guest_user = User.objects.get(user_id=user_id)
                 post = Photocard.objects.get(pno=post_id)
                 post.buyer = guest_user
+                post.buy_state ="중"
                 post.save()
                 
                 room, created = ChatRoom.objects.get_or_create(
-                    category="category",
+                    category=category,
                     post_id=post.pno,
                     host_user=post.seller,
                     guest_user=post.buyer,
