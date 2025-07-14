@@ -124,6 +124,7 @@ def detail(request, pno):
     # pno 포토카드 불러오기
     qs = Photocard.objects.annotate(wish_count=Count('wished_by_users')).get(pno=pno)
     is_wish = TempWish.objects.filter(user=user_id, photocard=qs).exists()
+    is_user = qs.seller.user_id == user_id
     
     qs.hit += 1
     qs.save()
@@ -151,9 +152,9 @@ def detail(request, pno):
     # 포토카드 상세정보 반환
     if qs.tag:
         tags = qs.tag.split(",")
-        context = {"info":qs, "is_wish":is_wish, "tags":tags}
+        context = {"info":qs, "is_user":is_user, "is_wish":is_wish, "tags":tags}
     else:
-        context = {"info":qs, "is_wish":is_wish}
+        context = {"info":qs, "is_user":is_user, "is_wish":is_wish}
         
     return render(request, 'pocadetail.html', context)
 
@@ -320,7 +321,7 @@ def write(request):
             tag = ','.join(tags) # 하나의 문자열로 태그 전환
             
             trade_type=request.POST.get('trade_type') # 거래방식
-            price = request.POST.get('price') # 가격
+            price = request.POST.get('price', '') # 가격
             description = request.POST.get('description','') # 상세설명
             
             place=request.POST.get('place') # 장소
@@ -342,11 +343,11 @@ def write(request):
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, price=price, description=description, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
             
             # redirect로 이동
-            return redirect('/photocard/list')
+            return redirect('/photocard/exchange')
             
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
