@@ -128,6 +128,11 @@
       color: #333;
     }
 
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
+    }
+
     table.writebox {
       width: 880px;
       border-collapse: separate;
@@ -386,11 +391,9 @@
 <body>
 
   <div class="Bboard">
-  <form method="POST" enctype="multipart/form-data" id="statusForm">
-    {% csrf_token %}
     <div class="notice">
       <div class="dash-top">
-        <h2>현황공유 작성</h2>
+        <h2>현황공유 수정</h2>
         <div class="line"></div>
       </div>
     </div>
@@ -399,11 +402,11 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="title" name="title" placeholder="현황공유 제목을 입력하세요"/></td>
+          <td><input type="text" class="wlong" id="title" placeholder="현황공유 제목을 입력하세요" value = "현황공유 제목"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="artist" name="artist" placeholder="아티스트명을 입력하세요" required/></td>
+          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력하세요" value = "현황공유 제목" required/></td>
         </tr>
         <tr>
           <th scope="row"><label>카테고리 <span class="required">*</span></label></th>
@@ -416,22 +419,20 @@
               <button type="button" class="category-btn" data-category="굿즈샵">굿즈샵</button>
               <button type="button" class="category-btn" data-category="기타">기타</button>
             </div>
-               <!-- 숨겨진 input에 선택된 값 저장 -->
-          <input type="hidden" name="category" id="categoryInput">
           </td>
         </tr>
         <tr>
           <th scope="row"><label for="eventDate">날짜 <span class="required">*</span></label></th>
-          <td><input type="datetime-local" class="wlong" id="eventDate" name="event_datetime"  required/></td>
+          <td><input type="datetime-local" class="wlong" id="eventDate" required/></td>
         </tr>
         <tr>
           <th scope="row"><label for="location">장소 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="location" name="location" placeholder="예: 강남구 CGV" required/></td>
+          <td><input type="text" class="wlong" id="location" placeholder="예: 강남구 CGV" value = "현황공유 제목" required/></td>
         </tr>
         <tr>
           <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
           <td>
-            <select id="region" name="region" class="wlong" style="width: calc(80% - 10px); padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
+            <select id="region" class="wlong" style="width: calc(80% - 10px); padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
               <option value="">지역 선택</option>
               <option value="서울">서울</option>
               <option value="경기">경기</option>
@@ -455,12 +456,12 @@
         </tr>
         <tr>
           <th scope="row"><label for="description">현황 설명 <span class="required">*</span></label></th>
-          <td><textarea class="tta" id="description" name="content" placeholder="현재 상황을 자세히 설명해주세요&#10;예: 대기 줄 길이, 품절 상품, 특이사항 등" required></textarea></td>
+          <td><textarea class="tta" id="description" placeholder="현재 상황을 자세히 설명해주세요&#10;예: 대기 줄 길이, 품절 상품, 특이사항 등" value = "현황공유 제목" required></textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
           <td>
-            <input type="text" class="wlong" id="tags" name="tags" placeholder="태그를 쉼표로 구분해서 입력하세요 (예: 팬사인회, 강남, 품절)">
+            <input type="text" class="wlong" id="tags" placeholder="태그를 쉼표로 구분해서 입력하세요 (예: 팬사인회, 강남, 품절)" value = "현황공유 제목">
             <div style="font-size: 12px; color: #999; margin-top: 5px; width: calc(80% - 10px);">쉼표(,)로 구분하여 여러 태그를 입력할 수 있습니다</div>
           </td>
         </tr>
@@ -468,7 +469,7 @@
           <th scope="row"><label for="file">사진 첨부</label></th>
           <td>
             <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display:none;">
+              <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
               <div class="upload-icon">📸</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 5장)</p>
@@ -482,35 +483,31 @@
 
     <div class="btn">
       <button type="button" class="btn-submit" onclick="submitForm()">현황공유 등록</button>
-      <button type="button" class="btn-cancel" onclick="goBack()">취소</button>
+      <button type="button" class="btn-cancel"  onclick="location.href='{% url 'community:statusview' %}'">취소</button>
     </div>
-  </form>
   </div>
-
 
   <script>
     let uploadedImages = [];
     let selectedCategory = '';
 
     // 카테고리 버튼 클릭 이벤트
-    document.addEventListener('DOMContentLoaded', function () {
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    const categoryInput = document.getElementById('categoryInput');
-
-    categoryButtons.forEach(button => {
-      button.addEventListener('click', function () {
-        categoryButtons.forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        categoryInput.value = this.getAttribute('data-category');
+    document.addEventListener('DOMContentLoaded', function() {
+      const categoryButtons = document.querySelectorAll('.category-btn');
+      
+      categoryButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // 모든 버튼에서 active 클래스 제거
+          categoryButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // 클릭된 버튼에 active 클래스 추가
+          this.classList.add('active');
+          
+          // 선택된 카테고리 저장
+          selectedCategory = this.getAttribute('data-category');
+        });
       });
     });
-  });
-
-  function goBack() {
-    if (confirm('작성을 취소하시겠습니까?')) {
-      window.history.back();
-    }
-  }
 
     // 파일 업로드 관련
     document.addEventListener("DOMContentLoaded", function () {
@@ -638,63 +635,33 @@
 
     // 폼 제출 처리
     function submitForm() {
-  const category = document.getElementById('categoryInput').value;
-  const tagsInput = document.getElementById('tags').value.trim();
-  const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
-
-  const form = new FormData();
-  form.append('title', document.getElementById('title').value.trim());
-  form.append('artist', document.getElementById('artist').value.trim());
-  form.append('category', category);
-  form.append('event_datetime', document.getElementById('eventDate').value);
-  form.append('location', document.getElementById('location').value.trim());
-  form.append('region', document.getElementById('region').value);
-  form.append('content', document.getElementById('description').value.trim());
-
-  // 태그는 쉼표로 구분한 문자열로 보냄
-  form.append('tags', tags.join(','));
-
-  // 이미지 첨부 (최대 5개)
-  uploadedImages.forEach(imageData => {
-    form.append('images', imageData.file);
-  });
-
-
-  const region = document.getElementById('region').value;
-
-  // 필수 항목 체크
-  if (!form.get('title') || !form.get('artist') || !form.get('category') || !form.get('region') ||
-      !form.get('event_datetime') || !form.get('location') || !form.get('content')) {
-    alert('필수 항목을 모두 입력해주세요.');
-    return;
-  }
-
-  form.append('region', region); 
-  // 실제 전송
-  fetch("{% url 'community:write_status' %}", {
-    method: 'POST',
-    body: form,
-    headers: {
-      'X-CSRFToken': '{{ csrf_token }}',
-    }
-  })
-  .then(response => {
-    if (response.ok) {
+      const tagsInput = document.getElementById('tags').value.trim();
+      const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+      
+      const formData = {
+        title: document.getElementById('title').value.trim(),
+        artist: document.getElementById('artist').value.trim(),
+        category: selectedCategory,
+        eventDate: document.getElementById('eventDate').value,
+        location: document.getElementById('location').value.trim(),
+        region: document.getElementById('region').value,
+        description: document.getElementById('description').value.trim(),
+        tags: tags,
+        images: uploadedImages
+      };
+      
+      // 필수 필드 확인
+      if (!formData.title || !formData.artist || !formData.category || 
+          !formData.eventDate || !formData.location || !formData.description) {
+        alert('필수 항목을 모두 입력해주세요.');
+        return;
+      }
+      
+      console.log('폼 데이터:', formData);
       alert('현황공유가 성공적으로 등록되었습니다!');
-      window.location.href = "{% url 'community:status' %}"; // 목록 페이지 등으로 이동
-    } else {
-      return response.text().then(text => { throw new Error(text); });
     }
-  })
-  .catch(error => {
-    console.error('에러 발생:', error);
-    alert('저장 중 오류가 발생했습니다.');
-  });
-    cancelButton.addEventListener("click", function () {
-    window.history.back();
-  });
-}
+
   </script>
-  {%endblock%}
 </body>
 </html>
+{% endblock content %}
