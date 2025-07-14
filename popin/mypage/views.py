@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 import json
 from collections import defaultdict
-from idols.models import Group
+from idols.models import Group, Member
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
@@ -41,9 +41,9 @@ def profile(request):
             'profile_image':user.profile_image, # 프로필 이미지
             'members': user.bias_member.all(), # 최애 멤버 (member.group.name으로 최애 그룹 이름 접근 가능)
             'groups': user.bias_group.all(), # 최애 그룹
+            'bias_pairs': zip(user.bias_group.all(), user.bias_member.all())  # ✅ 그룹-멤버 쌍
             }
-        
-        
+
         return render(request,'mypage/profile.html', context)
     
     except User.DoesNotExist:
@@ -284,6 +284,7 @@ def my_received_reviews(request):
 def block_list(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
+        
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
 
@@ -319,15 +320,31 @@ def update_profile(request):
             # 텍스트 데이터는 request.POST에서
             user.nickname = request.POST.get('nickname', user.nickname)
             user.introduction = request.POST.get('introduction', user.introduction)
-
+        
             # 파일은 request.FILES에서
             profile_img = request.FILES.get('profile_image')
             if profile_img:
                 user.profile_image = profile_img
                 
+            # 최애 멤버/그룹
+            member_name = request.POST.get('member')
+            group_name = request.POST.get('group')
+            new_nickname = request.POST.get('nickname')
+            request.session['nickname'] = new_nickname            
+
+            if member_name and group_name:
+                try:
+                    group = Group.objects.get(name=group_name)
+                    member = Member.objects.get(name=member_name, group=group)
+                    user.bias_group.set([group])   # bias_group은 many-to-many
+                    user.bias_member.set([member]) # bias_member도 many-to-many
+                except (Group.DoesNotExist, Member.DoesNotExist):
+                    return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
+                
             print(user)
             
             user.save()
+            return redirect('/mypage/profile')
             return JsonResponse({'message': '프로필 수정 완료'})
         except Exception as e:
             return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)
@@ -346,7 +363,6 @@ def update_blocklist(request):
             body = json.loads(request.body)
             id = body.get('id')
             to_user = User.objects.get(user_id = id) # 차단한 유저 
-            
             
             relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
             if not relation:

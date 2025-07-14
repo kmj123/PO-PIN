@@ -343,7 +343,7 @@ def write(request):
             
             # Photocard 객체 생성
             Photocard.objects.create(
-                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, price=price, description=description, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
+                title=title, image=image, seller=seller, category=category, album=album, member=member_obj, poca_state=poca_state, tag=tag, trade_type=trade_type, description=description,price=price, place=place, sell_state=sell_state, available_at=available_at, latitude=latitude, longitude=longitude
             )
             
             # redirect로 이동
