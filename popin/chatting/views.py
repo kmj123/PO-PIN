@@ -21,12 +21,27 @@ def chatting(request):
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
         rooms = ChatRoom.objects.filter(host_user=user) | ChatRoom.objects.filter(guest_user=user)
         rooms = rooms.distinct().order_by('-last_timestamp')  # 최근 채팅 순 정렬
-        room = rooms.first()
-        messages = ChatMessage.objects.filter(room=room).order_by('timestamp')
+        first_room = rooms.first()
+        messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
         
-        print(rooms)
+        room_list = []
+        for room in rooms:
+            read_count = ChatMessage.objects.filter(room=room, is_read=False).order_by('timestamp').count
+            if user.nickname == room.host_user.nickname:
+                nickname = room.guest_user.nickname
+            else:
+                nickname = room.host_user.nickname
+            
+            room_list.append({
+                'id':room.id,
+                'nickname': nickname,
+                'last_timestamp':room.last_timestamp,
+                'last_message' : room.last_message,
+                'read_count' : read_count,
+            })
+
         context = {
-            'rooms':rooms,
+            'rooms':room_list,
             "messages": messages,
         }
         return render(request, 'chatting/chatting.html', context)        
@@ -100,6 +115,8 @@ def fetch_messages(request, room_id):
     messages = ChatMessage.objects.filter(room=room).order_by('timestamp')
     data = []
     for msg in messages:
+        msg.is_read = True
+        msg.save()
         data.append({
             'user_id': msg.send_user.user_id,
             'message': msg.message,
