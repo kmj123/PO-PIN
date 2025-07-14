@@ -8,7 +8,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>커뮤니티 | 게시글 작성</title>
+  <title>나눔 게시글 수정</title>
   <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body {
@@ -17,10 +17,6 @@
           min-height: 100vh;
           color: #333;
       }
-
-      .required {
-      color: #ff4444;
-    }
 
       .header {
           background: rgba(255, 255, 255, 0.95);
@@ -223,7 +219,7 @@
           cursor: pointer;
           background-color: #7E6EB0;
           color: white;
-          transition: background-color 0.3s ease;
+          transition: background-color 0.3s ease;}
           .file-upload-area {
   border: 2px dashed #ccc;
   border-radius: 8px;
@@ -315,7 +311,9 @@
   color: #7E6EB0;
   font-weight: 500;
 }
-      }
+    .required {
+      color: #ff4444;
+    }
   </style>
 </head>
 <body>
@@ -325,7 +323,7 @@
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
-        <h2>나눔 모집 글 작성</h2>
+        <h2>나눔 모집 글 수정</h2>
         <div class="line"></div>
       </div>
     </div>
@@ -334,16 +332,17 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" name ="title" id="title"/></td>
+          <td><input type="text" class="wlong" name ="title" id="title" value = "나눔 게시글 제목"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: NewJeans"/></td>
+          <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: NewJeans" value = "나눔 게시글 제목"/></td>
         </tr>
-         <tr>
-          <th scope="row"><label for="category">종류 <span class="required">*</span></label></th>
+        
+        <tr>
+          <th scope="row"><label for="type">종류 <span class="required">*</span></label></th>
           <td>
-            <select id="category" class="wlong" name="category">
+            <select id="type" class="wlong" name="category">
               <option value="">선택하세요</option>
               <option value="앨범">앨범</option>
               <option value="굿즈">굿즈</option>
@@ -352,20 +351,8 @@
           </td>
         </tr>
         <tr>
-  <th scope="row"><label for="type">나눔 형태 <span class="required">*</span></label></th>
-  <!--  -->
-  <td>
-    <select id="type" class="wlong" name="type" required>
-      <option value="온라인">온라인</option>
-      <option value="오프라인">오프라인</option>
-    </select>
-  </td>
-</tr>
-
-  <!--  -->
-        <tr>
           <th scope="row"><label for="location">위치 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" name="location" id="location" placeholder="예: 서울 강남구"/></td>
+          <td><input type="text" class="wlong" name="location" id="location" placeholder="예: 서울 강남구" value = "나눔 게시글 제목"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="datetime">날짜 및 시간 <span class="required">*</span></label></th>
@@ -373,15 +360,15 @@
         </tr>
         <tr>
           <th scope="row"><label for="requirements">필수 사항 <span class="required">*</span></label></th>
-          <td><textarea name ='requirement' id="requirements" placeholder="필수 사항을 입력해주세요."></textarea></td>
+          <td><textarea name ='requirement' id="requirements" placeholder="필수 사항을 입력해주세요.">나눔 게시글 제</textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="content">본문 <span class="required">*</span></label></th>
-          <td><textarea class="tta" name="content"id="content"></textarea></td>
+          <td><textarea class="tta" name="content"id="content">나눔 게시글 제목</textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong"name="tags" id="tags" placeholder="#태그1, #태그2 (쉼표로 구분)"/></td>
+          <td><input type="text" class="wlong"name="tags" id="tags" placeholder="#태그1, #태그2 (쉼표로 구분)" value = "#나눔 #게시글 #제목"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="file">사진 첨부</label></th>
@@ -555,9 +542,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(data => {
       alert("게시글이 성공적으로 등록되었습니다.");
-
-      window.location.href = '{% url 'community:write_sharing' %}';
-
+      window.location.href = "{% url 'community:sharing' %}";
     })
     .catch(error => {
       console.error("❌ 오류:", error);
@@ -566,10 +551,13 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   cancelButton.addEventListener("click", function () {
-    window.history.back();
+    location.href = '{% url 'community:sharingview' %}';
   });
 });
-</script>
-{%endblock%}
+
+
+
+ </script>
 </body>
 </html>
+{% endblock content %}
