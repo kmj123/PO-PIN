@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=popin.settings
+    command: >
+      /bin/sh -c "
+        python manage.py collectstatic --noinput &&
+        python manage.py makemigrations &&
+        python manage.py migrate &&
+        daphne -b 0.0.0.0 -p 8000 popin.asgi:application
+      "
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
