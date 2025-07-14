@@ -240,13 +240,13 @@ def review(request):
         user = User.objects.get(user_id=user_id)
 
         # 사용자 작성 게시글 조회
-        # 동행글
+        
         companion_posts = CompanionPost.objects.filter(author=user).values(
             "id","title", "created_at", "views", "comments_count"
         )
 
         # 나눔
-        sharing_posts = SharingPost.objects.filter(author=use나눔글r).values(
+        sharing_posts = SharingPost.objects.filter(author=user).values(
             "id","title", "created_at", "views"
         )
 
