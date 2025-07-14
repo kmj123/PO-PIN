@@ -1,0 +1,13 @@
+# 기본 파이썬 이미지
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# 필요 패키지 복사 및 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 프로젝트 복사
+COPY . .
+
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "socket_project.asgi:application"]
