@@ -15,7 +15,6 @@
 <body>
   <div class="list">
     <div class = 'group'>
-
       <div class="girl">
         <h3>걸그룹</h3>
         <div class="line"></div>
@@ -50,8 +49,8 @@
           <li><a href="" data-category="기타" >기타</a></li>
         </ul>
       </div>
-
     </div>
+    
     <div class="dashboard">
       <div class="top">
         <h3>나눔</h3>
@@ -89,7 +88,7 @@
         <div class="postlist">
           <!-- 동행 카드들 -->
           {% for post in posts %}
-          <div class="post-card" data-category="{{ post.artist }}" data-full-content="{{ post.content|safe }}"
+          <div class="post-card" data-category="{{ post.artist }}" data-full-content="{{ post.content|safe }}" 
           data-imgs="{% for image in post.images.all %}{{ image.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
             <div class="post-header">
               <span class="boardf">
@@ -99,7 +98,7 @@
               <div class="post-title-row">
                 <h3 class="post-title">{{ post.title }}</h3>
                 <div class="post-right">
-                  <input type="button" class="post-btn report-btn" onclick="reportBtn()" value=":경광등:">
+                  <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
                 </div>
               </div>
               <div class="post-tags">
@@ -107,31 +106,33 @@
                 <span class="post-tag">#{{ tag.name }}</span>
                 {% endfor %}
               </div>
-            </div>
+            </div>       
             <div class="post-info">
               <div class="info-date">
-                <span class="info-icon">:날짜:</span>
+                <span class="info-icon">📅</span>
                 <span>{{ post.share_date|date:"Y년 m월 d일 (D) H:i" }}</span>
               </div>
               <div class="info-place">
-                <span class="info-icon">:둥근_압핀:</span>
+                <span class="info-icon">📍</span>
                 <span>{{ post.location }}</span>
               </div>
               <div class="info-check">
-                <span class="info-icon">:흰색_확인_표시:</span>
+                <span class="info-icon">✅</span>
                 <span>{{ post.requirement }}</span>
               </div>
             </div>
+            
             <div class="post-description">
               {{ post.content|truncatechars:100 }}
             </div>
+            
             <div class="post-footer">
               <div class="post-wrtier_id">
-                <span>:상반신_그림자: {{ post.author.nickname }}</span>
-                <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
+                <span>👤 {{ post.author.nickname }}</span>
+                <span class="post-meta">{{ post.created_at|date:"Y년 n월 j일 H:i" }}</span>
               </div>
               <div class="participants">
-                <span>:한_쪽_눈: {{ post.views }}</span>
+                <span>👁️ {{ post.views }}</span>
               </div>
             </div>
           </div>
@@ -163,9 +164,9 @@
             <div id="modalPostTags" class="post-tags"></div>
             <p id="modalPostCreated"></p>
           </div>
-          <p id="modalPostDate">:날짜: 날짜</p>
-          <p id="modalPostPlace">:둥근_압핀: 장소</p>
-          <p id="modalPostCheck">:흰색_확인_표시: 인증수단</p>
+          <p id="modalPostDate">📅 날짜</p>
+          <p id="modalPostPlace">📍 장소</p>
+          <p id="modalPostCheck">✅ 인증수단</p>
           <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
             설명 내용
           </div>
@@ -180,6 +181,7 @@
       </div>
     </div>
   </div>
+  
   <button type="button" class="topBtn" id="topBtn">
     <img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24">
   </button>

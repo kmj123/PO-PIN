@@ -265,6 +265,8 @@ border-radius: 6px;
     transition: all 0.3s ease;
     cursor: pointer;
     width : 88%;
+    overflow: hidden; /* 카드 밖으로 넘어가지 않게 */
+    word-wrap: break-word;
 }
 
 .board-item:hover {

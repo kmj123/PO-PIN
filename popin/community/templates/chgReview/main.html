@@ -7,7 +7,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% comment %} <link rel="stylesheet" type="text/css" href="/static/css/login/login.css"> {% endcomment %}
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/static/css/community/chgReview.css">
   <script src="/static/js/community/chgReview.js" defer></script>
@@ -17,7 +16,6 @@
   </style>
 </head>
 <body>
-
 <form method="GET" action="{% url 'community:chgReviewmain' %}">
   <div class="list">
     <div class="menu">
@@ -44,8 +42,9 @@
           <button class="toggle-btn active" data-type="general">일반 검색</button>
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
+
         <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목, 작성자·거래자 ID로 검색" value="{{ query }}">
-         <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+         <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
 
         <select id="ratingFilter" class="filter-select">
           <option value="">전체 평점</option>
@@ -76,19 +75,23 @@
               <div class="title-star-wrapper">
                 <h3 class="board-title">{{ review.title }}</h3>
                 <div class="vertical-line"></div>
-                 <span class="star">⭐ {{ review.overall_score }}</span>
+                <span class="star">⭐ {{ review.overall_score }}</span>
               </div>
               <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
             </div>
-            <div class="post-tags">
-              {% for tag in review.tags.all %}
-               <span class="post-tag">#{{ tag.name }}</span>
-               {% endfor %}
-            </div>
-
+            {% for tag in review.tags.all %}
+              <span class="post-tag">#{{ tag.name }}</span>
+            {% endfor %}
+            
+            <!-- 수정: 전체 내용을 숨겨진 상태로 추가하고, 미리보기는 그대로 유지 -->
             <div class="board-preview">
-               {{ review.content|truncatechars:100 }}
+              {{ review.content|truncatechars:100 }}
             </div>
+            <!-- 전체 내용을 숨겨진 상태로 저장 -->
+            <div class="board-content" style="display:none;">
+              {{ review.content }}
+            </div>
+            
             <div class="post-footer">
               <div class="board-meta">
                 <span class="writer_id">🙋‍♂️ {{ review.writer.nickname }}</span>
@@ -96,129 +99,25 @@
                 <span class="partner_id">{{ review.partner.name }}</span>
                 <span>👁️ {{ review.views }}</span>
               </div>
-
-              <span class="post-date">2025-07-02</span>
+              <span class="post-date">{{ review.created_at|date:"Y년 n월 j일 H:i" }}</span>
             </div>
           </li>
-
-          <li class="board-item">
-            <div class="boardf">
-              <span class="artist">RIIZE</span>
-              <span class="onoff off">오프라인</span>
-              <span class="Tway buy">양도</span>
-            </div>
-            <div class="board-item-header">
-              <div class="title-star-wrapper">
-                <h3 class="board-title">완벽한 거래였습니다!</h3>
-                <div class="vertical-line"></div>
-                <span class="star">⭐ 5</span>
-              </div>
-              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
-            </div>
-            <div class="post-tags">
-              <span class="post-tag">#교환</span>
-              <span class="post-tag">#오프라인</span>
-              <span class="post-tag">#riize</span>
-            </div>
-            <div class="board-preview">
-              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
-            </div>
-            <div class="post-footer">
-              <div class="board-meta">
-                <span class="writer_id">🙋‍♂️ kpop_lover</span>
-                <span style="font-weight: 500;">⇄</span>
-                <span class="partner_id">dududu</span>
-                <span>👁️ 60</span>
-              </div>
-              <span class="post-date">2025-07-04</span>
-            </div>
-          </li>
-
-          <li class="board-item">
-            <div class="boardf">
-              <span class="artist">aespa</span>
-              <span class="onoff off">오프라인</span>
-              <span class="Tway buy">양도</span>
-            </div>
-            <div class="board-item-header">
-              <div class="title-star-wrapper">
-                <h3 class="board-title">완벽한 거래였습니다!</h3>
-                <div class="vertical-line"></div>
-                <span class="star">⭐ 4</span>
-              </div>
-              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
-            </div>
-            <div class="post-tags">
-              <span class="post-tag">#집</span>
-              <span class="post-tag">#온라인</span>
-            </div>
-            <div class="board-preview">
-              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
-            </div>
-            <div class="post-footer">
-              <div class="board-meta">
-                <span class="writer_id">🙋‍♂️ kpop_lover</span>
-                <span style="font-weight: 500;">⇄</span>
-                <span class="partner_id">poca_collector</span>
-                <span>👁️ 88</span>
-              </div>
-              <span class="post-date">2025-07-06</span>
-            </div>
-          </li>
-
-          <li class="board-item">
-            <div class="boardf">
-              <span class="artist">AESPA</span>
-              <span class="onoff off">오프라인</span>
-              <span class="Tway buy">양도</span>
-            </div>
-            <div class="board-item-header">
-              <div class="title-star-wrapper">
-                <h3 class="board-title">완벽한 거래였습니다!</h3>
-                <div class="vertical-line"></div>
-                <span class="star">⭐ 4</span>
-              </div>
-              <input type="button" class="post-btn report-btn" onclick="reportBtn()" value="🚨">
-            </div>
-            <div class="post-tags">
-              <span class="post-tag">앨범</span>
-              <span class="post-tag">오프라인</span>
-              <span class="post-tag">aespa</span>
-            </div>
-            <div class="board-preview">
-              시간 약속도 정확하고 포토카드 포장도 꼼꼼히 해주셔서 감동받았어요. 이런 분들이 많아졌으면 좋겠네요 ^^
-            </div>
-            <div class="post-footer">
-              <div class="board-meta">
-                <span class="writer_id">🙋‍♂️ kpop_lover</span>
-                <span style="font-weight: 500;">⇄</span>
-                <span class="partner_id">riize_collector</span>
-                <span>👁️ 124</span>
-              </div>
-              <span class="post-date">2025-07-07</span>
-
-            </div>
-          </li>
-         {% endfor %}
+          {% endfor %}
+          </form>
         </ul>
-                
+        <p id="noResultsMessage" style="display:none; text-align:center; padding:20px; margin-top : 20px;">
+                    </p>
+              
+                      
                 <!-- 페이지네이션을 게시글 바로 아래로 이동 -->
                 <div class="pagination">
-                {% if page_obj.has_previous %}
-                  <a href="?q={{ query }}&page=1">«</a>
-                  <a href="?q={{ query }}&page={{ page_obj.previous_page_number }}">‹</a>
-                {% endif %}
-
-                <span class="current">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-
-                {% if page_obj.has_next %}
-                  <a href="?q={{ query }}&page={{ page_obj.next_page_number }}">›</a>
-                  <a href="?q={{ query }}&page={{ page_obj.paginator.num_pages }}">»</a>
-                {% endif %}
+                  <div class="page-buttons"></div>
+                </div>
                   </div>
+
                 
                 <div id="postModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999;">
-                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative;">
+                  <div class="modal-content" style="background:white; padding:30px; border-radius:15px; max-width:600px; width:90%; position:relative; max-height:80vh; overflow-y:auto;">
                     <button class="close-btn" onclick="closePostModal()">&times;</button>
                     <div id="modalPostMeta" class="post-meta-wrapper">
                       <span id="modalPostArtist" class="artist"></span>
@@ -233,21 +132,20 @@
                     <p id="modalPostWriter">작성자</p>
                     <p id="modalPostPartner">거래자</p>
                     <p id="modalPostStar">별점</p>
-                    <p id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">설명 내용</p>
+                    <!-- 수정: 전체 내용을 표시하기 위해 스타일 수정 -->
+                    <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word;">설명 내용</div>
                     <div id="modalPostImages" style="display:flex; flex-wrap:wrap; gap:10px; margin:20px 0;"></div>
-                    </div>
                   </div>
+                </div>
                 <div id="imageModal" class="modal" style="display:none;">
                         <button id="prevBtn">‹</button>
                         <img id="modalImage" />
                         <button id="nextBtn">›</button>
                       </div>
-                      <!-- 메뉴에서 해당 게시물이 없을 때 -->
-                      <p id="noResultsMessage" style="display:none; text-align:center; padding:20px; margin-top : 20px;">
-                      </p>
                 </div>
     </div>
   </div>
+
   <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
 {% endblock content %}
 </body>
