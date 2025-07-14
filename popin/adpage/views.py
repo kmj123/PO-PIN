@@ -4,10 +4,12 @@ from django.db.models import Count, Q
 from collections import defaultdict
 from django.http import JsonResponse
 import json
-
 from signupFT.models import User
 from photocard.models import Photocard
 from adpage.models import Notice, NoticeImage
+from django.utils import timezone
+from community.models import (ExchangeReview, SharingPost, ProxyPost, CompanionPost, StatusPost)
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def main(request) :
@@ -209,12 +211,6 @@ def block_user(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 ###########
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from signupFT.models import User
-from community.models import (
-    ExchangeReview, SharingPost, ProxyPost, CompanionPost, StatusPost
-)
 
 def post(request):
     user_id = request.session.get('user_id')
@@ -297,10 +293,7 @@ def post(request):
     return render(request, 'admin/managePost.html', context)
     
 
-from django.shortcuts import render, get_object_or_404
-from community.models import (
-    ExchangeReview, SharingPost, ProxyPost, CompanionPost, StatusPost
-)
+
 
 def postV(request, board, pk):
     board_map = {
