@@ -638,15 +638,23 @@
                                 <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
                             </div>
                             <div class="myinfo-profile">
-                                <label for="mybias">최애변경</label>
-                                <div class="mybias_input">
-                                    {% for group,member in bias_pairs %}
-                                    {%if forloop.first%}
+                                <label for="mybias">마이 아티스트</label>
+                                {% for group,member in bias_pairs %}
+                                    {%if forloop%}
+                                    <div class="mybias_input">
                                     <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
                                     {%endif%}
-                                    {% endfor %}
                                 </div>
+                                {% endfor %}
                             </div>
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
+                            </div>
+
                             <!--아티스트 검색 모달창-->
                             <div id="searchModal" class="modal" >
                                 <div class="modal-content">
@@ -655,8 +663,10 @@
                                         {% csrf_token %}
                                         <div class="search-container">
                                             <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
-                                            <input type="hidden" name="group_name" id="selectedGroup">
-                                            <input type="hidden" name="member_name" id="selectedMember">
+                                            <input type="hidden" name="favorite_group" id="selectedGroup">
+                                            <input type="hidden" name="favorite_member" id="selectedMember">
+                                            <input type="hidden" name="second_group" id="selectedGroup">
+                                            <input type="hidden" name="second_member" id="selectedMember">
 
                                             <div class="filter-buttons">
                                                 <button type="button" class="filter-btn" data-filter="all">전체</button>
@@ -664,6 +674,8 @@
                                                 <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
                                             </div>
                                         </div>
+
+                                        <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
 
                                         <div class="selected-members" id="selectedMembers" style="display: none;">
                                             <h3>🌟 선택된 멤버</h3>
@@ -682,19 +694,12 @@
                                     </form>
                                 </div>
                             </div>
-                            
-                            <div class="myinfo-profile">
-                                <label for="myself">자기소개</label>
-                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
-                            </div>
-                            <div class="myinfo-profile">
-                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
+
 
 
         <div class="content">
@@ -839,123 +844,20 @@
                     </div>
                 </div>
 
+                <!--차단한사용자-->
                 <div class="section-content">
                     <div id="blocked-user" class="blocked-content"> </div>
                 </div>
 
+                <!--신고한 글-->
                 <div class="section-content">
-                    <div id="blocked-post" class="blocked-content" style="display: none;">
-                        <div class="item">
-                            <h3>매우매우 안좋은 글</h3>
-                            <button class="unblock-btn">차단해제</button>
-                            <p>차단 사유: 매우매우 안좋은 글</p>
-                        </div>
-                        <div class="item">
-                            <h3>사기꾼의 글</h3>
-                            <button class="unblock-btn">차단해제</button>
-                            <p>차단 사유: 사기꾼의 글</p>
-                        </div>
-                    </div>
+                    <div id="blocked-post" class="blocked-content" style="display: none;"></div>
                 </div>
             </div>
             <!--//블랙리스트-->
         </div>
     </main>
     
-        <!--프로필 수정 모달창 구현-->
-        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div id="modalContainer" class="hidden">
-                <div id="modalContent">
-                    <div class="profileTop">
-                        <button id="favorite-btnClose" type="button">
-                            <img src="/static/images/mypage/cancelicon.png" style="width: 40px; height: 40px;">
-                        </button>
-                        <h1>프로필 수정</h1>
-                    </div>
-                    <div class="profileContent">
-                        <label for="profile_image">프로필 이미지</label>
-                        <div class="profile_img_container">
-                            <div class="profile_img_wrapper">
-                                <div class="previous_container" id="previous_container" style="cursor:pointer;">
-                                    <img id="previousImage" src="/media/{{ profile_image }}/" class="profile_image" alt="프로필 이미지">
-                                </div>
-                                <input type="file" id="profile-img-input" name="profile_image" class="fileType" accept="image/*" style="display:none;">
-                            </div>
-                            <div class="preview-container" id="previewContainer" style="display:none;">
-                                <img id="previewImage" class="preview-image" alt="미리보기">
-                            </div>
-                        </div>
-                        <div class="myinfo">
-                            <div class="myinfo-profile">
-                                <label for="nickname">닉네임</label>
-                                <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
-                            </div>
-                            <div class="myinfo-profile">
-                                <label for="mybias">마이 아티스트</label>
-                                {% for group,member in bias_pairs %}
-                                    {%if forloop%}
-                                    <div class="mybias_input">
-                                    <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                    {%endif%}
-                                </div>
-                                {% endfor %}
-                            </div>
-
-                            <!--아티스트 검색 모달창-->
-                            <div id="searchModal" class="modal" >
-                                <div class="modal-content">
-                                    <span id="searchModalOpenClose" class="close">&times;</span>
-                                    <form id="memberSearchForm" method="POST" action="{% url 'signup:member_select' %}">
-                                        {% csrf_token %}
-                                        <div class="search-container">
-                                            <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
-                                            <input type="hidden" name="favorite_group" id="selectedGroup">
-                                            <input type="hidden" name="favorite_member" id="selectedMember">
-                                            <input type="hidden" name="second_group" id="selectedGroup">
-                                            <input type="hidden" name="second_member" id="selectedMember">
-
-                                            <div class="filter-buttons">
-                                                <button type="button" class="filter-btn" data-filter="all">전체</button>
-                                                <button type="button" class="filter-btn" data-filter="boy">보이그룹</button>
-                                                <button type="button" class="filter-btn" data-filter="girl">걸그룹</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="selected-count">선택된 멤버: <span id="selectedCount">0</span>/2명</div>
-
-                                        <div class="selected-members" id="selectedMembers" style="display: none;">
-                                            <h3>🌟 선택된 멤버</h3>
-                                            <div class="selected-list" id="selectedList"></div>
-                                        </div>
-
-                                        <div class="search-noticeBox" id="searchNotice">
-                                            <span class="icon">🔍</span>
-                                            <div class="main-text">검색어를 입력하여 아이돌 그룹을 찾아보세요!</div>
-                                            <div class="sub-text">그룹명 또는 멤버명으로 검색 가능합니다</div>
-                                        </div>
-                                        
-                                        <div class="groups-container" id="groupsContainer"></div>
-                                        <div id="hiddenInputsContainer"></div>
-                                        <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
-                                    </form>
-                                </div>
-                            </div>
-                            
-                            <div class="myinfo-profile">
-                                <label for="myself">자기소개</label>
-                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
-                            </div>
-                            <div class="myinfo-profile">
-                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
-
-
 <script>
     // 파일업로드 관련
     const imageuploadContainer = document.getElementById('previous_container');
@@ -1539,7 +1441,6 @@
     });
 
 
-
     // 아티스트 검색 모달창
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById('searchModal');
@@ -1552,8 +1453,8 @@
         const hiddenInputsContainer = document.getElementById('hiddenInputsContainer');
         const memberGrid = document.querySelector('.mybias_input');
 
-            let selectedMembers = new Set();
-            let currentFilter = 'all';
+        let selectedMembers = new Set();
+        let currentFilter = 'all';
         
         const mybiasInput = document.querySelector(".mybias_input");
         mybiasInput.addEventListener("click", () => {
@@ -1578,6 +1479,7 @@
             if (e.target === modal) modal.style.display = 'none';
         });
 
+        // 선택된 멤버 업데이트
         function updateSelectedDisplay() {
             const count = document.getElementById('selectedCount');
             const container = document.getElementById('selectedMembers');
@@ -1601,6 +1503,8 @@
             }).join('');
             }
         }
+
+        // 선택된 멤버 취소 
         groupsContainer.addEventListener('click', e => {
             if (e.target.classList.contains('remove-btn')) {
                 const item = e.target.dataset.item;
@@ -1702,18 +1606,33 @@
 
         // 완료 버튼 클릭
         completeBtn.addEventListener('click', () => {
-            if (!selectedMember) return;
+            if (selectedMembers.size === 0) return;
+            
+            // hidden input, 렌더링 초기화
+            hiddenInputsContainer.innerHTML = '';
+            memberGrid.innerHTML = '';
 
-            // hidden input 생성
-            hiddenInputsContainer.innerHTML += `
-                <input type="hidden" name="group" value="${selectedMember.group}">
-                <input type="hidden" name="member" value="${selectedMember.member}">
-            `;
+            // 선택된 멤버 순서대로 분리
+            const selectedArray = Array.from(selectedMembers);
+            selectedArray.forEach((item, index) => {
+                const [group, member] = item.split('-');
 
-            // 메인 페이지에 렌더링
-            memberGrid.innerHTML += `
-                    <input type="text" id="mybias" name="mybias" value="${selectedMember.group} - ${selectedMember.member}" readonly style="cursor: pointer;">
-            `;
+                // hidden input 생성 (favorite, second 구분)
+                const groupInputName = index === 0 ? 'favorite_group' : 'second_group';
+                const memberInputName = index === 0 ? 'favorite_member' : 'second_member';
+
+                hiddenInputsContainer.innerHTML += `
+                    <input type="hidden" name="${groupInputName}" value="${group}">
+                    <input type="hidden" name="${memberInputName}" value="${member}">
+                `;
+
+                // 메인 입력 필드 렌더링
+                memberGrid.innerHTML += `
+                    <input type="text" name="mybias" value="${group} - ${member}" readonly style="cursor: pointer;">
+                `;
+            });
+
+            // 모달 닫기
             modal.style.display = 'none';
         });
 

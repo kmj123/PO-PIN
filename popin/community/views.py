@@ -340,23 +340,23 @@ def chgReviewview(request, post_id):
    
 ################################################################################
 def recent(request):
-      def annotate_type(qs, type_name):
+    def annotate_type(qs, type_name):
         for post in qs:
             post.post_type = type_name
         return qs
 
-      posts = sorted(
+    posts = sorted(
 
-        chain(
-            annotate_type(ExchangeReview.objects.all(), 'review'),
-            annotate_type(SharingPost.objects.all(), 'sharing'),
-            annotate_type(ProxyPost.objects.all(), 'proxy'),
-            annotate_type(CompanionPost.objects.all(), 'companion'),
-            annotate_type(StatusPost.objects.all(), 'status'),
-        ),
-        key=attrgetter('created_at'),
-        reverse=True
-    )
+    chain(
+        annotate_type(ExchangeReview.objects.all(), 'review'),
+        annotate_type(SharingPost.objects.all(), 'sharing'),
+        annotate_type(ProxyPost.objects.all(), 'proxy'),
+        annotate_type(CompanionPost.objects.all(), 'companion'),
+        annotate_type(StatusPost.objects.all(), 'status'),
+    ),
+    key=attrgetter('created_at'),
+    reverse=True
+)
 
     paginator = Paginator(posts, 10)  # 한 페이지당 10개씩
     page_number = request.GET.get('page')
@@ -365,7 +365,7 @@ def recent(request):
         'page_obj': page_obj,
     })
 
-      return render(request, 'community/community_recent.html', {'posts': posts})
+    return render(request, 'community/community_recent.html', {'posts': posts})
 
 
 #############################################################################
