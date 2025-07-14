@@ -59,6 +59,11 @@ class ChatConsumer(WebsocketConsumer):
             send_user=user,
             message=message
         )
+        
+        room.last_message = message
+        room.last_timestamp = chat.timestamp
+        room.save()
+        
 
         # 동일 그룹에 메시지 전송
         async_to_sync(self.channel_layer.group_send)(
