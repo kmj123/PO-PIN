@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.timezone import now
 import json
+from django.utils import timezone
 
 
 from .models import ChatMessage, ChatRoom
@@ -26,7 +28,10 @@ def chatting(request):
         
         room_list = []
         for room in rooms:
-            read_count = ChatMessage.objects.filter(room=room, is_read=False).order_by('timestamp').count
+            read_count = ChatMessage.objects.filter(
+                room=room,
+                is_read=False
+            ).exclude(send_user=user).count()
             if user.nickname == room.host_user.nickname:
                 nickname = room.guest_user.nickname
             else:
@@ -89,6 +94,10 @@ def start_chat(request):
                     post_id=post.pno,
                     host_user=post.seller,
                     guest_user=post.buyer,
+                    defaults={
+                        'last_timestamp':now(),
+                        'last_message' : "채팅을 시작해 보세요",
+                    }
                 )
                 
                 return JsonResponse({'success': True, 'created':created, 'room_id': room.id})
@@ -104,7 +113,8 @@ def start_chat(request):
         return JsonResponse({'error': str(e)}, status=500)
     
 def fetch_messages(request, room_id):
-    if not request.session.get("user_id"):
+    user_id = request.session.get('user_id')
+    if not user_id:
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
     try:
@@ -115,8 +125,10 @@ def fetch_messages(request, room_id):
     messages = ChatMessage.objects.filter(room=room).order_by('timestamp')
     data = []
     for msg in messages:
-        msg.is_read = True
-        msg.save()
+        if user_id != msg.send_user.user_id:
+            msg.is_read = True
+            msg.save()
+            
         data.append({
             'user_id': msg.send_user.user_id,
             'message': msg.message,
