@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import JsonResponse
 import json
-
 from collections import defaultdict
-
 from idols.models import Group
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
+from community.models import CompanionPost, SharingPost, ProxyPost
+from django.shortcuts import get_object_or_404
+from community.models import ExchangeReview
 
 def profile(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -230,11 +231,59 @@ def trade(request):
 # # 후기글
 # def review(request):
 #     return JsonResponse()
+#####################################################################
+# 커뮤니티 작성글
 
-# # 커뮤니티 작성글
-# def review(request):
-#     return JsonResponse()
+def review(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "로그인 필요"}, status=403)
 
+    try:
+        user = User.objects.get(user_id=user_id)
+
+        # 사용자 작성 게시글 조회
+        companion_posts = CompanionPost.objects.filter(author=user).values(
+            "id","title", "created_at", "views", "comments_count"
+        )
+
+        sharing_posts = SharingPost.objects.filter(author=user).values(
+            "id","title", "created_at", "views"
+        )
+
+        proxy_posts = ProxyPost.objects.filter(author=user).values(
+           "id","title", "created_at", "views"
+        )
+
+        return JsonResponse({
+            "companion": list(companion_posts),
+            "sharing": list(sharing_posts),
+            "proxy": list(proxy_posts),
+        })
+
+    except User.DoesNotExist:
+        return JsonResponse({"error": "사용자 없음"}, status=404)
+###########################################
+
+
+def my_written_reviews(request):
+    user_id = request.session.get("user_id")
+    user = get_object_or_404(User, user_id=user_id)
+    
+    reviews = ExchangeReview.objects.filter(writer=user).values(
+        'id', 'title', 'created_at', 'overall_score'
+    )
+    return JsonResponse({'written_reviews': list(reviews)})
+
+def my_received_reviews(request):
+    user_id = request.session.get("user_id")
+    user = get_object_or_404(User, user_id=user_id)
+    
+    reviews = ExchangeReview.objects.filter(partner=user).values(
+        'id', 'title', 'created_at', 'overall_score'
+    )
+    return JsonResponse({'received_reviews': list(reviews)})     
+###########################################
 # 차단 유저 관리
 def block_list(request):
     if request.method == 'POST':
