@@ -81,7 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim() || "";
       const people = card.querySelector(".info-people span:nth-child(2)")?.textContent.trim() || "";
       const money = card.querySelector(".info-mon span:nth-child(2)")?.textContent.trim() || "";
-      const desc = card.querySelector(".post-description")?.textContent.trim() || "";
+      const desc = card.querySelector(".post-content")?.textContent.trim() ||
+                 card.querySelector(".post-description")?.textContent.trim();
       const wdate = card.querySelector(".post-meta")?.textContent.trim() || "";
       const imgListStr = card.getAttribute("data-imgs") || "";
       const tags = Array.from(card.querySelectorAll(".post-tag")).map(t => t.textContent.replace('#', '').trim());
