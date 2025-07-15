@@ -95,9 +95,10 @@ def latest_post(request):
                     'created_at':poca.created_at,
                     'available_at':poca.available_at,
                     'tag' : poca.tag,
-                    'sell_state' : poca.get_sell_state_display(),
                     'trade_type': poca.trade_type,
+                    'trade_state' : poca.get_sell_state_display(),
                     'place': poca.place,
+                    'price': poca.price,
                 })
             except Photocard.DoesNotExist:
                 continue
@@ -165,8 +166,8 @@ def wishlist(request):
             'title': photocard.title,
             'album': photocard.album,
             'image_url': photocard.image.url,
-            'sell_state': photocard.get_sell_state_display(),
             'trade_type' : photocard.trade_type,
+            'trade_state': photocard.get_sell_state_display(),
             'place': photocard.place,
             'available_at' : photocard.available_at,
             'price' : photocard.price,
@@ -192,11 +193,13 @@ def trade(request):
                 {
                     'title': photocard.title,
                     'trade_type': photocard.trade_type,
-                    'trade_state': photocard.sell_state,
+                    'trade_state': photocard.get_sell_state_display(),
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+
                 }
                 for photocard in sell_poca
             ]
@@ -204,12 +207,14 @@ def trade(request):
             buy_data = [
                 {
                     'title': photocard.title,
-                    'trade_type': photocard.trade_type,
+                    'trade_type': photocard.get_sell_state_display(),
                     'trade_state': photocard.buy_state,
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+
                 }
                 for photocard in buy_poca
             ]
@@ -217,12 +222,14 @@ def trade(request):
             exchange_data = [
                 {
                     'title': photocard.title,
-                    'trade_type': photocard.trade_type,
+                    'trade_type': photocard.get_sell_state_display(),
                     'trade_state': photocard.sell_state,
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+                    
                 }
                 for photocard in exchange_poca
             ]

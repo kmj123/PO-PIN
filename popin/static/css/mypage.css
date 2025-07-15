@@ -775,7 +775,7 @@ a{
     padding:0px;
 }
 
-.wish-list-txt h3{
+.mypage-list-txt h3{
     margin-top: 0.5rem;
     font-size: 1rem;
     font-weight: 600;
@@ -785,7 +785,7 @@ a{
     gap: 0.5rem;
 }
 
-.wish-list-txt p {
+.mypage-list-txt p {
     margin: 0.5rem 0 0;
     color: #666;
 }
