@@ -307,6 +307,8 @@
 </head>
 <body>
 
+<form method="POST" action="{% url 'community:updateP' post.id %}" enctype="multipart/form-data">
+    {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
@@ -378,7 +380,7 @@
 
     <div class="btn">
       <button type="button" value="write">확인</button>
-      <button type="button" value="cancel"  onclick= "location.href='{% url "community:proxyview" %}'">취소</button>
+      <button type="button" value="cancel" onclick="location.href='{% url "community:proxyview" post.id %}'">취소</button>
     </div>
   </div>
 

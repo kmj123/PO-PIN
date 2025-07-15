@@ -17,4 +17,5 @@ urlpatterns = [
     path('reviews/written/', views.my_written_reviews, name='my_written_reviews'),
     path('reviews/received/', views.my_received_reviews, name='my_received_reviews'),
     
+
 ]
