@@ -139,3 +139,39 @@ def fetch_messages(request, room_id):
         
     print(data);
     return JsonResponse({'messages': data})
+
+def cancel_chat(request, room_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST만 허용됩니다.'}, status=405)
+    
+    user_id = request.session.get('user_id')
+    if not user_id: # 비로그인일 경우 에러 리턴
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    try:
+        print(room_id, flush=True)
+        room = ChatRoom.objects.get(id=room_id)
+        try: # chatting room 검색
+            
+            # 로그인한 사용자가 이 채팅방의 host 또는 guest 인지 확인
+            if room.host_user.user_id != user_id and room.guest_user.user_id != user_id:
+                return JsonResponse({'error': '접근 불가'}, status=403)
+            
+            if room.category in ("exchange", "sale"): # 거래중인 포스트 카테고리 
+                post = Photocard.objects.get(pno=room.post_id) # 거래중인 포스트 아이디
+                post.buyer = None # 거래자 삭제
+                post.buy_state = None # 거래 상태 삭제
+                post.save()
+
+                room.delete()
+                return JsonResponse({'success': True, 'message': f"{post.title}의 거래가 취소되었습니다."})
+
+            # # 교환/판매가 아니더라도 채팅방은 삭제
+            # room.delete()
+            # return JsonResponse({'success': True, 'message': '채팅방이 삭제되었습니다.'})
+        except ChatRoom.DoesNotExist: # 없을 경우 에러 리턴
+            return JsonResponse({'error': 'Room not found'}, status=404)
+        
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
