@@ -567,4 +567,3 @@ def location2(request):
 
 
 
-

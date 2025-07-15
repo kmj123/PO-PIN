@@ -329,7 +329,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // 검색 결과 처리
     if (filteredCards.length === 0) {
       if (noResults) {
+
         noResults.textContent = "해당 게시물이 없습니다.";
+
         noResults.style.display = "block";
       }
       allCards.forEach(card => card.style.display = "none");

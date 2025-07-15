@@ -47,14 +47,12 @@
         <h3>동행 모집</h3>
       </div>
      <form method="GET" action="{% url 'community:companion' %}">
-
       <div class="line"></div>
       <div class="search-filter-container">
           <div class="search-toggle">
              <button class="toggle-btn active" data-type="general" type="button">일반 검색</button>
            <button class="toggle-btn" data-type="tag" type="button">태그 검색</button>
           </div>
-
           <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목으로 검색" value="{{ query }}">
          <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
 
@@ -80,8 +78,7 @@
               <option value="제주" {% if request.GET.region == "제주" %}selected{% endif %}>제주</option>
               <option value="기타" {% if request.GET.region == "기타" %}selected{% endif %}>기타</option>
             </select>
-            
-            
+ 
             <select id="stateFilter" class="filter-select">
               <option value="">게시글 상태</option>
               <option>모집중</option>
@@ -102,7 +99,6 @@
               <span class = "artist">{{ post.artist }}</span>
               <span class = "region">{{ post.region }}</span>
               <span class = "ptype">{{ post.location }}</span>
-
             </div>
             <div class="post-title-row">
                <h3 class="post-title">{{ post.title }}</h3>
@@ -140,7 +136,6 @@
                 {{ post.content }}
               </div>
               <div class="post-modal" style="display: none;">{{ post.content }}</div>
-              
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 {{ post.author.nickname }}</span>
@@ -187,9 +182,9 @@
                       <div id="modalPostTags" class="post-tags"></div>
                       <p id="modalPostCreated"></p>
                     </div>
-                    <p id="modalPostDate">📅 날짜</p>
-                    <p id="modalPostPlace">📍 장소</p>
-                    <p id="modalPostPeople">👥 인원</p>
+                    <p id="modalPostDate">:날짜: 날짜</p>
+                    <p id="modalPostPlace">:둥근_압핀: 장소</p>
+                    <p id="modalPostPeople">:2개의_상반신_그림자: 인원</p>
                     <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
                       설명 내용
                     </div>
@@ -202,7 +197,6 @@
                   <img id="modalImage" style="max-width:80%; max-height:80%;" />
                   <button id="nextBtn">›</button>
                 </div>
-                
             </div>
           </div>
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>

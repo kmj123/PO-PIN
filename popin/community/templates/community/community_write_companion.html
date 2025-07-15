@@ -305,6 +305,7 @@
 
         </tr>
 
+
         <tr>
           <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
           <td>
@@ -357,6 +358,7 @@
     </div>
   </div>
 </form>
+
 
  <script>
   let selectedFiles = [];
@@ -451,6 +453,7 @@
 
       const fileSize = formatFileSize(file.size);
 
+
       fileItem.innerHTML = `
         <div class="file-info">
           <div class="file-icon">📷</div>
@@ -541,7 +544,8 @@
 
         if (!response.ok) throw new Error("서버 오류");
 
-        alert("게시글이 성공적으로 등록되었습니다.");
+
+        alert("동행 모집글이 성공적으로 등록되었습니다.");
         window.location.href = "{% url 'community:companion' %}";
       } catch (error) {
         console.error("❌ 오류:", error);

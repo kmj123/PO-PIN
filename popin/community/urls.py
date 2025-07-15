@@ -16,7 +16,7 @@ urlpatterns = [
 
 
     path('', views.main, name='main'),
-    
+
     path('companion/', views.companion, name='companion'),
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
