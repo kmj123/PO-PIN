@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Chat Room</title>
+    <style>
+    .my-message {
+        text-align: right;
+        margin: 5px 0;
+        background-color: #dcf8c6;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+
+    .other-message {
+        text-align: left;
+        margin: 5px 0;
+        background-color: #fff;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    </style>
+</head>
+<body>
+    <div id="chat-log" style="width: 100%; height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;">
+        {% for msg in messages %}
+            <div class="{% if msg.user.user_id == request.session.user_id %}my-message{% else %}other-message{% endif %}">
+                <strong>{{ msg.user.user_id }}</strong>: {{ msg.message }}
+            </div>
+        {% endfor %}
+    </div>
+    <input id="chat-message-input" type="text" size="100"><br />
+    <input id="chat-message-submit" type="button" value="Enter"/>
+
+    <script type="text/javascript">
+        let roomName = "{{ room_name | escapejs }}";
+        const currentUserId = "{{ request.session.user_id|escapejs }}";
+
+        let chatSocket = new WebSocket(
+            `ws://${window.location.host}/ws/chatting/${roomName}/`
+        );
+
+        chatSocket.onmessage = (e) => {
+            let data = JSON.parse(e.data);
+            let message = data['message'];
+            let user_id = data['user_id'];
+
+            let div = document.createElement("div");
+            div.className = (user_id === currentUserId) ? "my-message" : "other-message";
+            div.innerHTML = `<strong>${user_id}</strong>: ${message}`;
+            document.querySelector("#chat-log").appendChild(div);
+
+            // 스크롤 아래로
+            document.querySelector("#chat-log").scrollTop = document.querySelector("#chat-log").scrollHeight;
+        };
+
+        window.onload = () => {
+            const chatLog = document.querySelector("#chat-log");
+            chatLog.scrollTop = chatLog.scrollHeight;
+        };
+
+        chatSocket.onclose = (e) => {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector("#chat-message-input").focus();
+        document.querySelector("#chat-message-input").addEventListener("keyup",(e) => {
+            if (e.keyCode === 13) { 
+                document.querySelector("#chat-message-submit").click();
+            }
+        });
+
+        document.querySelector("#chat-message-submit").addEventListener("click", (e) => {
+            let messageInputDom = document.querySelector("#chat-message-input");
+            let message = messageInputDom.value;
+            if (message.trim()) {
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                messageInputDom.value = '';
+            }
+        });
+    </script>
+</body>
+</html>

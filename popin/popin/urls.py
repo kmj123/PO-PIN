@@ -17,7 +17,7 @@ urlpatterns = [
     path('community/', include('community.urls')),
     path('pocadeco/', include('pocadeco.urls')),
     path('customer/', include('customer.urls')),
-    
+    path('chatting/', include('chatting.urls')),
 ]
 
 

@@ -38,9 +38,11 @@ INSTALLED_APPS = [
     'community',
     'pocadeco',
     'customer',
+    'chatting',
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # 가장 위쪽에!
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,6 +51,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'popin.urls'
 
@@ -69,6 +73,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'popin.wsgi.application'
 
+ASGI_APPLICATION = 'popin.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],  #'localhost' 말고 서비스 이름인 'redis' 사용
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -115,6 +129,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 STATIC_URL = 'static/'
 # static파일 위치 설정 - 현재root 모든 static폴더를 가져옴
 # 정적파일 : css,js,image
@@ -125,6 +141,7 @@ STATICFILES_DIRS = (
 ### 파일업로드 위치
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
 #MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 # MEDIA_ROOT = 'c:/aaa' # 로컬드라이브 설정
 
