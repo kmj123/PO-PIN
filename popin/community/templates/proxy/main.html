@@ -59,17 +59,14 @@
       <div class = "comment">
         대리구매는 신뢰할 수 있는 사용자와 진행하시고, 거래 전 충분한 소통을 권장합니다.
       </div>
-
-      <form method="GET" action="{% url 'community:proxy' %}">
       <div class="search-filter-container">
         <div class="search-toggle">
           <button class="toggle-btn active" data-type="general">일반 검색</button>
           <button class="toggle-btn" data-type="tag">태그 검색</button>
         </div>
 
-        <input type="text" id="generalSearch" class="search-input" placeholder="제목으로 검색">
-
-        <input type="text" id="tagSearch" class="search-input" placeholder="태그 검색" style="display:none">
+        <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목으로 검색" value="{{ query }}">
+         <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
 
         <select id="stateFilter" class="filter-select">
           <option value="">전체 상태</option>
@@ -83,17 +80,21 @@
             <option value = "조회순">조회순</option>
         </select>
       </div>
-    </form>
         <div class="postlist">
           <!-- 동행 카드들 -->
+<<<<<<< HEAD
           {% for post in posts %}
+=======
+      <form method="GET" action="{% url 'community:proxy' %}">
+        {% for post in posts %}
+>>>>>>> 548ffa6f8337681cc1110afe2e6a9eb0634748b1
           <div class="post-card" 
-          data-category="BLACKPINK" 
-          data-imgs="/static/images/test/proxy1.png,/static/images/test/proxy2.png,/static/images/test/proxy3.png">
+          data-category="{{ post.artist }}" 
+          data-imgs="{% for image in post.images.all %}{{ post.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
             <div class="post-header">
               <span class = "boardf">
-                <span class = "artist">BLACKPINK</span>
-                <span class = "ptype">전시회</span>
+                <span class = "artist">{{ post.artist }}</span>
+                <span class = "ptype">{{ post.location }}</span>
 
               </span>
               <div class="post-title-row">
@@ -110,7 +111,6 @@
                 
               </div>
             </div>
-              
               <div class="post-info">
                   <div class="info-date">
                       <span class="info-icon">📅</span>
@@ -129,13 +129,18 @@
                       <span>{{ post.reward }}</span>
                   </div>
               </div>
-              
-              <div class="post-description">{{ post.description }}</div>
+              <div class="post-description">
+                  {{ post.description|truncatechars:100 }}
+                </div>
+                <!-- 전체 내용을 숨겨진 상태로 저장 -->
+                <div class="post-content" style="display:none;">
+                  {{ post.description }}
+                </div>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>👤 {{ post.author.nickname }}</span>
-                      <span class="post-meta">{{ post.created_at|date:"Y-m-d" }}</span>
+                      <span class="post-meta">{{ post.created_at|date:"Y년 n월 j일 H:i" }}</span>
                   </div>
                   <div class="participants">
                       <span>👁️{{ post.views }}</span>
@@ -146,6 +151,7 @@
                   <button class="join-btn active">채팅하기</button>
               </div>
           </div>
+<<<<<<< HEAD
           {% endfor %}
           <div class="post-card" 
           data-category="EXO" 
@@ -439,6 +445,11 @@
               </div>
             </div>
 
+=======
+           </form>
+          {% endfor %}
+          
+>>>>>>> 548ffa6f8337681cc1110afe2e6a9eb0634748b1
           </div>      
 
             <div class="pagination">

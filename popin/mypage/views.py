@@ -2,13 +2,14 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import JsonResponse
 import json
-
 from collections import defaultdict
-
-from idols.models import Group
+from idols.models import Group, Member
 from signupFT.models import User, UserRelation
 from photocard.models import Photocard
 from photocard.models import TempWish
+from community.models import CompanionPost, SharingPost, ProxyPost
+from django.shortcuts import get_object_or_404
+from community.models import ExchangeReview
 
 def profile(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -40,9 +41,9 @@ def profile(request):
             'profile_image':user.profile_image, # 프로필 이미지
             'members': user.bias_member.all(), # 최애 멤버 (member.group.name으로 최애 그룹 이름 접근 가능)
             'groups': user.bias_group.all(), # 최애 그룹
+            'bias_pairs': zip(user.bias_group.all(), user.bias_member.all())  # ✅ 그룹-멤버 쌍
             }
-        
-        
+
         return render(request,'mypage/profile.html', context)
     
     except User.DoesNotExist:
@@ -227,18 +228,63 @@ def trade(request):
 
     return JsonResponse({'error': 'POST 요청만 허용됩니다.'}, status=400)
 
-# # 후기글
-# def review(request):
-#     return JsonResponse()
 
-# # 커뮤니티 작성글
-# def review(request):
-#     return JsonResponse()
+# #커뮤니티 작성글(동행, 나눔, 대리구매) 
+def review(request):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "로그인 필요"}, status=403)
 
+    try:
+        user = User.objects.get(user_id=user_id)
+
+        # 사용자 작성 게시글 조회
+        companion_posts = CompanionPost.objects.filter(author=user).values(
+            "id","title", "created_at", "views", "comments_count"
+        )
+
+        sharing_posts = SharingPost.objects.filter(author=user).values(
+            "id","title", "created_at", "views"
+        )
+
+        proxy_posts = ProxyPost.objects.filter(author=user).values(
+           "id","title", "created_at", "views"
+        )
+
+        return JsonResponse({
+            "companion": list(companion_posts),
+            "sharing": list(sharing_posts),
+            "proxy": list(proxy_posts),
+        })
+
+    except User.DoesNotExist:
+        return JsonResponse({"error": "사용자 없음"}, status=404)
+###########################################
+#내가쓴 교환판매후기
+
+def my_written_reviews(request):
+    user_id = request.session.get("user_id")
+    user = get_object_or_404(User, user_id=user_id)
+    
+    reviews = ExchangeReview.objects.filter(writer=user).values(
+        'id', 'title', 'created_at', 'overall_score'
+    )
+    return JsonResponse({'written_reviews': list(reviews)})
+# 내가받은 교환판매후기 
+def my_received_reviews(request):
+    user_id = request.session.get("user_id")
+    user = get_object_or_404(User, user_id=user_id)
+    
+    reviews = ExchangeReview.objects.filter(partner=user).values(
+        'id', 'title', 'created_at', 'overall_score'
+    )
+    return JsonResponse({'received_reviews': list(reviews)})     
+###########################################
 # 차단 유저 관리
 def block_list(request):
     if request.method == 'POST':
         user_id = request.session.get('user_id')
+        
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
 
@@ -274,15 +320,31 @@ def update_profile(request):
             # 텍스트 데이터는 request.POST에서
             user.nickname = request.POST.get('nickname', user.nickname)
             user.introduction = request.POST.get('introduction', user.introduction)
-
+        
             # 파일은 request.FILES에서
             profile_img = request.FILES.get('profile_image')
             if profile_img:
                 user.profile_image = profile_img
                 
+            # 최애 멤버/그룹
+            member_name = request.POST.get('member')
+            group_name = request.POST.get('group')
+            new_nickname = request.POST.get('nickname')
+            request.session['nickname'] = new_nickname            
+
+            if member_name and group_name:
+                try:
+                    group = Group.objects.get(name=group_name)
+                    member = Member.objects.get(name=member_name, group=group)
+                    user.bias_group.set([group])   # bias_group은 many-to-many
+                    user.bias_member.set([member]) # bias_member도 many-to-many
+                except (Group.DoesNotExist, Member.DoesNotExist):
+                    return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
+                
             print(user)
             
             user.save()
+            return redirect('/mypage/profile')
             return JsonResponse({'message': '프로필 수정 완료'})
         except Exception as e:
             return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)
@@ -301,7 +363,6 @@ def update_blocklist(request):
             body = json.loads(request.body)
             id = body.get('id')
             to_user = User.objects.get(user_id = id) # 차단한 유저 
-            
             
             relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
             if not relation:

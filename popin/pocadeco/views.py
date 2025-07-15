@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from signupFT.models import User
 from photocard.models import Photocard
@@ -13,18 +13,19 @@ from django.http import JsonResponse
 import json, base64
 
 from django.core.paginator import Paginator
+from pocadeco.models import DecoWish
 
-# 데코포토 전체 리스트
+
 # 데코포토 전체 리스트
 def decolist(request):
     # 전체 데코포토 리스트 불러오기
     decoratedpoca = DecoratedPhotocard.objects.select_related('member__group').order_by('-created_at').annotate(wish_count=Count('wished_by_users'))
-    searchInput = request.GET.get("search-input")
+    searchInput = request.GET.get("search-input", "")
     
     # 필터용 쿼리 파라미터 받아오기
     searchgroup = request.GET.getlist('searchgroup')
     selected_members = request.GET.getlist('selectedMembers')
-    sort = request.GET.get('sort')
+    sort = request.GET.get('sort', '')
     
     # 조건부 필터링 (값이 있을 경우에만 필터링)
     if searchgroup:
@@ -84,6 +85,75 @@ def decolist(request):
     
     context = {'decoList': deco_list, 'page_num':page_num, 'sort':sort, 'searchInput':searchInput}
     return render(request,'pocadeco/decolist.html', context)
+
+def decoview(request, id):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = get_object_or_404(User, user_id=user_id)
+    decophotocard = DecoratedPhotocard.objects.get(id=id)
+    is_wish = DecoWish.objects.filter(user=user, DecoratedPhotocard=decophotocard)
+    
+    decophotocard.hit += 1
+    decophotocard.save()
+
+    if decophotocard.tag:
+        tags = decophotocard.tag.split(',')
+        context = {
+            'id':decophotocard.id,
+            'nickname' : decophotocard.user.nickname,
+            'title': decophotocard.title,
+            'result_image': decophotocard.result_image,
+            'tags' : tags,
+            'group' : decophotocard.member.group.name,
+            'member' :decophotocard.member.name,
+            'hit' : decophotocard.hit,
+            'created_at' : decophotocard.created_at,
+            'like' : decophotocard.wished_by_users.count(),
+            'is_wish':is_wish,
+        }
+    else:
+        context = {
+            'id':decophotocard.id,
+            'nickname' : decophotocard.user.nickname,
+            'title': decophotocard.title,
+            'result_image': decophotocard.result_image,
+            'group' : decophotocard.member.group.name,
+            'member' :decophotocard.member.name,
+            'hit' : decophotocard.hit,
+            'created_at' : decophotocard.created_at,
+            'like' : decophotocard.wished_by_users.count(),
+            'is_wish':is_wish,
+        }
+        
+    return render(request, 'pocadeco/decoview.html', context)
+
+def toggle_wish(request, id):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
+    user = get_object_or_404(User, user_id=user_id)
+    decoPoca = get_object_or_404(DecoratedPhotocard, id=id)
+    temp_wish = DecoWish.objects.filter(user=user, DecoratedPhotocard=decoPoca).first()
+    
+    if temp_wish:
+        temp_wish.delete()
+        action = 'decreased'
+    else:
+        DecoWish.objects.create(user=user, DecoratedPhotocard=decoPoca)
+        action = 'increased'
+        
+    wish_count = decoPoca.wished_by_users.count()
+    
+    # ajax 요청에 대해서는 JSON 응답을 반환
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'action': action, 'new_like_count': wish_count})
+    # 일반적인 요청에는 포토카드 교환 페이지로 리다이렉트
+    return redirect('/pocadeco/decolist/')
 
 # 데코포카 생성 페이지
 def main(request):

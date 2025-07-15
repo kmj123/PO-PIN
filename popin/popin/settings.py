@@ -20,6 +20,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.humanize',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -149,3 +150,4 @@ EMAIL_HOST_USER = ' popinproject123@gmail.com'
 EMAIL_HOST_PASSWORD = 'puyz isul hqyi igdf'  # 앱 비밀번호 발급받아야됨..
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+KAKAO_REST_API_KEY = '5266ddb28bc841325f4d4e639f6ef9be'

@@ -7,10 +7,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>커뮤니티| 교환후기 작성</title>
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <title>교환후기 수정</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -123,13 +123,14 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    .required {
-      color: #ff4444;
-    }
-
 
     .dash-top h2 {
       font-size: 24px;
+    }
+
+    .line {
+      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
+      margin: 20px auto 0 auto;
     }
 
     table.writebox {
@@ -377,16 +378,18 @@
     .btn button:hover {
       background-color: #6b5a96;
     }
+        .required {
+      color: #ff4444;
+    }
   </style>
 </head>
 <body>
-
   <form method="POST"  action="{% url 'community:write_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
       <div class="dash-top">
-        <h2>교환후기 글 작성</h2>
+        <h2>교환후기 글 수정</h2>
         <div class="line"></div>
       </div>
     </div>
@@ -394,26 +397,28 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" name="title" id="title"/></td>
+          <td><input type="text" class="wlong" name="title" id="title" value = "교환후기 제목"/></td>
         </tr>
         <tr>
 
         <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
-        <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: nct wish" /></td>
+        <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: nct wish" value = "엔시티 위시" /></td>
       </tr>
 
 
         <tr>
           <th scope="row"><label for="content">후기내용 <span class="required">*</span></label></th>
-          <td><textarea class="tta" name="content" id="content" placeholder="교환 경험에 대한 상세한 후기를 작성해주세요."></textarea></td>
+          <td><textarea class="tta" name="content" id="content" placeholder="교환 경험에 대한 상세한 후기를 작성해주세요." >
+            ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ
+          </textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="partner">상대방 아이디 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" name="partner" id="partner" placeholder="교환하신 상대방의 아이디를 입력해주세요"/></td>
+          <td><input type="text" class="wlong" name="partner" id="partner" placeholder="교환하신 상대방의 아이디를 입력해주세요" value = "bttfbttf"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" name="tags" id="tags" placeholder="#친절 #재거래희망 #빠른배송 등"/></td>
+          <td><input type="text" class="wlong" name="tags" id="tags" placeholder="#친절 #재거래희망 #빠른배송 등" value = "#ddd #sas #aaa"/></td>
         </tr>
         <tr>
           <th scope="row">온/오프 <span class="required">*</span></th>
@@ -481,215 +486,11 @@
 
     <div class="btn">
       <button type="submit" value="write">확인</button>
-      <button type="button" value="cancel">취소</button>
+      <button type="button" value="cancel" onclick="location.href='{% url 'community:chgReviewview' %}'">취소</button>
     </div>
   </div>
+
 </form>
-   <script>
-  let selectedFiles = [];
-
-  document.addEventListener("DOMContentLoaded", function () {
-    setupToggleSwitches();
-    setupRating();
-    setupFileUpload();
-    setupButtons();
-  });
-
-  function formatFileSize(bytes) {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Bytes';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
-  }
-
-  function setupToggleSwitches() {
-    const methodMap = {
-      onlineToggle: "온라인",
-      offlineToggle: "오프라인"
-    };
-    const transactionMap = {
-      saleToggle: "판매",
-      exchangeToggle: "교환"
-    };
-
-    const methodInput = document.getElementById("methodInput");
-    const transactionInput = document.getElementById("transactionTypeInput");
-
-    Object.keys(methodMap).forEach(id => {
-      const el = document.getElementById(id);
-      el?.addEventListener("click", () => {
-        Object.keys(methodMap).forEach(k => document.getElementById(k)?.classList.remove("active"));
-        el.classList.add("active");
-        methodInput.value = methodMap[id];
-      });
-    });
-
-    Object.keys(transactionMap).forEach(id => {
-      const el = document.getElementById(id);
-      el?.addEventListener("click", () => {
-        Object.keys(transactionMap).forEach(k => document.getElementById(k)?.classList.remove("active"));
-        el.classList.add("active");
-        transactionInput.value = transactionMap[id];
-      });
-    });
-  }
-
-  function setupRating() {
-    const stars = document.querySelectorAll('.star');
-    const ratingText = document.querySelector('.rating-text');
-    const scoreInput = document.getElementById("scoreInput");
-
-    stars.forEach(star => {
-      star.addEventListener('click', function () {
-        const rating = parseInt(this.dataset.rating);
-        scoreInput.value = rating;
-        stars.forEach((s, index) => s.classList.toggle('active', index < rating));
-        const ratingTexts = ['매우 불만족', '불만족', '보통', '만족', '매우 만족'];
-        ratingText.textContent = `${rating}점 - ${ratingTexts[rating - 1]}`;
-      });
-    });
-  }
-
-  function setupFileUpload() {
-    const fileUploadArea = document.getElementById('fileUploadArea');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-
-    fileUploadArea.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', function () {
-      const files = Array.from(fileInput.files);
-      if (selectedFiles.length + files.length > 5) {
-        alert("최대 5개까지만 업로드할 수 있습니다.");
-        fileInput.value = '';
-        return;
-      }
-      files.forEach(file => {
-        selectedFiles.push(file);
-        displayFile(file);
-      });
-    });
-
-    fileUploadArea.addEventListener('dragover', function (e) {
-      e.preventDefault();
-      this.classList.add('dragover');
-    });
-
-    fileUploadArea.addEventListener('dragleave', function (e) {
-      e.preventDefault();
-      this.classList.remove('dragover');
-    });
-
-    fileUploadArea.addEventListener('drop', function (e) {
-      e.preventDefault();
-      this.classList.remove('dragover');
-      handleFiles(e.dataTransfer.files);
-    });
-
-    function handleFiles(files) {
-      Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/') && selectedFiles.length < 5) {
-          selectedFiles.push(file);
-          displayFile(file);
-        }
-      });
-    }
-  }
-
-  function displayFile(file) {
-    const fileList = document.getElementById('fileList');
-    const fileItem = document.createElement('div');
-    fileItem.className = 'file-item';
-    fileItem.innerHTML = `
-      <div class="file-info">
-        <div class="file-icon">📷</div>
-        <div>
-          <span class="file-name">${file.name}</span>
-          <span class="file-size">${formatFileSize(file.size)}</span>
-        </div>
-      </div>
-      <div class="file-remove" onclick="removeFile('${file.name}')">×</div>
-    `;
-    fileList.appendChild(fileItem);
-  }
-
-  window.removeFile = function (fileName) {
-    selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-    document.querySelectorAll('.file-item').forEach(item => {
-      if (item.querySelector('.file-name').textContent === fileName) {
-        item.remove();
-      }
-    });
-
-
-   
-
-    const dataTransfer = new DataTransfer();
-    selectedFiles.forEach(file => dataTransfer.items.add(file));
-    document.getElementById('fileInput').files = dataTransfer.files;
-  }
-
-  function setupButtons() {
-    const writeButton = document.querySelector('button[value="write"]');
-    const cancelButton = document.querySelector('button[value="cancel"]');
-
-    writeButton.addEventListener("click", function (e) {
-      e.preventDefault();
-
-      const form = new FormData();
-      const title = document.getElementById("title").value.trim();
-      const artist = document.getElementById("artist").value.trim();
-      const content = document.getElementById("content").value.trim();
-      const partner = document.getElementById("partner").value.trim();
-      const tags = document.getElementById("tags").value.trim();
-      const method = document.getElementById("methodInput").value;
-      const transaction = document.getElementById("transactionTypeInput").value;
-      const score = document.getElementById("scoreInput").value;
-
-      if (!title || !artist || !content || !partner || !method || !transaction || !score) {
-        alert("필수 항목을 모두 입력해주세요.");
-        return;
-      }
-
-      form.append('title', title);
-      form.append('artist', artist);
-      form.append('content', content);
-      form.append('partner', partner);
-      form.append('tags', tags);
-      form.append('method', method);
-      form.append('transaction_type', transaction);
-      form.append('overall_score', score);
-
-      selectedFiles.forEach(file => form.append('images', file));
-
-      fetch("{% url 'community:write_review' %}", {
-        method: 'POST',
-        body: form,
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}'
-        }
-      })
-        .then(response => {
-          if (response.ok) {
-            alert("성공적으로 등록되었습니다.");
-            window.location.href = "{% url 'community:chgReviewmain' %}";
-          } else {
-            return response.text().then(text => { throw new Error(text); });
-          }
-        })
-        .catch(err => {
-          console.error("오류:", err);
-          alert("저장 중 오류가 발생했습니다.");
-        });
-    });
-
-    cancelButton.addEventListener("click", function () {
-      if (confirm("작성 중인 내용이 모두 삭제됩니다. 정말로 취소하시겠습니까?")) {
-        window.history.back();
-      }
-    });
-  }
-</script>
-{%endblock%}
 </body>
+{% endblock content %}
 </html>

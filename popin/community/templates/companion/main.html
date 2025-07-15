@@ -55,7 +55,8 @@
           </div>
           <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목으로 검색" value="{{ query }}">
          <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
-          <div class = "Fselect">
+
+
             <select id="regionFilter" name="region" class="filter-select">
               <option value="" {% if not request.GET.region %}selected{% endif %}>지역 선택</option>
               <option value="서울" {% if request.GET.region == "서울" %}selected{% endif %}>서울</option>
@@ -76,6 +77,9 @@
               <option value="제주" {% if request.GET.region == "제주" %}selected{% endif %}>제주</option>
               <option value="기타" {% if request.GET.region == "기타" %}selected{% endif %}>기타</option>
             </select>
+
+            
+
             <select id="stateFilter" class="filter-select">
               <option value="">게시글 상태</option>
               <option>모집중</option>
@@ -89,6 +93,7 @@
           {% for post in posts %}
           <!-- 동행 카드들 -->
           <div class="post-card" data-category="{{ post.category }}"
+
            data-imgs="{% for image in post.images.all %}{{ image.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
           <div class="post-header">
             <div class = "postf">
@@ -131,9 +136,14 @@
                 {{ post.content }}
               </div>
               <div class="post-modal" style="display: none;">{{ post.content }}</div>
+
               <div class="post-footer">
                   <div class="post-wrtier_id">
                       <span>:상반신_그림자: {{ post.author.nickname }}</span>
+              
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>👤 {{ post.author.nickname }}</span>
                        <span class="post-meta">{{ post.created_at|date:"Y년 n월 j일 H:i" }}</span>
                     </div>
                     <div class="participants">
@@ -147,10 +157,11 @@
             {% else %}
               <button class="join-btn active">채팅하기</button>
             {% endif %}
-          </div>
+          </div>          
           <p id="noResultsMessage" style="display:none; text-align:center; padding:20px;"></p>
         </div>
           {% endfor %}
+
             <div class="pagination">
                   <a href="#" title="첫 페이지">«</a>
                   <a href="#" title="이전 페이지">‹</a>
@@ -191,6 +202,10 @@
                   <img id="modalImage" style="max-width:80%; max-height:80%;" />
                   <button id="nextBtn">›</button>
                 </div>
+<<<<<<< HEAD
+=======
+                
+>>>>>>> 548ffa6f8337681cc1110afe2e6a9eb0634748b1
             </div>
           </div>
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
