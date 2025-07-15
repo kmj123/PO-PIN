@@ -22,31 +22,36 @@ def chatting(request):
     try:
         user = User.objects.get(user_id=user_id) # 로그인한 사용자
         rooms = ChatRoom.objects.filter(host_user=user) | ChatRoom.objects.filter(guest_user=user)
-        rooms = rooms.distinct().order_by('-last_timestamp')  # 최근 채팅 순 정렬
+        rooms = rooms.distinct().order_by('-last_timestamp').exclude()  # 최근 채팅 순 정렬
         first_room = rooms.first()
         messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
         
         room_list = []
         for room in rooms:
-            read_count = ChatMessage.objects.filter(
-                room=room,
-                is_read=False
-            ).exclude(send_user=user).count()
-            if user.nickname == room.host_user.nickname:
-                nickname = room.guest_user.nickname
-                user_id = room.guest_user.user_id
-            else:
-                nickname = room.host_user.nickname
-                user_id = room.host_user.user_id
-            
-            room_list.append({
-                'id':room.id,
-                'user_id':user_id,
-                'nickname': nickname,
-                'last_timestamp':room.last_timestamp,
-                'last_message' : room.last_message,
-                'read_count' : read_count,
-            })
+            if room.category in ("exchange", "sale"):
+                post = Photocard.objects.get(pno=room.post_id)
+                if post.sell_state == "후" and post.buy_state == "후":
+                    continue
+                else:
+                    read_count = ChatMessage.objects.filter(
+                        room=room,
+                        is_read=False
+                    ).exclude(send_user=user).count()
+                    if user.nickname == room.host_user.nickname:
+                        nickname = room.guest_user.nickname
+                        user_id = room.guest_user.user_id
+                    else:
+                        nickname = room.host_user.nickname
+                        user_id = room.host_user.user_id
+                    
+                    room_list.append({
+                        'id':room.id,
+                        'user_id':user_id,
+                        'nickname': nickname,
+                        'last_timestamp':room.last_timestamp,
+                        'last_message' : room.last_message,
+                        'read_count' : read_count,
+                    })
 
         context = {
             'rooms':room_list,
