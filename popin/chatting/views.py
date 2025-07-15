@@ -190,17 +190,24 @@ def block_user(request, target_id):
         body = json.loads(request.body)
         reason = body.get('reason', '')
         
-        # 이미 동일한 관계가 있는 경우 방지 (예외 처리할 수도 있음)
-        relation, created = UserRelation.objects.get_or_create(
-            from_user=user,
-            to_user=target_user,
-            relation_type='BLOCK',
-            reason = reason,
-        )
-        if not created:
+        try:
+            # 먼저 동일한 관계가 있는지 확인
+            relation = UserRelation.objects.get(
+                from_user=user,
+                to_user=target_user,
+                relation_type='BLOCK'
+            )
             return JsonResponse({'success': True, 'message': '이미 차단된 사용자입니다.'})
 
-        return JsonResponse({'success': True})
+        except UserRelation.DoesNotExist:
+            # 없다면 새로 생성
+            UserRelation.objects.create(
+                from_user=user,
+                to_user=target_user,
+                relation_type='BLOCK',
+                reason=reason
+            )
+            return JsonResponse({'success': True, 'message': '사용자를 차단했습니다.'})
     
     except User.DoesNotExist:
         return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)

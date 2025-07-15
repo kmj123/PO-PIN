@@ -931,7 +931,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert("사용자가 차단되었습니다.");
+                    alert(data.message);
                     // 추가적으로 UI 정리하고 싶으면 여기에 처리
                 } else {
                     alert("오류: " + data.error);
