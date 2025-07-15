@@ -908,6 +908,28 @@
         }
     }
 
+    // ajax용 전역 함수
+    function getPlace(location, place) {
+    return (location === 'location' || !place) ? '내위치' : place;
+    }
+
+    function getAvailableDate(available_at) {
+        return available_at ? available_at.split('T')[0] : '협의';
+    }
+
+    // 거래완료시 sell_state 뱃지 회색으로 변경
+    function getSellStateClass(sell_state) {
+        return sell_state === '거래중' ? 'badge' : 'badge Nope';
+    }
+
+    function getPrice(trade_type,price){
+        console.log(typeof trade_type, trade_type);
+        if (trade_type === 0 || trade_type === '교환'){
+            return '';
+        }
+        return `가격: ${trade_type.toLocaleString()}원`;
+    }
+
     // #Recent AJAX
     $.ajax({
         url: "/mypage/latest/",
@@ -925,28 +947,30 @@
 
 
                 // 조건처리
-                const loadPlace  = (card.location === 'location' || !card.place) ? '내위치' : card.place;
-                const loadDdate = card.available_at ? card.available_at.split('T')[0] : '협의';
-                const sell_stateclass = card.sell_state === '거래중' ? 'badge' : 'badge Nope';
-                const trade_typeclass = card.sell_state === '거래완료' ? 'badge Nope' : 'badge';
+                const loadPlace = getPlace(card.location, card.place);
+                const loadDdate = getAvailableDate(card.available_at);
+                const sell_stateclass = getSellStateClass(card.sell_state);
 
-                return ` <a href="/photocard/detail/${ card.pno }">
+                return ` 
+                    <a href="/photocard/detail/${ card.pno }">
                         <div class="item" data-pno="${ card.pno }">
-                            <div class="item-header">
-                                <div class="item-title">
-                                    <h3>${card.title}</h3>
+                            <div class="wishlist">
+                                <div class="mypage-list-img">
+                                    <img src=${card.image_url}>
                                 </div>
-                            </div>
-                            <div class="item-footer">
-                                <div class="item-info">
-                                    <span class="${trade_typeclass}">${card.trade_type}</span>
-                                    <span class="${sell_stateclass}">${card.sell_state}</span>
-                                    <span class="badge tag">${loadPlace}</span>
+                                <div class="wish-list-txt">
+                                        <h3>${card.title}</h3>
+                                    <div class="item-info">
+                                        <span class="${sell_stateclass}">${card.trade_type}</span>
+                                        <span class="${sell_stateclass}">${card.sell_state}</span>
+                                        <span class="badge tag">📍${loadPlace}</span>
+                                    </div>
+                                    <p class="info-bottom">📆 | ${loadDdate}
                                 </div>
-                                <p>거래 가능일: ${loadDdate} | 앨범명: ${card.album}</p>
                             </div>
                         </div>
-                    </a>`}).join("");
+                    </a>`
+                }).join("");
 
             recentList.append(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
         },
@@ -1027,28 +1051,33 @@
             wishList.empty();
             
             const wishdata = data.wishlist.map(wish => {
-                const loadPlace  = (wish.location === 'location' || !wish.place) ? '내위치' : wish.place;
-                const loadDdate = wish.available_at ? wish.available_at.split('T')[0] : '협의';
-                const sell_stateclass = wish.sell_state === '거래중' ? 'badge' : 'badge Nope';
-                const trade_typeclass = wish.sell_state === '거래완료' ? 'badge Nope' : 'badge';
+                const loadPlace = getPlace(wish.location, wish.place);
+                const loadDdate = getAvailableDate(wish.available_at);
+                const sell_stateclass = getSellStateClass(wish.sell_state);
+                const loadprice = getPrice(wish.price);
+                
                 return (
-                `<div class="item">
-                            <a href="/photocard/detail/${wish.pno}">
+                    `<div class="item">
+                        <a href="/photocard/detail/${wish.pno}">
                             <div class="wishlist">
-                                <div class="wish-list-img">
+                                <div class="mypage-list-img">
                                     <img src=${wish.image_url}>
                                 </div>
                                 <div class="wish-list-txt">
                                     <h3>${wish.title}</h3>
-                                    <p>${wish.place}</p>
-                                    <p>${wish.price}</p>
-                                    <span class="badge reserved">${wish.sell_state}</span>
-                                    <span class="badge reserved">${wish.trade_state}</span>
-                                    <p> ${loadDdate} | ${wish.album}</p>
+                                    <div class="item-info">
+                                        <span class="${sell_stateclass}">${wish.trade_type}</span>
+                                        <span class="${sell_stateclass}">${wish.sell_state}</span>
+                                        <span class="badge tag">📍${loadPlace}</span>
+                                        <p>${loadprice}</p>
+                                    </div>
+                                    <p class="info-bottom">📆 | ${loadDdate}
+                                    💬
                                 </div>
                             </div>
-                            </a>
-                        </div>`);
+                        </a>
+                    </div>
+                    `);
                 }).join("");
                 wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
         },
@@ -1070,13 +1099,25 @@
             const saleList = $("#transactions #selling-list");
             saleList.empty();
 
-            const saleData = data.sell_poca.map(sell => 
-                `<div class="item">
+            const saleData = data.sell_poca.map(sell => {
+
+                const loadPlace = getPlace(wish.location, wish.place);
+                const loadDdate = getAvailableDate(wish.available_at);
+                const sell_stateclass = getSellStateClass(wish.sell_state);
+                const loadprice = getPrice(wish.price);
+
+                return `<div class="item">
                 <a href="/photocard/detail/${sell.pno}">
                     <h3>${sell.title}</h3>
-                    <p>${sell.album} | 태그 ${sell.trade_state}</p>
+                    <div class="item-info">
+                        <span class="${sell_stateclass}">${sell.trade_type}</span>
+                        <span class="${sell_stateclass}">${sell.sell_state}</span>
+                        <span class="badge tag">📍${loadPlace}</span>
+                        <p>${loadprice}</p>
+                    </div>
+                    <p class="info-bottom">📆 | ${loadDdate}
                 </a>
-                </div>`).join("");
+                </div>`}).join("");
 
             saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
         }, error: function(xhr, status, error){
@@ -1167,7 +1208,7 @@
 
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
-                    <a hred="/community/chgReview/view/${received.post_id}">
+                    <a href="/community/chgReview/view/${received.post_id}">
                         <h3>작성자: ${received.writer}</h3>
                         <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
                         <p>${received.title} - ${received.content}</p>
@@ -1195,11 +1236,11 @@
 
                 const writtenData = data.written_reviews.map(written => 
                     `<div class="item">
-                    <a hred="/community/chgReview/view/${written.post_id}">
+                    <a href="/community/chgReview/view/${written.post_id}">
                         <h3>제목: ${written.title} </h3>
                         <p>작성자 : ${written.partner__nickname}</p>
                         <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
-                        <p class=".review-content">${written.content}</p>
+                        <p class="review-content">${written.content}</p>
                     </a>
                     </div>`).join("");
 
