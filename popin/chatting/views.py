@@ -150,11 +150,16 @@ def cancel_chat(request, room_id):
             
             if room.category in ("exchange", "sale"): # 거래중인 포스트 카테고리 
                 post = Photocard.objects.get(pno=room.post_id) # 거래중인 포스트 아이디
-                post.buyer = None # 거래자 삭제
-                post.buy_state = None # 거래 상태 삭제
-                post.save()
+                if post.sell_state != "후" and post.buy_state != "후" :
+                    post.buyer = None # 거래자 삭제
+                    post.buy_state = None # 거래 상태 삭제
+                    post.save()
+                    room.delete()
+                else:
+                    return JsonResponse({'error': f"{post.title}의 거래를 완료해 주세요"})
+                    
 
-                room.delete()
+                
                 return JsonResponse({'success': True, 'message': f"{post.title}의 거래가 취소되었습니다."})
 
             # # 교환/판매가 아니더라도 채팅방은 삭제
@@ -212,7 +217,7 @@ def change_poststate(request):
         
         room = ChatRoom.objects.get(id=room_id)
         
-        if room.category == "exchange" or room.category == "sale":
+        if room.category in ("exchange", "sale"):
             post = Photocard.objects.get(pno=room.post_id)
             if room.host_user.user_id == user.user_id:
                 post.sell_state = "후"
