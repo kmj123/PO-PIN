@@ -1131,7 +1131,7 @@
         // 내가 받은 후기글
         $.ajax({
             url: "/mypage/reviews/received/",
-            type: "POST",
+            type: "GET",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1142,7 +1142,7 @@
 
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
-                    <a hred="/community/chgReview/view/${received.post_id}">
+                    <a href="/community/chgReview/view/${received.id}">
                         <h3>작성자: ${received.writer}</h3>
                         <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
                         <p>${received.title} - ${received.content}</p>
@@ -1159,7 +1159,7 @@
         // 내가 쓴 후기글
         $.ajax({
             url: "/mypage/reviews/written/",
-            type: "POST",
+            type: "GET",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1170,7 +1170,7 @@
 
                 const writtenData = data.written_reviews.map(written => 
                     `<div class="item">
-                    <a hred="/community/chgReview/view/${written.post_id}">
+                    <a href="/community/chgReview/view/${written.id}">
                         <h3>제목: ${written.title} </h3>
                         <p>작성자 : ${written.partner__nickname}</p>
                         <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>

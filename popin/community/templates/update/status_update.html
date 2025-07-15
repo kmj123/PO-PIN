@@ -483,7 +483,7 @@
 
     <div class="btn">
       <button type="button" class="btn-submit" onclick="submitForm()">현황공유 등록</button>
-      <button type="button" class="btn-cancel"  onclick="location.href='{% url 'community:statusview' %}'">취소</button>
+      <button type="button" class="btn-cancel"  onclick="location.href='{% url 'community:statusview' post.id%}'">취소</button>
     </div>
   </div>
 
