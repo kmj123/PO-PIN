@@ -9,6 +9,8 @@ from adpage.models import Notice
 from django.db.models import Count
 from django.core.paginator import Paginator
 import json
+import requests
+import datetime
 
 
 def main(request):
@@ -23,6 +25,9 @@ def main(request):
         # 공지사항 최신글 (임시)
         notices = Notice.objects.all().order_by('is_pinned','-created_at')[:4]
         notice_titles = [notice.title for notice in notices]
+        
+        global dlist
+        dlist = publicData()
         
         # 전체 게시글
         total_photocard = Photocard.objects.all().count() 
@@ -93,6 +98,7 @@ def main(request):
             'total_decopoca':total_decopoca,
             'recent':recent,
             'titles': json.dumps(notice_titles),
+            'dlist':dlist,
         }
         
         return render(request, 'main.html', context)
@@ -154,3 +160,55 @@ def recent(request):
     page_num = paginator.get_page(page)
 
     return render(request, 'recent.html', {'category':category, 'searchinput':searchinput, 'page_num':page_num})
+
+
+def publicData():
+    dlist = []
+    serviceKey = '726643496e66627731313152476c504a'
+    
+    stations = ['2556', '4136', '2619', '2527', '4115', '1813', '0239', '0426', '0339']
+    inouts = [1, 2]
+    
+    week_tag = get_week_tag()
+    
+    for station in stations:
+        found_first = False  # 첫 번째 데이터를 찾았는지 여부
+        for inout in inouts:
+            url = f'http://openAPI.seoul.go.kr:8088/{serviceKey}/json/SearchLastTrainTimeByIDService/1/5/{station}/{week_tag}/{inout}/'
+            response = requests.get(url)
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                # 'row'에서 출발시간, 종착역, 상하행 정보 가져오기
+                rows = data['SearchLastTrainTimeByIDService']['row']
+                
+                if rows and not found_first:
+                    first_row = rows[0]  # 첫 번째 데이터
+                    dlist.append({
+                        'station_name': first_row['STATION_NM'],
+                        'subway_name': first_row['SUBWAYENAME'],
+                        'left_time': first_row['LEFTTIME'],
+                        'inout': first_row['INOUT_TAG'],
+                        'week_tag': week_tag  # 현재 week_tag 추가
+                    })
+                    found_first = True  # 첫 번째 데이터 찾았으므로 종료
+            else:
+                print(f"Error fetching data for station {station}")
+                
+    print("!!!===============================================")
+    print("공공데이터 : ",response.text)
+    print("===============================================")
+        
+    return dlist
+
+def get_week_tag():
+    today = datetime.datetime.today()
+    weekday = today.weekday()
+    
+    if weekday < 5:
+        return 1
+    elif weekday == 5:
+        return 2
+    else:
+        return 3

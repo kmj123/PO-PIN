@@ -338,23 +338,23 @@ def chgReviewview(request, post_id):
     return render(request, 'community/chgR_view.html', {'post': post})
     
 def recent(request):
-      def annotate_type(qs, type_name):
+    def annotate_type(qs, type_name):
         for post in qs:
             post.post_type = type_name
         return qs
 
-      posts = sorted(
+    posts = sorted(
 
-        chain(
-            annotate_type(ExchangeReview.objects.all(), 'review'),
-            annotate_type(SharingPost.objects.all(), 'sharing'),
-            annotate_type(ProxyPost.objects.all(), 'proxy'),
-            annotate_type(CompanionPost.objects.all(), 'companion'),
-            annotate_type(StatusPost.objects.all(), 'status'),
-        ),
-        key=attrgetter('created_at'),
-        reverse=True
-    )
+    chain(
+        annotate_type(ExchangeReview.objects.all(), 'review'),
+        annotate_type(SharingPost.objects.all(), 'sharing'),
+        annotate_type(ProxyPost.objects.all(), 'proxy'),
+        annotate_type(CompanionPost.objects.all(), 'companion'),
+        annotate_type(StatusPost.objects.all(), 'status'),
+    ),
+    key=attrgetter('created_at'),
+    reverse=True
+)
 
     paginator = Paginator(posts, 10)  # 한 페이지당 10개씩
     page_number = request.GET.get('page')
@@ -363,13 +363,13 @@ def recent(request):
         'page_obj': page_obj,
     })
 
-<<<<<<< HEAD
-=======
+
       return render(request, 'community/community_recent.html', {'posts': posts})
 
 
+
 #############################################################################
->>>>>>> 548ffa6f8337681cc1110afe2e6a9eb0634748b1
+
 # 동행모집글 작성
 from django.shortcuts import render, redirect
 from django.utils import timezone
