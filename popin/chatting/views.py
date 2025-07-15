@@ -199,4 +199,32 @@ def block_user(request, target_id):
         return JsonResponse({'error': str(e)}, status=500)
     
 def change_poststate(request):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+
+    try:
+        user = User.objects.get(user_id=user_id) # 로그인한 사용자
+        
+        body = json.loads(request.body)
+        room_id = body.get('room_id', '')
+        
+        room = ChatRoom.objects.get(id=room_id)
+        
+        if room.category == "exchange" or room.category == "sale":
+            post = Photocard.objects.get(pno=room.post_id)
+            if room.host_user.user_id == user.user_id:
+                post.sell_state = "후"
+            elif room.guest_user.user_id == user.user_id:
+                post.buy_state = "후"
+            post.save()
+            return JsonResponse({'success': True, 'message': post.title + "의 거래가 완료되었습니다."})
+            
+    except User.DoesNotExist:
+        return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
+
+        
+            
+    
     return redirect('login:loginp')
