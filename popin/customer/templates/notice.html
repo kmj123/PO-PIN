@@ -380,23 +380,11 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <nav class="nav">
-            <div class="logo">PO-PIN</div>
-            <ul class="nav-menu">
-                <li><a href="#home">홈</a></li>
-                <li><a href="#exchange">포카교환</a></li>
-                <li><a href="#community">커뮤니티</a></li>
-                <li><a href="#decorate">포카꾸미기</a></li>
-                <li><a href="#customer">고객지원</a></li>
-            </ul>
-            <div class="banner-right">
-                <a href="#" class="home">
-                    <i class="fi-rr-caret-left"></i>이전으로
-                </a>
-            </div>
-        </nav>
-    </header>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
 
     <div class="notice">
         <div class="dash-top">
@@ -406,10 +394,10 @@
 
         <!-- 카테고리 탭 -->
         <div class="category-tabs">
-            <button class="tab-button active" onclick="showCategory('all')">전체</button>
-            <button class="tab-button" onclick="showCategory('general')">일반</button>
-            <button class="tab-button" onclick="showCategory('maintenance')">점검</button>
-            <button class="tab-button" onclick="showCategory('update')">업데이트</button>
+            <button class="tab-button active" onclick="filterByType('전체', this)">전체</button>
+            <button class="tab-button" onclick="filterByType('일반', this)">일반</button>
+            <button class="tab-button" onclick="filterByType('점검', this)">점검</button>
+            <button class="tab-button" onclick="filterByType('업데이트', this)">업데이트</button>
         </div>
 
         <div class="table-container">
@@ -431,57 +419,28 @@
                             <th>조회수</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="notice-tbody">
+                        {% for notice in notice_list %}
                         <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>포카꾸미기 이용 안내</a></td>
-                            <td>2025-06-25</td>
-                            <td>123</td>
+                            <td>
+                                <a href="/customer/notice_view/{{notice.id}}/">
+                                    <span class="category-badge 
+                                        {%if notice.notice_type == "일반"%} 
+                                            badge-general 
+                                        {%elif notice.notice_type == "점검"%} 
+                                            badge-maintenance 
+                                        {%elif notice.notice_type == "업데이트"%} 
+                                            badge-update 
+                                        {%endif%}">
+                                        {{notice.notice_type}}
+                                    </span>
+                                    {{notice.title}}
+                                </a>
+                            </td>
+                            <td>{{notice.created_at}}</td>
+                            <td>{{notice.views}}</td>
                         </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-update">업데이트</span>포핀 서비스 업데이트 안내</a></td>
-                            <td>2025-06-24</td>
-                            <td>89</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>포카교환 시 주의사항</a></td>
-                            <td>2025-06-23</td>
-                            <td>156</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>커뮤니티 이용수칙</a></td>
-                            <td>2025-06-22</td>
-                            <td>67</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>개인정보 처리방침 변경 안내</a></td>
-                            <td>2025-06-21</td>
-                            <td>201</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>고객지원 센터 운영시간 안내</a></td>
-                            <td>2025-06-20</td>
-                            <td>98</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-update">업데이트</span>포핀 앱 버전 2.0 출시</a></td>
-                            <td>2025-06-19</td>
-                            <td>234</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-maintenance">점검</span>서버 점검 일정 안내</a></td>
-                            <td>2025-06-18</td>
-                            <td>145</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-update">업데이트</span>포카꾸미기 신기능 추가</a></td>
-                            <td>2025-06-17</td>
-                            <td>178</td>
-                        </tr>
-                        <tr>
-                            <td><a href=""><span class="category-badge badge-general">일반</span>이벤트 당첨자 발표</a></td>
-                            <td>2025-06-16</td>
-                            <td>312</td>
-                        </tr>
+                        {%endfor %}
                     </tbody>
                 </table>
             </div>
@@ -626,20 +585,78 @@
     </div>
 
     <script>
-        function showCategory(category) {
-            // 모든 카테고리 컨텐츠 숨기기
+        function showCategory(category, button) {
+            // 모든 탭 콘텐츠 숨기기
             const contents = document.querySelectorAll('.category-content');
             contents.forEach(content => content.classList.remove('active'));
-            
-            // 모든 탭 버튼 비활성화
+
+            // 모든 버튼에서 active 제거
             const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(button => button.classList.remove('active'));
-            
-            // 선택된 카테고리 컨텐츠 보이기
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // 선택된 콘텐츠, 버튼 활성화
             document.getElementById(category).classList.add('active');
-            
-            // 선택된 탭 버튼 활성화
-            event.target.classList.add('active');
+            button.classList.add('active');
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    cookie = cookie.trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+        function filterByType(noticeType, button) {
+            // 버튼 active 처리
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            // AJAX 요청
+            fetch('/customer/filter_notice/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ notice_type: noticeType })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('notice-tbody');
+                container.innerHTML = '';
+
+                data.notices.forEach(notice => {
+                    container.innerHTML += `
+                        <tr>
+                            <td>
+                                <a href="/customer/notice_view/${notice.id}/">
+                                    <span class="category-badge ${
+                                        notice.notice_type === '일반' ? 'badge-general' :
+                                        notice.notice_type === '점검' ? 'badge-maintenance' :
+                                        'badge-update'
+                                    }">${notice.notice_type}</span>
+                                    ${notice.title}
+                                </a>
+                            </td>
+                            <td>${notice.created_at}</td>
+                            <td>${notice.views}</td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('에러 발생:', error);
+            });
         }
     </script>
 </body>

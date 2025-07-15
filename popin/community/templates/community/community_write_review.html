@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -119,14 +123,13 @@
       text-align: center;
       margin-bottom: 30px;
     }
+    .required {
+      color: #ff4444;
+    }
+
 
     .dash-top h2 {
       font-size: 24px;
-    }
-
-    .line {
-      border-bottom: 1px solid rgba(185, 180, 190, 0.96);
-      margin: 20px auto 0 auto;
     }
 
     table.writebox {
@@ -377,23 +380,6 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#home">홈</a></li>
-        <li><a href="#exchange">포카교환</a></li>
-        <li><a href="#community">커뮤니티</a></li>
-        <li><a href="#decorate">포카꾸미기</a></li>
-        <li><a href="#customer">고객지원</a></li>
-      </ul>
-      <div class="banner-right">
-        <a href="#" class="home">
-          <i class="fi-rr-caret-left"></i>이전으로
-        </a>
-      </div>
-    </nav>
-  </header>
 
   <form method="POST"  action="{% url 'community:write_review' %}" enctype="multipart/form-data">
     {% csrf_token %}
@@ -407,22 +393,22 @@
     <table class="writebox">
       <tbody>
         <tr>
-          <th scope="row"><label for="title">제목</label></th>
+          <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
           <td><input type="text" class="wlong" name="title" id="title"/></td>
         </tr>
         <tr>
 
-        <th scope="row"><label for="artist">아티스트</label></th>
+        <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
         <td><input type="text" class="wlong" name="artist" id="artist" placeholder="예: nct wish" /></td>
       </tr>
 
 
         <tr>
-          <th scope="row"><label for="content">후기내용</label></th>
+          <th scope="row"><label for="content">후기내용 <span class="required">*</span></label></th>
           <td><textarea class="tta" name="content" id="content" placeholder="교환 경험에 대한 상세한 후기를 작성해주세요."></textarea></td>
         </tr>
         <tr>
-          <th scope="row"><label for="partner">상대방 아이디</label></th>
+          <th scope="row"><label for="partner">상대방 아이디 <span class="required">*</span></label></th>
           <td><input type="text" class="wlong" name="partner" id="partner" placeholder="교환하신 상대방의 아이디를 입력해주세요"/></td>
         </tr>
         <tr>
@@ -430,7 +416,7 @@
           <td><input type="text" class="wlong" name="tags" id="tags" placeholder="#친절 #재거래희망 #빠른배송 등"/></td>
         </tr>
         <tr>
-          <th scope="row">온/오프</th>
+          <th scope="row">온/오프 <span class="required">*</span></th>
           <td>
             <div class="toggle-group">
             <input type="hidden" name="method" id="methodInput" value="">
@@ -446,7 +432,7 @@
           </td>
         </tr>
         <tr>
-          <th scope="row">거래 방식</th>
+          <th scope="row">거래 방식 <span class="required">*</span></th>
           <input type="hidden" name="transaction_type" id="transactionTypeInput" value="">
           <td>
             <div class="toggle-group">
@@ -462,7 +448,7 @@
           </td>
         </tr>
         <tr>
-          <th scope="row">총평점</th>
+          <th scope="row">총평점 <span class="required">*</span></th>
           <input type="hidden" name="overall_score" id="scoreInput" value="">
           <td>
             <div class="rating">
@@ -498,13 +484,9 @@
       <button type="button" value="cancel">취소</button>
     </div>
   </div>
-
 </form>
-  
-<script>
+   <script>
   let selectedFiles = [];
-  let currentRating = 0;
-  let selectedExchangeMethod = '';
 
   document.addEventListener("DOMContentLoaded", function () {
     setupToggleSwitches();
@@ -513,48 +495,39 @@
     setupButtons();
   });
 
-  // ✅ 파일 크기 포맷 함수 (가장 위에 위치해야 오류 안 남)
   function formatFileSize(bytes) {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 Byte';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    if (bytes === 0) return '0 Bytes';
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
   }
 
   function setupToggleSwitches() {
-    // 온/오프라인
     const methodMap = {
       onlineToggle: "온라인",
       offlineToggle: "오프라인"
     };
+    const transactionMap = {
+      saleToggle: "판매",
+      exchangeToggle: "교환"
+    };
+
     const methodInput = document.getElementById("methodInput");
+    const transactionInput = document.getElementById("transactionTypeInput");
 
     Object.keys(methodMap).forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener("click", () => {
-        Object.keys(methodMap).forEach(k => {
-          document.getElementById(k).classList.remove("active");
-
-
-        });
+      el?.addEventListener("click", () => {
+        Object.keys(methodMap).forEach(k => document.getElementById(k)?.classList.remove("active"));
         el.classList.add("active");
         methodInput.value = methodMap[id];
       });
     });
 
-    // 거래 방식
-    const transactionMap = {
-      saleToggle: "양도",
-      exchangeToggle: "교환"
-    };
-    const transactionInput = document.getElementById("transactionTypeInput");
-
     Object.keys(transactionMap).forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener("click", () => {
-        Object.keys(transactionMap).forEach(k => {
-          document.getElementById(k).classList.remove("active");
-        });
+      el?.addEventListener("click", () => {
+        Object.keys(transactionMap).forEach(k => document.getElementById(k)?.classList.remove("active"));
         el.classList.add("active");
         transactionInput.value = transactionMap[id];
       });
@@ -569,23 +542,10 @@
     stars.forEach(star => {
       star.addEventListener('click', function () {
         const rating = parseInt(this.dataset.rating);
-        currentRating = rating;
         scoreInput.value = rating;
-
-        stars.forEach((s, index) => {
-          s.classList.toggle('active', index < rating);
-        });
-
-
-
+        stars.forEach((s, index) => s.classList.toggle('active', index < rating));
         const ratingTexts = ['매우 불만족', '불만족', '보통', '만족', '매우 만족'];
         ratingText.textContent = `${rating}점 - ${ratingTexts[rating - 1]}`;
-      });
-    });
-
-    document.querySelector('.rating').addEventListener('mouseleave', () => {
-      stars.forEach((s, index) => {
-        s.style.color = index < currentRating ? '#FFD700' : '#ddd';
       });
     });
   }
@@ -599,26 +559,16 @@
 
     fileInput.addEventListener('change', function () {
       const files = Array.from(fileInput.files);
-
       if (selectedFiles.length + files.length > 5) {
         alert("최대 5개까지만 업로드할 수 있습니다.");
         fileInput.value = '';
         return;
       }
-
       files.forEach(file => {
         selectedFiles.push(file);
         displayFile(file);
       });
-
-      updateFileInput();
     });
-
-    function updateFileInput() {
-      const dataTransfer = new DataTransfer();
-      selectedFiles.forEach(file => dataTransfer.items.add(file));
-      document.getElementById('fileInput').files = dataTransfer.files;
-    }
 
     fileUploadArea.addEventListener('dragover', function (e) {
       e.preventDefault();
@@ -638,25 +588,18 @@
 
     function handleFiles(files) {
       Array.from(files).forEach(file => {
-        if (file.type.startsWith('image/')) {
-          if (selectedFiles.length < 5) {
-            selectedFiles.push(file);
-            displayFile(file);
-            updateFileInput();
-          } else {
-            alert("최대 5개까지만 업로드할 수 있습니다.");
-          }
+        if (file.type.startsWith('image/') && selectedFiles.length < 5) {
+          selectedFiles.push(file);
+          displayFile(file);
         }
       });
     }
   }
 
-
   function displayFile(file) {
     const fileList = document.getElementById('fileList');
     const fileItem = document.createElement('div');
     fileItem.className = 'file-item';
-
     fileItem.innerHTML = `
       <div class="file-info">
         <div class="file-icon">📷</div>
@@ -670,14 +613,14 @@
     fileList.appendChild(fileItem);
   }
 
-  function removeFile(fileName) {
+  window.removeFile = function (fileName) {
     selectedFiles = selectedFiles.filter(file => file.name !== fileName);
-    const fileItems = document.querySelectorAll('.file-item');
-    fileItems.forEach(item => {
+    document.querySelectorAll('.file-item').forEach(item => {
       if (item.querySelector('.file-name').textContent === fileName) {
         item.remove();
       }
     });
+
 
    
 
@@ -686,50 +629,67 @@
     document.getElementById('fileInput').files = dataTransfer.files;
   }
 
-
   function setupButtons() {
     const writeButton = document.querySelector('button[value="write"]');
     const cancelButton = document.querySelector('button[value="cancel"]');
 
+    writeButton.addEventListener("click", function (e) {
+      e.preventDefault();
 
-    writeButton.addEventListener("click", function () {
-      const title = document.getElementById("title").value;
-      const content = document.getElementById("content").value;
-      const partner = document.getElementById("partner").value;
+      const form = new FormData();
+      const title = document.getElementById("title").value.trim();
+      const artist = document.getElementById("artist").value.trim();
+      const content = document.getElementById("content").value.trim();
+      const partner = document.getElementById("partner").value.trim();
+      const tags = document.getElementById("tags").value.trim();
+      const method = document.getElementById("methodInput").value;
+      const transaction = document.getElementById("transactionTypeInput").value;
+      const score = document.getElementById("scoreInput").value;
 
-
-      if (!title || !content || !partner) {
-        alert("제목, 후기내용, 교환상대방을 모두 입력해주세요.");
+      if (!title || !artist || !content || !partner || !method || !transaction || !score) {
+        alert("필수 항목을 모두 입력해주세요.");
         return;
       }
 
+      form.append('title', title);
+      form.append('artist', artist);
+      form.append('content', content);
+      form.append('partner', partner);
+      form.append('tags', tags);
+      form.append('method', method);
+      form.append('transaction_type', transaction);
+      form.append('overall_score', score);
 
-      if (!document.getElementById("methodInput").value) {
-        alert("온/오프라인 방식을 선택해주세요.");
-        return;
-      }
+      selectedFiles.forEach(file => form.append('images', file));
 
-
-      if (!document.getElementById("transactionTypeInput").value) {
-        alert("거래 방식을 선택해주세요.");
-        return;
-      }
-
-
-      if (!document.getElementById("scoreInput").value) {
-        alert("총 평점을 선택해주세요.");
-        return;
-      }
-
-      document.querySelector("form").submit();
+      fetch("{% url 'community:write_review' %}", {
+        method: 'POST',
+        body: form,
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      })
+        .then(response => {
+          if (response.ok) {
+            alert("성공적으로 등록되었습니다.");
+            window.location.href = "{% url 'community:chgReviewmain' %}";
+          } else {
+            return response.text().then(text => { throw new Error(text); });
+          }
+        })
+        .catch(err => {
+          console.error("오류:", err);
+          alert("저장 중 오류가 발생했습니다.");
+        });
     });
 
     cancelButton.addEventListener("click", function () {
       if (confirm("작성 중인 내용이 모두 삭제됩니다. 정말로 취소하시겠습니까?")) {
-        window.location.href = "main.html";
+        window.history.back();
       }
     });
   }
 </script>
+{%endblock%}
 </body>
 </html>

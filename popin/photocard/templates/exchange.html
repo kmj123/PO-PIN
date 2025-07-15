@@ -1,12 +1,11 @@
-{% extends "header_login.html" %}
 {% load static %}
-{% block content %}
 <title>{% block title %}포토카드 교환{% endblock %}</title>
 <meta name='csrf-token' content='{{csrf_token}}'>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 <style>
     .fb{
         position:fixed;
-        bottom:25px; right:310px;
+        bottom:20px; right:20px;
         width:55px; height:55px;
         justify-content:center;
         background-color: white;
@@ -171,17 +170,17 @@
         height:835px;
         background: rgba(255, 255, 255, 0.95);
         margin: 20px 25px 20px 10px;
-        padding:20px;
+        padding:15px;
         border-radius: 20px;
     }
 
     .photoGrid {
         display:grid;
-        grid-template-rows: repeat(3, 245px);
-        grid-template-columns: repeat(4, 183px);
+        grid-template-rows: repeat(2, 395px);
+        grid-template-columns: repeat(4, 185px);
         gap:10px;
         justify-content:center;
-        max-height:755px;
+        max-height:800px;
         overflow-y: auto;
         width:100%; height:100%;
         box-sizing: border-box;
@@ -189,33 +188,79 @@
     }
 
     .no-results {
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: #888;
+        font-weight:500;
         text-align: center;
+        margin-top:10px;
     }
 
-    .cardItem {
-        width: 183px;
-        height: 245px;
-        overflow: hidden;
-    }
+    .cardItem a{text-decoration:none;}
 
-    .card-image {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-    }
+    /*
+    .cardItem:hover{transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);}
+    */
+
+    .card-image {width:183px; height:284px;}
 
     .card-image img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
     }
 
-    .card-image img:hover {
-        transform: scale(1.05);
-        transition: transform 0.3s ease;
+    .card-info {padding:7px;}
+
+    .card-info h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: #333;
+    }
+
+    .card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .card-album {
+        color: #666;
+        font-size: 12px;
+    }
+
+    .card-likes {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        color: #e74c3c;
+        font-size: 12px;
+    }
+
+    .card-tags {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .card-location {
+        color: #666;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
     }
 
 
@@ -249,7 +294,7 @@
 
         .sfilter {
             width:100%;
-            height: 65px;  /* 모바일에서는 접힌 상태로 높이를 줄임 */
+            height: 60px;  /* 모바일에서는 접힌 상태로 높이를 줄임 */
             overflow: hidden;  /* 접힌 부분이 잘리도록 설정 */
             cursor: pointer;  /* 클릭 시 펼쳐지도록 포인터 커서 설정 */
             box-sizing: border-box;
@@ -272,8 +317,8 @@
 
         .photoGrid {
             display:grid;
-            grid-template-rows: repeat(3, 245px);
-            grid-template-columns: 183px;
+            grid-template-rows: 600px;
+            grid-template-columns: 100%;
             gap:10px;
             justify-content: center;
             max-height:755px;
@@ -283,10 +328,12 @@
             overflow-x: hidden;
         }
 
+        .card-image{width:100%; height:480px;}
+
         .fb {
             position:fixed;
-            left:35px;
-            bottom:35px;
+            right:0;
+            bottom:20px;
         }
     }
 
@@ -361,7 +408,6 @@
                 "{{groupMember.group.name_en}}":[{% for member in groupMember.group.members.all %}"{{member.name}}"{% if not forloop.last %},{% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
             {% endfor %}
         };
-        console.log(groupMembers);
 
         // 그룹 검색 입력 시 동작
         $('#searchinput').on('input', function() {
@@ -424,6 +470,11 @@
 </script>
 
 <body>
+    {% if request.session.user_id %}
+        {% include "header_login.html" %}
+    {% else %}
+        {% include "header_logout.html" %}
+    {% endif %}
     <button class="fb"><a href="/photocard/write/"><i class="fas fa-pencil"></i></a></button>
 
     <div class="content">
@@ -466,7 +517,7 @@
                 </div>
                 <div class="flocation">
                     <h4>📍 위치 설정</h4>
-                    <div class="clocation">강남구 (현재 위치)<a href="#"><i class="fas fa-map"></i></a></div>
+                    <div class="clocation">강남구 (현재 위치)<a href="/photocard/location/"><i class="fas fa-map"></i></a></div>
                     <div class="fdiv">
                         <h4>자주 거래되는 장소</h4>
                         <div class="dropdown place-dropdown">
@@ -492,13 +543,27 @@
         </section>
 
         <section class="photocardList">
+            <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다.</div>
             <div class="photoGrid">
-                <div class="no-results" style="{% if photocards %}display:none;{% else %}display:block;{% endif %}">검색 결과가 없습니다.</div>
                 {% for p in photocards %}
-                    <div class="cardItem">
+                    <div class="cardItem" data-pno="{{ p.pno }}">
                         <a href="/photocard/detail/{{p.pno}}/">
                             <div class="card-image">
                                 <img src="/media/{{p.image}}" alt="{{p.pno}}">
+                            </div>
+                            <div class="card-info">
+                                <h3>{{p.member}}</h3>
+                                <div class="card-meta">
+                                    <span class="card-album">{{p.album}}</span>
+                                    <span class="card-likes">
+                                        ❤️ <span class="wish_count">{{p.wish_count}}</span>
+                                    </span>
+                                </div>
+                                <div class="card-tags">
+                                    <span class="tag">{{p.trade_type}}</span>
+                                    <span class="tag">{{p.category}}</span>
+                                </div>
+                                <div class="card-location">📍 {{p.place}}</div>
                             </div>
                         </a>
                     </div>
@@ -507,4 +572,3 @@
         </section>
 
     </div>
-{% endblock content %}

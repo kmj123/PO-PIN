@@ -370,17 +370,17 @@
           <tbody>
             <tr>
               <th scope="row"><label for="board">공지 유형</label></th>
-              <td>일반</td>
+              <td>{{notice.notice_type}}</td>
             </tr>
             <tr>
               <th scope="row"><label for="title">제목</label></th>
-              <td>포핀 이용 안내</td>
+              <td>{{notice.title}}</td>
             </tr>
             <tr>
               <th scope="row"><label for="fix">상단고정</label></th>
               <td>
                 <div class="custom-checkbox">
-                  <input type="checkbox" id="fix" checked/>
+                  <input type="checkbox" id="fix" {%if notice.is_pinned == True%}checked{%endif%}/>
                 </div>
               </td>
             </tr>
@@ -388,8 +388,7 @@
               <th scope="row"><label for="content">상세 내용</label></th>
               <td>
                 <div class="content-text">
-                  포핀은 현장교환을 주로 하는 어쩌구입니다.<br>
-                  가나다라마바사
+                  {{notice.content}}
                 </div>
               </td>
             </tr>
@@ -424,7 +423,7 @@
 <script>
   function deleteBtn(){
     if (confirm("게시물을 삭제하시겠습니까?")){
-      document.getElementById('deleteFrm').submit();
+      window.location.href = "{% url 'adpage:noticeD' notice.id %}";
       alert("삭제되었습니다.");
     }
     else{

@@ -16,6 +16,7 @@ urlpatterns = [
     path('home/', include('home.urls')),
     path('community/', include('community.urls')),
     path('pocadeco/', include('pocadeco.urls')),
+    path('customer/', include('customer.urls')),
     
 ]
 

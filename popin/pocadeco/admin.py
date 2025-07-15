@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import DecoratedPhotocard, StickerPlacement
+from .models import DecoratedPhotocard, StickerPlacement, DecoWish
 
 class StickerPlacementInline(admin.TabularInline):
     model = StickerPlacement
@@ -17,3 +17,5 @@ class StickerPlacementAdmin(admin.ModelAdmin):
     list_display = ("emoji", "photocard", "x", "y", "scale", "rotation")
     search_fields = ("emoji", "photocard__title")
     list_filter = ("photocard",)
+    
+admin.site.register(DecoWish)

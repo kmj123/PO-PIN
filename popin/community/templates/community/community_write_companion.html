@@ -1,3 +1,7 @@
+{% extends 'header_login.html'%}
+{% load static %}
+<!--상단 헤더-->
+{%block content%}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -80,7 +84,7 @@
       color: #555;
     }
     td {
-      padding: 5px 0;
+      padding: 10px;
     }
     input[type="text"], textarea, input[type="file"], input[type="location"] {
       width: 90%;
@@ -99,7 +103,7 @@
       flex-wrap: wrap;
     }
     .type-toggle button {
-      padding: 8px 14px;
+      padding:  10px;
       border: 1px solid #aaa;
       border-radius: 20px;
       background: #fff;
@@ -154,6 +158,29 @@
         margin-top: 15px;
         width: 90%;
       }
+       .datetime-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+     input.wlong, textarea.tta, input.fileType, select.select-box {
+      width: calc(90%);
+      padding: 10px;
+      margin-right:20px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    input.wlong:focus, textarea.tta:focus, input.fileType:focus, select.select-box:focus {
+      border: 2px solid #7E6EB0;
+    }
+
+    .datetime-group input {
+      width: auto;
+      padding: 8px;
+    }
       .file-item {
         display: flex;
         justify-content: space-between;
@@ -211,6 +238,9 @@
         background: #FF4444;
         color: white;
       }
+      .required {
+      color: #ff4444;
+    }
       .file-count {
         margin-top: 10px;
         font-size: 14px;
@@ -220,20 +250,8 @@
   </style>
 </head>
 <body>
-  <header class="header">
-    <nav class="nav">
-      <div class="logo">PO-PIN</div>
-      <ul class="nav-menu">
-        <li><a href="#">홈</a></li>
-        <li><a href="#">포카교환</a></li>
-        <li><a href="#">커뮤니티</a></li>
-        <li><a href="#">포카꾸미기</a></li>
-        <li><a href="#">고객지원</a></li>
-      </ul>
-      <a href="#" class="home"><i class="fi-rr-caret-left"></i>이전으로</a>
-    </nav>
-  </header>
-
+  <form id="companionForm" method="POST" action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
+  {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
       <h2>동행 모집 글 작성</h2>
@@ -242,15 +260,15 @@
     <table class="writebox">
       <tbody>
         <tr>
-          <th><label for="artist">제목</label></th>
-          <td><input type="text" id="artist" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
+          <th><label for="title">제목 <span class="required">*</span></label></th>
+          <td><input type="text" id="title" name="title" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
         </tr>
         <tr>
-      <th><label for="artist">아티스트</label></th>
-      <td><input type="text" id="artist" placeholder="예: NewJeans" /></td>
+      <th><label for="artist">아티스트 <span class="required">*</span></label></th>
+      <td><input type="text" id="artist" name="artist" placeholder="예: NewJeans" /></td>
     </tr>
         <tr>
-          <th>유형</th>
+          <th>유형 <span class="required">*</span></th>
           <td>
             <div class="type-toggle">
               <button type="button" data-type="콘서트">콘서트</button>
@@ -259,25 +277,69 @@
               <button type="button" data-type="굿즈샵">굿즈샵</button>
               <button type="button" data-type="기타">기타</button>
             </div>
+            <input type="hidden" name="category" id="categoryInput">
           </td>
         </tr>
         <tr>
-          <th><label for="location">위치</label></th>
-          <td><input type="text" id="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
+          <th><label for="location">위치 <span class="required">*</span></label></th>
+          <td><input type="text" id="location" name="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
         </tr>
+
         <tr>
-          <th><label for="content">본문</label></th>
+
+          <th scope="row">날짜 및 시간 <span class="required">*</span></th>
+          <td>
+            <div class="datetime-group">
+              <input type="date" id="eventDate"name="eventDate" required>
+              <input type="time" id="eventTime" name="eventTime" required>
+            </div>
+          </td>
+       <tr>
+          <th scope="row"><label for="max_people"> 모집 인원 <span class="required">*</span></label></th>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+
+       </tr>
+        <tr>
+          <th><label for="content">본문 <span class="required">*</span></label></th>
           <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+
         </tr>
+
+        <tr>
+          <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
+          <td>
+            <select id="region" name="region" class="wlong" style="width: 90%; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
+              <option value="">지역 선택</option>
+              <option value="서울">서울</option>
+              <option value="경기">경기</option>
+              <option value="부산">부산</option>
+              <option value="대구">대구</option>
+              <option value="인천">인천</option>
+              <option value="광주">광주</option>
+              <option value="대전">대전</option>
+              <option value="울산">울산</option>
+              <option value="강원">강원</option>
+              <option value="충북">충북</option>
+              <option value="충남">충남</option>
+              <option value="전북">전북</option>
+              <option value="전남">전남</option>
+              <option value="경북">경북</option>
+              <option value="경남">경남</option>
+              <option value="제주">제주</option>
+              <option value="기타">기타</option>
+            </select>
+          </td>
+        </tr>
+ 
         <tr>
           <th><label for="tags">태그</label></th>
-          <td><input type="text" id="tags" placeholder="#태그1, #태그2" /></td>
+          <td><input type="text" id="tags" name="tags" placeholder="#태그1, #태그2" /></td>
         </tr>
         <tr>
           <th scope="row">사진 첨부</th>
           <td>
             <div class="file-upload-area" id="fileUploadArea">
-              <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+              <input type="file" id="fileInput" name="images" multiple accept="image/*" style="display: none;">
               <div class="upload-icon">📷</div>
               <p><strong>클릭하거나 파일을 드래그하여 업로드</strong></p>
               <p style="font-size: 12px; color: #999; margin-top: 5px;">JPG, PNG, GIF 파일만 업로드 가능 (최대 10MB)</p>
@@ -290,162 +352,212 @@
     </table>
 
     <div class="btn">
-      <button type="button" id="submitBtn">확인</button>
+      <button type="submit" id="submitBtn">확인</button>
       <button type="button" id="cancelBtn">취소</button>
     </div>
   </div>
+</form>
 
-  <script>
+ <script>
+  let selectedFiles = [];
+
+  document.addEventListener("DOMContentLoaded", function () {
     const toggleButtons = document.querySelectorAll('.type-toggle button');
-    let selectedType = '';
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const form = document.getElementById('companionForm');
+    const maxFileCount = 5;
 
+    // 유형 선택
     toggleButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         toggleButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        selectedType = btn.dataset.type;
+        const selectedType = btn.dataset.type;
+        document.getElementById("categoryInput").value = selectedType;
       });
     });
 
-    document.getElementById('submitBtn').addEventListener('click', () => {
-      const artist = document.getElementById('artist').value;
-      const location = document.getElementById('location').value;
-      const content = document.getElementById('content').value;
+    // 파일 클릭
+    fileUploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
 
-      if (!artist || !selectedType || !location || !content) {
+    // 파일 변경
+    fileInput.addEventListener('change', function (e) {
+      handleFiles(e.target.files);
+    });
+
+    // 드래그앤드롭
+    fileUploadArea.addEventListener('dragenter', preventDefaults, false);
+    fileUploadArea.addEventListener('dragover', function (e) {
+      preventDefaults(e);
+      this.classList.add('dragover');
+    }, false);
+
+    fileUploadArea.addEventListener('dragleave', function (e) {
+      preventDefaults(e);
+      if (!fileUploadArea.contains(e.relatedTarget)) {
+        this.classList.remove('dragover');
+      }
+    }, false);
+
+    fileUploadArea.addEventListener('drop', function (e) {
+      preventDefaults(e);
+      this.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    }, false);
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // 파일 핸들링
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) {
+          alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
+          return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`${file.name}은(는 10MB를 초과합니다.`);
+          return;
+        }
+
+        if (selectedFiles.length >= maxFileCount) {
+          alert("최대 5개의 이미지만 업로드할 수 있습니다.");
+          return;
+        }
+
+        if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+          alert(`${file.name}은(는) 이미 추가된 파일입니다.`);
+          return;
+        }
+
+        selectedFiles.push(file);
+        displayFile(file);
+      });
+
+      updateFileCount();
+    }
+
+    function displayFile(file) {
+      const fileItem = document.createElement('div');
+      fileItem.className = 'file-item';
+      fileItem.setAttribute('data-filename', file.name);
+
+      const fileSize = formatFileSize(file.size);
+
+      fileItem.innerHTML = `
+        <div class="file-info">
+          <div class="file-icon">📷</div>
+          <div>
+            <div class="file-name">${file.name}</div>
+            <div class="file-size">${fileSize}</div>
+          </div>
+        </div>
+        <span class="file-remove" onclick="removeFile('${file.name}', ${file.size})">×</span>
+      `;
+
+      fileList.appendChild(fileItem);
+    }
+
+    window.removeFile = function (fileName, fileSize) {
+      selectedFiles = selectedFiles.filter(file => !(file.name === fileName && file.size === fileSize));
+      const fileItems = document.querySelectorAll('.file-item');
+      fileItems.forEach(item => {
+        if (item.getAttribute('data-filename') === fileName) {
+          item.remove();
+        }
+      });
+      updateFileCount();
+    };
+
+    function updateFileCount() {
+      const fileCount = document.getElementById('fileCount');
+      if (selectedFiles.length > 0) {
+        fileCount.style.display = 'block';
+        fileCount.textContent = `총 ${selectedFiles.length}개의 파일이 선택되었습니다.`;
+      } else {
+        fileCount.style.display = 'none';
+      }
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    // form submit 처리
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const artist = document.getElementById("artist").value.trim();
+      const category = document.getElementById("categoryInput").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const eventDate = document.getElementById("eventDate").value;
+      const eventTime = document.getElementById("eventTime").value;
+      const maxPeople = document.getElementById("max_people").value.trim();
+      const content = document.getElementById("content").value.trim();
+      const region = document.getElementById("region").value;
+
+      if (!title || !artist || !category || !location || !eventDate || !eventTime || !maxPeople || !content || !region) {
         alert("필수 항목을 모두 입력해주세요.");
         return;
       }
 
-      alert("동행 모집 글이 작성되었습니다!");
-      console.log({
-        artist,
-        type: selectedType,
-        location,
-        content,
-        tags: document.getElementById('tags').value
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("artist", artist);
+      formData.append("category", category);
+      formData.append("location", location);
+      formData.append("eventDate", eventDate);
+      formData.append("eventTime", eventTime);
+      formData.append("max_people", maxPeople);
+      formData.append("content", content);
+      formData.append("region", region);
+      formData.append("tags", document.getElementById("tags").value);
+
+      // 이미지 추가
+      selectedFiles.forEach(file => {
+        formData.append("images", file);
       });
+
+      try {
+        const response = await fetch("{% url 'community:write_companion' %}", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+          },
+          body: formData,
+        });
+
+        if (!response.ok) throw new Error("서버 오류");
+
+        alert("게시글이 성공적으로 등록되었습니다.");
+        window.location.href = "{% url 'community:companion' %}";
+      } catch (error) {
+        console.error("❌ 오류:", error);
+        alert("등록 중 오류가 발생했습니다.");
+      }
     });
 
+    // 취소 버튼
     document.getElementById('cancelBtn').addEventListener('click', () => {
-      window.location.href = "main.html"; // 이동 페이지 수정 가능
+      if (confirm("작성을 취소하시겠습니까?")) {
+        window.history.back();
+      }
     });
-    let selectedFiles = [];
-
-document.addEventListener("DOMContentLoaded", function () {
-  const fileUploadArea = document.getElementById('fileUploadArea');
-  const fileInput = document.getElementById('fileInput');
-  const fileList = document.getElementById('fileList');
-
-  fileUploadArea.addEventListener('click', () => {
-    fileInput.click();
   });
+</script>
 
-  fileInput.addEventListener('change', function(e) {
-    handleFiles(e.target.files);
-  });
-
-  fileUploadArea.addEventListener('dragenter', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-  });
-
-  fileUploadArea.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.classList.add('dragover');
-  });
-
-  fileUploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!fileUploadArea.contains(e.relatedTarget)) {
-      this.classList.remove('dragover');
-    }
-  });
-
-  fileUploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
-  });
-});
-
-function handleFiles(files) {
-  Array.from(files).forEach(file => {
-    if (!file.type.startsWith('image/')) {
-      alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      alert(`${file.name}은(는) 파일 크기가 너무 큽니다. (최대 10MB)`);
-      return;
-    }
-
-    if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
-      alert(`${file.name}은(는) 이미 추가된 파일입니다.`);
-      return;
-    }
-
-    selectedFiles.push(file);
-    displayFile(file);
-  });
-
-  updateFileCount();
-}
-
-function displayFile(file) {
-  const fileList = document.getElementById('fileList');
-  const fileItem = document.createElement('div');
-  fileItem.className = 'file-item';
-  fileItem.setAttribute('data-filename', file.name);
-
-  const fileSize = formatFileSize(file.size);
-
-  fileItem.innerHTML = `
-    <div class="file-info">
-      <div class="file-icon">📷</div>
-      <div>
-        <div class="file-name">${file.name}</div>
-        <div class="file-size">${fileSize}</div>
-      </div>
-    </div>
-    <span class="file-remove" onclick="removeFile('${file.name}', ${file.size})">×</span>
-  `;
-
-  fileList.appendChild(fileItem);
-}
-
-function removeFile(fileName, fileSize) {
-  selectedFiles = selectedFiles.filter(file => !(file.name === fileName && file.size === fileSize));
-  const fileItems = document.querySelectorAll('.file-item');
-  fileItems.forEach(item => {
-    if (item.getAttribute('data-filename') === fileName) {
-      item.remove();
-    }
-  });
-  updateFileCount();
-}
-
-function updateFileCount() {
-  const fileCount = document.getElementById('fileCount');
-  if (selectedFiles.length > 0) {
-    fileCount.style.display = 'block';
-    fileCount.textContent = `총 ${selectedFiles.length}개의 파일이 선택되었습니다.`;
-  } else {
-    fileCount.style.display = 'none';
-  }
-}
-
-function formatFileSize(bytes) {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-  </script>
+{%endblock%}
 </body>
 </html>

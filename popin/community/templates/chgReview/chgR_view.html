@@ -16,22 +16,24 @@
   <div class="container">
     <div class="main-content">
       <div class="post-header">
-        <h1 class="post-title">신속하고 깔끔한 교환이었어요!</h1>
+        <h1 class="post-title">{{ post.title }}</h1>
         <div class="post-meta">
-          <span class="post-tag">교환완료</span>
-          <span class="post-tag">NCT</span>
-          <span class="post-tag">유우시</span>
+          {% for tag in post.tags.all %}
+            <span class="post-tag">#{{ tag.name }}</span>
+          {% endfor %}
           <div class="rating-display">
-            <span class="rating-stars">⭐⭐⭐⭐⭐</span>
-            <span class="rating-text">5.0점</span>
+            {% for i in "12345"|slice:":post.overall_score" %}
+                ⭐
+              {% endfor %}
+            <span class="rating-text">{{ post.overall_score }}</span>
           </div>
           <div class="trader-info">
-            <span style = "font-weight : 550;">작성자 : kpop_lover</span>
+            <span style = "font-weight : 550;">작성자 : {{ post.writer.nickname }}</span>
             <span style = "font-weight : 25px;">│</span>
-            <span style = "font-weight : 550;">거래자 : poca_master</span>
+            <span style = "font-weight : 550;">거래자 : {{ post.partner.nickname }}</span>
           </div>
-          <span>📅 2024-06-10</span>
-          <span>👁️ 124</span>
+          <span>📅 {{ post.created_at|date:"Y-m-d" }}</span>
+          <span>👁️{{ post.views }}</span>
         </div>
       </div>
 
@@ -40,12 +42,12 @@
           <h4>📋 교환 정보</h4>
           <div class="exchange-summary">
             <div class="trader-card">
-              <div class="trader-name">kpop_lover</div>
+              <div class="trader-name">{{ post.writer.nickname }}</div>
               <div class="trader-role">후기 작성자</div>
             </div>
             <div class="exchange-arrow">⇄</div>
             <div class="trader-card">
-              <div class="trader-name">poca_master</div>
+              <div class="trader-name">{{ post.partner.nickname }}</div>
               <div class="trader-role">교환 상대방</div>
             </div>
           </div>
@@ -54,36 +56,26 @@
 
         <div class="review-content">
           <h4>📝 교환 후기</h4>
-          <p>거래 상대방이 정말 친절하고 약속도 잘 지켜주셔서 만족스러운 교환이었습니다. 포토카드 상태도 완벽했어요!</p>
-          <br>
-          <p>처음에 교환 약속을 잡을 때부터 상대방이 매우 친절하게 응답해주셨고, 만날 장소와 시간도 서로 편한 시간으로 맞춰주셨습니다. 약속 당일에도 정확한 시간에 도착하셔서 기다리게 하지 않았고, 포토카드도 꼼꼼히 포장해서 가져오셨어요.</p>
-          <br>
-          <p>교환한 포토카드들의 상태도 사전에 설명해주신 것과 정확히 일치했고, 특히 모서리나 표면에 손상이 전혀 없어서 매우 만족스러웠습니다. 이런 양심적인 거래자 분들 덕분에 포토카드 교환이 더욱 즐거워지는 것 같아요.</p>
-          <br>
-          <p>다음에도 기회가 되면 꼭 다시 교환하고 싶은 분이에요. 다른 분들께도 추천드립니다! 👍</p>
+          <p>{{ post.content|linebreaks }}</p>
+
         </div>
         <div class="review-images">
           <h4>📎 첨부 파일</h4>
           <div class="image-gallery">
-            <div class="image-item" onclick="openModal(this)">
-              <img src="/static/images/test/chgR.jpg" alt="교환 포토카드 1">
-            </div>
-            <div class="image-item" onclick="openModal(this)">
-              <img src="/static/images/test/chgR1.jpg" alt="교환 포토카드 2">
-            </div>
-            <div class="image-item" onclick="openModal(this)">
-              <img src="/static/images/test/chgR2.jpg" alt="포장 상태">
-            </div>
-            <div class="image-item" onclick="openModal(this)">
-              <img src="/static/images/test/chgR3.jpg" alt="교환 현장">
-            </div>
+              {% for image in post.images.all %}
+              <div class="image-item" onclick="openModal(this)">
+                <img src="{{ image.image.url }}" alt="후기 이미지 {{ forloop.counter }}">
+              </div>
+              {% empty %}
+              <p>첨부된 이미지가 없습니다.</p>
+            {% endfor %}
           </div>
         </div>
       </div>
 
       <div class="action-buttons">
         <a href="#" class="btn back" onclick="history.back()">이전으로</a>
-        <a href="#" class="btn update">수정하기</a>
+        <a href="{% url 'community:updateC' %}" class="btn update">수정하기</a>
         <a href="#" class="btn delete">삭제하기</a>
       </div>
     </div>

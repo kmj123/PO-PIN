@@ -12,6 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const stateFilter = document.getElementById("stateFilter");
   const toggleBtns = document.querySelectorAll(".toggle-btn");
   const categoryLinks = document.querySelectorAll(".group a[data-category]");
+  const noResultsMessage = document.getElementById('noResultsMessage');
+  const postlistContainer = document.querySelector('.postlist');
+  const paginationContainer = document.querySelector('.pagination');
+  
   let currentImageIndex = 0;
   let imageList = [];
   let currentPage = 1;
@@ -51,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
     modalImage.src = imageList[currentImageIndex];
   });
+  
   nextBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     currentImageIndex = (currentImageIndex + 1) % imageList.length;
@@ -161,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll(".post-card").forEach(card => {
       card.replaceWith(card.cloneNode(true));
     });
+    
     document.querySelectorAll(".post-card").forEach(card => {
       card.addEventListener("click", (event) => {
         if (
@@ -176,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = card.querySelector(".info-date span:nth-child(2)")?.textContent.trim() || "";
         const place = card.querySelector(".info-place span:nth-child(2)")?.textContent.trim() || "";
         const check = card.querySelector(".info-check span:nth-child(2)")?.textContent.trim() || "";
-        const desc = card.querySelector(".post-description")?.textContent.trim() || "";
+        const desc = card.getAttribute("data-full-content") || card.querySelector(".post-description")?.textContent.trim() || "";
         const imgListStr = card.getAttribute("data-imgs") || "";
         const tags = Array.from(card.querySelectorAll(".post-tag")).map(t => t.textContent.replace('#','').trim());
         const wdate = card.querySelector(".post-meta")?.textContent.trim() || "";
@@ -185,8 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
-
-  setupPostCardEvents();
 
   // Top 버튼 스크롤 이벤트
   window.addEventListener('scroll', () => {
@@ -200,25 +204,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 페이징 UI 생성 함수
   function renderPagination(totalPosts, perPage) {
-    const paginationContainer = document.querySelector('.pagination');
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    const postList = document.querySelector('.postlist');
-
     if (totalPosts === 0) {
       paginationContainer.style.display = 'none';
-      postList.style.display = 'none';
-      noResultsMessage.style.display = 'block';
       return;
     } else if (totalPosts <= perPage) {
-      paginationContainer.innerHTML = "";
       paginationContainer.style.display = "none";
-      postList.style.display = 'block';
-      noResultsMessage.style.display = 'none';
       return;
     } else {
       paginationContainer.style.display = "flex";
-      noResultsMessage.style.display = 'none';
-      postList.style.display = 'block';
     }
 
     const totalPages = Math.ceil(totalPosts / perPage);
@@ -243,10 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
       a.textContent = text;
       if (ariaLabel) a.setAttribute('aria-label', ariaLabel);
 
-      if (isActive) a.classList.add('active');
+      if (isActive) {
+        a.innerHTML = `<strong>${text}</strong>`;
+      }
+      
       if (isDisabled) {
-        a.classList.add('disabled');
-        a.setAttribute("aria-disabled", "true");
+        a.style.pointerEvents = 'none';
+        a.style.opacity = '0.5';
       }
 
       a.addEventListener('click', (e) => {
@@ -254,19 +250,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isActive || isDisabled) return;
         currentPage = page;
         applyFilters();
-        requestAnimationFrame(() => {
+        // 페이지 변경 후 스크롤을 위로
+        setTimeout(() => {
           window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        }, 50);
       });
 
       return a;
     };
 
+    // 페이지네이션 버튼 생성
     paginationContainer.appendChild(createPageLink('«', 1, false, '첫 페이지', currentPage === 1));
     paginationContainer.appendChild(createPageLink('‹', Math.max(currentPage - 1, 1), false, '이전 페이지', currentPage === 1));
 
     for (let i = startPage; i <= endPage; i++) {
-      paginationContainer.appendChild(createPageLink(i, i, i === currentPage));
+      paginationContainer.appendChild(createPageLink(i.toString(), i, i === currentPage));
     }
 
     paginationContainer.appendChild(createPageLink('›', Math.min(currentPage + 1, totalPages), false, '다음 페이지', currentPage === totalPages));
@@ -281,15 +279,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const sortOption = sortSelect?.value || "";
 
     let cards = Array.from(document.querySelectorAll(".post-card"));
+    let filteredCards = [];
 
     // 필터링
     cards.forEach(card => {
       let show = true;
       
+      // 카테고리 필터
       if (selectedCategory && card.dataset.category !== selectedCategory) {
         show = false;
       }
       
+      // 키워드 검색
       if (show && keyword) {
         if (searchType === "general") {
           const title = card.querySelector(".post-title")?.textContent.toLowerCase() || "";
@@ -300,78 +301,80 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // 나눔 종류 필터
       if (show && selectedState && selectedState !== "" && selectedState !== "전체") {
         const stype = card.querySelector(".stype")?.textContent.trim() || "";
         show = stype === selectedState;
       }
 
-      card.style.display = show ? "block" : "none";
+      if (show) {
+        filteredCards.push(card);
+      }
     });
 
-    // 보이는 카드만 가져오기
-    const visibleCards = cards.filter(card => card.style.display !== "none");
-    
     // 정렬
     if (sortOption === "최신순") {
-      visibleCards.sort((a, b) => {
+      filteredCards.sort((a, b) => {
         const dateA = a.querySelector(".post-meta")?.textContent.trim() || "";
         const dateB = b.querySelector(".post-meta")?.textContent.trim() || "";
         return new Date(dateB) - new Date(dateA);
       });
     } else if (sortOption === "조회순") {
-      visibleCards.sort((a, b) => {
+      filteredCards.sort((a, b) => {
         const viewsA = parseInt(a.querySelector(".participants span")?.textContent.replace(/[^\d]/g, "") || 0);
         const viewsB = parseInt(b.querySelector(".participants span")?.textContent.replace(/[^\d]/g, "") || 0);
         return viewsB - viewsA;
       });
     }
 
-    // DOM에 정렬된 순서대로 카드 배치
-    const postlistContainer = document.querySelector('.postlist');
-    const paginationElement = document.querySelector('.pagination');
-    if (postlistContainer && visibleCards.length > 0) {
-      visibleCards.forEach(card => {
-        if (paginationElement) {
-          postlistContainer.insertBefore(card, paginationElement);
-        } else {
-          postlistContainer.appendChild(card);
-        }
-      });
-    }
-
-    // 페이징
-    const total = visibleCards.length;
+    // 페이징 처리
+    const total = filteredCards.length;
     const start = (currentPage - 1) * postsPerPage;
-    const paginated = visibleCards.slice(start, start + postsPerPage);
+    const paginatedCards = filteredCards.slice(start, start + postsPerPage);
 
-    // 모든 카드 숨기고 페이징 대상 카드만 보여주기
-    cards.forEach(card => card.style.display = "none");
-    paginated.forEach(card => card.style.display = "block");
+    // 모든 카드 숨기기
+    cards.forEach(card => {
+      card.style.display = "none";
+    });
 
+    // 페이징된 카드만 보이기
+    paginatedCards.forEach(card => {
+      card.style.display = "block";
+    });
+
+    // 페이지네이션 렌더링
     renderPagination(total, postsPerPage);
 
-    setupPostCardEvents();  // 이벤트 재등록
-
-    // 게시글 없을 때 / 있을 때 메시지 처리
-    const noResultsMessage = document.getElementById('noResultsMessage');
+    // 결과 메시지 처리
     if (total === 0) {
       noResultsMessage.style.display = 'block';
-      postlistContainer.style.display = 'none';
     } else {
       noResultsMessage.style.display = 'none';
-      postlistContainer.style.display = 'block';
     }
+
+    // 이벤트 재등록
+    setupPostCardEvents();
   }
 
   // 토글 버튼 이벤트 (검색 타입)
   toggleBtns.forEach(btn => {
     btn.addEventListener("click", () => {
+      if (btn.classList.contains("active")) return;
+
       toggleBtns.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      generalInput.style.display = btn.dataset.type === "general" ? "block" : "none";
-      tagInput.style.display = btn.dataset.type === "tag" ? "block" : "none";
-      generalInput.value = "";
-      tagInput.value = "";
+
+      const type = btn.dataset.type;
+      if (type === "general") {
+        generalInput.style.display = "block";
+        tagInput.style.display = "none";
+        tagInput.value = "";
+      } else if (type === "tag") {
+        generalInput.style.display = "none";
+        tagInput.style.display = "block";
+        generalInput.value = "";
+      }
+
       currentPage = 1;
       applyFilters();
     });
@@ -387,7 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 초기 필터 적용 및 카테고리 표시 업데이트
+  // 초기 설정
+  setupPostCardEvents();
   applyFilters();
   updateCategoryDisplay();
 });
