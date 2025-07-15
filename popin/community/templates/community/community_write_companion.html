@@ -300,10 +300,9 @@
 
        </tr>
         <tr>
-          <th><label for="content">본문 <span class="required">*</span></label></th>
-          <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
-
-        </tr>
+        <th><label for="content">본문 <span class="required">*</span></label></th>
+        <td><textarea id="content" name="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+      </tr>
 
         <tr>
           <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
@@ -541,7 +540,7 @@
 
         if (!response.ok) throw new Error("서버 오류");
 
-        alert("게시글이 성공적으로 등록되었습니다.");
+        alert("동행 모집글이 성공적으로 등록되었습니다.");
         window.location.href = "{% url 'community:companion' %}";
       } catch (error) {
         console.error("❌ 오류:", error);

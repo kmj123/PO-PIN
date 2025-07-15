@@ -47,18 +47,15 @@
         <h3>동행 모집</h3>
       </div>
      <form method="GET" action="{% url 'community:companion' %}">
-
       <div class="line"></div>
       <div class="search-filter-container">
           <div class="search-toggle">
              <button class="toggle-btn active" data-type="general" type="button">일반 검색</button>
            <button class="toggle-btn" data-type="tag" type="button">태그 검색</button>
           </div>
-
           <input type="text" name="q" id="generalSearch" class="search-input" placeholder="제목으로 검색" value="{{ query }}">
          <input type="text" name="tag" id="tagSearch" class="search-input" placeholder="태그 검색" value="{{ tag_query }}" style="display:none">
 
-          <div class = "Fselect">
 
             <select id="regionFilter" name="region" class="filter-select">
               <option value="" {% if not request.GET.region %}selected{% endif %}>지역 선택</option>
@@ -80,8 +77,9 @@
               <option value="제주" {% if request.GET.region == "제주" %}selected{% endif %}>제주</option>
               <option value="기타" {% if request.GET.region == "기타" %}selected{% endif %}>기타</option>
             </select>
+
             
-            
+
             <select id="stateFilter" class="filter-select">
               <option value="">게시글 상태</option>
               <option>모집중</option>
@@ -95,20 +93,19 @@
           {% for post in posts %}
           <!-- 동행 카드들 -->
           <div class="post-card" data-category="{{ post.category }}"
-          data-imgs="{% for image in post.images.all %}{{ post.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
+
+           data-imgs="{% for image in post.images.all %}{{ image.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
           <div class="post-header">
             <div class = "postf">
-
               <span class = "artist">{{ post.artist }}</span>
               <span class = "region">{{ post.region }}</span>
               <span class = "ptype">{{ post.location }}</span>
-
             </div>
             <div class="post-title-row">
                <h3 class="post-title">{{ post.title }}</h3>
               <div class="post-right">
                 <span class="post-status {% if post.status == '모집완료' %}status-full{% elif post.status == '모집중' %}status-recruiting{% else %}progress{% endif %}">{{ post.status }}</span>
-                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value=":경광등:">
               </div>
             </div>
             <div class="post-tags">
@@ -119,19 +116,18 @@
           </div>
               <div class="post-info">
                   <div class="info-date">
-                      <span class="info-date">📅</span>
+                      <span class="info-date">:날짜:</span>
                       <span>{{ post.event_date|date:"Y년 m월 d일 (D) H:i" }}</span>
                   </div>
                   <div class="info-place">
-                      <span class="info-place">📍</span>
+                      <span class="info-place">:둥근_압핀:</span>
                        <span>{{ post.location }}</span>
                   </div>
                   <div class="info-people">
-                      <span class="info-people">👥</span>
+                      <span class="info-people">:2개의_상반신_그림자:</span>
                       <span>{{ post.current_people }}/{{ post.max_people }}명</span>
                   </div>
               </div>
-              
               <div class="post-description">
                 {{ post.content|truncatechars:100 }}
               </div>
@@ -140,6 +136,10 @@
                 {{ post.content }}
               </div>
               <div class="post-modal" style="display: none;">{{ post.content }}</div>
+
+              <div class="post-footer">
+                  <div class="post-wrtier_id">
+                      <span>:상반신_그림자: {{ post.author.nickname }}</span>
               
               <div class="post-footer">
                   <div class="post-wrtier_id">
@@ -147,8 +147,8 @@
                        <span class="post-meta">{{ post.created_at|date:"Y년 n월 j일 H:i" }}</span>
                     </div>
                     <div class="participants">
-                     <span>👁️ {{ post.views }}</span>
-                     <span>💬 {{ post.comments_count }}</span>
+                     <span>:한_쪽_눈: {{ post.views }}</span>
+                     <span>:말풍선: {{ post.comments_count }}</span>
                     </div>
                   </div>
                <div class="post-actions">
@@ -157,9 +157,11 @@
             {% else %}
               <button class="join-btn active">채팅하기</button>
             {% endif %}
-            
-          </div>
-            {% endfor %}
+          </div>          
+          <p id="noResultsMessage" style="display:none; text-align:center; padding:20px;"></p>
+        </div>
+          {% endfor %}
+
             <div class="pagination">
                   <a href="#" title="첫 페이지">«</a>
                   <a href="#" title="이전 페이지">‹</a>
@@ -185,9 +187,9 @@
                       <div id="modalPostTags" class="post-tags"></div>
                       <p id="modalPostCreated"></p>
                     </div>
-                    <p id="modalPostDate">📅 날짜</p>
-                    <p id="modalPostPlace">📍 장소</p>
-                    <p id="modalPostPeople">👥 인원</p>
+                    <p id="modalPostDate">:날짜: 날짜</p>
+                    <p id="modalPostPlace">:둥근_압핀: 장소</p>
+                    <p id="modalPostPeople">:2개의_상반신_그림자: 인원</p>
                     <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
                       설명 내용
                     </div>
@@ -200,10 +202,12 @@
                   <img id="modalImage" style="max-width:80%; max-height:80%;" />
                   <button id="nextBtn">›</button>
                 </div>
+<<<<<<< HEAD
+=======
                 
+>>>>>>> 548ffa6f8337681cc1110afe2e6a9eb0634748b1
             </div>
           </div>
-          {% endfor %}
           <button type="button" class ="topBtn" id="topBtn"><img src="/static/images/login/topBtn.svg" alt="TOP" width="24" height="24"></button>
           {% endblock content %}
         </body>
