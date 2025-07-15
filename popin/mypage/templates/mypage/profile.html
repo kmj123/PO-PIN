@@ -639,13 +639,13 @@
                             </div>
                             <div class="myinfo-profile">
                                 <label for="mybias">마이 아티스트</label>
-                                {% for group,member in bias_pairs %}
-                                    {%if forloop%}
-                                    <div class="mybias_input">
-                                    <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                    {%endif%}
-                                </div>
-                                {% endfor %}
+                                <div class="mybias_input">
+                                        {% for group,member in bias_pairs %}
+                                            {%if forloop%}
+                                        <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
+                                        {%endif%}
+                                    {% endfor %}
+                                    </div>
                             </div>
                             <div class="myinfo-profile">
                                 <label for="myself">자기소개</label>

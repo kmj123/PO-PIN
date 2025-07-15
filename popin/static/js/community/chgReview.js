@@ -329,7 +329,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // 검색 결과 처리
     if (filteredCards.length === 0) {
       if (noResults) {
-        noResults.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+
+        noResults.textContent = "해당 게시물이 없습니다.";
+
         noResults.style.display = "block";
       }
       allCards.forEach(card => card.style.display = "none");
@@ -469,7 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (container && filteredCards.length === 0) {
       // 게시물이 없을 때만 메시지 표시
       if (noResultsMessage) {
-        noResultsMessage.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+        noResultsMessage.textContent = "해당 게시물이 없습니다.";
         noResultsMessage.style.display = "block";
       }
     } else {

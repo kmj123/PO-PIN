@@ -16,23 +16,20 @@ urlpatterns = [
 
 
     path('', views.main, name='main'),
-   
 
-
-    
     path('companion/', views.companion, name='companion'),
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
 
-    path("updateC/<int:pk>/", views.updateC, name="updateC"),
-    path('updateCo/', views.updateCo, name='updateCo'),
-    path('updateP/', views.updateP, name='updateP'),
-    path('updateSh/', views.updateSh, name='updateSh'),
-    path('updateS/', views.updateS, name='updateS'),
+    # path("updateC/<int:pk>/", views.updateC, name="updateC"),
+    # path('updateCo/', views.updateCo, name='updateCo'),
+    # path('updateP/', views.updateP, name='updateP'),
+    # path('updateSh/', views.updateSh, name='updateSh'),
+    # path('updateS/', views.updateS, name='updateS'),
 
-    path('companion/view/', views.companionview, name='companionview'),
-    path('proxy/view/', views.proxyview, name='proxyview'),
-    path('sharing/view/', views.sharingview, name='sharingview'),
-    path('status/view/', views.statusview, name='statusview'),
+    # path('companion/view/', views.companionview, name='companionview'),
+    # path('proxy/view/', views.proxyview, name='proxyview'),
+    # path('sharing/view/', views.sharingview, name='sharingview'),
+    # path('status/view/', views.statusview, name='statusview'),
 ]

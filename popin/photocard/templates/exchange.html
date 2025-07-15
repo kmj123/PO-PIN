@@ -1,3 +1,4 @@
+
 {% load static %}
 <title>{% block title %}포토카드 교환{% endblock %}</title>
 <meta name='csrf-token' content='{{csrf_token}}'>
@@ -37,10 +38,11 @@
         border-radius: 20px;
         transition: all 0.3s ease;  /* 크기나 상태 변화 시 부드럽게 전환 */
         display: block; /* 기본적으로 보임 */
-        overflow:hidden;
     }
 
     .sfilter h4{color:#666666;}
+
+    .sfilter > div{padding-top:20px;}
 
     /* 그룹 검색 */
     .groupsearch{
@@ -145,7 +147,7 @@
 
     .clocation a{color:#333;}
 
-    .fgroup{margin-top:15px;}
+    .fgroup, .fdiv{margin-top:15px;}
 
     .fchoice{margin-bottom:10px;}
 
@@ -162,13 +164,6 @@
 
     #searchBtn:hover {background: #667eea; color: white;}
 
-    .mapsearch {
-        margin-top:380px; height:50px;
-        display:flex; justify-content:center;
-        text-align:center; align-items:center;
-        border:2px solid #666; border-radius:5px;}
-
-    .mapsearch a{text-decoration:none; color:#666; padding:3px;}
 
     /* 포토카드 리스트 영역 */
     .photocardList {
@@ -522,6 +517,8 @@
                     </div>
                 </div>
                 <div class="flocation">
+                    <h4>📍 위치 설정</h4>
+                    <div class="clocation">강남구 (현재 위치)<a href="/photocard/location/"><i class="fas fa-map"></i></a></div>
                     <div class="fdiv">
                         <h4>자주 거래되는 장소</h4>
                         <div class="dropdown place-dropdown">
@@ -544,10 +541,6 @@
                     <button type="submit" id="searchBtn">검색</button>
                 </div>
             </form>
-
-            <div class="mapsearch">
-                <a href="/photocard/location/"><h4>📍 지도로 한눈에 보기</h4></a>
-            </div>
         </section>
 
         <section class="photocardList">

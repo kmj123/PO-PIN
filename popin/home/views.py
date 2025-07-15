@@ -26,9 +26,10 @@ def main(request):
         notices = Notice.objects.all().order_by('is_pinned','-created_at')[:4]
         notice_titles = [notice.title for notice in notices]
         
+
         global dlist
         dlist = publicData()
-        
+
         # 전체 게시글
         total_photocard = Photocard.objects.all().count() 
         # 활성 사용자
@@ -99,6 +100,7 @@ def main(request):
             'recent':recent,
             'titles': json.dumps(notice_titles),
             'dlist':dlist,
+
         }
         
         return render(request, 'main.html', context)

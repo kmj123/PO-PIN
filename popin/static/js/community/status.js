@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const noResultsMessage = document.getElementById("noResultsMessage");
     if (noResultsMessage) {
       if (filteredCards.length === 0) {
-        noResultsMessage.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+        noResultsMessage.textContent = "해당 게시물이 없습니다.";
         noResultsMessage.style.display = "block";
       } else {
         noResultsMessage.style.display = "none";

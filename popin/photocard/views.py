@@ -321,14 +321,7 @@ def write(request):
             tag = ','.join(tags) # 하나의 문자열로 태그 전환
             
             trade_type=request.POST.get('trade_type') # 거래방식
-            price = request.POST.get('price') # 가격
-            if price:  # price가 비어 있지 않으면
-                try:
-                    price = float(price)  # price를 숫자(float)로 변환
-                except ValueError:
-                    price = 0.0  # 변환 실패 시 기본값으로 0.0 설정
-            else:
-                price = 0.0  # price가 비어있으면 0.0으로 설정
+            price = request.POST.get('price', '') # 가격
             description = request.POST.get('description','') # 상세설명
             
             place=request.POST.get('place') # 장소
@@ -571,7 +564,6 @@ def location2_api(request):
     
 def location2(request):
     return render(request, 'photocard/location2.html') 
-
 
 
 

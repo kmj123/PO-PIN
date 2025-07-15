@@ -179,6 +179,7 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    word-wrap: break-word;
 }
 
 .post-card:hover {

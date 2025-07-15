@@ -327,7 +327,7 @@
 #favorite-btn {
     width: 60px;  /* 원하는 버튼 크기로 조정 */
     height: 60px;
-    border: none;
+    border: 1px solid black;
     border-radius: 50%; /* 원형 버튼 */
     padding: 0;
     cursor: pointer;

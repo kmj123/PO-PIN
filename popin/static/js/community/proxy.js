@@ -302,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // postList.style.display = "none"; // 필요하면 사용하세요
 
     // "해당 조건에 맞는 게시물이 없습니다." 메시지 보이기
-    noResultsMessage.textContent = "해당 조건에 맞는 게시물이 없습니다.";
+    noResultsMessage.textContent = "해당 게시물이 없습니다.";
     noResultsMessage.style.display = "block";
 
     // 페이지네이션 숨기기

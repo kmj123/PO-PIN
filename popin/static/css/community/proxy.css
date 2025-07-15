@@ -182,7 +182,7 @@
 }
 
 .postlist {
-    padding: 0 30px 30px;
+    padding: 0 30px;
 }
 
 .post-card {
@@ -480,6 +480,7 @@
 #prevBtn { left: 30px; }
 #nextBtn { right: 30px; }
 
+
 .modal-content {
     position: absolute;
     top: 50%;
@@ -647,7 +648,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin: -20px 20px 20px 20px;
+  margin-bottom : 20px;
 }
 
 .pagination a,
