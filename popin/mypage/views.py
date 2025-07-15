@@ -10,6 +10,7 @@ from photocard.models import TempWish
 from community.models import CompanionPost, SharingPost, ProxyPost
 from django.shortcuts import get_object_or_404
 from community.models import ExchangeReview
+from django.views.decorators.http import require_POST
 
 def profile(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
@@ -239,14 +240,17 @@ def review(request):
         user = User.objects.get(user_id=user_id)
 
         # 사용자 작성 게시글 조회
+        
         companion_posts = CompanionPost.objects.filter(author=user).values(
             "id","title", "created_at", "views", "comments_count"
         )
 
+        # 나눔
         sharing_posts = SharingPost.objects.filter(author=user).values(
             "id","title", "created_at", "views"
         )
 
+        # 대리구매
         proxy_posts = ProxyPost.objects.filter(author=user).values(
            "id","title", "created_at", "views"
         )
@@ -267,18 +271,41 @@ def my_written_reviews(request):
     user = get_object_or_404(User, user_id=user_id)
     
     reviews = ExchangeReview.objects.filter(writer=user).values(
-        'id', 'title', 'created_at', 'overall_score'
+        'id', 'title', 'created_at', 'overall_score', 'content', 'partner__nickname'
     )
     return JsonResponse({'written_reviews': list(reviews)})
+
+
 # 내가받은 교환판매후기 
 def my_received_reviews(request):
-    user_id = request.session.get("user_id")
-    user = get_object_or_404(User, user_id=user_id)
-    
-    reviews = ExchangeReview.objects.filter(partner=user).values(
-        'id', 'title', 'created_at', 'overall_score'
-    )
-    return JsonResponse({'received_reviews': list(reviews)})     
+    if request.method == 'POST':
+        print("POST 요청 도착")
+        user_id = request.session.get('user_id')
+        if not user_id:
+            return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+        try:
+            user = User.objects.get(user_id=user_id)
+        
+            reviews = ExchangeReview.objects.filter(partner=user).select_related("writer").values(
+                'id', 'title', 'content', 'overall_score', 'created_at', 'writer__nickname'
+            )
+
+            # 날짜 문자열 처리
+            received_data = [
+                {
+                    'title': review['title'],
+                    'content': review['content'],
+                    'overall_score': review['overall_score'],
+                    'created_at':  review['created_at'].strftime('%Y-%m-%d'),
+                    'writer': review['writer__nickname'],
+                }
+                for review in reviews
+            ]
+        except User.DoesNotExist:
+            return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
+
+    return JsonResponse({'received_reviews': received_data})
+     
 ###########################################
 # 차단 유저 관리
 def block_list(request):
@@ -327,17 +354,20 @@ def update_profile(request):
                 user.profile_image = profile_img
                 
             # 최애 멤버/그룹
-            member_name = request.POST.get('member')
-            group_name = request.POST.get('group')
+            member_name = request.POST.getlist('member')
+            group_name = request.POST.getlist('group')
             new_nickname = request.POST.get('nickname')
             request.session['nickname'] = new_nickname            
 
+            group = []
+            member = []
+            
             if member_name and group_name:
                 try:
                     group = Group.objects.get(name=group_name)
                     member = Member.objects.get(name=member_name, group=group)
-                    user.bias_group.set([group])   # bias_group은 many-to-many
-                    user.bias_member.set([member]) # bias_member도 many-to-many
+                    user.bias_group.set(group)   # bias_group은 many-to-many
+                    user.bias_member.set(member) # bias_member도 many-to-many
                 except (Group.DoesNotExist, Member.DoesNotExist):
                     return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
                 
