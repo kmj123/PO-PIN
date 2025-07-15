@@ -638,12 +638,12 @@
                                 <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
                             </div>
                             <div class="myinfo-profile">
-                                <label for="mybias">마이 아티스트</label>
+                                <label for="mybias">최애 선택하기</label>
                                 <div class="mybias_input">
-                                        {% for group,member in bias_pairs %}
-                                            {%if forloop%}
-                                        <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                        {%endif%}
+                                    {% for group,member in bias_pairs %}
+                                        <input type="text" class="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
+                                    {%empty%}
+                                        <input type="text" class="mybias" name="mybias" placeholder="나의 최애를 선택해주세요" readonly style="cursor: pointer;">
                                     {% endfor %}
                                     </div>
                             </div>
@@ -919,19 +919,36 @@
             const recentList = $("#recent .section-content");
             
             const cardsHtml = data.photocards.map(card => {
-                const dateType = card.created_at.split('T')[0];
+                const tags = (card.tag ? card.tag.split(',') : []).map(tag =>
+                    `<span class="badge tag">${tag.trim()}</span>`
+                ).join('');
 
-                return `
-                    <a href="/photocard/detail/${ card.pno }">
+
+                // 조건처리
+                const loadPlace  = (card.location === 'location' || !card.place) ? '내위치' : card.place;
+                const loadDdate = card.available_at ? card.available_at.split('T')[0] : '협의';
+                const sell_stateclass = card.sell_state === '거래중' ? 'badge' : 'badge Nope';
+                const trade_typeclass = card.sell_state === '거래완료' ? 'badge Nope' : 'badge';
+
+                return ` <a href="/photocard/detail/${ card.pno }">
                         <div class="item" data-pno="${ card.pno }">
-                            <div>
-                                <h3>${card.title}</h3>
-                                <p>${dateType} - ${card.album}</p>
-                            </div> 
+                            <div class="item-header">
+                                <div class="item-title">
+                                    <h3>${card.title}</h3>
+                                </div>
+                            </div>
+                            <div class="item-footer">
+                                <div class="item-info">
+                                    <span class="${trade_typeclass}">${card.trade_type}</span>
+                                    <span class="${sell_stateclass}">${card.sell_state}</span>
+                                    <span class="badge tag">${loadPlace}</span>
+                                </div>
+                                <p>거래 가능일: ${loadDdate} | 앨범명: ${card.album}</p>
+                            </div>
                         </div>
                     </a>`}).join("");
 
-            recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
+            recentList.append(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
         },
         error: function () {
             console.error("최근 본 글 불러오기 실패");
@@ -1008,24 +1025,32 @@
             // 기존 목록 비우기
             const wishList = $("#wishlist .section-content");
             wishList.empty();
-
-            const wishdata = data.wishlist.map(wish => 
+            
+            const wishdata = data.wishlist.map(wish => {
+                const loadPlace  = (wish.location === 'location' || !wish.place) ? '내위치' : wish.place;
+                const loadDdate = wish.available_at ? wish.available_at.split('T')[0] : '협의';
+                const sell_stateclass = wish.sell_state === '거래중' ? 'badge' : 'badge Nope';
+                const trade_typeclass = wish.sell_state === '거래완료' ? 'badge Nope' : 'badge';
+                return (
                 `<div class="item">
-                    <a href="/photocard/detail/${wish.pno}">
-                        <div class="wishlist">
-                            <div class="wish-list-img">
-                                <img src=${wish.image_url}>
+                            <a href="/photocard/detail/${wish.pno}">
+                            <div class="wishlist">
+                                <div class="wish-list-img">
+                                    <img src=${wish.image_url}>
+                                </div>
+                                <div class="wish-list-txt">
+                                    <h3>${wish.title}</h3>
+                                    <p>${wish.place}</p>
+                                    <p>${wish.price}</p>
+                                    <span class="badge reserved">${wish.sell_state}</span>
+                                    <span class="badge reserved">${wish.trade_state}</span>
+                                    <p> ${loadDdate} | ${wish.album}</p>
+                                </div>
                             </div>
-                            <div class="wish-list-txt">
-                                <span class="badge reserved">거래${wish.trade_state}</span>
-                                <h3>${wish.title}
-                                </h3>
-                                <p>${wish.album}</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>`).join("");
-            wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
+                            </a>
+                        </div>`);
+                }).join("");
+                wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
         },
         error: function (xhr, status, error) {
             console.error("위시리스트 불러오기 실패");
@@ -1049,7 +1074,7 @@
                 `<div class="item">
                 <a href="/photocard/detail/${sell.pno}">
                     <h3>${sell.title}</h3>
-                    <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
+                    <p>${sell.album} | 태그 ${sell.trade_state}</p>
                 </a>
                 </div>`).join("");
 
@@ -1075,7 +1100,7 @@
                 `<div class="item">
                 <a href="/photocard/detail/${buy.pno}">
                     <h3>${buy.title}</h3>
-                    <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
+                    <p>${buy.album} | 태그 ${buy.trade_state}</p>
                 </a>
                 </div>`).join("");
                 buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
@@ -1101,7 +1126,7 @@
                 `<div class="item">
                 <a href="/photocard/detail/${exchange.pno}">
                     <h3>${exchange.title}</h3>
-                    <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
+                    <p>${exchange.album} | 태그 ${exchange.trade_state}</p>
                 </a>
                 </div>`).join("");
 
