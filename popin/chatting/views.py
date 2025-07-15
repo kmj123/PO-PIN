@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from .models import ChatMessage, ChatRoom
 from photocard.models import Photocard
-from signupFT.models import User
+from signupFT.models import User, UserRelation
 
 
 # Create your views here.
@@ -34,11 +34,14 @@ def chatting(request):
             ).exclude(send_user=user).count()
             if user.nickname == room.host_user.nickname:
                 nickname = room.guest_user.nickname
+                user_id = room.guest_user.user_id
             else:
                 nickname = room.host_user.nickname
+                user_id = room.host_user.user_id
             
             room_list.append({
                 'id':room.id,
+                'user_id':user_id,
                 'nickname': nickname,
                 'last_timestamp':room.last_timestamp,
                 'last_message' : room.last_message,
@@ -53,18 +56,6 @@ def chatting(request):
     
     except User.DoesNotExist:
         return redirect('login:main')  # 예외 상황 대비
-
-# def room(request, room_name):
-#     messages = ChatMessage.objects.filter(room_name=room_name).order_by('timestamp')
-#     print("=====================")
-#     print(room_name)
-#     print(messages)
-#     print("=====================")
-#     context = {
-#         "room_name": room_name,
-#         "messages": messages,
-#     }
-#     return render(request, "chatting/chatting.html", context)
 
 def test(request):
     return render(request, 'chatting/test.html')
@@ -175,3 +166,37 @@ def cancel_chat(request, room_id):
     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+def block_user(request, target_id):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+
+    try:
+        user = User.objects.get(user_id=user_id) # 로그인한 사용자
+        target_user = User.objects.get(user_id=target_id)
+        
+        body = json.loads(request.body)
+        reason = body.get('reason', '')
+        
+        # 이미 동일한 관계가 있는 경우 방지 (예외 처리할 수도 있음)
+        relation, created = UserRelation.objects.get_or_create(
+            from_user=user,
+            to_user=target_user,
+            relation_type='BLOCK',
+            reason = reason,
+        )
+        if not created:
+            return JsonResponse({'success': True, 'message': '이미 차단된 사용자입니다.'})
+
+        return JsonResponse({'success': True})
+    
+    except User.DoesNotExist:
+        return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+def change_poststate(request):
+    return redirect('login:loginp')

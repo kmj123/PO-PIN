@@ -404,7 +404,7 @@ def update_blocklist(request):
             id = body.get('id')
             to_user = User.objects.get(user_id = id) # 차단한 유저 
             
-            relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
+            relation = UserRelation.objects.get(to_user=to_user, from_user=from_user, relation_type="BLOCK")
             if not relation:
                 return JsonResponse({'error': '관계를 찾을 수 없습니다.'}, status=404)
             else:
