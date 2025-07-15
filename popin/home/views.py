@@ -168,7 +168,7 @@ def publicData():
     dlist = []
     serviceKey = '726643496e66627731313152476c504a'
     
-    stations = ['2556', '4136', '2619', '2527', '4115', '1813', '0239', '0426', '0339']
+    stations = ['2556', '4136', '2619', '2527', '4115', '0210', '0239', '0150', '0426', '0339']
     inouts = [1, 2]
     
     week_tag = get_week_tag()
@@ -188,6 +188,7 @@ def publicData():
                 if rows and not found_first:
                     first_row = rows[0]  # 첫 번째 데이터
                     dlist.append({
+                        'station_code' : first_row['STATION_CD'],
                         'station_name': first_row['STATION_NM'],
                         'subway_name': first_row['SUBWAYENAME'],
                         'left_time': first_row['LEFTTIME'],
