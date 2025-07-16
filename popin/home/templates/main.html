@@ -663,11 +663,11 @@
                             {% if r.category == '판매' or r.category == '교환'%}
                                 /photocard/detail/{{ r.id }}/
                             {% elif r.category == '포카 꾸미기' %}
-                                /pocadeco/view/{{ r.id }}/
+                                /pocadeco/decoview/{{ r.id }}/
                             {% endif %}">
                                 <div class="post-content">
                                     <div class="post-title">{{r.title}}</div>
-                                    <div class="post-meta">{{r.user}} • {{r.created_at}} • 조회 {{r.hit}}</div>
+                                    <div class="post-meta">{{r.user}} • {{r.created_at|timesince}} 전 • 조회 {{r.hit}}</div>
                                 </div>
                                 <div class="post-category">{{r.category}}</div>
                             </a>
