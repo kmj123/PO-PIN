@@ -259,6 +259,12 @@
     gap: 1rem;
 }
 
+.mypage-item-list{
+    display: flex;
+    height: 100%;
+    padding: 0.5rem;
+    gap: 1rem;
+}
 
 .mypage-list-img{
     width: 110px;
