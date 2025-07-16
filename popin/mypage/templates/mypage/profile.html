@@ -706,13 +706,20 @@
             <div class="tabs-wrapper">
                 <div class="tabs">
                     <button class="tab active " onclick="showTab('keywords')">키워드</button>
-                    <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    {% if not target_id %} <!--다른 유저 프로필일 경우 context로 target_id (타 유저 아이디)가 넘어옵니다!!!-->
+                        <button class="tab" onclick="showTab('recent')">최근본글</button>
+                    {% endif %}
                     <button class="tab" onclick="showTab('mypoca')">마이 포카</button>
-                    <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
+                    {% if not target_id %}
+                        <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
+                    {% endif %}
                     <button class="tab" onclick="showTab('transactions')">포토카드</button>
                     <button class="tab" onclick="showTab('reviews')">후기글</button>
-                    <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
-                    <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
+                    {% if not target_id %}
+                        <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                        <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
+                    {% endif %}
+                    
                 </div>
             </div>
             <!--키워드 리스트-->
@@ -859,6 +866,8 @@
     </main>
     
 <script>
+    const targetId = "{{ target_id|default:'' }}";  // 없으면 빈 문자열
+
     // 파일업로드 관련
     const imageuploadContainer = document.getElementById('previous_container');
     const imageInput = document.getElementById('profile-img-input');
@@ -945,6 +954,7 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
+        data: targetId ? { target_user_id: targetId } : {}, // 타겟아이디가 있으면 타켓의 정보가 넘어옴! 없으면 나의 정보
         success: function (data) {
             console.log("받은 데이터:", data.group_album_dict);
 
@@ -1039,6 +1049,7 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
+        data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
             console.log('판매목록 불러오기 성공');
 
@@ -1091,6 +1102,7 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
+        data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
             console.log('교환목록 불러오기 성공');
 
@@ -1134,6 +1146,7 @@
             type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
+            data: targetId ? { target_user_id: targetId } : {},
             success: function(data){
                 console.log('받은 후기글 불러오기 성공');
 
