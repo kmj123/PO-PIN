@@ -158,7 +158,7 @@ def recent(request):
         filtered_posts = [p for p in filtered_posts if searchinput.lower() in p['title'].lower()]
     
     # 페이지네이터
-    paginator = Paginator(filtered_posts, 5)
+    paginator = Paginator(filtered_posts, 10)
     page = int(request.GET.get('page', 1))
     page_num = paginator.get_page(page)
 
