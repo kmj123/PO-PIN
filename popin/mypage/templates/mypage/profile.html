@@ -27,11 +27,11 @@
 
         .modal-content{
             border-radius: 8px;
-            width: 100%;
-            max-width: 100%;
+            width: 90%;
+            max-width: 850px;
             background-color: #ffff;
             FONT-WEIGHT: 200;
-            /* margin: 20px auto; */
+            margin: 20px auto;
             padding: 65px;
             max-height: 100%;
             overflow-y: auto;
@@ -304,8 +304,8 @@
             border-radius: 6px;
             position: fixed;
             z-index: 9999;
-            left: 50%;
-            bottom: 50%;
+            left: 64%;
+            bottom: 31%;
             font-size:12px;
             opacity: 0;
             trasition: opacity 0.5s, bottom: 0.5s;
@@ -315,7 +315,6 @@
         #toast.show{
             visibility:visible;
             opacity: 1;
-            bottom: 50%;
         }
 
     </style>
@@ -803,12 +802,12 @@
                     </div>
                 </div>
                 
-                <!--내가 받은 거래 후기-->
+                <!--받은 후기-->
                 <div class="section-content">
                     <div id="received-reviews" class="review-content"></div>
                 </div>
 
-                <!--내가 쓴 후기-->
+                <!--작성 후기-->
                 <div class="section-content">
                     <div id="written-reviews" class="review-content" style="display: none;"></div>
                 </div>
@@ -955,7 +954,7 @@
 
 
                 // 조건처리
-                const loadPlace = getPlace(card.location, card.place);
+                const loadPlace = getPlace(card.place);
                 const loadDdate = getAvailableDate(card.available_at);
                 const sell_stateclass = getSellStateClass(card.trade_state);
 
@@ -1058,7 +1057,7 @@
             wishList.empty();
             
             const wishdata = data.wishlist.map(wish => {
-                const loadPlace = getPlace(wish.location, wish.place);
+                const loadPlace = getPlace(wish.place);
                 const loadDdate = getAvailableDate(wish.available_at);
                 const sell_stateclass = getSellStateClass(wish.trade_state);
                 const loadprice = getPrice(wish.price);
@@ -1107,7 +1106,7 @@
 
             const saleData = data.sell_poca.map(sell => {
 
-                const loadPlace = getPlace(sell.location, sell.place);
+                const loadPlace = getPlace(sell.place);
                 const loadDdate = getAvailableDate(sell.available_at);
                 const sell_stateclass = getSellStateClass(sell.trade_state);
                 const loadprice = getPrice(sell.price);
@@ -1152,7 +1151,7 @@
             buyList.empty();
 
             const buyData = data.buy_poca.map(buy => {
-                const loadPlace = getPlace(buy.location, buy.place);
+                const loadPlace = getPlace(buy.place);
                 const loadDdate = getAvailableDate(buy.available_at);
                 const sell_stateclass = getSellStateClass(buy.trade_state);
                 const loadprice = getPrice(buy.price);
@@ -1199,7 +1198,7 @@
             exchangeList.empty();
             
             const exchangeData = data.exchange_poca.map(exchange => {
-                const loadPlace = getPlace(exchange.location, exchange.place);
+                const loadPlace = getPlace(exchange.place);
                 const loadDdate = getAvailableDate(exchange.available_at);
                 const sell_stateclass = getSellStateClass(exchange.trade_state);
                 const loadprice = getPrice(exchange.price);
@@ -1252,7 +1251,7 @@
         return cookieValue;
     }
         
-        // 내가 받은 후기글
+        // 받은 후기
         $.ajax({
             url: "/mypage/reviews/received/",
             type: "GET",
@@ -1267,9 +1266,10 @@
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
                     <a href="/community/chgReview/view/${received.id}">
-                        <h3>작성자: ${received.writer}</h3>
-                        <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
-                        <p>${received.title} - ${received.content}</p>
+                        <h3>제목: ${received.title} </h3>
+                        <p>닉네임: ${received.writer}</p>
+                        <p class="rating">⭐ 평점 : ${received.overall_score}점</p>
+                        <p class="reviews-contents">내용: ${received.content}</p>
                     </a>
                     </div>
                     `).join("");
@@ -1280,7 +1280,7 @@
                 $("#reviews #received-reviews").html("<div class='error-content'>받은 후기글 불러오는 데 실패했습니다.</div>");
             }
         });
-        // 내가 쓴 후기글
+        // 작성한 후기
         $.ajax({
             url: "/mypage/reviews/written/",
             type: "GET",
@@ -1295,9 +1295,9 @@
                     `<div class="item">
                     <a href="/community/chgReview/view/${written.id}">
                         <h3>제목: ${written.title} </h3>
-                        <p>작성자 : ${written.partner__nickname}</p>
-                        <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
-                        <p class="review-content">${written.content}</p>
+                        <p>닉네임 : ${written.partner__nickname}</p>
+                        <p class="rating">⭐ 평점 : ${written.overall_score}점</p>
+                        <p class="reviews-contents">내용: ${written.content}</p>
                     </a>
                     </div>`).join("");
 
