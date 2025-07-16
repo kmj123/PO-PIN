@@ -1532,7 +1532,7 @@
         loadBlockedUsers();
     });
     
-    // 프로필 수정 업데이트 AJAX
+    {% comment %} // 프로필 수정 업데이트 AJAX
     $('#profileForm').on('submit', function(e) {
         e.preventDefault();
 
@@ -1555,7 +1555,7 @@
                 alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
             }
         });
-    });
+    }); {% endcomment %}
 
 
     // 아티스트 검색 모달창
