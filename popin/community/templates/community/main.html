@@ -500,15 +500,15 @@
         </ul>
         <div class="board-stats">
           <div class="stat-item">
-            <span class="stat-number">1,247</span>
+            <span class="stat-number">{{ total_reviews }}</span>
             <span class="stat-label">총 후기</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">4.8</span>
+           <span class="stat-number">{{ avg_rating }}</span>
             <span class="stat-label">평균 평점</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">32</span>
+            <span class="stat-number">{{ today_reviews }}</span>
             <span class="stat-label">오늘 작성</span>
           </div>
         </div>
@@ -541,15 +541,15 @@
         </ul>
         <div class="board-stats">
           <div class="stat-item">
-            <span class="stat-number">89</span>
+          <span class="stat-number">{{ sharing_active }}</span>
             <span class="stat-label">진행중 나눔</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">543</span>
+           <span class="stat-number">{{ sharing_completed }}</span>
             <span class="stat-label">완료된 나눔</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">15</span>
+            <span class="stat-number">{{ sharing_today }}</span>
             <span class="stat-label">오늘 등록</span>
           </div>
         </div>
@@ -579,15 +579,15 @@
         </ul>
         <div class="board-stats">
           <div class="stat-item">
-            <span class="stat-number">156</span>
+            <span class="stat-number">{{proxy_active}}</span>
             <span class="stat-label">모집중</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">892</span>
+            <span class="stat-number">{{proxy_completed}}</span>
             <span class="stat-label">완료</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">23</span>
+            <span class="stat-number">{{proxy_today}}</span>
             <span class="stat-label">오늘 등록</span>
           </div>
         </div>
@@ -617,15 +617,15 @@
         </ul>
         <div class="board-stats">
           <div class="stat-item">
-            <span class="stat-number">67</span>
+            <span class="stat-number">{{status_active}}</span>
             <span class="stat-label">실시간 현황</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">234</span>
+            <span class="stat-number">{{status_total}}</span>
             <span class="stat-label">총 현황</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">18</span>
+            <span class="stat-number">{{status_today}}</span>
             <span class="stat-label">오늘 업데이트</span>
           </div>
         </div>
@@ -655,15 +655,15 @@
         </ul>
         <div class="board-stats">
           <div class="stat-item">
-            <span class="stat-number">78</span>
+            <span class="stat-number">{{companion_active}}</span>
             <span class="stat-label">모집중</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">456</span>
+            <span class="stat-number">{{companion_completed}}</span>
             <span class="stat-label">매칭 완료</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">12</span>
+            <span class="stat-number">{{companion_today}}</span>
             <span class="stat-label">오늘 등록</span>
           </div>
         </div>
@@ -686,40 +686,18 @@
           실시간 커뮤니티 활동을 한눈에 확인해보세요.
         </p>
         <ul class="activity-list">
+           {% for item in recent_items %}
           <li class="activity-item">
             <div class="activity-icon">⭐</div>
             <div class="activity-content">
-              <div class="activity-title">윳냥이님과의 교환 후기 등록</div>
-              <div class="activity-meta">교환후기 · 별점 5.0</div>
+              <div class="activity-title">{{ item.title }}</div>
+             <div class="activity-meta">{{ item.meta }}</div>
             </div>
-            <div class="activity-time">2분 전</div>
+           <div class="activity-time">{{ item.time|timesince }} 전</div>
           </li>
-          <li class="activity-item">
-            <div class="activity-icon">🎁</div>
-            <div class="activity-content">
-              <div class="activity-title">홍대 리쿠 생일 카페 포카 나눔</div>
-              <div class="activity-meta">오프라인 나눔 · 15개 남음</div>
-            </div>
-            <div class="activity-time">15분 전</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">🛒</div>
-            <div class="activity-content">
-              <div class="activity-title">위시 전시회 MD 대리구매</div>
-              <div class="activity-meta">인당 2개 제한</div>
-            </div>
-            <div class="activity-time">3시간 전</div>
-          </li>
-          <li class="activity-item">
-            <div class="activity-icon">👥</div>
-            <div class="activity-content">
-              <div class="activity-title">7/15 라이즈 콘서트 동행 구함</div>
-              <div class="activity-meta">동행 모집 · 여 · 20대</div>
-            </div>
-            <div class="activity-time">1시간 전</div>
-          </li>
+            {% endfor %}
         </ul>
-        <a href="{% url 'community:recent' %}" class="more-btn">더보기 →</a>
+        
       </div>
     </div>
   </div>

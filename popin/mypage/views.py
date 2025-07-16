@@ -286,11 +286,12 @@ def my_written_reviews(request):
 
 # 내가받은 교환판매후기 
 def my_received_reviews(request):
-    if request.method == 'POST':
-        print("POST 요청 도착")
+    # GET으로 요청 받기
+    if request.method == 'GET':
         user_id = request.session.get('user_id')
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+
         try:
             target_user_id = request.POST.get('target_user_id')
             query_user_id = target_user_id if target_user_id else user_id
@@ -311,10 +312,30 @@ def my_received_reviews(request):
                 }
                 for review in reviews
             ]
+
         except User.DoesNotExist:
             return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
 
-    return JsonResponse({'received_reviews': received_data})
+        reviews = ExchangeReview.objects.filter(partner=user).select_related("writer").values(
+            'id', 'title', 'content', 'overall_score', 'created_at', 'writer__nickname'
+        )
+
+        received_data = [
+            {
+                'id': review['id'],  # ✅ id도 같이 보내줘야 JS에서 undefined 안 뜸
+                'title': review['title'],
+                'content': review['content'],
+                'overall_score': review['overall_score'],
+                'created_at': review['created_at'].strftime('%Y-%m-%d'),
+                'writer': review['writer__nickname'],
+            }
+            for review in reviews
+        ]
+
+        return JsonResponse({'received_reviews': received_data})
+
+    # GET이 아닌 요청은 405
+    return JsonResponse({'error': 'GET 요청만 지원합니다.'}, status=405)
      
 ###########################################
 # 차단 유저 관리
