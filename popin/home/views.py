@@ -90,6 +90,7 @@ def main(request):
                 'hit' : recent_deco.hit,
             })
             
+        
         context = {
             'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
             'photocards': photocards, # 최근 인기 포토카드

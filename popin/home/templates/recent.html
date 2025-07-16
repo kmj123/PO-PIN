@@ -158,10 +158,10 @@
                             {% if post.category == '판매' or post.category == '교환'%}
                                 /photocard/detail/{{ post.id }}/
                             {% elif post.category == '포카 꾸미기' %}
-                                /pocadeco/view/{{ post.id }}/
+                                /pocadeco/decoview/{{ post.id }}/
                             {% endif %}">
                                 <div class="post-title">{{ post.title }}</div>
-                                <div class="post-meta">{{ post.user }} • {{ post.created_at }} • 조회 {{ post.hit }}
+                                <div class="post-meta">{{ post.user }} • {{ post.created_at|timesince}} 전 • 조회 {{ post.hit }}
                                     <div class="post-category">{{ post.category }}</div>
                                 </div>
                             </a>
