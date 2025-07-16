@@ -424,7 +424,7 @@ def update_profile(request):
                 members.append(m2)
             else:
                 bias_pairs = zip(user.bias_group.all(), user.bias_member.all())
-                return render(request, 'your_template.html', {
+                return render(request, '/mypage/profile/', {
                     'bias_pairs': bias_pairs,
                     'nickname': user.nickname,
                     'introduction': user.introduction,
@@ -435,7 +435,7 @@ def update_profile(request):
             
 
             user.save()
-            return redirect('/mypage/profile')
+            return JsonResponse({'message': '프로필 수정 성공'}, status=200)
 
         except Exception as e:
             return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)

@@ -608,7 +608,7 @@
         <!--//프로필-->
 
         <!--프로필 수정 모달창 구현-->
-        <form action="/mypage/update_profile/" id="uploadForm" method="post" name="profileFrm" enctype="multipart/form-data">
+        <form action="/mypage/update_profile/" id="profileForm" method="post" name="profileFrm" enctype="multipart/form-data">
             {% csrf_token %}
             <div id="modalContainer" class="hidden">
                 <div id="modalContent">
@@ -655,10 +655,11 @@
                                         {% csrf_token %}
                                         <div class="search-container">
                                             <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
-                                            <input type="hidden" name="favorite_group" id="selectedGroup">
-                                            <input type="hidden" name="favorite_member" id="selectedMember">
-                                            <input type="hidden" name="second_group" id="selectedGroup">
-                                            <input type="hidden" name="second_member" id="selectedMember">
+                                            <input type="hidden" name="favorite_group" id="favoriteGroup">
+                                            <input type="hidden" name="favorite_member" id="favoriteMember">
+                                            <input type="hidden" name="second_group" id="secondGroup">
+                                            <input type="hidden" name="second_member" id="secondMember">
+
 
                                             <div class="filter-buttons">
                                                 <button type="button" class="filter-btn" data-filter="all">전체</button>
@@ -1532,7 +1533,7 @@
         loadBlockedUsers();
     });
     
-    {% comment %} // 프로필 수정 업데이트 AJAX
+    // 프로필 수정 업데이트 AJAX
     $('#profileForm').on('submit', function(e) {
         e.preventDefault();
 
@@ -1555,7 +1556,7 @@
                 alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
             }
         });
-    }); {% endcomment %}
+    });
 
 
     // 아티스트 검색 모달창
@@ -1592,9 +1593,6 @@
             modal.style.display = 'none';
         });
 
-        window.addEventListener('click', e => {
-            if (e.target === modal) modal.style.display = 'none';
-        });
 
         // 선택된 멤버 업데이트
         function updateSelectedDisplay() {
