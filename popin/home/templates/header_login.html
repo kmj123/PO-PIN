@@ -290,6 +290,8 @@
             <div class="user-info">
                 <a href="/chatting/" class="alarm">💌</a>
                     <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
+                <a href="/chatting/" class="alarm">🔔</a>
+                    <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
                 <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
@@ -297,7 +299,7 @@
             <!-- 모바일 메뉴 -->
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-user-info">
-                    <a href="/chatting/" class="alarm">💌</a>
+                    <a href="/chatting/" class="alarm">🔔</a>
                     <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
                     <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
                 </div>

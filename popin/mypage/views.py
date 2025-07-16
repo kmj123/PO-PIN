@@ -207,6 +207,7 @@ def trade(request):
                     'member': photocard.member.name if photocard.member else '',
                     'price' : photocard.price,
                     'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in sell_poca
             ]
@@ -222,6 +223,7 @@ def trade(request):
                     'member': photocard.member.name if photocard.member else '',
                     'price' : photocard.price,
                     'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in buy_poca
             ]
@@ -237,6 +239,7 @@ def trade(request):
                     'member': photocard.member.name if photocard.member else '',
                     'price' : photocard.price,
                     'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in exchange_poca
             ]
