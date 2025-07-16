@@ -1122,9 +1122,10 @@
                                         <p class="info-bottom">📆 | ${loadDdate}
                                     </div>
                                 </div>
+                                <button>내가 받은 리뷰 보기</button>
                             </div>
-                        </a>
-                    `);
+                        </a>`
+                    );
                 }).join("");
 
             saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
@@ -1152,9 +1153,8 @@
                 const loadprice = getPrice(buy.price);
                 
                 return (
-                    `<div class="item">
-                        <a href="/photocard/detail/${buy.pno}">
-                            <div class="wishlist">
+                    `<a href="/photocard/detail/${buy.pno}">
+                            <div class="item">
                                 <div class="mypage-list-img">
                                     <img src=${buy.image_url}>
                                 </div>
@@ -1165,13 +1165,12 @@
                                         <span class="${sell_stateclass}">${buy.trade_state}</span>
                                         <span class="badge tag">📍${loadPlace}</span>
                                         <p>${loadprice}</p>
+                                        <p class="info-bottom">📆 | ${loadDdate}
                                     </div>
-                                    <p class="info-bottom">📆 | ${loadDdate} 💬
                                 </div>
                             </div>
-                        </a>
-                    </div>`
-                );
+                        </a>`
+                    );
             }).join("");
             buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
 
@@ -1191,14 +1190,31 @@
 
             const exchangeList = $("#transactions #exchange-list");
             exchangeList.empty();
+            
+            const exchangeData = data.exchange_poca.map(exchange => {
+                const loadPlace = getPlace(exchange.location, exchange.place);
+                const loadDdate = getAvailableDate(exchange.available_at);
+                const sell_stateclass = getSellStateClass(exchange.trade_state);
+                const loadprice = getPrice(exchange.price);
 
-            const exchangeData = data.exchange_poca.map(exchange => 
-                `<div class="item">
-                <a href="/photocard/detail/${exchange.pno}">
-                    <h3>${exchange.title}</h3>
-                    <p>${exchange.album} | 태그 ${exchange.trade_state}</p>
-                </a>
-                </div>`).join("");
+                `<a href="/photocard/detail/${exchange.pno}">
+                    <div class="item">
+                        <div class="mypage-list-img">
+                            <img src=${exchange.image_url}>
+                        </div>
+                        <div class="mypage-list-txt">
+                            <h3>${exchange.title}</h3>
+                            <div class="item-info">
+                                <span class="${sell_stateclass}">${exchange.trade_type}</span>
+                                <span class="${sell_stateclass}">${exchange.trade_state}</span>
+                                <span class="badge tag">📍${loadPlace}</span>
+                                <p>${loadprice}</p>
+                                <p class="info-bottom">📆 | ${loadDdate}
+                            </div>
+                        </div>
+                    </div>
+                </a>`
+            }).join("");
 
                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
         }, error: function(xhr, status, error){
