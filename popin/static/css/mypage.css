@@ -185,6 +185,13 @@
     overflow-y: auto;
 }
 
+.review-content {
+    width:905px;
+    white-space: nowrap;         /* 한 줄로 제한 */
+    overflow: hidden;            /* 넘치는 부분 숨기기 */
+    text-overflow: ellipsis;     /* 넘치는 부분에 말줄임표(...) 표시 */
+}
+
 .section-header h2 {
     color: #333;
     font-size: 1.5rem;
@@ -252,8 +259,14 @@
     gap: 1rem;
 }
 
+.mypage-item-list{
+    display: flex;
+    height: 100%;
+    padding: 0.5rem;
+    gap: 1rem;
+}
 
-.wish-list-img{
+.mypage-list-img{
     width: 110px;
     height: 120px;
     display: flex;
@@ -261,7 +274,7 @@
     align-items: center;
 }
 
-.wish-list-img img{
+.mypage-list-img img{
     width: 100%;
     height: 100%;
     border-radius: 20px;
@@ -768,7 +781,7 @@ a{
     padding:0px;
 }
 
-.wish-list-txt h3{
+.mypage-list-txt h3{
     margin-top: 0.5rem;
     font-size: 1rem;
     font-weight: 600;
@@ -778,25 +791,44 @@ a{
     gap: 0.5rem;
 }
 
-.wish-list-txt p {
+.mypage-list-txt p {
     margin: 0.5rem 0 0;
     color: #666;
 }
 
 .badge {
-    font-size: 0.75rem;
-    padding: 3px 8px;
-    border-radius: 5px;
-    vertical-align: middle;
-    color: white;
+    padding: 4px 8px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: #F0F0F0;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
-.badge.complete {
-    background-color: #696969;
+.badge.Nope {
+    padding: 4px 8px;
+    background: #606060;
+    color: #F0F0F0;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
-.badge.reserved {
-    background-color: #ff9800;
+.badge.tag{
+    background: #F0F0F0;
+    color: #666;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.item-header {
+    display: flex;
+}
+
+.info-bottom {
+    font-size: 14px; 
+    margin-top: 15px;
 }
 
 input[type="text"],
