@@ -16,6 +16,6 @@ urlpatterns = [
     path('review/', views.review, name='review'),#커뮤니티 작성글(동행, 나눔, 대리구매)
     path('reviews/written/', views.my_written_reviews, name='my_written_reviews'),
     path('reviews/received/', views.my_received_reviews, name='my_received_reviews'),
-    
 
+    path('profile/<str:target_id>/',views.profile,name='profile'), # 타인 프로필
 ]
