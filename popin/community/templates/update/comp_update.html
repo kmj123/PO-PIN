@@ -250,7 +250,7 @@
   </style>
 </head>
 <body>
-  <form id="companionForm" method="POST" action="{% url 'community:write_companion' %}" enctype="multipart/form-data">
+ <form id="companionForm" method="POST" action="{% url 'community:updateCo' pk=post.pk %}" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
@@ -261,11 +261,11 @@
       <tbody>
         <tr>
           <th><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" id="title" name="title" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
+          <td><input type="text" id="title" name="title" value="{{ post.title }}" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
         </tr>
         <tr>
       <th><label for="artist">아티스트 <span class="required">*</span></label></th>
-      <td><input type="text" id="artist" name="artist" placeholder="예: NewJeans" /></td>
+      <td><input type="text" id="artist" name="artist" value="{{ post.artist }}" placeholder="예: NewJeans" /></td>
     </tr>
         <tr>
           <th>유형 <span class="required">*</span></th>
@@ -277,12 +277,12 @@
               <button type="button" data-type="굿즈샵">굿즈샵</button>
               <button type="button" data-type="기타">기타</button>
             </div>
-            <input type="hidden" name="category" id="categoryInput">
+            <input type="hidden" name="category" id="categoryInput" value="{{ post.category }}" >
           </td>
         </tr>
         <tr>
           <th><label for="location">위치 <span class="required">*</span></label></th>
-          <td><input type="text" id="location" name="location" placeholder="예: 서울 영등포 타임스퀘어" /></td>
+          <td><input type="text" id="location" name="location" value="{{ post.location }}" placeholder="예: 서울 영등포 타임스퀘어" /></td>
         </tr>
 
         <tr>
@@ -290,28 +290,28 @@
           <th scope="row">날짜 및 시간 <span class="required">*</span></th>
           <td>
             <div class="datetime-group">
-              <input type="date" id="eventDate"name="eventDate" required>
-              <input type="time" id="eventTime" name="eventTime" required>
+              <input type="date" id="eventDate"name="eventDate" value="{{ post.event_date|date:'Y-m-d' }}"required>
+              <input type="time" id="eventTime" name="eventTime"value="{{ post.event_date|time:'H:i' }}" required>
             </div>
           </td>
        <tr>
           <th scope="row"><label for="max_people"> 모집 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.max_people }}"placeholder="동행수"/></td>
        </tr>
        <tr>
           <th scope="row"><label for="max_people">현재 모집된 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" placeholder="동행수"/></td>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.max_people }}"placeholder="동행수"/></td>
        </tr>
         <tr>
           <th><label for="content">본문 <span class="required">*</span></label></th>
-          <td><textarea id="content" placeholder="상세 내용을 적어주세요."></textarea></td>
+          <td><textarea id="content" name="content" placeholder="상세 내용을 적어주세요.">{{ post.content }}</textarea></td>
 
         </tr>
 
         <tr>
           <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
           <td>
-            <select id="region" name="region" class="wlong" style="width: 90%; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
+            <select id="region" name="region" value="{{ post.region }}" class="wlong" style="width: 90%; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
               <option value="">지역 선택</option>
               <option value="서울">서울</option>
               <option value="경기">경기</option>
@@ -336,7 +336,7 @@
  
         <tr>
           <th><label for="tags">태그</label></th>
-          <td><input type="text" id="tags" name="tags" placeholder="#태그1, #태그2" /></td>
+          <td><input type="text" id="tags" name="tags" value="{{ tags_str }}" placeholder="#태그1, #태그2" /></td>
         </tr>
         <tr>
           <th scope="row">사진 첨부</th>
@@ -534,7 +534,7 @@
       });
 
       try {
-        const response = await fetch("{% url 'community:write_companion' %}", {
+        const response = await fetch("{% url 'community:updateCo' pk=post.pk %}", {
           method: "POST",
           headers: {
             "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value

@@ -47,9 +47,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
+        margin-bottom: 5px;
         padding-bottom: 20px;
-        border-bottom: 2px solid #f0f0f0;
     }
 
     .page-notice {
@@ -307,6 +306,89 @@
         font-size: 14px;
     }
 
+    /* 막차 */
+    .subway_div{
+        width:100%;
+    }
+
+    .subway{
+        display:flex;
+        margin: 10px 0;
+        overflow-x: hidden;
+        white-space: nowrap;
+        position:relative;
+    }
+
+    .subway_title{display:flex; padding-left:5px;}
+
+    .ani_icons{display:flex; gap:10px; color:#333; cursor:pointer; margin-left:20px;}
+
+    .ani_icons button{border:none; background:none;}
+
+    .ani_icons i{font-size:16px;}
+
+    .subway_content{
+        display:flex;
+        width:200%;
+        animation: moveSubway 35s linear infinite;
+    }
+
+    .subway_info{
+        width: 240px;
+        height: 100px;
+        border: 2px solid #e1e8ed;
+        border-radius: 15px;
+        background: white;
+        text-align: center;
+        padding: 10px;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.2;
+        margin-right: 10px; /* 각 subway_info 사이에 여백 */
+        flex-shrink: 0; /* 자식 요소가 축소되지 않도록 */
+    }
+
+    .subway_info div{
+        padding:3px 10px;
+        width:200px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+    }
+
+    .start {font-weight:600;}
+
+    .sline img{width:15px; height:15px;}
+
+    /* 기차 애니메이션 */
+    @keyframes moveSubway {
+        0% {
+            transform: translateX(20px);
+        }
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    .subway_rail{width:100%; margin:10px 0 30px 0;}
+
+    .rail{
+        width:100%; height:15px; 
+        border-top:3px solid #d8dde1; border-bottom:3px solid #d8dde1; 
+        position: relative;
+        background-image: linear-gradient(to right, #d8dde1 10%, transparent 10%) ;
+        background-size: 10px 100%; /* 세로줄의 간격과 길이를 설정 */
+        background-repeat: repeat-x; /* 수평으로 반복 */
+        position: relative;
+    }
+
+
     /* 반응형 */
 
     @media (max-width: 768px) {
@@ -349,6 +431,46 @@
     }
 </style>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 애니메이션 일시정지/재생/다시시작 //
+        const subwayContent = document.querySelector(".subway_content");
+        const pauseButton = document.getElementById("pause");
+        const backButton = document.getElementById("back");
+
+        // 애니메이션 제어 상태
+        let isPaused = false;
+
+        // 기본 상태에서 애니메이션이 실행됨
+        subwayContent.style.animationPlayState = "running";
+
+        // 일시정지/시작 버튼 클릭
+        pauseButton.addEventListener("click", function () {
+            if (!isPaused) {
+                subwayContent.style.animationPlayState = "paused"; // 애니메이션 일시정지
+                pauseButton.innerHTML = '<i class="fas fa-play"></i>'; // 아이콘을 "시작"으로 변경
+                isPaused = true;
+            } else {
+                subwayContent.style.animationPlayState = "running"; // 애니메이션 다시 시작
+                pauseButton.innerHTML = '<i class="fas fa-pause"></i>'; // 아이콘을 "일시정지"로 변경
+                isPaused = false;
+            }
+        });
+
+        // 처음부터 시작 버튼 클릭
+        backButton.addEventListener("click", function () {
+            subwayContent.style.transition = "none"; // 애니메이션 잠시 비활성화
+            subwayContent.style.transform = "translateX(0)"; // 처음 위치로 이동
+            setTimeout(() => {
+                subwayContent.style.transition = "transform 20s linear"; // 애니메이션 재활성화
+                subwayContent.style.animation = "none"; // 애니메이션을 일시적으로 비활성화한 후 다시 켬
+                subwayContent.offsetHeight; // 강제로 DOM을 다시 계산하여 애니메이션이 새로 시작되도록 만듦
+                subwayContent.style.animation = "moveSubway 20s linear infinite"; // 다시 애니메이션 시작
+            }, 50); // 잠시 후 애니메이션 재시작
+        });
+    });
+</script>
+
 <body>
     <div class="container">
         <!-- 메인 콘텐츠 -->
@@ -365,30 +487,6 @@
                             </div>
                             <a href="/customer/notice/" class="noticeall">전체보기</a>
                         </div>
-                    </div>
-                </div>
-
-                <div class="subway">
-                    <div class="subway_title"><h2>막차 알림</h2></div>
-                    <div class="subway_info">
-                        {% for d in dlist %}
-                            <div>
-                                {{d.station_name}}
-                            </div>
-                            <div>
-                                종착역 {{d.subway_name}}
-                            </div>
-                            <div>
-                                출발시간 {{d.left_time}}
-                            </div>
-                            <div>
-                                {% if d.inout == '1' %} 상행내선
-                                {% elif d.inout == '2' %} 하행외선
-                                {% endif %}
-                            </div>
-                            {% comment %} <div>{{d.week_tag}}</div> {% endcomment %}
-                            <div>------------------------------------</div>
-                        {% endfor %}
                     </div>
                 </div>
 
@@ -427,6 +525,89 @@
                         changeTitle();  // 첫 번째 제목 표시
                     };
                 </script>
+
+                <div class="subway_div">
+                    <div class="subway_title">
+                        <h2>막차 알림</h2>
+                        <div class="ani_icons">
+                            <button id="pause"><i class="fas fa-pause"></i></button>
+                            <button id="back"><i class="fas fa-step-backward"></i></button>
+                            {% comment %} <i class="fas fa-play"></i> {% endcomment %}
+                        </div>
+                    </div>
+                    <div class="subway">
+                        <div class="subway_content">
+                            {% for d in dlist %}
+                                <div class="subway_info">
+                                    <div class="start">
+                                        {{d.station_name}}
+                                        {% if d.station_name == "올림픽공원" %}🌳
+                                        {% elif d.station_name == "디지털미디어시티" %}📡
+                                        {% elif d.station_name == "여의도" %}🏢
+                                        {% elif d.station_name == "뚝섬" %}🌌
+                                        {% elif d.station_name == "홍대입구" %}🍰
+                                        {% elif d.station_name == "서울역" %}🚉
+                                        {% elif d.station_name == "수서" %}🚆
+                                        {% endif %}
+                                        <span class="sline">
+                                            {% if d.station_code == "2556" %} <img src="/static/images/landing/line5.svg">
+                                            {% elif d.station_code == "4136" %} <img src="/static/images/landing/line9.svg">
+                                            {% elif d.station_code == "2619" %} <img src="/static/images/landing/line6.svg">
+                                            {% elif d.station_code == "2527" %} <img src="/static/images/landing/line5.svg">
+                                            {% elif d.station_code == "4115" %} <img src="/static/images/landing/line9.svg">
+                                            {% elif d.station_code == "0210" %} <img src="/static/images/landing/line2.svg">
+                                            {% elif d.station_code == "0239" %} <img src="/static/images/landing/line2.svg">
+                                            {% elif d.station_code == "0150" %} <img src="/static/images/landing/line1.svg">
+                                            {% elif d.station_code == "0426" %} <img src="/static/images/landing/line4.svg">
+                                            {% elif d.station_code == "0339" %} <img src="/static/images/landing/line3.svg">
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="end">
+                                        {{d.subway_name}}행
+                                        <span class="left_time">{{d.left_time}}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% for d in dlist %}
+                                <div class="subway_info">
+                                    <div class="start">
+                                        {{d.station_name}}
+                                        {% if d.station_name == "올림픽공원" %}🌳
+                                        {% elif d.station_name == "디지털미디어시티" %}📡
+                                        {% elif d.station_name == "여의도" %}🏢
+                                        {% elif d.station_name == "뚝섬" %}🌌
+                                        {% elif d.station_name == "홍대입구" %}🍰
+                                        {% elif d.station_name == "서울역" %}🚉
+                                        {% elif d.station_name == "수서" %}🚆
+                                        {% endif %}
+                                        <span class="sline">
+                                            {% if d.station_code == "2556" %} <img src="/static/images/landing/line5.svg">
+                                            {% elif d.station_code == "4136" %} <img src="/static/images/landing/line9.svg">
+                                            {% elif d.station_code == "2619" %} <img src="/static/images/landing/line6.svg">
+                                            {% elif d.station_code == "2527" %} <img src="/static/images/landing/line5.svg">
+                                            {% elif d.station_code == "4115" %} <img src="/static/images/landing/line9.svg">
+                                            {% elif d.station_code == "0210" %} <img src="/static/images/landing/line2.svg">
+                                            {% elif d.station_code == "0239" %} <img src="/static/images/landing/line2.svg">
+                                            {% elif d.station_code == "0150" %} <img src="/static/images/landing/line1.svg">
+                                            {% elif d.station_code == "0426" %} <img src="/static/images/landing/line4.svg">
+                                            {% elif d.station_code == "0339" %} <img src="/static/images/landing/line3.svg">
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="end">
+                                        {{d.subway_name}}행
+                                        <span class="left_time">{{d.left_time}}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="subway_rail">
+                    <div class="rail"></div>
+                </div>
+
                     
                 <div class="quick-stats">
                     <div class="stat-card">

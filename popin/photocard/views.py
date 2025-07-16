@@ -139,9 +139,9 @@ def detail(request, pno):
         elif qs.place == "더현대":
             qs.latitude = 37.52586982023892
             qs.longitude = 126.92844895447732
-        elif qs.place == "고척":
-            qs.latitude = 37.49823024363382
-            qs.longitude = 126.86710307179943
+        elif qs.place == "광야":
+            qs.latitude = 37.545225
+            qs.longitude = 127.043785
         elif qs.place == "인스파이어":
             qs.latitude = 37.46667138168973
             qs.longitude = 126.39058501167706

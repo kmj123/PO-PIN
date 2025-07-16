@@ -239,55 +239,39 @@
   </div>
 
   <script>
-  let chartInstance = null;
-
-  const allLabels = [
-    "2023-01", "2023-02", "2023-03", "2023-04", "2023-05", "2023-06", "2023-07", "2023-08",
-    "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08",
-    "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08"
-  ];
-
-  const allDataAll = [
-    90, 100, 110, 95, 105, 115, 120, 130,   // 2023
-    140, 100, 120, 90, 150, 130, 110, 170,  // 2024 (기존 데이터 중 일부)
-    180, 160, 170, 175, 165, 185, 190, 200   // 2025
-  ];
-
-  const allDataExchange = [
-    20, 25, 30, 22, 27, 33, 35, 40, 
-    42, 30, 40, 25, 50, 45, 35, 60, 
-    65, 60, 62, 63, 61, 68, 70, 72
-  ];
-
-  const allDataSell = [
-    70, 75, 80, 73, 78, 82, 85, 90, 
-    98, 70, 80, 65, 100, 85, 75, 110, 
-    115, 100, 108, 112, 104, 117, 120, 128
-  ];
-
-  // 차트 그리기 함수
-  function renderChart(labels, all, exchange, sell) {
-    const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
-
-    // 기존 차트 제거
-    if (chartInstance) {
-      chartInstance.destroy();
-    }
-
-    chartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: '전체 거래량',
-            data: all,
-            backgroundColor: 'rgba(54, 162, 235, 0.7)'
-          },
-          {
-            label: '교환',
-            data: exchange,
-            backgroundColor: 'rgba(102, 126, 234, 0.7)'
+    // 차트 생성
+    window.addEventListener("DOMContentLoaded", () => {
+      const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: {{ months|safe }},
+          datasets: [
+            {
+              label: '전체 거래량',
+              data: {{all}},
+              backgroundColor: 'rgba(54, 162, 235, 0.7)' // 파랑
+            },
+            {
+              label: '교환',
+              data: {{exchange}},
+              backgroundColor: 'rgba(102, 126, 234, 0.7)' // 보라
+            },
+            {
+              label: '판매',
+              data: {{sell}},
+              backgroundColor: 'rgba(255, 159, 64, 0.7)' // 주황
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: { stacked: false },
+            y: {
+              beginAtZero: true,
+              ticks: { color: '#333' }
+            }
           },
           {
             label: '판매',

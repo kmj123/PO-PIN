@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.db.models.functions import ExtractMonth
+from django.db.models.functions import ExtractMonth,ExtractYear
 from django.db.models import Count, Q
 from collections import defaultdict
 from django.http import JsonResponse
@@ -33,28 +33,31 @@ def main(request) :
             
             # 월별 거래 통계
             monthly_trade_stats = Photocard.objects.annotate(
-                    month=ExtractMonth('available_at')
-                ).values(
-                    'month', 'trade_type'
-                ).annotate(
-                    count=Count('pno')
-                ).order_by(
-                    'month', 'trade_type'
-                ).exclude(
-                    sell_state='전'
-                )
+                year=ExtractYear('available_at'),
+                month=ExtractMonth('available_at')
+            ).values(
+                'year', 'month', 'trade_type'
+            ).annotate(
+                count=Count('pno')
+            ).order_by(
+                'year', 'month', 'trade_type'
+            ).exclude(
+                sell_state='전'
+            )
                 
             # 집계 구조 준비
             month_set = set()
             count_data = defaultdict(lambda: {'판매': 0, '교환': 0})
-
+            
             for entry in monthly_trade_stats:
+                year = entry['year']
                 month = entry['month']
                 trade_type = entry['trade_type']
                 count = entry['count']
-                
-                month_set.add(month)
-                count_data[month][trade_type] = count
+
+                label = f"{year}-{str(month).zfill(2)}"  # 예: "2025-07"
+                month_set.add(label)
+                count_data[label][trade_type] = count
 
             # 정렬된 결과로 리스트 준비
             sorted_months = sorted(list(month_set))
@@ -71,7 +74,7 @@ def main(request) :
                 'total_photocards':total_photocards, # 전체 게시글 (포토카드)
                 'total_users':total_users,  # 전체 사용자
                 'block_users':block_users, # 차단 사용자
-                'months':sorted_months, # 월별 거래 통계 (month)
+                'months':json.dumps(sorted_months), # 월별 거래 통계 (month)
                 'all' : all_counts, # 월별 거래 통계 (총판)
                 'sell':sale_counts, # 월별 거래 통계 (판매)
                 'exchange':exchange_counts, # 월별 거래 통계 (교환)

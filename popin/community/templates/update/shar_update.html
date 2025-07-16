@@ -318,7 +318,7 @@
 </head>
 <body>
 
-  <form method="POST"  action="{% url 'community:write_sharing' %}" enctype="multipart/form-data">
+  <form method="POST" action="{% url 'community:updateSh' post.id %}" enctype="multipart/form-data">
     {% csrf_token %}
   <div class="Bboard">
     <div class="notice">
@@ -551,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   cancelButton.addEventListener("click", function () {
-    location.href = '{% url 'community:sharingview' %}';
+      location.href = '{% url "community:sharingview" post.id %}';
   });
 });
 

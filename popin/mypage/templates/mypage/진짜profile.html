@@ -706,20 +706,13 @@
             <div class="tabs-wrapper">
                 <div class="tabs">
                     <button class="tab active " onclick="showTab('keywords')">키워드</button>
-                    {% if not target_id %} <!--다른 유저 프로필일 경우 context로 target_id (타 유저 아이디)가 넘어옵니다!!!-->
-                        <button class="tab" onclick="showTab('recent')">최근본글</button>
-                    {% endif %}
+                    <button class="tab" onclick="showTab('recent')">최근본글</button>
                     <button class="tab" onclick="showTab('mypoca')">마이 포카</button>
-                    {% if not target_id %}
-                        <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
-                    {% endif %}
+                    <button class="tab" onclick="showTab('wishlist')" >위시리스트</button>
                     <button class="tab" onclick="showTab('transactions')">포토카드</button>
                     <button class="tab" onclick="showTab('reviews')">후기글</button>
-                    {% if not target_id %}
-                        <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
-                        <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
-                    {% endif %}
-                    
+                    <button class="tab" onclick="showTab('community')">커뮤니티 작성글</button>
+                    <button class="tab" onclick="showTab('blocked')">블랙리스트</button>
                 </div>
             </div>
             <!--키워드 리스트-->
@@ -866,8 +859,6 @@
     </main>
     
 <script>
-    const targetId = "{{ target_id|default:'' }}";  // 없으면 빈 문자열
-
     // 파일업로드 관련
     const imageuploadContainer = document.getElementById('previous_container');
     const imageInput = document.getElementById('profile-img-input');
@@ -954,7 +945,6 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
-        data: targetId ? { target_user_id: targetId } : {}, // 타겟아이디가 있으면 타켓의 정보가 넘어옴! 없으면 나의 정보
         success: function (data) {
             console.log("받은 데이터:", data.group_album_dict);
 
@@ -1049,7 +1039,6 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
-        data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
             console.log('판매목록 불러오기 성공');
 
@@ -1102,7 +1091,6 @@
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
-        data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
             console.log('교환목록 불러오기 성공');
 
@@ -1143,10 +1131,9 @@
         // 내가 받은 후기글
         $.ajax({
             url: "/mypage/reviews/received/",
-            type: "GET",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
-            data: targetId ? { target_user_id: targetId } : {},
             success: function(data){
                 console.log('받은 후기글 불러오기 성공');
 
@@ -1155,7 +1142,7 @@
 
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
-                    <a href="/community/chgReview/view/${received.id}">
+                    <a hred="/community/chgReview/view/${received.post_id}">
                         <h3>작성자: ${received.writer}</h3>
                         <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
                         <p>${received.title} - ${received.content}</p>
@@ -1172,7 +1159,7 @@
         // 내가 쓴 후기글
         $.ajax({
             url: "/mypage/reviews/written/",
-            type: "GET",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1183,7 +1170,7 @@
 
                 const writtenData = data.written_reviews.map(written => 
                     `<div class="item">
-                    <a href="/community/chgReview/view/${written.id}">
+                    <a hred="/community/chgReview/view/${written.post_id}">
                         <h3>제목: ${written.title} </h3>
                         <p>작성자 : ${written.partner__nickname}</p>
                         <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
@@ -1200,8 +1187,8 @@
 
         // 커뮤니티 - 동행글
         $.ajax({
-            url: "/community/mypage_community_list/",
-            type: "GET",
+            url: "/mypage/review/",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1212,8 +1199,8 @@
 
 
                 const companionData = data.companion.map(companion => {
-                     return`<div class="item">
-                     <a href="/community/companion/${companion.id}/">
+                    `<div class="item">
+                    <a href="/community/companion/view/">
                         <h3>${companion.title}</h3>
                         <p>${companion.created_at} - 조회수: ${companion.views} | 댓글: ${companion.comments_count}</p>
                     </a>
@@ -1229,8 +1216,8 @@
 
         // 커뮤니티 - 나눔글
         $.ajax({
-           url: "/community/mypage_community_list/",
-            type: "GET",
+            url: "/mypage/review/",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1241,8 +1228,8 @@
 
                             
                 const sharingData = data.sharing.map(sharing => {
-                    return`<div class="item">
-                    <a href="/community/sharing/${sharing.id}/">
+                    `<div class="item">
+                    <a href="/community/sharing/view/">
                         <h3>${sharing.title}</h3>
                         <p>${sharing.created_at} - 조회수: ${sharing.views} | 댓글: ${sharing.comments_count}</p>
                     </a>
@@ -1257,8 +1244,8 @@
 
         // 커뮤니티 - 대리구매
         $.ajax({
-            url: "/community/mypage_community_list/",
-            type: "GET",
+            url: "/mypage/review/",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1269,8 +1256,8 @@
 
 
                 const InsteadbuyData = data.proxy.map(proxy => {
-                    return`<div class="item">
-                    <a href="/community/proxy/${proxy.id}/">
+                    `<div class="item">
+                    <a href="/community/proxy/view/">
                         <h3>${proxy.title}</h3>
                         <p>${proxy.created_at} - 조회수: ${proxy.views} | 댓글: ${proxy.comments_count}</p>
                     </a>
@@ -1284,10 +1271,10 @@
             }
         });
         // 커뮤니티 - 현황공유
-        
+        /*
         $.ajax({
-            url: "/community/mypage_community_list/",
-            type: "GET",
+            url: "/mypage/review/",
+            type: "POST",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
@@ -1298,8 +1285,7 @@
 
 
                 const shareNowData = data.shareNow.map(shareNow => {
-                     return`<div class="item">
-                    <a href="/community/status/${shareNow.id}/">
+                    `<div class="item">
                         <h3>${shareNow.title}</h3>
                         <p>${shareNow.created_at} - 조회수: ${shareNow.views} | 댓글: ${shareNow.comments_count}</p>
                     </div>`}).join("");
@@ -1310,7 +1296,7 @@
                 $("#reviews #received-reviews").html("<div class='error-content'>현황공유글을 불러오는 데 실패했습니다.</div>");
             }
         });
-     
+        */
 
     // 블랙리스트 - 차단한 사용자 목록 AJAX
     function loadBlockedUsers() {
