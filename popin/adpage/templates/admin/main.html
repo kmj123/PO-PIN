@@ -236,7 +236,7 @@
       new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: {{months}},
+          labels: {{ months|safe }},
           datasets: [
             {
               label: '전체 거래량',

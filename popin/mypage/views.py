@@ -12,14 +12,15 @@ from django.shortcuts import get_object_or_404
 from community.models import ExchangeReview
 from django.views.decorators.http import require_POST
 
-def profile(request):
+def profile(request, target_id=None):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
     
     if not user_id:
         return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
     
     try:
-        user = User.objects.get(user_id=user_id) # 로그인한 사용자
+        # 만약 target_id가 있으면 그걸로, 없으면 로그인 유저 기준으로
+        user = User.objects.get(user_id=target_id or user_id)
         completed = Photocard.objects.filter(seller=user, sell_state = "후", buy_state = "후").count()
         first_group = user.bias_group.all().first()
 
@@ -32,7 +33,7 @@ def profile(request):
             # 수정 시 닉네임, 자기소개, 프로필 이미지, 최애 멤버는 프로필에서 불러온 정보로 모달에 넘겨 주세요!
             # 수정할 시에는 update_profile ajax 통신!
             # 첫 프로필 진입으로 키워드 부분이 보여질 경우 해당 members, groups 반환 바랍니다
-            
+            'target_id': target_id or None,
             'nickname':user.nickname, # 닉네임
             'introduction':user.introduction, # 자기소개
             'group_logo': group_logo, # 그룹 로고 이미지
@@ -57,12 +58,15 @@ def test(request):
 # 키워드
 def keyword(request):
     if request.method == 'POST':
-        user_id = request.session.get('user_id')
+        user_id = request.session.get('user_id') # 로그인 유저
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
         try:
+            target_user_id = request.POST.get('target_user_id')
+            query_user_id = target_user_id if target_user_id else user_id
+            user = User.objects.get(user_id=query_user_id)
+            
             # 유저가 설정한 최애 그룹, 멤버 키워드 확인
-            user = User.objects.get(user_id=user_id)
             groups = list(user.bias_group.values('id', 'name'))
             members = list(user.bias_member.values('id', 'name', 'group__name'))
 
@@ -118,7 +122,9 @@ def my_poca(request):
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
         
         try:
-            user = User.objects.get(user_id=user_id)
+            target_user_id = request.POST.get('target_user_id')
+            query_user_id = target_user_id if target_user_id else user_id
+            user = User.objects.get(user_id=query_user_id)
             my_poca_qs = Photocard.objects.select_related('member__group').filter(seller=user)
             
             # 그룹 -> 앨범 -> 포토카드 묶기
@@ -183,7 +189,9 @@ def trade(request):
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
 
         try:
-            user = User.objects.get(user_id=user_id)
+            target_user_id = request.POST.get('target_user_id')
+            query_user_id = target_user_id if target_user_id else user_id
+            user = User.objects.get(user_id=query_user_id)
             
             sell_poca = Photocard.objects.filter(seller=user, trade_type="판매").exclude(sell_state='전')
             buy_poca = Photocard.objects.filter(buyer=user, trade_type="판매").exclude(buy_state='전')
@@ -294,13 +302,16 @@ def my_written_reviews(request):
 
 # 내가받은 교환판매후기 
 def my_received_reviews(request):
-    if request.method == 'POST':
-        print("POST 요청 도착")
+    # GET으로 요청 받기
+    if request.method == 'GET':
         user_id = request.session.get('user_id')
         if not user_id:
             return JsonResponse({'error': '로그인이 필요합니다.'}, status=401)
+
         try:
-            user = User.objects.get(user_id=user_id)
+            target_user_id = request.POST.get('target_user_id')
+            query_user_id = target_user_id if target_user_id else user_id
+            user = User.objects.get(user_id=query_user_id)
         
             reviews = ExchangeReview.objects.filter(partner=user).select_related("writer").values(
                 'id', 'title', 'content', 'overall_score', 'created_at', 'writer__nickname'
@@ -317,10 +328,30 @@ def my_received_reviews(request):
                 }
                 for review in reviews
             ]
+
         except User.DoesNotExist:
             return JsonResponse({'error': '사용자를 찾을 수 없습니다.'}, status=404)
 
-    return JsonResponse({'received_reviews': received_data})
+        reviews = ExchangeReview.objects.filter(partner=user).select_related("writer").values(
+            'id', 'title', 'content', 'overall_score', 'created_at', 'writer__nickname'
+        )
+
+        received_data = [
+            {
+                'id': review['id'],  # ✅ id도 같이 보내줘야 JS에서 undefined 안 뜸
+                'title': review['title'],
+                'content': review['content'],
+                'overall_score': review['overall_score'],
+                'created_at': review['created_at'].strftime('%Y-%m-%d'),
+                'writer': review['writer__nickname'],
+            }
+            for review in reviews
+        ]
+
+        return JsonResponse({'received_reviews': received_data})
+
+    # GET이 아닌 요청은 405
+    return JsonResponse({'error': 'GET 요청만 지원합니다.'}, status=405)
      
 ###########################################
 # 차단 유저 관리
@@ -422,7 +453,7 @@ def update_blocklist(request):
             id = body.get('id')
             to_user = User.objects.get(user_id = id) # 차단한 유저 
             
-            relation = UserRelation.objects.get(to_user=to_user, from_user=from_user)
+            relation = UserRelation.objects.get(to_user=to_user, from_user=from_user, relation_type="BLOCK")
             if not relation:
                 return JsonResponse({'error': '관계를 찾을 수 없습니다.'}, status=404)
             else:

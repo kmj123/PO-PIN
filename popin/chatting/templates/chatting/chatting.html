@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>PhotoCard Hub -채팅</title>
     <style>
         * {
@@ -613,7 +614,7 @@
                 
                 <div class="chat-items">
                     {%for room in rooms%}
-                        <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" onclick="selectChat(this)"  >
+                        <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" data-room-user-id="{{ room.user_id }}"onclick="selectChat(this)"  >
                             <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
                             <div class="chat-info">
                                 <div class="chat-name">{{room.nickname}}</div>
@@ -642,9 +643,10 @@
                         </div>
                     </div>
                     <div class="chat-actions">
-                        <button class="action-btn" onclick="callUser()" title="통화">📞</button>
+                        <button class="action-btn" onclick="completed()" title="거래완료">✅</button>
                         <button class="action-btn" onclick="viewProfile()" title="프로필">👤</button>
-                        <button class="action-btn" onclick="chatSettings()" title="설정">⚙️</button>
+                        <button class="action-btn" onclick="reportChat()" title="신고">🚨</button>
+                        <button class="action-btn" onclick="cancelChat()" title="삭제">🗑</button>
                     </div>
                 </div>
 
@@ -707,6 +709,8 @@
         const currentUserId = "{{ request.session.user_id|escapejs }}";
         let chatSocket = null;  // 현재 연결된 WebSocket
         let isTyping = false;
+        let currentRoomId = null;  // 현재 선택된 채팅방 ID 저장 전역변수
+        let selectedUserId = null;  // 현재 선택된 채팅방 상대 유저 아이디 저장 전역변수
 
         function selectChat(element) {
             document.querySelectorAll('.chat-item').forEach(item => {
@@ -715,7 +719,11 @@
             element.classList.add('active');
 
             const roomName = element.dataset.roomId;
+            const roomUserId = element.dataset.roomUserId;
             const roomNickname = element.dataset.roomNickname;
+
+            currentRoomId = roomName;
+            selectedUserId = roomUserId;
 
             // 채팅창 초기화
             const messagesContainer = document.getElementById('messagesContainer');
@@ -851,5 +859,118 @@
             const emoji = emojis[Math.floor(Math.random() * emojis.length)];
             document.getElementById('messageInput').value += emoji;
             handleInput();
+        }
+
+        function cancelChat() {
+            if (!currentRoomId) {
+                alert("삭제할 채팅방을 먼저 선택하세요.");
+                return;
+            }
+
+            if (!confirm("정말로 이 채팅방을 삭제하시겠습니까?")) {
+                return;
+            }
+
+            fetch(`/chatting/cancel_chat/${currentRoomId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // 삭제된 방 UI에서도 제거 (선택사항)
+                    document.querySelector(`.chat-item[data-room-id="${currentRoomId}"]`)?.remove();
+                    currentRoomId = null;
+
+                    // 채팅창 초기화
+                    document.getElementById('messagesContainer').innerHTML = '';
+                    document.querySelector('.chat-header-name').textContent = '';
+                    document.querySelector('.chat-header-avatar').textContent = '';
+                } else {
+                    alert("오류: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("삭제 실패:", error);
+                alert("삭제 중 오류 발생");
+            });
+        }
+
+        function viewProfile() {
+            if (!selectedUserId) {
+                alert("먼저 채팅방을 선택해주세요.");
+                return;
+            }
+            window.location.href = `/mypage/profile/${selectedUserId}`;
+        }
+
+        function reportChat() {
+            if (!selectedUserId) {
+                alert("먼저 채팅방을 선택해주세요.");
+                return;
+            }
+
+            const reason = prompt("이 사용자를 차단하려는 사유를 입력하세요:\n(예: 욕설, 스팸, 불쾌한 행동 등)");
+            if (reason === null) {
+                // 사용자가 취소 버튼을 눌렀을 경우
+                return;
+            }
+
+            fetch(`/chatting/block_user/${selectedUserId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // 추가적으로 UI 정리하고 싶으면 여기에 처리
+                } else {
+                    alert("오류: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("차단 중 오류 발생:", error);
+                alert("차단에 실패했습니다.");
+            });
+        }
+
+        function completed() {
+            if (!selectedUserId) {
+                alert("먼저 채팅방을 선택해주세요.");
+                return;
+            }
+            if (!confirm("거래를 완료하시겠습니까? ")) {
+                return;
+            }
+            fetch(`/chatting/change_poststate/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ room_id : currentRoomId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // 추가적으로 UI 정리하고 싶으면 여기에 처리
+                } else {
+                    alert("오류: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error("완료 중 오류 발생:", error);
+                alert("완료에 실패했습니다.");
+            });
         }
     </script>
