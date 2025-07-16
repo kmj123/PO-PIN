@@ -56,7 +56,8 @@
         <h3>나눔</h3>
       </div>
       <div class="line"></div>
-      <form method="GET" action="{% url 'community:sharing' %}" class="search-form">
+      <form method="GET" action="{% url 'community:sharing' %}" class="search-form"  enctype="multipart/form-data">
+        {% csrf_token %}
         <div class="box">
           <div><p>{{ ongoing_count }}</p><a>진행 중인 나눔</a></div>
           <div><p>{{ completed_count }}</p><a>완료된 나눔</a></div>

@@ -7,10 +7,11 @@ function reportBtn() {
   }
 }
 
-// 채팅버튼
-// document.getElementById("chatButton").addEventListener("click", function () {
-//     location.href = "/chatting/chatting.html";
-// });
+//채팅
+function goToChat(postId, postTitle) {
+    const encodedTitle = encodeURIComponent(postTitle);
+    window.location.href = "{% url 'chatting:chatting' %}?post_id=" + postId + "&title=" + encodedTitle;
+}
 
 // 메뉴 선택
 const categoryLinks = document.querySelectorAll(".menu a");

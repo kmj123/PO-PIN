@@ -12,11 +12,20 @@ from community.models import ExchangeReview, ReviewImage, ReviewTag
 from signupFT.models import User  # 너의 커스텀 유저 모델 import
 from django.contrib import messages
 
-
 User = get_user_model()
 #########  urls.py 순서대로 정리함 
 
 from django.db.models import Q
+
+def companionview(request) :
+    return render(request,'chgReview/comp_view.html')
+def proxyview(request) :
+    return render(request,'chgReview/proxy_view.html')
+def sharingview(request) :
+    return render(request,'chgReview/shar_view.html')
+def statusview(request) :
+    return render(request,'chgReview/status_view.html')
+
 
 def chgReviewmain(request):
     today = datetime.today()

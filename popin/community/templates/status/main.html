@@ -32,6 +32,7 @@
         <h3>현황공유</h3>
       </div>
     <form id="searchForm" method="GET" action="{% url 'community:status' %}">
+      {% csrf_token %}
       <div class="line"></div>
         <div class="search-filter-container">
         <div class="search-toggle">

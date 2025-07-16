@@ -46,7 +46,8 @@
       <div class="top">
         <h3>동행 모집</h3>
       </div>
-     <form method="GET" action="{% url 'community:companion' %}">
+     <form id = "companionFrm" method="GET" action="{% url 'community:companion' %}"  enctype="multipart/form-data">
+      
       <div class="line"></div>
       <div class="search-filter-container">
           <div class="search-toggle">
@@ -150,7 +151,7 @@
             {% if post.status == '모집완료' %}
               <button class="join-btn disabled">모집 완료</button>
             {% else %}
-              <button class="join-btn active">채팅하기</button>
+               <a href="{% url 'chatting:chatting' %}?post_id={{ post.id }}&title={{ post.title|urlencode }}" class="join-btn active">채팅하기</a>
             {% endif %}
             
           </div>

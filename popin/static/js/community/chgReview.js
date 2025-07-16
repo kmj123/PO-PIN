@@ -90,11 +90,8 @@ document.addEventListener("DOMContentLoaded", function () {
   document.getElementById("modalPostPartner").textContent = `🔄 ${partner}`;
   document.getElementById("modalPostStar").textContent = `${star}`;
   
-  // 수정: innerHTML 대신 textContent 사용하여 전체 내용 표시
   const descriptionEl = document.getElementById("modalPostDescription");
   descriptionEl.textContent = desc; // 전체 내용 표시
-  // 또는 줄바꿈을 유지하려면:
-  // descriptionEl.innerHTML = desc.replace(/\n/g, '<br>');
   
   document.getElementById("modalPostDate").textContent = date;
 
@@ -179,24 +176,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (imageModal) {
-    imageModal.addEventListener('click', (e) => {
-      if (e.target === modalImage) return;
-      imageModal.style.display = 'none';
-    });
+  imageModal.addEventListener('click', (e) => {
+    if (
+      modalImage.contains(e.target) ||
+      prevBtn.contains(e.target) ||
+      nextBtn.contains(e.target)
+    ) return;  // 이미지, 버튼 클릭 시 닫지 않음
 
-    prevBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
-      modalImage.src = imageList[currentImageIndex];
-    });
+    imageModal.style.display = 'none';  // 모달 배경 클릭 시 닫기
+  });
 
-    nextBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      currentImageIndex = (currentImageIndex + 1) % imageList.length;
-      modalImage.src = imageList[currentImageIndex];
-    });
-  }
+  prevBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex - 1 + imageList.length) % imageList.length;
+    modalImage.src = imageList[currentImageIndex];
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentImageIndex = (currentImageIndex + 1) % imageList.length;
+    modalImage.src = imageList[currentImageIndex];
+  });
 
   // Top 버튼 기능
   window.addEventListener('scroll', function () {

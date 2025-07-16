@@ -28,8 +28,8 @@ urlpatterns = [
     # path('updateSh/', views.updateSh, name='updateSh'),
     # path('updateS/', views.updateS, name='updateS'),
 
-    # path('companion/view/', views.companionview, name='companionview'),
-    # path('proxy/view/', views.proxyview, name='proxyview'),
-    # path('sharing/view/', views.sharingview, name='sharingview'),
-    # path('status/view/', views.statusview, name='statusview'),
+    path('companion/view/', views.companionview, name='companionview'),
+    path('proxy/view/', views.proxyview, name='proxyview'),
+    path('sharing/view/', views.sharingview, name='sharingview'),
+    path('status/view/', views.statusview, name='statusview'),
 ]
