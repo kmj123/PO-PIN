@@ -608,7 +608,7 @@
         <!--//프로필-->
 
         <!--프로필 수정 모달창 구현-->
-        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
+        <form action="/mypage/update_profile/" id="uploadForm" method="post" name="profileFrm" enctype="multipart/form-data">
             {% csrf_token %}
             <div id="modalContainer" class="hidden">
                 <div id="modalContent">
@@ -645,13 +645,6 @@
                                         <input type="text" class="mybias" name="mybias" placeholder="나의 최애를 선택해주세요" readonly style="cursor: pointer;">
                                     {% endfor %}
                                     </div>
-                            </div>
-                            <div class="myinfo-profile">
-                                <label for="myself">자기소개</label>
-                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
-                            </div>
-                            <div class="myinfo-profile">
-                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
                             </div>
 
                             <!--아티스트 검색 모달창-->
@@ -692,6 +685,13 @@
                                         <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
                                     </form>
                                 </div>
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
                             </div>
                         </div>
                     </div>
@@ -1024,7 +1024,6 @@
                             <div class="album-info">
                                 <h4>${albumName}</h4>
                                 <p>${groupName}</p>
-                                <span class="card-count">${cardCount}장</span>
                             </div>
                         </div>
                     </a>
@@ -1475,7 +1474,6 @@
         loadBlockedUsers();
     });
 
-    /*
     // 블랙리스트 - 신고한 글 목록 AJAX
     function loadBlockedPosts() {
         $.ajax({
@@ -1533,7 +1531,6 @@
     $(document).ready(function(){
         loadBlockedUsers();
     });
-    */
     
     // 프로필 수정 업데이트 AJAX
     $('#profileForm').on('submit', function(e) {
@@ -1547,11 +1544,12 @@
             data: formData,
             processData: false,
             contentType: false,
-            headers: {
-            'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
-            },
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             success: function(response) {
+                console.log(response)
                 alert("프로필 수정 성공");
+                $('#modalContainer').hide(); // 모달 닫기
+                location.reload(); // 페이지 반영 위해 리로드
             },
             error: function(xhr) {
                 alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
@@ -1747,7 +1745,7 @@
 
                 // 메인 입력 필드 렌더링
                 memberGrid.innerHTML += `
-                    <input type="text" name="mybias" value="${group} - ${member}" readonly style="cursor: pointer;">
+                    <input type="text" value="${group} - ${member}" readonly style="cursor: pointer;">
                 `;
             });
 
