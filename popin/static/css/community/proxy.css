@@ -269,20 +269,21 @@
     white-space: nowrap;
 }
 
-.status-recruiting {
+.모집중 {
     background: #4caf50;
     color: white;
 }
 
-.status-urgent {
+.마감 {
     background:rgb(255, 94, 0);
     color: white;
 }
 
-.soon-closing {
+.긴급모집 {
     background :rgb(233, 164, 36);
     color : white;
 }
+
 
 .status-closed {
     background: #666;
@@ -607,7 +608,9 @@
     border-top: 1px solid #f0f0f0;
 }
 
+a{text-decoration: none;}
 .join-btn {
+    text-align : center;
     padding: 12px 25px;
     border: none;
     border-radius: 25px;
