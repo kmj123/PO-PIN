@@ -852,7 +852,7 @@
                             <div class="chat-time">14:30</div>
                             <div class="unread-badge">2</div>
                         </div>
-                        <div class="chat-type-indicator trade">:돈가방:</div>
+                        <div class="chat-type-indicator trade">💰</div>
                     </div>
                     <div class="chat-item" data-room-id="community_456" data-room-nickname="박동행자" data-type="community" onclick="selectChat(this)">
                         <div class="chat-avatar">박</div>
@@ -863,7 +863,7 @@
                         <div class="chat-meta">
                             <div class="chat-time">12:15</div>
                         </div>
-                        <div class="chat-type-indicator community">:2개의_상반신_그림자:</div>
+                        <div class="chat-type-indicator community">👥</div>
                     </div>
                     <div class="chat-item" data-room-id="trade_789" data-room-nickname="이나눔러" data-type="community" onclick="selectChat(this)">
                         <div class="chat-avatar">이</div>
@@ -874,7 +874,7 @@
                         <div class="chat-meta">
                             <div class="chat-time">11:45</div>
                         </div>
-                        <div class="chat-type-indicator community">:선물:</div>
+                        <div class="chat-type-indicator community">🎁</div>
                     </div>
                     {% for room in rooms %}
                     <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" data-room-user-id="{{ room.user_id }}" onclick="selectChat(this)">
@@ -905,10 +905,10 @@
                         </div>
                     </div>
                     <div class="chat-actions">
-                        <button class="action-btn" onclick="completed()" title="거래완료">:흰색_확인_표시:</button>
-                        <button class="action-btn" onclick="viewProfile()" title="프로필">:상반신_그림자:</button>
-                        <button class="action-btn" onclick="reportChat()" title="신고">:경광등:</button>
-                        <button class="action-btn" onclick="cancelChat()" title="삭제">:휴지통:</button>
+                        <button class="action-btn" onclick="completed()" title="거래완료">✅</button>
+                        <button class="action-btn" onclick="viewProfile()" title="프로필">👤</button>
+                        <button class="action-btn" onclick="reportChat()" title="신고">🚨</button>
+                        <button class="action-btn" onclick="cancelChat()" title="삭제">🗑️</button>
                     </div>
                 </div>
                 <!-- Transaction/Community Info Panel -->
@@ -917,7 +917,7 @@
                 {% if post_info and post_type == "offline-companion" %}
                 <div class="transaction-info companion" id="companion">
                     <div class="transaction-header">
-                        <div class="transaction-icon">:손을_잡고_있는_남성과_여성:</div>
+                        <div class="transaction-icon">👫</div>
                         <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">동행</div>
                         <div>
                             <div class="transaction-title">{{ post_info.title }}</div>
@@ -951,7 +951,7 @@
                 {% elif post_info and post_type == "offline-proxy" %}
                 <div class="transaction-info" id="transactionInfo">
                     <div class="transaction-header">
-                        <div class="transaction-icon trade">:돈가방:</div>
+                        <div class="transaction-icon trade">💰</div>
                         <div style="font-size: 17px; font-weight: 700; color: rgb(76, 175, 80);">대리구매</div>
                         <div>
                             <div class="transaction-title">{{ post_info.title }}</div>
@@ -1007,9 +1007,9 @@
                 </div>
                 <div class="message-input-container">
                     <div class="input-actions">
-                        <button class="input-btn" onclick="attachFile()" title="파일 첨부">:클립:</button>
+                        <button class="input-btn" onclick="attachFile()" title="파일 첨부">📎</button>
                         <input type="file" id="fileInput" style="display: none;" onchange="handleFile(event)" multiple>
-                        <button class="input-btn" onclick="sendEmojis()" title="이모지">:미소짓는_상기된_얼굴:</button>
+                        <button class="input-btn" onclick="sendEmojis()" title="이모지">😊</button>
                     </div>
                     <div id="thumbnailPreview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
                     <textarea
