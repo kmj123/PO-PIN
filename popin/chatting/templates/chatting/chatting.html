@@ -831,7 +831,6 @@
                 <button class="back-btn" onclick="goBack()">← 뒤로가기</button>
             </nav>
         </div>
-
         <!-- Chat Container -->
         <div class="chat-container">
             <!-- Chat List -->
@@ -840,9 +839,7 @@
                     <h2 class="chat-list-title">채팅</h2>
                     <button class="new-chat-btn" onclick="startNewChat()">+</button>
                 </div>
-                
                 <input type="text" class="search-chat" placeholder="채팅 검색..." onkeyup="searchChats(event)">
-                
                 <div class="chat-items" id="chatItems">
                     <!-- Sample chat items -->
                     <div class="chat-item active" data-room-id="trade_123" data-room-nickname="김구매자" data-type="trade" onclick="selectChat(this)">
@@ -855,9 +852,8 @@
                             <div class="chat-time">14:30</div>
                             <div class="unread-badge">2</div>
                         </div>
-                        <div class="chat-type-indicator trade">💰</div>
+                        <div class="chat-type-indicator trade">:돈가방:</div>
                     </div>
-
                     <div class="chat-item" data-room-id="community_456" data-room-nickname="박동행자" data-type="community" onclick="selectChat(this)">
                         <div class="chat-avatar">박</div>
                         <div class="chat-info">
@@ -867,38 +863,36 @@
                         <div class="chat-meta">
                             <div class="chat-time">12:15</div>
                         </div>
-                        <div class="chat-type-indicator community">👥</div>
+                        <div class="chat-type-indicator community">:2개의_상반신_그림자:</div>
                     </div>
-
                     <div class="chat-item" data-room-id="trade_789" data-room-nickname="이나눔러" data-type="community" onclick="selectChat(this)">
                         <div class="chat-avatar">이</div>
                         <div class="chat-info">
                             <div class="chat-name">이나눔러</div>
                             <div class="chat-preview">나눔 참여하고 싶습니다!</div>
-                <div class="chat-items">
-                    {%for room in rooms%}
-                        <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" data-room-user-id="{{ room.user_id }}"onclick="selectChat(this)"  >
-                            <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
-                            <div class="chat-info">
-                                <div class="chat-name">{{room.nickname}}</div>
-                                <div class="chat-preview">{{room.last_message}}</div>
-                            </div>
-                            <div class="chat-meta">
-                                <div class="chat-time">{{room.last_timestamp|date:"h:i"}}</div>
-                                {%if room.read_count != 0%}
-                                    <div class="unread-badge">{{room.read_count}}</div>
-                                {%endif%}
-                            </div>
                         </div>
                         <div class="chat-meta">
                             <div class="chat-time">11:45</div>
                         </div>
-                        <div class="chat-type-indicator community">🎁</div>
+                        <div class="chat-type-indicator community">:선물:</div>
                     </div>
-                    {%endfor%}
+                    {% for room in rooms %}
+                    <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" data-room-user-id="{{ room.user_id }}" onclick="selectChat(this)">
+                        <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
+                        <div class="chat-info">
+                            <div class="chat-name">{{ room.nickname }}</div>
+                            <div class="chat-preview">{{ room.last_message }}</div>
+                        </div>
+                        <div class="chat-meta">
+                            <div class="chat-time">{{ room.last_timestamp|date:"h:i" }}</div>
+                            {% if room.read_count != 0 %}
+                                <div class="unread-badge">{{ room.read_count }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-
             <!-- Chat Area -->
             <div class="chat-area">
                 <div class="chat-header">
@@ -911,179 +905,59 @@
                         </div>
                     </div>
                     <div class="chat-actions">
-                        <button class="action-btn" onclick="completed()" title="거래완료">✅</button>
-                        <button class="action-btn" onclick="viewProfile()" title="프로필">👤</button>
-                        <button class="action-btn" onclick="reportChat()" title="신고">🚨</button>
-                        <button class="action-btn" onclick="cancelChat()" title="삭제">🗑</button>
+                        <button class="action-btn" onclick="completed()" title="거래완료">:흰색_확인_표시:</button>
+                        <button class="action-btn" onclick="viewProfile()" title="프로필">:상반신_그림자:</button>
+                        <button class="action-btn" onclick="reportChat()" title="신고">:경광등:</button>
+                        <button class="action-btn" onclick="cancelChat()" title="삭제">:휴지통:</button>
                     </div>
                 </div>
-
                 <!-- Transaction/Community Info Panel -->
-                 <!-- 게시글 정보가 있을 때만 표시 -->
-
-                
-        {% comment %} <div class="transaction-info proxy-purchase" id="proxyPurchase">
-            <div class="transaction-header">
-                <div class="transaction-icon">🛒</div>
-                <div>
-                    <div class="transaction-title">아이유 콘서트 티켓 대리구매</div>
-                    <div class="transaction-type">대리구매</div>
-                </div>
-                <div class="transaction-status active">진행중</div>
-            </div>
-            <div class="transaction-details">
-                <div class="detail-item">
-                    <div class="detail-label">아티스트</div>
-                    <div class="detail-value">아이유</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">공연장</div>
-                    <div class="detail-value">잠실 종합운동장</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">대리구매 수수료</div>
-                    <div class="detail-value">10,000원</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">티켓 가격</div>
-                    <div class="detail-value">150,000원</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">요청자</div>
-                    <div class="detail-value">김**님</div>
-                </div>
-            </div>
-            <div class="transaction-controls">
-                <button class="control-btn complete" onclick="completeTransaction('proxy')">구매 완료</button>
-                <button class="control-btn cancel" onclick="cancelTransaction('proxy')">요청 취소</button>
-            </div>
-        </div>
-
-        <!-- 양도 -->
-        <div class="transaction-info transfer" id="transfer">
-            <div class="transaction-header">
-                <div class="transaction-icon">🎫</div>
-                <div>
-                    <div class="transaction-title">뉴진스 콘서트 티켓 양도</div>
-                    <div class="transaction-type">양도</div>
-                </div>
-                <div class="transaction-status active">판매중</div>
-            </div>
-            <div class="transaction-details">
-                <div class="detail-item">
-                    <div class="detail-label">아티스트</div>
-                    <div class="detail-value">뉴진스</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">공연장</div>
-                    <div class="detail-value">올림픽 체조경기장</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">좌석</div>
-                    <div class="detail-value">VIP석 A구역 3열</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">양도 가격</div>
-                    <div class="detail-value">120,000원</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">원가</div>
-                    <div class="detail-value">130,000원</div>
-                </div>
-            </div>
-            <div class="transaction-controls">
-                <button class="control-btn complete" onclick="purchaseTicket()">구매하기</button>
-                <button class="control-btn contact" onclick="contactSeller()">판매자 문의</button>
-            </div>
-        </div>
-
-        <!-- 판매 -->
-        <div class="transaction-info sale" id="sale">
-            <div class="transaction-header">
-                <div class="transaction-icon">💰</div>
-                <div>
-                    <div class="transaction-title">세븐틴 콘서트 굿즈 판매</div>
-                    <div class="transaction-type">판매</div>
-                </div>
-                <div class="transaction-status active">판매중</div>
-            </div>
-            <div class="transaction-details">
-                <div class="detail-item">
-                    <div class="detail-label">아티스트</div>
-                    <div class="detail-value">세븐틴</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">상품명</div>
-                    <div class="detail-value">공식 후디 + 포토카드 세트</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">상태</div>
-                    <div class="detail-value">새제품</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">판매 가격</div>
-                    <div class="detail-value">80,000원</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">배송비</div>
-                    <div class="detail-value">3,000원 (착불)</div>
-                </div>
-            </div>
-            <div class="transaction-controls">
-                <button class="control-btn complete" onclick="purchaseGoods()">구매하기</button>
-                <button class="control-btn contact" onclick="contactSeller()">판매자 문의</button>
-            </div>
-        </div>
-    </div> {% endcomment %}
-
-            
-        <!-- 동행 -->
-         {% if post_info %}
-            <div class="transaction-info companion" id="companion">
-                <div class="transaction-header">
-                    <div class="transaction-icon">👫</div>
-                    <div style = "font-size : 17px; font-weight : 700; color : rgba(100, 51, 179, 1);">동행</div>
-                    <div>
-                        <div class="transaction-title">{{ post_info.title }}</div>
-                    </div>
-                    <div class="transaction-status active">{{ post_info.status }}</div>
-                </div>
-                <div class="transaction-details">
-                    <div class="detail-item">
-                        <div class="detail-label">아티스트</div>
-                        <div class="detail-value">{{ post_info.artist }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">공연장</div>
-                        <div class="detail-value">{{ post_info.location }}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">동행 날짜</div>
-                        <div class="detail-value">2025-08-15</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">작성자</div>
-                        <div class="detail-value">이**님</div>
-                    </div>
-                </div>
-                <div class="transaction-controls">
-                    <button class="control-btn request" onclick="requestCompanion()">동행 신청</button>
-                    <button class="control-btn contact" onclick="contactWriter()">종료하기</button>
-                </div>
-            </div>
-            {% endif %}
-            <!-- 대리구매 -->
-                {% if post_info %}
-                <div class="transaction-info" id="transactionInfo">
+                <!-- 게시글 정보가 있을 때만 표시 -->
+                <!-- 동행 -->
+                {% if post_info and post_type == "offline-companion" %}
+                <div class="transaction-info companion" id="companion">
                     <div class="transaction-header">
-                        <div class="transaction-icon trade">💰</div>
-                        <div style = "font-size : 17px; font-weight : 700; color : rgb(76, 175, 80);">대리구매</div>
+                        <div class="transaction-icon">:손을_잡고_있는_남성과_여성:</div>
+                        <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">동행</div>
                         <div>
                             <div class="transaction-title">{{ post_info.title }}</div>
                         </div>
                         <div class="transaction-status active">{{ post_info.status }}</div>
                     </div>
-                    
+                    <div class="transaction-details">
+                        <div class="detail-item">
+                            <div class="detail-label">아티스트</div>
+                            <div class="detail-value">{{ post_info.artist }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">공연장</div>
+                            <div class="detail-value">{{ post_info.location }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">동행 날짜</div>
+                            <div class="detail-value">2025-08-15</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">작성자</div>
+                            <div class="detail-value">이**님</div>
+                        </div>
+                    </div>
+                    <div class="transaction-controls">
+                        <button class="control-btn request" onclick="requestCompanion()">동행 신청</button>
+                        <button class="control-btn contact" onclick="contactWriter()">종료하기</button>
+                    </div>
+                </div>
+                <!-- 대리구매 -->
+                {% elif post_info and post_type == "offline-proxy" %}
+                <div class="transaction-info" id="transactionInfo">
+                    <div class="transaction-header">
+                        <div class="transaction-icon trade">:돈가방:</div>
+                        <div style="font-size: 17px; font-weight: 700; color: rgb(76, 175, 80);">대리구매</div>
+                        <div>
+                            <div class="transaction-title">{{ post_info.title }}</div>
+                        </div>
+                        <div class="transaction-status active">{{ post_info.status }}</div>
+                    </div>
                     <div class="transaction-details">
                         <div class="detail-item">
                             <div class="detail-label">아티스트</div>
@@ -1098,14 +972,12 @@
                             <div class="detail-value">{{ post_info.reward }}</div>
                         </div>
                     </div>
-
                     <div class="transaction-controls">
                         <button class="control-btn complete" onclick="completeTransaction()">거래 완료</button>
                         <button class="control-btn cancel" onclick="cancelTransaction()">거래 취소</button>
                     </div>
                 </div>
                 {% endif %}
-
                 <div class="messages-container" id="messagesContainer">
                     <!-- Sample messages -->
                     <div class="message received">
@@ -1115,7 +987,6 @@
                             <div class="message-time">14:25</div>
                         </div>
                     </div>
-
                     <div class="message sent">
                         <div class="message-avatar">나</div>
                         <div class="message-content">
@@ -1123,7 +994,6 @@
                             <div class="message-time">14:27</div>
                         </div>
                     </div>
-
                     <div class="message received">
                         <div class="message-avatar">김</div>
                         <div class="message-content">
@@ -1131,27 +1001,24 @@
                             <div class="message-time">14:30</div>
                         </div>
                     </div>
-
                     <div class="system-message">
                         거래 일정이 설정되었습니다: 2025.07.16 15:00 (홍대)
                     </div>
                 </div>
-
                 <div class="message-input-container">
                     <div class="input-actions">
-                        <button class="input-btn" onclick="attachFile()" title="파일 첨부">📎</button>
+                        <button class="input-btn" onclick="attachFile()" title="파일 첨부">:클립:</button>
                         <input type="file" id="fileInput" style="display: none;" onchange="handleFile(event)" multiple>
-                        <button class="input-btn" onclick="sendEmojis()" title="이모지">😊</button>
+                        <button class="input-btn" onclick="sendEmojis()" title="이모지">:미소짓는_상기된_얼굴:</button>
                     </div>
                     <div id="thumbnailPreview" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
-                    <textarea 
-                        class="message-input" 
-                        id="messageInput" 
-                        placeholder="메시지를 입력하세요..." 
+                    <textarea
+                        class="message-input"
+                        id="messageInput"
+                        placeholder="메시지를 입력하세요..."
                         onkeypress="handleKeyPress(event)"
                         oninput="handleInput()"
                     ></textarea>
-                    
                     <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>
                         ➤
                     </button>
@@ -1159,6 +1026,7 @@
             </div>
         </div>
     </div>
+</body>
     
 </body>
      <script type="text/javascript">
