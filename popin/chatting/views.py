@@ -5,9 +5,10 @@ from django.utils.timezone import now
 import json
 from django.utils import timezone
 
-
 from .models import ChatMessage, ChatRoom
 from photocard.models import Photocard
+
+from community.models import ProxyPost, CompanionPost  # 상단에 import
 from signupFT.models import User, UserRelation
 
 
@@ -17,11 +18,81 @@ def chatting(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
 
     if not user_id:
-        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+        return redirect('login:loginp')
 
     try:
-        user = User.objects.get(user_id=user_id) # 로그인한 사용자
+        user = User.objects.get(user_id=user_id)
+        post_id = request.GET.get('post_id')
+        post_type = request.GET.get('post_type')  # 동행인지 대리인지 구분하려고 추가
+
+        selected_room = None
+        messages = []
+        post_info = None
+
+        if post_id:
+            try:
+                if post_type == "companion":
+                    post = CompanionPost.objects.get(id=post_id)
+                else:
+                    post = ProxyPost.objects.get(id=post_id)
+
+                post_author = post.author
+
+                existing_room = ChatRoom.objects.filter(
+                    host_user=user, guest_user=post_author
+                ).first() or ChatRoom.objects.filter(
+                    host_user=post_author, guest_user=user
+                ).first()
+
+                if existing_room:
+                    selected_room = existing_room
+                else:
+                    selected_room = ChatRoom.objects.create(
+                        host_user=user,
+                        guest_user=post_author,
+                    )
+
+                messages = ChatMessage.objects.filter(room=selected_room).order_by('timestamp')
+
+                post_info = {
+                    'id': post.id,
+                    'title': post.title,
+                    'artist': post.artist,
+                    'location': getattr(post, 'location', ''),  # 나눔은 location 없을 수도
+                    'reward': getattr(post, 'reward', ''),  # 동행은 reward 없음
+                    'status': post.status,
+                }
+
+            except (ProxyPost.DoesNotExist, CompanionPost.DoesNotExist):
+                selected_room = None
+                messages = []
+
         rooms = ChatRoom.objects.filter(host_user=user) | ChatRoom.objects.filter(guest_user=user)
+
+#         rooms = rooms.distinct().order_by('-last_timestamp')
+
+#         if not selected_room:
+#             first_room = rooms.first()
+#             if first_room:
+#                 messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
+
+#         room_list = []
+#         for room in rooms:
+#             read_count = ChatMessage.objects.filter(
+#                 room=room,
+#                 is_read=False
+#             ).exclude(send_user=user).count()
+
+#             nickname = room.guest_user.nickname if user.nickname == room.host_user.nickname else room.host_user.nickname
+
+#             room_list.append({
+#                 'id': room.id,
+#                 'nickname': nickname,
+#                 'last_timestamp': room.last_timestamp,
+#                 'last_message': room.last_message,
+#                 'read_count': read_count,
+#             })
+ 
         rooms = rooms.distinct().order_by('-last_timestamp').exclude()  # 최근 채팅 순 정렬
         first_room = rooms.first()
         messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
@@ -54,13 +125,16 @@ def chatting(request):
                     })
 
         context = {
-            'rooms':room_list,
-            "messages": messages,
+            'rooms': room_list,
+            'messages': messages,
+            'selected_room_id': selected_room.id if selected_room else (rooms.first().id if rooms.first() else None),
+            'post_info': post_info,
         }
-        return render(request, 'chatting/chatting.html', context)        
-    
+
+        return render(request, 'chatting/chatting.html', context)
+
     except User.DoesNotExist:
-        return redirect('login:main')  # 예외 상황 대비
+        return redirect('login:main')
 
 def test(request):
     return render(request, 'chatting/test.html')

@@ -90,6 +90,7 @@ def main(request):
                 'hit' : recent_deco.hit,
             })
             
+        
         context = {
             'username': user.name or user.nickname or user.user_id,  # 로그인한 사용자
             'photocards': photocards, # 최근 인기 포토카드
@@ -157,7 +158,7 @@ def recent(request):
         filtered_posts = [p for p in filtered_posts if searchinput.lower() in p['title'].lower()]
     
     # 페이지네이터
-    paginator = Paginator(filtered_posts, 5)
+    paginator = Paginator(filtered_posts, 10)
     page = int(request.GET.get('page', 1))
     page_num = paginator.get_page(page)
 

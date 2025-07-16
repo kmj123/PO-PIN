@@ -82,7 +82,8 @@
       </div>
         <div class="postlist">
           <!-- 동행 카드들 -->
-      <form method="GET" action="{% url 'community:proxy' %}">
+        <form id = "proxyFrm" method="GET" action="{% url 'community:proxy' %}" enctype="multipart/form-data">
+        {% csrf_token %}
         {% for post in posts %}
           <div class="post-card" 
           data-category="{{ post.artist }}" 
@@ -144,7 +145,7 @@
                   </div>
               </div>
               <div class="post-actions">
-                  <button class="join-btn active">채팅하기</button>
+                <a href = "{% url 'chatting:chatting' %}?post_id={{ post.id }}&title={{ post.title|urlencode }}" class="join-btn active">채팅하기</a>
               </div>
           </div>
            </form>

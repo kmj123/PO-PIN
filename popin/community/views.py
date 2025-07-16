@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from community.models import ExchangeReview, ReviewImage, ReviewTag
 from signupFT.models import User  # 너의 커스텀 유저 모델 import
 from django.contrib import messages
+
 from .models import CompanionPost, CompanionTag, CompanionImage
 from django.views.decorators.csrf import csrf_exempt
 from community.models import ProxyPost, ProxyImage, ProxyTag
@@ -28,6 +29,7 @@ from django.utils import timezone
 from community.models import  StatusStatus 
 from django.shortcuts import render
 from django.db.models import Count, Avg
+
 
 User = get_user_model()
 #########  urls.py 순서대로 정리함 
@@ -61,6 +63,16 @@ def statusview(request) :
     return render(request,'chgReview/status_view.html')
 
 
+
+
+def companionview(request) :
+    return render(request,'chgReview/comp_view.html')
+def proxyview(request) :
+    return render(request,'chgReview/proxy_view.html')
+def sharingview(request) :
+    return render(request,'chgReview/shar_view.html')
+def statusview(request) :
+    return render(request,'chgReview/status_view.html')
 
 
 def chgReviewmain(request):

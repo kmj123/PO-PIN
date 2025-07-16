@@ -21,6 +21,7 @@ urlpatterns = [
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
+
     # 수정
     path("updateC/<int:pk>/", views.updateC, name="updateC"),
     path('updateCo/<int:pk>/', views.updateCo, name='updateCo'),

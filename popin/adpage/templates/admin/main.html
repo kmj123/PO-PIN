@@ -135,6 +135,8 @@
       font-size : 25px;
     }
 
+    .chart-container label, .chart-container{align-items : right; text-align : right ;}
+
     a{text-decoration : none;}
     .white-box h2 {
         color :#333333; font-size : 25px;
@@ -225,7 +227,14 @@
 
     <div class="chart-container">
       <h2>월별 거래 통계</h2>
+      <select id="filterSelect" onchange="updateFilteredChart()">
+        <option value="last3">최근 3개월</option>
+        <option value="last6_asc">최근 6개월</option>
+        <option value="all">연도별</option>
+      </select>
       <canvas id="monthlyTransactionChart"></canvas>
+    </div>
+    <div class="chart-controls" style="margin-bottom: 10px;">
     </div>
   </div>
 
@@ -264,14 +273,198 @@
               ticks: { color: '#333' }
             }
           },
-          plugins: {
-            legend: {
-              labels: { color: '#333' }
-            }
+          {
+            label: '판매',
+            data: sell,
+            backgroundColor: 'rgba(255, 159, 64, 0.7)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: false },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#333' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#333' }
           }
         }
-      });
+      }
     });
-  </script>
+  }
+
+  // 필터링된 차트 업데이트 함수
+  function updateFilteredChart() {
+  const option = document.getElementById('filterSelect').value;
+
+  let labels = [...allLabels];
+  let all = [...allDataAll];
+  let exchange = [...allDataExchange];
+  let sell = [...allDataSell];
+
+  if (option === 'last3') {
+    const startIndex = Math.max(0, labels.length - 3);
+    labels = labels.slice(startIndex);
+    all = all.slice(startIndex);
+    exchange = exchange.slice(startIndex);
+    sell = sell.slice(startIndex);
+  } else if (option === 'last6_asc') {
+    const startIndex = Math.max(0, labels.length - 6);
+    labels = labels.slice(startIndex);
+    all = all.slice(startIndex);
+    exchange = exchange.slice(startIndex);
+    sell = sell.slice(startIndex);
+  } else if (option === 'all') {
+    const yearMap = {};
+    for (let i = 0; i < labels.length; i++) {
+      const year = labels[i].split('-')[0];
+      if (!yearMap[year]) {
+        yearMap[year] = { all: 0, exchange: 0, sell: 0 };
+      }
+      yearMap[year].all += all[i];
+      yearMap[year].exchange += exchange[i];
+      yearMap[year].sell += sell[i];
+    }
+
+    labels = Object.keys(yearMap).sort();  // 여기서 정렬해줌
+    all = labels.map(y => yearMap[y].all);
+    exchange = labels.map(y => yearMap[y].exchange);
+    sell = labels.map(y => yearMap[y].sell);
+  }
+
+  renderChart(labels, all, exchange, sell);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  // 초기 필터 값을 "최근 3개월"로 변경
+  const filterSelect = document.getElementById('filterSelect');
+  filterSelect.value = 'last3';  // 초기값 설정
+
+  updateFilteredChart();  // 초기 렌더링 시 필터링 함수 호출
+
+  filterSelect.addEventListener('change', updateFilteredChart);
+});
+
+</script>
+
 </body>
 </html>
+
+
+{% comment %} 
+<script>
+  let chartInstance = null;
+
+  // 차트 그리기 함수
+  function renderChart(labels, all, exchange, sell) {
+    const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
+
+    // 기존 차트 제거
+    if (chartInstance) {
+      chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: '전체 거래량',
+            data: all,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)'
+          },
+          {
+            label: '교환',
+            data: exchange,
+            backgroundColor: 'rgba(102, 126, 234, 0.7)'
+          },
+          {
+            label: '판매',
+            data: sell,
+            backgroundColor: 'rgba(255, 159, 64, 0.7)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: false },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#333' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#333' }
+          }
+        }
+      }
+    });
+  }
+
+  // 필터링된 차트 업데이트 함수
+  function updateFilteredChart() {
+    const option = document.getElementById('filterSelect').value;
+
+    let labels = [...allLabels];
+    let all = [...allDataAll];
+    let exchange = [...allDataExchange];
+    let sell = [...allDataSell];
+
+    if (option === 'last3') {
+      const startIndex = Math.max(0, labels.length - 3);
+      labels = labels.slice(startIndex);
+      all = all.slice(startIndex);
+      exchange = exchange.slice(startIndex);
+      sell = sell.slice(startIndex);
+    } else if (option === 'last6_asc') {
+      const startIndex = Math.max(0, labels.length - 6);
+      labels = labels.slice(startIndex);
+      all = all.slice(startIndex);
+      exchange = exchange.slice(startIndex);
+      sell = sell.slice(startIndex);
+    } else if (option === 'all') {
+      const yearMap = {};
+      for (let i = 0; i < labels.length; i++) {
+        const year = labels[i].split('-')[0];
+        if (!yearMap[year]) {
+          yearMap[year] = { all: 0, exchange: 0, sell: 0 };
+        }
+        yearMap[year].all += all[i];
+        yearMap[year].exchange += exchange[i];
+        yearMap[year].sell += sell[i];
+      }
+
+      labels = Object.keys(yearMap).sort();  // 연도 정렬 추가
+      all = labels.map(y => yearMap[y].all);
+      exchange = labels.map(y => yearMap[y].exchange);
+      sell = labels.map(y => yearMap[y].sell);
+    }
+
+    renderChart(labels, all, exchange, sell);
+  }
+
+  // 초기 데이터 전역 변수에 저장
+  const allLabels = {{ months|safe }};
+  const allDataAll = {{ all|safe }};
+  const allDataExchange = {{ exchange|safe }};
+  const allDataSell = {{ sell|safe }};
+
+  // 초기 로드 시 "최근 3개월" 필터 적용하여 차트 렌더링
+  window.addEventListener("DOMContentLoaded", () => {
+    // 필터 select 요소가 있다면 초기값 설정
+    const filterSelect = document.getElementById('filterSelect');
+    if (filterSelect) {
+      filterSelect.value = 'last3';  // 초기값 '최근 3개월'
+      filterSelect.addEventListener('change', updateFilteredChart);
+    }
+    updateFilteredChart();
+  });
+</script> {% endcomment %}

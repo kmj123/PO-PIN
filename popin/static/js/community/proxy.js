@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const modalImage = document.getElementById('modalImage');
   const imageModal = document.getElementById('imageModal');
@@ -24,6 +26,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const itemsPerPage = 2;
 
   let selectedCategory = null;
+
+  //채팅
+  function goToChat(postId, postTitle) {
+    const encodedTitle = encodeURIComponent(postTitle);
+    window.location.href = "{% url 'chatting:chatting' %}?post_id=" + postId + "&title=" + encodedTitle;
+}
 
   // 신고
   window.reportBtn = function () {
