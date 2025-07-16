@@ -21,7 +21,7 @@ urlpatterns = [
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
-
+    path('report_post/<str:post_type>/<int:post_id>/', views.report_post, name='report_post'),
     # 수정
     path("updateC/<int:pk>/", views.updateC, name="updateC"),
     path('updateCo/<int:pk>/', views.updateCo, name='updateCo'),

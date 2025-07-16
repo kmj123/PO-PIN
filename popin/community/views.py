@@ -29,6 +29,42 @@ from django.utils import timezone
 from community.models import  StatusStatus 
 from django.shortcuts import render
 from django.db.models import Count, Avg
+from django.shortcuts import render, redirect,get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from .models import SharingPost, SharingTag, SharingImage
+from django.db.models import Avg
+from datetime import datetime, timedelta
+from django.core.files.storage import default_storage
+from django.db import transaction
+from django.http import HttpResponse
+from community.models import ExchangeReview, ReviewImage, ReviewTag
+from signupFT.models import User  # 너의 커스텀 유저 모델 import
+from django.contrib import messages
+from .models import CompanionPost, CompanionTag, CompanionImage
+from django.views.decorators.csrf import csrf_exempt
+from community.models import ProxyPost, ProxyImage, ProxyTag
+from django.utils.timezone import make_aware
+from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
+from community.models import StatusPost, StatusImage, StatusTag
+from itertools import chain
+from operator import attrgetter
+from django.db.models import Q
+from django.core.paginator import Paginator
+from .models import ProxyStatus
+from community.models import SharingStatus  
+from community.models import CompanionPost, CompanionComment
+from django.utils import timezone
+from community.models import  StatusStatus 
+from django.shortcuts import render
+from django.db.models import Count, Avg
+from django.views.decorators.http import require_POST, require_GET
+from django.shortcuts import get_object_or_404
+from signupFT.models import User
+from community.models import (CompanionPost, SharingPost, ProxyPost, StatusPost, ExchangeReview)
+from community.models import (BlockedCompanionPost, BlockedSharingPost,BlockedProxyPost, BlockedStatusPost, BlockedExchangeReview)
+from community.models import (CompanionPost,SharingPost,ProxyPost,StatusPost,ExchangeReview)
 
 
 User = get_user_model()
@@ -944,3 +980,166 @@ def mypage_community_list(request):
         })
     else:
         return JsonResponse({'error': 'GET only'}, status=405)
+    
+    
+    ##### 신고버튼 누르면 신고카운트 db저장 
+@require_POST
+def report_post(request, post_type, post_id):
+    user_id = request.session.get("user_id")
+    if not user_id:
+        return JsonResponse({"error": "로그인 필요"}, status=403)
+
+    # 모델 매핑 
+    model_map = {
+        "companion": CompanionPost,
+        "sharing": SharingPost,
+        "proxy": ProxyPost,
+        "status": StatusPost,
+        "review": ExchangeReview, 
+    }
+
+    model = model_map.get(post_type)
+    if not model:
+        return JsonResponse({"error": "잘못된 타입"}, status=400)
+
+    # 게시글 가져오기
+    post = get_object_or_404(model, id=post_id)
+
+    #  게시글 신고 수 증가
+    post.report_count = (post.report_count or 0) + 1
+    post.save()
+
+  # 작성자(User) 신고 수 증가
+    author = post.writer if post_type == "review" else post.author
+    if hasattr(author, "report_count"):
+        author.report_count = (author.report_count or 0) + 1
+        author.save()
+
+    return JsonResponse({
+        "status": "ok",
+        "post_report_count": post.report_count,
+        "user_report_count": author.report_count if hasattr(author, "report_count") else None
+    })
+    
+    
+
+
+# ===================== 1) 각 게시판 차단/차단해제 API =====================
+
+@require_POST
+def toggle_block_companion(request, post_id):
+    """동행 게시글 차단/해제 토글"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+    post = get_object_or_404(CompanionPost, id=post_id)
+
+    block, created = BlockedCompanionPost.objects.get_or_create(user=user, post=post)
+    if not created:
+        block.delete()  # 이미 차단되어있으면 해제
+        return JsonResponse({'success': True, 'action': 'unblocked'})
+    return JsonResponse({'success': True, 'action': 'blocked'})
+
+@require_POST
+def toggle_block_sharing(request, post_id):
+    """나눔 게시글 차단/해제 토글"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+    post = get_object_or_404(SharingPost, id=post_id)
+
+    block, created = BlockedSharingPost.objects.get_or_create(user=user, post=post)
+    if not created:
+        block.delete()
+        return JsonResponse({'success': True, 'action': 'unblocked'})
+    return JsonResponse({'success': True, 'action': 'blocked'})
+
+@require_POST
+def toggle_block_proxy(request, post_id):
+    """대리구매 게시글 차단/해제 토글"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+    post = get_object_or_404(ProxyPost, id=post_id)
+
+    block, created = BlockedProxyPost.objects.get_or_create(user=user, post=post)
+    if not created:
+        block.delete()
+        return JsonResponse({'success': True, 'action': 'unblocked'})
+    return JsonResponse({'success': True, 'action': 'blocked'})
+
+@require_POST
+def toggle_block_status(request, post_id):
+    """현황공유 게시글 차단/해제 토글"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+    post = get_object_or_404(StatusPost, id=post_id)
+
+    block, created = BlockedStatusPost.objects.get_or_create(user=user, post=post)
+    if not created:
+        block.delete()
+        return JsonResponse({'success': True, 'action': 'unblocked'})
+    return JsonResponse({'success': True, 'action': 'blocked'})
+
+@require_POST
+def toggle_block_review(request, post_id):
+    """교환후기 게시글 차단/해제 토글"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+    post = get_object_or_404(ExchangeReview, id=post_id)
+
+    block, created = BlockedExchangeReview.objects.get_or_create(user=user, post=post)
+    if not created:
+        block.delete()
+        return JsonResponse({'success': True, 'action': 'unblocked'})
+    return JsonResponse({'success': True, 'action': 'blocked'})
+
+
+# =====================  2) 마이페이지 차단목록 조회 API =====================
+
+@require_GET
+def mypage_blocked_list_api(request):
+    """마이페이지에서 차단한 게시글 목록 + 블랙리스트 유저 목록 반환"""
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'success': False, 'message': '로그인이 필요합니다.'}, status=403)
+    user = get_object_or_404(User, user_id=user_id)
+
+    # 각 차단 모델에서 차단한 글 목록 가져오기
+    blocked_companion = BlockedCompanionPost.objects.filter(user=user).select_related('post')
+    blocked_sharing = BlockedSharingPost.objects.filter(user=user).select_related('post')
+    blocked_proxy = BlockedProxyPost.objects.filter(user=user).select_related('post')
+    blocked_status = BlockedStatusPost.objects.filter(user=user).select_related('post')
+    blocked_review = BlockedExchangeReview.objects.filter(user=user).select_related('post')
+
+    # 블랙리스트 유저 (예: 신고수 3회 이상일 경우)
+    blacklist_users = User.objects.filter(report_count__gte=3)
+
+    return JsonResponse({
+        'success': True,
+        'blocked_companion': [
+            {'id': b.post.id, 'title': b.post.title, 'author': b.post.author.nickname} for b in blocked_companion
+        ],
+        'blocked_sharing': [
+            {'id': b.post.id, 'title': b.post.title, 'author': b.post.author.nickname} for b in blocked_sharing
+        ],
+        'blocked_proxy': [
+            {'id': b.post.id, 'title': b.post.title, 'author': b.post.author.nickname} for b in blocked_proxy
+        ],
+        'blocked_status': [
+            {'id': b.post.id, 'title': b.post.title, 'author': b.post.author.nickname} for b in blocked_status
+        ],
+        'blocked_review': [
+            {'id': b.post.id, 'title': b.post.title, 'writer': b.post.writer.nickname} for b in blocked_review
+        ],
+        'blacklist_users': [
+            {'id': u.id, 'nickname': u.nickname, 'report_count': u.report_count} for u in blacklist_users
+        ]
+    })
