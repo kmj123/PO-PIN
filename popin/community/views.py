@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import SharingPost, SharingTag, SharingImage
+from django.core.paginator import Paginator
 from django.db.models import Avg
 from datetime import datetime, timedelta
 from django.core.files.storage import default_storage
@@ -10,7 +11,6 @@ from django.http import HttpResponse
 from community.models import ExchangeReview, ReviewImage, ReviewTag
 from signupFT.models import User  # 너의 커스텀 유저 모델 import
 from django.contrib import messages
-
 from .models import CompanionPost, CompanionTag, CompanionImage
 from django.views.decorators.csrf import csrf_exempt
 from community.models import ProxyPost, ProxyImage, ProxyTag
@@ -67,49 +67,11 @@ from community.models import (BlockedCompanionPost, BlockedSharingPost,BlockedPr
 from community.models import (CompanionPost,SharingPost,ProxyPost,StatusPost,ExchangeReview)
 
 
+
 User = get_user_model()
 #########  urls.py 순서대로 정리함 
 
-def updateC(request) :
-    return render(request,'update/chgR_update.html')
-
-def updateCo(request) :
-    return render(request,'update/comp_update.html')
-
-def updateP(request) :
-    return render(request,'update/proxy_update.html')
-
-def updateSh(request) :
-    return render(request,'update/shar_update.html')
-
-def updateS(request) :
-    return render(request,'update/status_update.html')
-
-
-def proxyview(request) :
-    return render(request,'chgReview/proxy_view.html')
-
-def companionview(request) :
-    return render(request,'chgReview/comp_view.html')
-
-def sharingview(request) :
-    return render(request,'chgReview/shar_view.html')
-
-def statusview(request) :
-    return render(request,'chgReview/status_view.html')
-
-
-
-
-def companionview(request) :
-    return render(request,'chgReview/comp_view.html')
-def proxyview(request) :
-    return render(request,'chgReview/proxy_view.html')
-def sharingview(request) :
-    return render(request,'chgReview/shar_view.html')
-def statusview(request) :
-    return render(request,'chgReview/status_view.html')
-
+from django.db.models import Q
 
 def chgReviewmain(request):
     today = datetime.today()
@@ -143,45 +105,46 @@ def chgReviewmain(request):
 
 ################################################################################
 ##교환/판매 상세보기 
+from django.shortcuts import render, get_object_or_404
+from community.models import ExchangeReview,ReviewImage,ReviewTag
 
-def chgReviewview(request, pk):
+def chgReviewview(request, post_id):
     post = get_object_or_404(
         ExchangeReview.objects.prefetch_related('tags', 'images'),
-        id=pk
+        id=post_id
     )
-
-    # 조회수 증가 (선택)
-    post.views += 1
-    post.save(update_fields=["views"])
-
-    return render(request, 'chgReview/chgR_view.html', {
-        'post': post
-    })
-################################################################################
-
-# 교환후기글 수정 
-def chgReview_update(request, pk):
-    post = get_object_or_404(ExchangeReview, id=pk)
-
-    if request.method == "POST":
-        post.title = request.POST.get("title")
-        post.content = request.POST.get("content")
-        post.overall_score = request.POST.get("overall_score")
-        post.save()
-        return redirect('chgReview:chgReviewview', pk=post.id)
-
-    return render(request, 'chgReview/chgR_edit.html', {'post': post})
-
-
-   
-################################################################################
-## 최근게시글
-def recent(request):
     
-    return render(request, 'community/community_recent.html')
+    return render(request, 'community/chgR_view.html', {'post': post})
+    
+def recent(request):
+    def annotate_type(qs, type_name):
+        for post in qs:
+            post.post_type = type_name
+        return qs
+    posts = sorted(
+        chain(
+            annotate_type(ExchangeReview.objects.all(), 'review'),
+            annotate_type(SharingPost.objects.all(), 'sharing'),
+            annotate_type(ProxyPost.objects.all(), 'proxy'),
+            annotate_type(CompanionPost.objects.all(), 'companion'),
+            annotate_type(StatusPost.objects.all(), 'status'),
+        ),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+    paginator = Paginator(posts, 10)  # 한 페이지당 10개씩
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'community/community_recent.html', {
+        'page_obj': page_obj,
+    })
 
-#############################################################################
 # 동행모집글 작성
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from datetime import datetime
+from .models import CompanionPost, CompanionTag, CompanionImage
+from signupFT.models import User  # 사용자 모델 import
 
 def write_companion(request):
     if request.method == "POST":
@@ -240,6 +203,12 @@ def write_companion(request):
   ########################################################################################## 
     
 ## 대리구매글 작성
+from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from community.models import ProxyPost, ProxyImage, ProxyTag
+from signupFT.models import User  # 사용자 모델 import
+from datetime import datetime
 
 def write_proxy(request):
 
@@ -367,6 +336,13 @@ def write_review(request):
 #########################################
 
 #나눔 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.db import transaction
+from django.utils.timezone import make_aware
+from datetime import datetime
+from signupFT.models import User
+from .models import SharingPost, SharingTag, SharingImage
 
 def write_sharing(request):
     if request.method == 'POST':
@@ -440,7 +416,13 @@ def write_sharing(request):
     return render(request, 'community/community_write_sharing.html')
 #################################################################
 
- 
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.dateparse import parse_datetime
+from community.models import StatusPost, StatusImage, StatusTag
+from signupFT.models import User
+
 @csrf_exempt
 def write_status(request):
     if request.method == 'POST':
@@ -501,108 +483,28 @@ def write_status(request):
 
 #######################################################################
 # 메인페이지
+from itertools import chain
+from operator import attrgetter
+from .models import SharingPost, CompanionPost, ProxyPost
+
 def main(request):
-    today = timezone.now().date()
+    all_posts = sorted(
+        chain(
+            SharingPost.objects.all(),
+            CompanionPost.objects.all(),
+            ProxyPost.objects.all()
+        ),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+    return render(request, 'community/main.html', {'posts': all_posts})
 
-    # 교환후기
-    total_reviews = ExchangeReview.objects.count()
-    avg_rating = ExchangeReview.objects.aggregate(avg=Avg('overall_score'))['avg'] or 0
-    today_reviews = ExchangeReview.objects.filter(created_at__date=today).count()
-
-    # 나눔 (SharingPost)
-    sharing_active = SharingPost.objects.filter(status='진행중').count()
-    sharing_completed = SharingPost.objects.filter(status='마감').count()
-    sharing_today = SharingPost.objects.filter(created_at__date=today).count()
-
-    # 대리구매 (ProxyPost)
-    proxy_active = ProxyPost.objects.filter(status='모집중').count() + ProxyPost.objects.filter(status='긴급모집').count()
-    proxy_completed = ProxyPost.objects.filter(status='마감').count()
-    proxy_today = ProxyPost.objects.filter(created_at__date=today).count()
-
-    # 현황공유 (StatusPost)
-    status_active = StatusPost.objects.filter(status='진행중').count()
-    status_total = StatusPost.objects.count()
-    status_today = StatusPost.objects.filter(created_at__date=today).count()
-
-    # 동행 (CompanionPost)
-    companion_active = CompanionPost.objects.filter(status='모집중').count() + CompanionPost.objects.filter(status='진행중').count()
-    companion_completed = CompanionPost.objects.filter(status='모집완료').count()
-    companion_today = CompanionPost.objects.filter(created_at__date=today).count()
-
-    # 최근 활동
-    recent_items = []
-    last_review = ExchangeReview.objects.order_by('-created_at').first()
-    if last_review:
-        recent_items.append({
-            'title': f"{last_review.writer.nickname}님과의 교환 후기 등록",
-            'meta': f"교환후기 · 별점 {last_review.overall_score}",
-            'icon': '⭐',
-            'time': last_review.created_at,
-        })
-
-    last_sharing = SharingPost.objects.order_by('-created_at').first()
-    if last_sharing:
-        recent_items.append({
-            'title': last_sharing.title,
-            'meta': f"오프라인 나눔 · 진행상태: {last_sharing.status}",
-            'icon': '🎁',
-            'time': last_sharing.created_at,
-        })
-
-    last_proxy = ProxyPost.objects.order_by('-created_at').first()
-    if last_proxy:
-        recent_items.append({
-            'title': last_proxy.title,
-            'meta': f"대리구매 · 상태: {last_proxy.status}",
-            'icon': '🛒',
-            'time': last_proxy.created_at,
-        })
-
-    last_status = StatusPost.objects.order_by('-created_at').first()
-    if last_status:
-        recent_items.append({
-            'title': last_status.title,
-            'meta': f"현황공유 · 상태: {last_status.status}",
-            'icon': '📊',
-            'time': last_status.created_at,
-        })
-
-    last_companion = CompanionPost.objects.order_by('-created_at').first()
-    if last_companion:
-        recent_items.append({
-            'title': last_companion.title,
-            'meta': f"동행모집 · 상태: {last_companion.status}",
-            'icon': '👥',
-            'time': last_companion.created_at,
-        })
-
-    recent_items = sorted(recent_items, key=lambda x: x['time'], reverse=True)[:5]
-
-    context = {
-        'total_reviews': total_reviews,
-        'avg_rating': round(avg_rating, 1),
-        'today_reviews': today_reviews,
-
-        'sharing_active': sharing_active,
-        'sharing_completed': sharing_completed,
-        'sharing_today': sharing_today,
-
-        'proxy_active': proxy_active,
-        'proxy_completed': proxy_completed,
-        'proxy_today': proxy_today,
-
-        'status_active': status_active,
-        'status_total': status_total,
-        'status_today': status_today,
-
-        'companion_active': companion_active,
-        'companion_completed': companion_completed,
-        'companion_today': companion_today,
-
-        'recent_items': recent_items,
-    }
-    return render(request, 'community/main.html', context)
 #########################################
+from .models import CompanionPost
+from django.utils import timezone
+from django.db.models import Q
+from django.core.paginator import Paginator
+from django.shortcuts import render
 
 def companion(request):
     query = request.GET.get('q', '')  # 검색어 받아오기
@@ -635,6 +537,10 @@ def companion(request):
     return render(request, 'companion/main.html', context)
 ###########################################################################
 ##### 대리구매 게시판
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.utils import timezone
+from .models import ProxyPost, ProxyStatus
 
 def proxy(request):
     # 🔍 검색어 받기
@@ -675,6 +581,10 @@ def proxy(request):
     return render(request, 'proxy/main.html', context)
 #############################################################################################
 ##### 나눔 게시판
+from django.db.models import Q
+from django.utils import timezone
+from django.core.paginator import Paginator
+from community.models import SharingPost, SharingStatus  
 
 def sharing(request):
     # 1. 검색어 가져오기
@@ -706,6 +616,10 @@ def sharing(request):
     return render(request, 'sharing/main.html', context)
  #####################################################   
 
+from django.db.models import Q
+from django.utils import timezone
+from django.core.paginator import Paginator
+from community.models import StatusPost, StatusStatus  
 ##### 현황공유 게시판
 
 def status(request):
@@ -1143,3 +1057,4 @@ def mypage_blocked_list_api(request):
             {'id': u.id, 'nickname': u.nickname, 'report_count': u.report_count} for u in blacklist_users
         ]
     })
+

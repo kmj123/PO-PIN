@@ -21,6 +21,7 @@ urlpatterns = [
     path('proxy/', views.proxy, name='proxy'),
     path('sharing/', views.sharing, name='sharing'),
     path('status/', views.status, name='status'),
+
     path('report_post/<str:post_type>/<int:post_id>/', views.report_post, name='report_post'),
     # 수정
     path("updateC/<int:pk>/", views.updateC, name="updateC"),
@@ -35,4 +36,5 @@ urlpatterns = [
     path('status/<int:pk>/', views.statusview, name='statusview'),
     
     path('mypage_community_list/', views.mypage_community_list, name='mypage_community_list'),
+
 ]
