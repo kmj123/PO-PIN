@@ -528,43 +528,43 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     r = 6371  # 지구 반지름 (km)
     return c * r
-def location_api(request):
-    try:
-        lat = float(request.GET.get('lat'))
-        lng = float(request.GET.get('lng'))
-        radius = float(request.GET.get('radius'))
-        query = request.GET.get('query', '').strip().lower()
+# def location_api(request):
+#     try:
+#         lat = float(request.GET.get('lat'))
+#         lng = float(request.GET.get('lng'))
+#         radius = float(request.GET.get('radius'))
+#         query = request.GET.get('query', '').strip().lower()
 
-        results = []
-        photocard_list = Photocard.objects.filter(latitude__isnull=False, longitude__isnull=False)
+#         results = []
+#         photocard_list = Photocard.objects.filter(latitude__isnull=False, longitude__isnull=False)
 
-        for card in photocard_list:
-            dist = haversine(lng, lat, card.longitude, card.latitude)
+#         for card in photocard_list:
+#             dist = haversine(lng, lat, card.longitude, card.latitude)
 
-            if dist <= radius:
-                member_name = card.member.name.lower() if card.member else ''
-                group_name = card.member.group.name.lower() if card.member and card.member.group else ''
+#             if dist <= radius:
+#                 member_name = card.member.name.lower() if card.member else ''
+#                 group_name = card.member.group.name.lower() if card.member and card.member.group else ''
 
-                if query == '' or query in member_name or query in group_name:
-                    results.append({
-                        "title": f"{group_name} {member_name} ({card.trade_type})",
-                        "lat": card.latitude,
-                        "lng": card.longitude,
-                        "group": group_name,
-                        "member": member_name,
-                        "type": card.trade_type,
-                        "description": card.description,
-                        "distance": f"{dist:.1f}km",
-                        "image": card.image.url if card.image else '',
-                    })
+#                 if query == '' or query in member_name or query in group_name:
+#                     results.append({
+#                         "title": f"{group_name} {member_name} ({card.trade_type})",
+#                         "lat": card.latitude,
+#                         "lng": card.longitude,
+#                         "group": group_name,
+#                         "member": member_name,
+#                         "type": card.trade_type,
+#                         "description": card.description,
+#                         "distance": f"{dist:.1f}km",
+#                         "image": card.image.url if card.image else '',
+#                     })
 
-        return JsonResponse({"status": "ok", "results": results})
+#         return JsonResponse({"status": "ok", "results": results})
 
-    except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)})
+#     except Exception as e:
+#         return JsonResponse({"status": "error", "message": str(e)})
     
-def location(request):
-    return render(request, 'photocard/location.html') 
+# def location(request):
+#     return render(request, 'photocard/location.html') 
 
 
 
