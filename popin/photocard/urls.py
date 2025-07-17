@@ -17,4 +17,5 @@ urlpatterns = [
     path('location/', views.location, name='location'),
     
     path('search_poca/',views.search_poca,name='search_poca'), # 타인 프로필
+    path('marker_detail/<int:pno>/', views.marker_detail, name='marker_detail'),
 ]

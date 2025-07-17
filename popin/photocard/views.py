@@ -562,4 +562,21 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * math.asin(math.sqrt(a))
     return R * c
 
-
+def marker_detail(request, pno):
+    try:
+        poca = Photocard.objects.select_related('seller').get(pno=pno)
+        data = {
+            'id': poca.pno,
+            'title': poca.title,
+            'group': poca.member.group.name,
+            'member': poca.member.name,
+            'type': poca.trade_type,
+            'description': poca.description,
+            'user': poca.seller.name,
+            'time': poca.created_at.strftime('%Y-%m-%d %H:%M'),
+            'lat': poca.latitude,
+            'lng': poca.longitude,
+        }
+        return JsonResponse(data)
+    except Photocard.DoesNotExist:
+        return JsonResponse({'error': 'Not found'}, status=404)

@@ -623,11 +623,15 @@
         }
 
         // 마커 클릭 시 호출될 함수
-        function showBottomSheetFromMarker(itemId) {
-            const itemData = sampleData.find(item => item.id === itemId);
-            if (itemData) {
-                showBottomSheet(itemData);
-            }
+        function showBottomSheetFromMarker(pno) {
+            fetch(`/photocard/marker_detail/${pno}/`)
+                .then(response => response.json())
+                .then(data => {
+                    showBottomSheet(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching post detail:', error);
+                });
         }
 
         // 바텀 시트 열기 함수
@@ -648,7 +652,7 @@
                         <span class="distance-badge">${Math.floor(calculateDistance(currentLocation.lat, currentLocation.lng, data.lat, data.lng) * 1000)}m</span>
                     </div>
                 </div>
-                <button class="contact-btn" onclick="contactUser('${data.user}')">
+                <button class="contact-btn" onclick="contactUser('${data.user}', '${data.id}')">
                     포토카드 상세보기
                 </button>
             `;
@@ -665,9 +669,9 @@
         }
 
         // 사용자에게 연락하는 함수
-        function contactUser(username) {
+        function contactUser(username, pno) {
             alert(`'${username}' 님의 포토카드 상세 정보를 확인합니다.`);
-            closeBottomSheet();
+            window.location.href =  `/photocard/detail/${pno}/`
         }
 
         // 두 지점 간 거리 계산 (킬로미터)
