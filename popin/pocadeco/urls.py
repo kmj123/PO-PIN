@@ -12,6 +12,7 @@ urlpatterns = [
     path('delete_decopoca/', views.delete_decopoca, name='delete_decopoca'), #포꾸 서버에 저장
     path('decoview/<int:id>/', views.decoview, name='decoview'),
     path('toggle_wish/<int:id>/', views.toggle_wish, name='toggle_wish'),
+    path('get_idol_data/', views.get_idol_data, name='get_idol_data'), #아이돌 데이터 가져오기
     # path('mydecolist/', views.mydecolist, name='mydecolist'), 
 
 ]

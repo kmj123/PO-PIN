@@ -494,7 +494,7 @@ from .models import Photocard
 import requests
 from django.conf import settings
 
-def location2_geocode_api(request):
+def location_geocode_api(request):
     query = request.GET.get('query')
     if not query:
         return JsonResponse({'status': 'error', 'message': 'No query provided'})
@@ -535,7 +535,7 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     r = 6371  # 지구 반지름 (km)
     return c * r
-def location2_api(request):
+def location_api(request):
     try:
         lat = float(request.GET.get('lat'))
         lng = float(request.GET.get('lng'))
@@ -570,8 +570,8 @@ def location2_api(request):
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
     
-def location2(request):
-    return render(request, 'photocard/location2.html') 
+def location(request):
+    return render(request, 'photocard/location.html') 
 
 
 

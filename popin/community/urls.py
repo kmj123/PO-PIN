@@ -35,5 +35,4 @@ urlpatterns = [
     path('status/<int:pk>/', views.statusview, name='statusview'),
     
     path('mypage_community_list/', views.mypage_community_list, name='mypage_community_list'),
-
 ]

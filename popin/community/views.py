@@ -33,6 +33,7 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import SharingPost, SharingTag, SharingImage
+from django.core.paginator import Paginator
 from django.db.models import Avg
 from datetime import datetime, timedelta
 from django.core.files.storage import default_storage
@@ -41,6 +42,7 @@ from django.http import HttpResponse
 from community.models import ExchangeReview, ReviewImage, ReviewTag
 from signupFT.models import User  # 너의 커스텀 유저 모델 import
 from django.contrib import messages
+
 from .models import CompanionPost, CompanionTag, CompanionImage
 from django.views.decorators.csrf import csrf_exempt
 from community.models import ProxyPost, ProxyImage, ProxyTag
@@ -65,7 +67,6 @@ from signupFT.models import User
 from community.models import (CompanionPost, SharingPost, ProxyPost, StatusPost, ExchangeReview)
 from community.models import (BlockedCompanionPost, BlockedSharingPost,BlockedProxyPost, BlockedStatusPost, BlockedExchangeReview)
 from community.models import (CompanionPost,SharingPost,ProxyPost,StatusPost,ExchangeReview)
-
 
 
 User = get_user_model()
@@ -1057,4 +1058,3 @@ def mypage_blocked_list_api(request):
             {'id': u.id, 'nickname': u.nickname, 'report_count': u.report_count} for u in blacklist_users
         ]
     })
-
