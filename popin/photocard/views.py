@@ -10,6 +10,10 @@ from datetime import date
 
 from django.http import JsonResponse
 
+from math import radians, cos, sin, asin, sqrt
+import requests
+from django.conf import settings
+
 # 포토카드 거래글 전체 읽어오기 (추후 위치 기반으로 수정 필요)
 def list(request):
     # 쿼리 파라미터 받아오기
@@ -478,14 +482,19 @@ def wish(request, pno):
         return redirect('login:main')  # 예외 상황 대비
     
 def location(request):
-        return render(request, 'location.html')
-
-
-from django.http import JsonResponse
-from math import radians, cos, sin, asin, sqrt
-from .models import Photocard  
-import requests
-from django.conf import settings
+    # 전체 게시글
+    total_photocards = Photocard.objects.all().count()
+    
+    # 근처 게시글
+    
+    # 활성 사용자
+    active_users = User.objects.filter(state=1).count()
+    
+    context = {
+        'total_photocards':total_photocards,
+        'active_users':active_users,
+    }
+    return render(request, 'location.html', context)
 
 def location_geocode_api(request):
     query = request.GET.get('query')

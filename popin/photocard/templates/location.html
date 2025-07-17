@@ -441,8 +441,8 @@
                 <div class="spinner" id="loading"></div>
                 <div class="popular-locations">
                     <div class="location-card" data-location="sangam" title="상암월드컵경기장">
-                        <div class="icon">⚽</div>
-                        <span>상암 월드컵 <br> 경기장</span>
+                        <div class="icon">📡</div>
+                        <span>상암</span>
                     </div>
                     <div class="location-card" data-location="hyundai" title="더현대 서울">
                         <div class="icon">🏢</div>
@@ -803,9 +803,9 @@
         // 통계 숫자 애니메이션 효과
         function animateStats() {
             const stats = [
-                { element: 'totalPosts', target: sampleData.length },
+                { element: 'totalPosts', target: {{total_photocards}} },
                 { element: 'nearbyPosts', target: 0 },
-                { element: 'activeUsers', target: 89 }
+                { element: 'activeUsers', target: {{active_users}} }
             ];
 
             stats.forEach(stat => {
