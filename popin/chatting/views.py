@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 import json
@@ -7,14 +7,13 @@ from django.utils import timezone
 
 from .models import ChatMessage, ChatRoom
 from photocard.models import Photocard
-
-from community.models import ProxyPost, CompanionPost  # 상단에 import
+from community.models import ProxyPost, CompanionPost
+from community.models import Board
 from signupFT.models import User, UserRelation
 
 
-# Create your views here.
-
 def chatting(request):
+    
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
 
     if not user_id:
@@ -26,10 +25,11 @@ def chatting(request):
         rooms = rooms.distinct().order_by('-last_timestamp').exclude()  # 최근 채팅 순 정렬
         first_room = rooms.first()
         messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
-        
+
         room_list = []
         for room in rooms:
-            if room.category in ("exchange", "sale"):
+            # 기존 교환/판매 관련 로직 유지
+            if hasattr(room, 'category') and room.category in ("exchange", "sale"):
                 post = Photocard.objects.get(pno=room.post_id)
                 if post.sell_state == "후" and post.buy_state == "후":
                     continue
@@ -44,6 +44,7 @@ def chatting(request):
                     else:
                         nickname = room.host_user.nickname
                         user_id = room.host_user.user_id
+
             elif room.category == "companion":
                 post = CompanionPost.objects.get(id=room.post_id)
                 if post.status == "완료":
@@ -88,6 +89,7 @@ def chatting(request):
         context = {
             'rooms': room_list,
             'messages': messages,
+
         }
 
         return render(request, 'chatting/chatting.html', context)

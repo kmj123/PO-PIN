@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>PhotoCard Hub -채팅</title>
+    <title>채팅</title>
     <style>
         * {
             margin: 0;
@@ -157,7 +157,7 @@
             background: #f8f9ff;
         }
 
-        .chat-item.active {
+        .chat-item .active {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
         }
@@ -827,7 +827,7 @@
         <!-- Header -->
         <div class="header">
             <nav class="nav">
-                <div class="logo">PO-PIN</div>
+                <a href="/" class="logo">PO-PIN</a>
                 <button class="back-btn" onclick="goBack()">← 뒤로가기</button>
             </nav>
         </div>
@@ -955,6 +955,7 @@
                         <button class="control-btn cancel" onclick="cancelTransaction()">거래 취소</button>
                     </div>
                 </div>
+
 
                 <div class="messages-container" id="messagesContainer">
                     <!-- Sample messages -->

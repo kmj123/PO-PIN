@@ -156,7 +156,8 @@
             {% if post.status == '모집완료' %}
               <button class="join-btn disabled">모집 완료</button>
             {% else %}
-               <a href="{% url 'chatting:chatting' %}?post_id={{ post.id }}&title={{ post.title|urlencode }}" class="join-btn active">채팅하기</a>
+               <a href="{% url 'chatting:chatting' %}?post_id={{ post.id }}&title={{ post.title|urlencode }}" 
+               class="join-btn active">채팅하기</a>
             {% endif %}
             
           </div>
@@ -188,9 +189,9 @@
                       <div id="modalPostTags" class="post-tags"></div>
                       <p id="modalPostCreated"></p>
                     </div>
-                    <p id="modalPostDate">:날짜: 날짜</p>
-                    <p id="modalPostPlace">:둥근_압핀: 장소</p>
-                    <p id="modalPostPeople">:2개의_상반신_그림자: 인원</p>
+                    <p id="modalPostDate">📅 날짜</p>
+                    <p id="modalPostPlace">📍 장소</p>
+                    <p id="modalPostPeople">👥 인원</p>
                     <div id="modalPostDescription" style="margin-top: 20px; color: #444; line-height: 1.6;">
                       설명 내용
                     </div>

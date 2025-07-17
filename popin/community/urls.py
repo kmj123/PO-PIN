@@ -28,6 +28,17 @@ urlpatterns = [
     path('updateP/<int:pk>/', views.updateP, name='updateP'),
     path('updateSh/<int:pk>/', views.updateSh, name='updateSh'),
     path('updateS/<int:pk>/', views.updateS, name='updateS'),
+    path('delete_image/<int:image_id>/', views.delete_image, name='delete_image'),
+    
+    # 삭제
+    path('delete-image/<int:image_id>/', views.delete_image, name='delete_image'),
+    # path('deleteC/<int:pk>/', views.deleteC, name='deleteC'),
+    path('deleteCo/<int:pk>/', views.deleteCo, name='deleteCo'),
+    # path('deleteSharing/<int:pk>/', views.deleteSh, name='deleteSh'),
+    # path('deleteProxy/<int:pk>/', views.deleteP, name='deleteP'),
+    # path('deleteStatus/<int:pk>/', views.deleteS, name='deleteS'),
+    
+    
     # 상세페이지 
     path('companion/<int:pk>/', views.companionview, name='companionview'),
     path('proxy/<int:pk>/', views.proxyview, name='proxyview'),
