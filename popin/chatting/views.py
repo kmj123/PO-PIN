@@ -255,6 +255,8 @@ def cancel_chat(request, room_id):
                     post.buy_state = None # 거래 상태 삭제
                     post.save()
                     room.delete()
+                    
+                    return JsonResponse({'success': True, 'message': f"{post.title}의 거래가 취소되었습니다."})
                 else:
                     return JsonResponse({'error': f"{post.title}의 거래를 완료해 주세요"})
             elif room.category == "companion":
@@ -266,6 +268,8 @@ def cancel_chat(request, room_id):
                 room.delete()
                 
                 return JsonResponse({'success': True, 'message': f"{post.title}의 거래가 취소되었습니다."})
+            else:
+                    return JsonResponse({'error': str(e)})
 
             # # 교환/판매가 아니더라도 채팅방은 삭제
             # room.delete()
