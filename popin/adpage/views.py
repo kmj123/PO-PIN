@@ -111,11 +111,11 @@ def user(request) :
         keyword = request.GET.get('keyword')
         
         user_list = User.objects.annotate(
-            report_count=Count(
+            report_c=Count(
                 'received_relations',
-                filter=Q(received_relations__relation_type='REPORT')
+                filter=Q(received_relations__relation_type='BLOCK')
             )
-        ).values('user_id','nickname','email','state','report_count').exclude(state=0)
+        ).values('user_id','nickname','email','state','report_c').exclude(state=0)
         
         # 조건부 필터링 (값이 있을 경우에만 필터링)
         if state:
@@ -134,7 +134,7 @@ def user(request) :
             "users":user_list, # 전체 유저 리스트
         }
         return render(request,"admin/manageUser.html", context)
-        
+                
     except:
         return redirect('home:main')  # 예외 상황 대비
 
