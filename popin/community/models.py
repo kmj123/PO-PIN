@@ -82,6 +82,7 @@ class ExchangeReview(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    report_count = models.PositiveIntegerField("신고 횟수", default=0) 
     def __str__(self):
         return f"[{self.title}] {self.writer} → {self.partner}"
 
@@ -171,6 +172,7 @@ class CompanionPost(models.Model):
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
     comments_count = models.PositiveIntegerField("댓글 수", default=0)
     region = models.CharField("지역", max_length=20, choices=REGION_CHOICES, null=True,blank=True) 
+    report_count = models.PositiveIntegerField("신고 횟수", default=0) 
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -249,6 +251,7 @@ class ProxyPost(models.Model):
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
     comments_count = models.PositiveIntegerField("댓글 수", default=0)
+    report_count = models.PositiveIntegerField("신고 횟수", default=0) 
     def __str__(self):
         return f"[{self.artist}] {self.title}"
 
@@ -322,7 +325,7 @@ class SharingPost(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
-
+    report_count = models.PositiveIntegerField("신고 횟수", default=0) 
     def __str__(self):
         return f"[{self.title}] by {self.author}"
 
@@ -393,6 +396,7 @@ class StatusPost(models.Model):
     created_at = models.DateTimeField("작성일", auto_now_add=True)
     updated_at = models.DateTimeField("수정일", auto_now=True)
     report_level = models.CharField("신고 상태",max_length=10,choices=ReportLevel.choices,default=ReportLevel.NORMAL )
+    report_count = models.PositiveIntegerField("신고 횟수", default=0) 
     class Meta:
         verbose_name = "현황 공유"
         verbose_name_plural = "현황 공유"
@@ -408,3 +412,44 @@ class StatusImage(models.Model):
 
     def __str__(self):
         return f"{self.post.title}의 이미지"
+    
+    
+# 동행글 차단
+class BlockedCompanionPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_companion_posts')
+    post = models.ForeignKey(CompanionPost, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'post')  # 같은 글을 중복차단 방지
+
+# 나눔글 차단
+class BlockedSharingPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_sharing_posts')
+    post = models.ForeignKey(SharingPost, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'post')
+
+# 대리구매글 차단
+class BlockedProxyPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_proxy_posts')
+    post = models.ForeignKey(ProxyPost, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'post')
+
+# 현황공유글 차단
+class BlockedStatusPost(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_status_posts')
+    post = models.ForeignKey(StatusPost, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'post')
+
+# 교환후기 차단
+class BlockedExchangeReview(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_review_posts')
+    post = models.ForeignKey(ExchangeReview, on_delete=models.CASCADE, related_name='blocked_by_users')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('user', 'post')
