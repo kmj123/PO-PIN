@@ -152,13 +152,17 @@
     </div>
 </div>
 <script>
-    let selectedMember = null;
+let selectedMember = null;
 let currentFilter = 'all';
 let activeDraggable = null;
 let isSelectionLocked = false; // 선택 고정 상태 추가
+let idolData = { members: [] }; // DB에서 로드될 아이돌 데이터
 
 // DOM 로드 완료 시 이벤트 리스너 등록
 document.addEventListener('DOMContentLoaded', function() {
+    // 아이돌 데이터 로드
+    loadIdolData();
+    
     // 파일 업로드 이벤트
     const fileInput = document.getElementById('fileInput');
     if (fileInput) {
@@ -224,6 +228,31 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSelectedDisplay();
     updateSelectionUI();
 });
+
+// 아이돌 데이터 로드 함수
+function loadIdolData() {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    fetch('/pocadeco/get_idol_data/', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            idolData = data.data;
+            console.log('아이돌 데이터 로드 완료:', idolData);
+        } else {
+            console.error('아이돌 데이터 로드 실패:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('아이돌 데이터 로드 중 오류:', error);
+    });
+}
 
 // 파일 업로드 함수
 function uploadPhoto() {
@@ -311,6 +340,12 @@ function saveDecoration() {
     const title = prompt("포꾸 이름을 입력해주세요:");
     if (!title) return;
 
+    // 선택된 멤버 정보 확인
+    if (!selectedMember) {
+        alert('멤버를 선택해주세요!');
+        return;
+    }
+
     // html2canvas가 로드되어 있는지 확인
     if (typeof html2canvas === 'undefined') {
         alert('html2canvas 라이브러리가 로드되지 않았습니다.');
@@ -318,6 +353,9 @@ function saveDecoration() {
     }
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    // 선택된 멤버 정보 파싱
+    const [groupName, memberName] = selectedMember.split('-');
 
     html2canvas(canvasEl, {
         useCORS: true,
@@ -338,8 +376,8 @@ function saveDecoration() {
             body: JSON.stringify({
                 title: title,
                 image: dataUrl,
-                group: "아일릿", // 임시 그룹 멤버 하드코딩 (수정해주세요!!)
-                member: "모카",
+                group: groupName,
+                member: memberName,
             })
         })
         .then(response => response.json())
@@ -721,33 +759,8 @@ function handleSearch() {
 
     if (searchNotice) searchNotice.style.display = 'none';
 
-    // 목 데이터 (실제로는 서버 API 호출)
-    const mockData = {
-        members: [
-            { name: "정국", group__name: "BTS", group__gender: "M" },
-            { name: "지민", group__name: "BTS", group__gender: "M" },
-            { name: "뷔", group__name: "BTS", group__gender: "M" },
-            { name: "카리나", group__name: "aespa", group__gender: "F" },
-            { name: "윈터", group__name: "aespa", group__gender: "F" },
-            { name: "지젤", group__name: "aespa", group__gender: "F" },
-            { name: "닝닝", group__name: "aespa", group__gender: "F" },
-            { name: "민지", group__name: "NewJeans", group__gender: "F" },
-            { name: "하니", group__name: "NewJeans", group__gender: "F" },
-            { name: "다니엘", group__name: "NewJeans", group__gender: "F" },
-            { name: "해린", group__name: "NewJeans", group__gender: "F" },
-            { name: "혜인", group__name: "NewJeans", group__gender: "F" },
-            { name: "마크", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "런쥔", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "제노", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "해찬", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "재민", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "천러", group__name: "NCT DREAM", group__gender: "M" },
-            { name: "지성", group__name: "NCT DREAM", group__gender: "M" }
-        ]
-    };
-
-    // 검색 필터링
-    const filteredMembers = mockData.members.filter(member => {
+    // 검색 필터링 (DB 데이터 사용)
+    const filteredMembers = idolData.members.filter(member => {
         const nameMatch = member.name.toLowerCase().includes(query.toLowerCase()) || 
                         member.group__name.toLowerCase().includes(query.toLowerCase());
         
