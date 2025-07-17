@@ -576,6 +576,11 @@ from operator import attrgetter
 from .models import SharingPost, CompanionPost, ProxyPost
 
 def main(request):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
     all_posts = sorted(
         chain(
             SharingPost.objects.all(),
