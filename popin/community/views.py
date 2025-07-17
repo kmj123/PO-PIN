@@ -203,7 +203,7 @@ def chgReviewview(request, post_id):
         id=post_id
     )
     
-    return render(request, 'community/chgR_view.html', {'post': post})
+    return render(request, 'chgReview/chgR_view.html', {'post': post})
     
 def recent(request):
     def annotate_type(qs, type_name):
