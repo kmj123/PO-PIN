@@ -31,12 +31,12 @@ urlpatterns = [
     path('delete_image/<int:image_id>/', views.delete_image, name='delete_image'),
     
     # 삭제
-    path('delete-image/<int:image_id>/', views.delete_image, name='delete_image'),
-    # path('deleteC/<int:pk>/', views.deleteC, name='deleteC'),
+    path('delete_image/<int:image_id>/', views.delete_image, name='delete_image'),
+    path('deleteC/<int:pk>/', views.deleteC, name='deleteC'),
     path('deleteCo/<int:pk>/', views.deleteCo, name='deleteCo'),
-    # path('deleteSharing/<int:pk>/', views.deleteSh, name='deleteSh'),
-    # path('deleteProxy/<int:pk>/', views.deleteP, name='deleteP'),
-    # path('deleteStatus/<int:pk>/', views.deleteS, name='deleteS'),
+    path('deleteSh/<int:pk>/', views.deleteSh, name='deleteSh'),
+    path('deleteP/<int:pk>/', views.deleteP, name='deleteP'),
+    path('deleteS/<int:pk>/', views.deleteS, name='deleteS'),
     
     
     # 상세페이지 
