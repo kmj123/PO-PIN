@@ -98,6 +98,10 @@ def latest_post(request):
                     'member': poca.member.name if poca.member else '',
                     'created_at':poca.created_at,
                     'available_at':poca.available_at,
+                    'tag' : poca.tag,
+                    'trade_type': poca.trade_type,
+                    'trade_state' : poca.get_sell_state_display(),
+                    'place': poca.place,
                 })
             except Photocard.DoesNotExist:
                 continue
@@ -161,12 +165,17 @@ def wishlist(request):
 
     wishlist_data = []
     for item in qs:
+        photocard = item.photocard
         wishlist_data.append({
-            'pno': item.photocard.pno,
-            'title': item.photocard.title,
-            'album': item.photocard.album,
-            'image_url': item.photocard.image.url,
-            'trade_state': item.photocard.sell_state,
+            'pno': photocard.pno,
+            'title': photocard.title,
+            'album': photocard.album,
+            'image_url': photocard.image.url,
+            'trade_type' : photocard.trade_type,
+            'trade_state': photocard.get_sell_state_display(),
+            'place': photocard.place,
+            'available_at' : photocard.available_at,
+            'price' : photocard.price,
         })
 
     return JsonResponse({'wishlist': wishlist_data})
@@ -191,11 +200,14 @@ def trade(request):
                 {
                     'title': photocard.title,
                     'trade_type': photocard.trade_type,
-                    'trade_state': photocard.sell_state,
+                    'trade_state': photocard.get_sell_state_display(),
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+                    'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in sell_poca
             ]
@@ -204,11 +216,14 @@ def trade(request):
                 {
                     'title': photocard.title,
                     'trade_type': photocard.trade_type,
-                    'trade_state': photocard.buy_state,
+                    'trade_state': photocard.get_sell_state_display(),
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+                    'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in buy_poca
             ]
@@ -217,11 +232,14 @@ def trade(request):
                 {
                     'title': photocard.title,
                     'trade_type': photocard.trade_type,
-                    'trade_state': photocard.sell_state,
+                    'trade_state': photocard.get_sell_state_display(),
                     'album': photocard.album,
                     'image_url': photocard.image.url if photocard.image else '',
                     'pno': photocard.pno,
                     'member': photocard.member.name if photocard.member else '',
+                    'price' : photocard.price,
+                    'place': photocard.place,
+                    'available_at':photocard.available_at,
                 }
                 for photocard in exchange_poca
             ]
@@ -384,29 +402,41 @@ def update_profile(request):
             if profile_img:
                 user.profile_image = profile_img
                 
-            # 최애 멤버/그룹
-            member_name = request.POST.getlist('member')
-            group_name = request.POST.getlist('group')
-            new_nickname = request.POST.get('nickname')
-            request.session['nickname'] = new_nickname            
+            # 최애 그룹/멤버 2개까지
+            favorite_group = request.POST.get('favorite_group')
+            favorite_member = request.POST.get('favorite_member')
+            second_group = request.POST.get('second_group')
+            second_member = request.POST.get('second_member')
 
-            group = []
-            member = []
+            groups = []
+            members = []
+
+            if favorite_group and favorite_member:
+                g1 = Group.objects.get(name=favorite_group)
+                m1 = Member.objects.get(name=favorite_member, group=g1)
+                groups.append(g1)
+                members.append(m1)
+
+            if second_group and second_member:
+                g2 = Group.objects.get(name=second_group)
+                m2 = Member.objects.get(name=second_member, group=g2)
+                groups.append(g2)
+                members.append(m2)
+            else:
+                bias_pairs = zip(user.bias_group.all(), user.bias_member.all())
+                return render(request, '/mypage/profile/', {
+                    'bias_pairs': bias_pairs,
+                    'nickname': user.nickname,
+                    'introduction': user.introduction,
+                    'profile_image': user.profile_image.url if user.profile_image else '',
+                })
+            user.bias_group.set(groups)
+            user.bias_member.set(members)
             
-            if member_name and group_name:
-                try:
-                    group = Group.objects.get(name=group_name)
-                    member = Member.objects.get(name=member_name, group=group)
-                    user.bias_group.set(group)   # bias_group은 many-to-many
-                    user.bias_member.set(member) # bias_member도 many-to-many
-                except (Group.DoesNotExist, Member.DoesNotExist):
-                    return JsonResponse({'message': '해당 멤버 또는 그룹을 찾을 수 없습니다.'}, status=400)
-                
-            print(user)
-            
+
             user.save()
-            return redirect('/mypage/profile')
-            return JsonResponse({'message': '프로필 수정 완료'})
+            return JsonResponse({'message': '프로필 수정 성공'}, status=200)
+
         except Exception as e:
             return JsonResponse({'message': f'오류 발생: {str(e)}'}, status=500)
 

@@ -27,11 +27,11 @@
 
         .modal-content{
             border-radius: 8px;
-            width: 100%;
-            max-width: 100%;
+            width: 90%;
+            max-width: 850px;
             background-color: #ffff;
             FONT-WEIGHT: 200;
-            /* margin: 20px auto; */
+            margin: 20px auto;
             padding: 65px;
             max-height: 100%;
             overflow-y: auto;
@@ -304,8 +304,8 @@
             border-radius: 6px;
             position: fixed;
             z-index: 9999;
-            left: 50%;
-            bottom: 50%;
+            left: 64%;
+            bottom: 31%;
             font-size:12px;
             opacity: 0;
             trasition: opacity 0.5s, bottom: 0.5s;
@@ -315,7 +315,6 @@
         #toast.show{
             visibility:visible;
             opacity: 1;
-            bottom: 50%;
         }
 
     </style>
@@ -609,7 +608,7 @@
         <!--//프로필-->
 
         <!--프로필 수정 모달창 구현-->
-        <form action="/mypage/update_profile/" method="post" name="profileFrm" enctype="multipart/form-data">
+        <form action="/mypage/update_profile/" id="profileForm" method="post" name="profileFrm" enctype="multipart/form-data">
             {% csrf_token %}
             <div id="modalContainer" class="hidden">
                 <div id="modalContent">
@@ -638,21 +637,14 @@
                                 <input type="text" id="nickname" name="nickname" value="{{ nickname }}">
                             </div>
                             <div class="myinfo-profile">
-                                <label for="mybias">마이 아티스트</label>
+                                <label for="mybias">최애 선택하기</label>
                                 <div class="mybias_input">
-                                        {% for group,member in bias_pairs %}
-                                            {%if forloop%}
-                                        <input type="text" id="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
-                                        {%endif%}
+                                    {% for group,member in bias_pairs %}
+                                        <input type="text" class="mybias" name="mybias" value="{{ group.name }} - {{member.name}}" readonly style="cursor: pointer;">
+                                    {%empty%}
+                                        <input type="text" class="mybias" name="mybias" placeholder="나의 최애를 선택해주세요" readonly style="cursor: pointer;">
                                     {% endfor %}
                                     </div>
-                            </div>
-                            <div class="myinfo-profile">
-                                <label for="myself">자기소개</label>
-                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
-                            </div>
-                            <div class="myinfo-profile">
-                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
                             </div>
 
                             <!--아티스트 검색 모달창-->
@@ -663,10 +655,11 @@
                                         {% csrf_token %}
                                         <div class="search-container">
                                             <input type="text" class="search-box" placeholder="그룹명 또는 멤버명으로 검색..." id="idolSearch">
-                                            <input type="hidden" name="favorite_group" id="selectedGroup">
-                                            <input type="hidden" name="favorite_member" id="selectedMember">
-                                            <input type="hidden" name="second_group" id="selectedGroup">
-                                            <input type="hidden" name="second_member" id="selectedMember">
+                                            <input type="hidden" name="favorite_group" id="favoriteGroup">
+                                            <input type="hidden" name="favorite_member" id="favoriteMember">
+                                            <input type="hidden" name="second_group" id="secondGroup">
+                                            <input type="hidden" name="second_member" id="secondMember">
+
 
                                             <div class="filter-buttons">
                                                 <button type="button" class="filter-btn" data-filter="all">전체</button>
@@ -693,6 +686,13 @@
                                         <button id="completeBtn" class="btn btn-primary" type="button" disabled>완료</button>
                                     </form>
                                 </div>
+                            </div>
+                            <div class="myinfo-profile">
+                                <label for="myself">자기소개</label>
+                                <input type="text" id="myself" name="introduction" value="{{ introduction }}">
+                            </div>
+                            <div class="myinfo-profile">
+                                <button id="favorite-btnSave" type="submit">변경사항 저장</button>
                             </div>
                         </div>
                     </div>
@@ -798,17 +798,17 @@
             <div id="reviews" class="tab-content">
                 <div class="section-header">
                     <div class="review-tabs">
-                        <button class="review-tab active" onclick="showReviewTab('received')">내가 받은 후기</button>
-                        <button class="review-tab" onclick="showReviewTab('written')">내가 쓴 후기</button>
+                        <button class="review-tab active" onclick="showReviewTab('received')">받은 후기</button>
+                        <button class="review-tab" onclick="showReviewTab('written')">작성 후기</button>
                     </div>
                 </div>
                 
-                <!--내가 받은 거래 후기-->
+                <!--받은 후기-->
                 <div class="section-content">
                     <div id="received-reviews" class="review-content"></div>
                 </div>
 
-                <!--내가 쓴 후기-->
+                <!--작성 후기-->
                 <div class="section-content">
                     <div id="written-reviews" class="review-content" style="display: none;"></div>
                 </div>
@@ -917,30 +917,70 @@
         }
     }
 
+    // ajax용 전역 함수
+    function getPlace(place) {
+    return (place === 'location' || !place) ? '내위치' : place;
+    }
+
+    function getAvailableDate(available_at) {
+        return available_at ? available_at.split('T')[0] : '협의💬';
+    }
+
+    // 거래완료시 trade_state 뱃지 회색으로 변경
+    function getSellStateClass(trade_state) {
+        return trade_state === '거래중' ? 'badge' : 'badge Nope';
+    }
+
+    function getPrice(trade_type,price){
+        if (trade_type === 0 || trade_type === '교환'){
+            return '';
+        }
+        return `가격: ${trade_type.toLocaleString()}원`;
+    }
+
+
     // #Recent AJAX
     $.ajax({
         url: "/mypage/latest/",
         type: "POST",
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         success: function (data) {
-            console.log('최근 게시글 연결 성공')
 
             const recentList = $("#recent .section-content");
             
             const cardsHtml = data.photocards.map(card => {
-                const dateType = card.created_at.split('T')[0];
+                const tags = (card.tag ? card.tag.split(',') : []).map(tag =>
+                    `<span class="badge tag">${tag.trim()}</span>`
+                ).join('');
 
-                return `
+
+                // 조건처리
+                const loadPlace = getPlace(card.place);
+                const loadDdate = getAvailableDate(card.available_at);
+                const sell_stateclass = getSellStateClass(card.trade_state);
+
+                return ` 
                     <a href="/photocard/detail/${ card.pno }">
                         <div class="item" data-pno="${ card.pno }">
-                            <div>
-                                <h3>${card.title}</h3>
-                                <p>${dateType} - ${card.album}</p>
-                            </div> 
+                            <div class="wishlist">
+                                <div class="mypage-list-img">
+                                    <img src=${card.image_url}>
+                                </div>
+                                <div class="wish-list-txt">
+                                        <h3>${card.title}</h3>
+                                    <div class="item-info">
+                                        <span class="${sell_stateclass}">${card.trade_type}</span>
+                                        <span class="${sell_stateclass}">${card.trade_state}</span>
+                                        <span class="badge tag">📍${loadPlace}</span>
+                                    </div>
+                                    <p class="info-bottom">📆 | ${loadDdate}
+                                </div>
+                            </div>
                         </div>
-                    </a>`}).join("");
+                    </a>`
+                }).join("");
 
-            recentList.html(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
+            recentList.append(cardsHtml || "<div class='error-content'>최근 본 글이 없습니다.</div>");
         },
         error: function () {
             console.error("최근 본 글 불러오기 실패");
@@ -956,7 +996,6 @@
         dataType: "json",
         data: targetId ? { target_user_id: targetId } : {}, // 타겟아이디가 있으면 타켓의 정보가 넘어옴! 없으면 나의 정보
         success: function (data) {
-            console.log("받은 데이터:", data.group_album_dict);
 
             const albumList = $("#mypoca #album-list");
             albumList.empty(); // 기존 목록 비우기
@@ -986,7 +1025,6 @@
                             <div class="album-info">
                                 <h4>${albumName}</h4>
                                 <p>${groupName}</p>
-                                <span class="card-count">${cardCount}장</span>
                             </div>
                         </div>
                     </a>
@@ -1014,28 +1052,39 @@
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: 'json',
         success: function(data){
-            console.log('위시리스트 연결 성공',data.wishlist);
             // 기존 목록 비우기
             const wishList = $("#wishlist .section-content");
             wishList.empty();
-
-            const wishdata = data.wishlist.map(wish => 
-                `<div class="item">
-                    <a href="/photocard/detail/${wish.pno}">
-                        <div class="wishlist">
-                            <div class="wish-list-img">
-                                <img src=${wish.image_url}>
+            
+            const wishdata = data.wishlist.map(wish => {
+                const loadPlace = getPlace(wish.place);
+                const loadDdate = getAvailableDate(wish.available_at);
+                const sell_stateclass = getSellStateClass(wish.trade_state);
+                const loadprice = getPrice(wish.price);
+                
+                return (
+                    `<div class="item">
+                        <a href="/photocard/detail/${wish.pno}">
+                            <div class="wishlist">
+                                <div class="mypage-list-img">
+                                    <img src=${wish.image_url}>
+                                </div>
+                                <div class="mypage-list-txt">
+                                    <h3>${wish.title}</h3>
+                                    <div class="item-info">
+                                        <span class="${sell_stateclass}">${wish.trade_type}</span>
+                                        <span class="${sell_stateclass}">${wish.trade_state}</span>
+                                        <span class="badge tag">📍${loadPlace}</span>
+                                        <p>${loadprice}</p>
+                                    </div>
+                                    <p class="info-bottom">📆 | ${loadDdate} 
+                                </div>
                             </div>
-                            <div class="wish-list-txt">
-                                <span class="badge reserved">거래${wish.trade_state}</span>
-                                <h3>${wish.title}
-                                </h3>
-                                <p>${wish.album}</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>`).join("");
-            wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
+                        </a>
+                    </div>
+                    `);
+                }).join("");
+                wishList.append(wishdata || "<div class='error-content'>위시리스트 목록이 없습니다.</div>")
         },
         error: function (xhr, status, error) {
             console.error("위시리스트 불러오기 실패");
@@ -1051,18 +1100,38 @@
         dataType: "json",
         data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
-            console.log('판매목록 불러오기 성공');
 
             const saleList = $("#transactions #selling-list");
             saleList.empty();
 
-            const saleData = data.sell_poca.map(sell => 
-                `<div class="item">
-                <a href="/photocard/detail/${sell.pno}">
-                    <h3>${sell.title}</h3>
-                    <p>${sell.album} | 상태: 거래${sell.trade_state}</p>
-                </a>
-                </div>`).join("");
+            const saleData = data.sell_poca.map(sell => {
+
+                const loadPlace = getPlace(sell.place);
+                const loadDdate = getAvailableDate(sell.available_at);
+                const sell_stateclass = getSellStateClass(sell.trade_state);
+                const loadprice = getPrice(sell.price);
+
+                return (
+                        `<div class="item">
+                            <a href="/photocard/detail/${sell.pno}">
+                            <div class="mypage-item-list">
+                                <div class="mypage-list-img">
+                                    <img src=${sell.image_url}>
+                                </div>
+                                <div class="mypage-list-txt">
+                                    <h3>${sell.title}</h3>
+                                    <div class="item-info">
+                                        <span class="${sell_stateclass}">${sell.trade_type}</span>
+                                        <span class="${sell_stateclass}">${sell.trade_state}</span>
+                                        <span class="badge tag">📍${loadPlace}</span>
+                                        <p>${loadprice}</p>
+                                        <p class="info-bottom">📆 | ${loadDdate}
+                                    </div>
+                                </div>
+                            </div>
+                            </a>
+                        </div>`);
+                }).join("");
 
             saleList.html(saleData||"<div class='error-content'>판매목록이 없습니다.</div>");
         }, error: function(xhr, status, error){
@@ -1077,19 +1146,39 @@
         headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
         dataType: "json",
         success: function(data){
-            console.log('구매목록 불러오기 성공');
 
             const buyList = $("#transactions #buying-list");
             buyList.empty();
 
-            const buyData = data.buy_poca.map(buy => 
-                `<div class="item">
-                <a href="/photocard/detail/${buy.pno}">
-                    <h3>${buy.title}</h3>
-                    <p>${buy.album} | 상태: 거래${buy.trade_state}</p>
-                </a>
-                </div>`).join("");
-                buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
+            const buyData = data.buy_poca.map(buy => {
+                const loadPlace = getPlace(buy.place);
+                const loadDdate = getAvailableDate(buy.available_at);
+                const sell_stateclass = getSellStateClass(buy.trade_state);
+                const loadprice = getPrice(buy.price);
+                
+                return (
+                    `<div class="item">
+                        <a href="/photocard/detail/${buy.pno}">
+                        <div class="mypage-item-list">
+                            <div class="mypage-list-img">
+                                <img src=${buy.image_url}>
+                            </div>
+                            <div class="mypage-list-txt">
+                                <h3>${buy.title}</h3>
+                                <div class="item-info">
+                                    <span class="${sell_stateclass}">${buy.trade_type}</span>
+                                    <span class="${sell_stateclass}">${buy.trade_state}</span>
+                                    <span class="badge tag">📍${loadPlace}</span>
+                                    <p>${loadprice}</p>
+                                    <p class="info-bottom">📆 | ${loadDdate}
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>`);
+                    
+            }).join("");
+            buyList.html(buyData||"<div class='error-content'>구매목록이 없습니다.</div>");
 
         }, error: function(xhr, status, error){
             console.error("판매목록 불러오기 실패");
@@ -1104,18 +1193,40 @@
         dataType: "json",
         data: targetId ? { target_user_id: targetId } : {},
         success: function(data){
-            console.log('교환목록 불러오기 성공');
 
             const exchangeList = $("#transactions #exchange-list");
             exchangeList.empty();
+            
+            const exchangeData = data.exchange_poca.map(exchange => {
+                const loadPlace = getPlace(exchange.place);
+                const loadDdate = getAvailableDate(exchange.available_at);
+                const sell_stateclass = getSellStateClass(exchange.trade_state);
+                const loadprice = getPrice(exchange.price);
 
-            const exchangeData = data.exchange_poca.map(exchange => 
-                `<div class="item">
-                <a href="/photocard/detail/${exchange.pno}">
-                    <h3>${exchange.title}</h3>
-                    <p>${exchange.album} | 상태: 거래${exchange.trade_state}</p>
-                </a>
-                </div>`).join("");
+                return (
+                    `
+                        <div class="item">
+                            <a href="/photocard/detail/${exchange.pno}">
+                                <div class="mypage-item-list">
+                                    <div class="mypage-list-img">
+                                        <img src=${exchange.image_url}>
+                                    </div>
+                                    <div class="mypage-list-txt">
+                                        <h3>${exchange.title}</h3>
+                                        <div class="item-info">
+                                            <span class="${sell_stateclass}">${exchange.trade_type}</span>
+                                            <span class="${sell_stateclass}">${exchange.trade_state}</span>
+                                            <span class="badge tag">📍${loadPlace}</span>
+                                            <p>${loadprice}</p>
+                                        </div>
+                                        <p class="info-bottom">📆 | ${loadDdate}
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    `
+                );
+            }).join("");
 
                 exchangeList.html(exchangeData||"<div class='error-content'>교환목록이 없습니다.</div>");
         }, error: function(xhr, status, error){
@@ -1140,7 +1251,7 @@
         return cookieValue;
     }
         
-        // 내가 받은 후기글
+        // 받은 후기
         $.ajax({
             url: "/mypage/reviews/received/",
             type: "GET",
@@ -1148,7 +1259,6 @@
             dataType: "json",
             data: targetId ? { target_user_id: targetId } : {},
             success: function(data){
-                console.log('받은 후기글 불러오기 성공');
 
                 const receivedList = $("#reviews #received-reviews");
                 receivedList.empty();
@@ -1156,9 +1266,10 @@
                 const receivedData = data.received_reviews.map(received => 
                     `<div class="item">
                     <a href="/community/chgReview/view/${received.id}">
-                        <h3>작성자: ${received.writer}</h3>
-                        <span class="rating">평점 : ${received.overall_score}점⭐⭐⭐⭐⭐</span>
-                        <p>${received.title} - ${received.content}</p>
+                        <h3>제목: ${received.title} </h3>
+                        <p>닉네임: ${received.writer}</p>
+                        <p class="rating">⭐ 평점 : ${received.overall_score}점</p>
+                        <p class="reviews-contents">내용: ${received.content}</p>
                     </a>
                     </div>
                     `).join("");
@@ -1169,14 +1280,13 @@
                 $("#reviews #received-reviews").html("<div class='error-content'>받은 후기글 불러오는 데 실패했습니다.</div>");
             }
         });
-        // 내가 쓴 후기글
+        // 작성한 후기
         $.ajax({
             url: "/mypage/reviews/written/",
             type: "GET",
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('쓴 후기글 불러오기 성공');
 
                 const writtenList = $("#reviews #written-reviews");
                 writtenList.empty();
@@ -1185,9 +1295,9 @@
                     `<div class="item">
                     <a href="/community/chgReview/view/${written.id}">
                         <h3>제목: ${written.title} </h3>
-                        <p>작성자 : ${written.partner__nickname}</p>
-                        <p class="rating">평점 : ${written.overall_score}⭐⭐⭐⭐⭐</p>
-                        <p class=".review-content">${written.content}</p>
+                        <p>닉네임 : ${written.partner__nickname}</p>
+                        <p class="rating">⭐ 평점 : ${written.overall_score}점</p>
+                        <p class="reviews-contents">내용: ${written.content}</p>
                     </a>
                     </div>`).join("");
 
@@ -1205,7 +1315,6 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('동행글 불러오기 성공');
 
                 const companionList = $("#community #WithU");
                 companionList.empty();
@@ -1234,7 +1343,6 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('나눔글 불러오기 성공');
 
                 const sharingList = $("#community #Sharing");
                 sharingList.empty();
@@ -1262,7 +1370,6 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('대리구매글 불러오기 성공');
 
                 const InsteadbuyList = $("#community #Insteadbuy");
                 InsteadbuyList.empty();
@@ -1291,7 +1398,6 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('현황공유글 불러오기 성공');
 
                 const shareNowList = $("#community #shareNow");
                 shareNowList.empty();
@@ -1320,7 +1426,6 @@
             headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             dataType: "json",
             success: function(data){
-                console.log('차단 사용자 불러오기 성공');
 
                 const blockuserList = $("#blocked #blocked-user");
                 blockuserList.empty();
@@ -1370,7 +1475,6 @@
         loadBlockedUsers();
     });
 
-    /*
     // 블랙리스트 - 신고한 글 목록 AJAX
     function loadBlockedPosts() {
         $.ajax({
@@ -1428,7 +1532,6 @@
     $(document).ready(function(){
         loadBlockedUsers();
     });
-    */
     
     // 프로필 수정 업데이트 AJAX
     $('#profileForm').on('submit', function(e) {
@@ -1442,11 +1545,12 @@
             data: formData,
             processData: false,
             contentType: false,
-            headers: {
-            'X-CSRFToken': getCookie('csrftoken')  // CSRF 토큰 필요
-            },
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
             success: function(response) {
+                console.log(response)
                 alert("프로필 수정 성공");
+                $('#modalContainer').hide(); // 모달 닫기
+                location.reload(); // 페이지 반영 위해 리로드
             },
             error: function(xhr) {
                 alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
@@ -1489,9 +1593,6 @@
             modal.style.display = 'none';
         });
 
-        window.addEventListener('click', e => {
-            if (e.target === modal) modal.style.display = 'none';
-        });
 
         // 선택된 멤버 업데이트
         function updateSelectedDisplay() {
@@ -1642,7 +1743,7 @@
 
                 // 메인 입력 필드 렌더링
                 memberGrid.innerHTML += `
-                    <input type="text" name="mybias" value="${group} - ${member}" readonly style="cursor: pointer;">
+                    <input type="text" value="${group} - ${member}" readonly style="cursor: pointer;">
                 `;
             });
 

@@ -177,6 +177,7 @@
 
         .mobile-user-info {
             display:flex;
+            align-items:center;
             position:fixed;
             top:27px;
             left:32px;
@@ -192,16 +193,12 @@
             line-height: 30px;
         }
 
-        .mobile-user-info > .logout {
-            line-height: 30px;
-        }
-
         .alarm{
             font-size:18px;
         }
 
         .logout{
-            font-size:20px;
+            font-size:22px;
         }
 
         .user-info a, .mobile-user-info a{color:#333; text-decoration: none;}
@@ -291,8 +288,8 @@
                 <li><a href="/customer/information/">고객지원</a></li>
             </ul>
             <div class="user-info">
-                <a href="/chatting/" class="alarm">🔔</a>
-                    <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
+                <a href="/chatting/" class="alarm">💌</a>
+                    <a href="/mypage/profile/" class="username"><span>{{ nickname }}</span>님</a>
                 <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
@@ -300,8 +297,8 @@
             <!-- 모바일 메뉴 -->
             <div class="mobile-menu" id="mobileMenu">
                 <div class="mobile-user-info">
-                    <a href="/chatting/" class="alarm">🔔</a>
-                    <a href="/mypage/profile/" class="username"><span>{{ request.session.nickname }}</span>님</a>
+                    <a href="/chatting/" class="alarm">💌</a>
+                    <a href="/mypage/profile/" class="username"><span>{{ nickname }}</span>님</a>
                     <a href="/login/logout/" class="logout"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
                 <ul class="mobile-menu-list">
