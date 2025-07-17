@@ -424,7 +424,7 @@ def update_profile(request):
                 members.append(m2)
             else:
                 bias_pairs = zip(user.bias_group.all(), user.bias_member.all())
-                return render(request, '/mypage/profile/', {
+                return render(request, 'mypage/profile.html', {
                     'bias_pairs': bias_pairs,
                     'nickname': user.nickname,
                     'introduction': user.introduction,

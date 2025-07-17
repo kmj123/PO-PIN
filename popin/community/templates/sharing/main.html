@@ -53,7 +53,7 @@
     
     <div class="dashboard">
       <div class="top">
-        <h3>나눔</h3>
+        <h3><a href = "{% url 'community:sharing' %}" style = "text-decoration :  none; color : black;">나눔</a></h3>
       </div>
       <div class="line"></div>
       <form method="GET" action="{% url 'community:sharing' %}" class="search-form"  enctype="multipart/form-data">

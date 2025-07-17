@@ -86,7 +86,7 @@ def delete_image(request, image_id):
     
 
 ## 교환후기 게시글 삭제
-@login_required
+
 def deleteC(request, pk):
     if request.method == "POST":
         post = get_object_or_404(ExchangeReview, pk=pk)
@@ -100,7 +100,7 @@ def deleteC(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 동행 게시글 삭제
-@login_required
+
 def deleteCo(request, pk):
     if request.method == "POST":
         post = get_object_or_404(CompanionPost, pk=pk)
@@ -114,7 +114,7 @@ def deleteCo(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 나눔 게시글 삭제
-@login_required
+
 def deleteSh(request, pk):
     if request.method == "POST":
         post = get_object_or_404(SharingPost, pk=pk)
@@ -128,7 +128,7 @@ def deleteSh(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 대리구매 게시글 삭제
-@login_required
+
 def deleteP(request, pk):
     if request.method == "POST":
         post = get_object_or_404(ProxyPost, pk=pk)
@@ -142,7 +142,7 @@ def deleteP(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 현황공유 게시글 삭제
-@login_required
+
 def deleteS(request, pk):
     if request.method == "POST":
         post = get_object_or_404(StatusPost, pk=pk)
@@ -251,6 +251,7 @@ def write_companion(request):
             content = request.POST.get('content')
             max_people = request.POST.get('max_people')  
             tags = request.POST.get('tags', '')
+            region = request.POST.get('region', '').strip()
 
             # 3. 날짜 + 시간 → datetime 필드
             date_str = request.POST.get('eventDate')
@@ -267,6 +268,7 @@ def write_companion(request):
                 max_people=max_people,
                 event_date=event_datetime,
                 author=user,
+                region=region
             )
 
 
@@ -577,6 +579,11 @@ from operator import attrgetter
 from .models import SharingPost, CompanionPost, ProxyPost
 
 def main(request):
+    user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
+    if not user_id:
+        return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
+    
     all_posts = sorted(
         chain(
             SharingPost.objects.all(),

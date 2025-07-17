@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleBtns = document.querySelectorAll(".toggle-btn");
   const categoryLinks = document.querySelectorAll(".group a[data-category]");
   const noResultsMessage = document.getElementById('noResultsMessage');
-  const postlistContainer = document.querySelector('.postlist');
+  const allCards = Array.from(document.querySelectorAll(".post-card"));
   const paginationContainer = document.querySelector('.pagination');
   
   let currentImageIndex = 0;
@@ -138,27 +138,52 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // 카테고리 표시 업데이트 함수
-  function updateCategoryDisplay() {
-    categoryLinks.forEach(link => {
-      link.parentElement.classList.remove('active');
-    });
-    if (selectedCategory) {
-      const activeLink = document.querySelector(`a[data-category="${selectedCategory}"]`);
-      if (activeLink) activeLink.parentElement.classList.add('active');
-    }
-  }
 
+
+  // 카테고리 표시 업데이트 함수
+   
+  function updateCategoryDisplay() {
+  if (!selectedCategory) {
+    // selectedCategory가 null, undefined, 빈 문자열 등 falsy하면 바로 리턴
+    return;
+  }
+  const selectedCategoryLower = selectedCategory.toLowerCase();
+  console.log('업데이트 시작', selectedCategory);
+  
+  categoryLinks.forEach(link => {
+    link.parentElement.classList.remove('active');
+  });
+
+  const activeLink = Array.from(document.querySelectorAll('a[data-category]'))
+    .find(a => a.dataset.category.toLowerCase() === selectedCategoryLower);
+
+  console.log('활성화할 링크:', activeLink);
+  if (activeLink) {
+    activeLink.parentElement.classList.add('active');
+    console.log('active 클래스 추가됨');
+  } else {
+    console.log('해당 카테고리 링크 없음');
+  }
+}
   // 카테고리 링크 이벤트
   categoryLinks.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      selectedCategory = link.dataset.category || null;
-      currentPage = 1;
-      updateCategoryDisplay();
-      applyFilters();
+  link.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    selectedCategory = this.dataset.category.toLowerCase();  // 현재 선택된 카테고리 기억
+    updateCategoryDisplay();  // UI 업데이트
+
+    filteredCards = allCards.filter(card => {
+      const postCategory = card.dataset.category?.toLowerCase() || "";
+
+      // "포함된 단어" 일치 (예: "nct" → "nct 127", "nct wish" 등 가능)
+      return postCategory.includes(selectedCategory);
     });
+
+    currentPage = 1;
+    applyFilters();
   });
+});
 
   // 게시글 카드 클릭 이벤트 설정
   function setupPostCardEvents() {

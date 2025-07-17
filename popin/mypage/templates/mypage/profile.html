@@ -1533,32 +1533,6 @@
         loadBlockedUsers();
     });
     
-    // 프로필 수정 업데이트 AJAX
-    $('#profileForm').on('submit', function(e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        $.ajax({
-            url: '/mypage/update_profile/',
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
-            success: function(response) {
-                console.log(response)
-                alert("프로필 수정 성공");
-                $('#modalContainer').hide(); // 모달 닫기
-                location.reload(); // 페이지 반영 위해 리로드
-            },
-            error: function(xhr) {
-                alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
-            }
-        });
-    });
-
-
     // 아티스트 검색 모달창
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById('searchModal');
@@ -1650,7 +1624,6 @@
                 .then(data => {
                     groupsContainer.innerHTML = '';
                     searchNotice.style.display = 'none';
-                    completeBtn.disabled = true;
 
 
                     // 검색된 결과가 여러명 경우
@@ -1689,6 +1662,7 @@
                         `;
                         groupsContainer.appendChild(groupCard);
                     });
+                    updateSelectedDisplay();
                 });
         });
 
@@ -1761,6 +1735,31 @@
             });
         });
 
+    });
+
+    // 프로필 수정 업데이트 AJAX
+    $('#profileForm').on('submit', function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        $.ajax({
+            url: '/mypage/update_profile/',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { "X-CSRFToken": $('meta[name="csrf-token"]').attr('content') },
+            success: function(response) {
+                console.log(response)
+                alert("프로필 수정 성공");
+                $('#modalContainer').hide(); // 모달 닫기
+                location.reload(); // 페이지 반영 위해 리로드
+            },
+            error: function(xhr) {
+                alert('오류: ' + xhr.responseJSON?.message || '요청 실패');
+            }
+        });
     });
 
 </script>
