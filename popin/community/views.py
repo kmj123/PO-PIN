@@ -74,19 +74,18 @@ User = get_user_model()
 
 #### 마이페이지 - 커뮤니티글 수정/삭제/
 
-
 ## 동행 이미지 수정
-@require_POST
 def delete_image(request, image_id):
-    image = get_object_or_404(CompanionImage, id=image_id)
-    image.delete()
-    return JsonResponse({'success': True})
-
-
+    try:
+        image = CompanionImage.objects.get(id=image_id)
+        image.delete()
+        return JsonResponse({'success': True})
+    except CompanionImage.DoesNotExist:
+        return JsonResponse({'success': False, 'error': '이미지가 존재하지 않습니다.'})
     
 
 ## 교환후기 게시글 삭제
-
+@login_required
 def deleteC(request, pk):
     if request.method == "POST":
         post = get_object_or_404(ExchangeReview, pk=pk)
@@ -100,7 +99,7 @@ def deleteC(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 동행 게시글 삭제
-
+@login_required
 def deleteCo(request, pk):
     if request.method == "POST":
         post = get_object_or_404(CompanionPost, pk=pk)
@@ -114,7 +113,7 @@ def deleteCo(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 나눔 게시글 삭제
-
+@login_required
 def deleteSh(request, pk):
     if request.method == "POST":
         post = get_object_or_404(SharingPost, pk=pk)
@@ -128,7 +127,7 @@ def deleteSh(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 대리구매 게시글 삭제
-
+@login_required
 def deleteP(request, pk):
     if request.method == "POST":
         post = get_object_or_404(ProxyPost, pk=pk)
@@ -142,7 +141,7 @@ def deleteP(request, pk):
     return HttpResponseForbidden("잘못된 접근입니다.")
 
 ## 현황공유 게시글 삭제
-
+@login_required
 def deleteS(request, pk):
     if request.method == "POST":
         post = get_object_or_404(StatusPost, pk=pk)
@@ -934,7 +933,7 @@ from datetime import datetime
 def updateCo(request, pk):
     post = get_object_or_404(CompanionPost, pk=pk)
     existing_images = post.images.all()
-    
+
     if request.method == "POST":
         print("🔧 [updateCo POST DATA]", request.POST)
 
@@ -973,6 +972,7 @@ def updateCo(request, pk):
         return redirect('community:companionview', pk=post.pk)
 
     return render(request, 'update/comp_update.html', {'post': post, 'existing_images': existing_images})
+
 
 def updateP(request, pk):
     post = get_object_or_404(ProxyPost, pk=pk)
@@ -1035,7 +1035,6 @@ def mypage_community_list(request):
     if not user_id:
         return JsonResponse({'error': '로그인 필요'}, status=403)
 
-    
     if request.method == "GET":
         companion_data = [
             {
