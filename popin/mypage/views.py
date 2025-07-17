@@ -266,7 +266,6 @@ def review(request):
         user = User.objects.get(user_id=user_id)
 
         # 사용자 작성 게시글 조회
-        
         companion_posts = CompanionPost.objects.filter(author=user).values(
             "id","title", "created_at", "views", "comments_count"
         )

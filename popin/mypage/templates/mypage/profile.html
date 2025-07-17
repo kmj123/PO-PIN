@@ -1532,7 +1532,7 @@
     $(document).ready(function(){
         loadBlockedUsers();
     });
-    
+
     // 아티스트 검색 모달창
     document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById('searchModal');
@@ -1625,7 +1625,6 @@
                     groupsContainer.innerHTML = '';
                     searchNotice.style.display = 'none';
 
-
                     // 검색된 결과가 여러명 경우
                     const groups = {};
                     data.members.forEach(m => {
@@ -1662,7 +1661,6 @@
                         `;
                         groupsContainer.appendChild(groupCard);
                     });
-                    updateSelectedDisplay();
                 });
         });
 
@@ -1761,6 +1759,7 @@
             }
         });
     });
+
 
 </script>
 
