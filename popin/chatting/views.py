@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.utils.timezone import now
 import json
@@ -7,14 +7,13 @@ from django.utils import timezone
 
 from .models import ChatMessage, ChatRoom
 from photocard.models import Photocard
-
-from community.models import ProxyPost, CompanionPost  # 상단에 import
+from community.models import ProxyPost, CompanionPost
+from community.models import Board
 from signupFT.models import User, UserRelation
 
 
-# Create your views here.
-
 def chatting(request):
+    
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
 
     if not user_id:
@@ -30,76 +29,78 @@ def chatting(request):
         post_info = None
 
         if post_id:
+            # 1. post_type 없이도 자동 식별 시도
             try:
-                if post_type == "companion":
-                    post = CompanionPost.objects.get(id=post_id)
-                else:
+                post = CompanionPost.objects.get(id=post_id)
+                template_post_type = "offline-companion"
+            except CompanionPost.DoesNotExist:
+                try:
                     post = ProxyPost.objects.get(id=post_id)
+                    template_post_type = "offline-proxy"
+                except ProxyPost.DoesNotExist:
+                    return HttpResponseForbidden("해당 ID의 게시글이 존재하지 않습니다.")
 
-                post_author = post.author
+            post_author = post.author
 
-                existing_room = ChatRoom.objects.filter(
-                    host_user=user, guest_user=post_author
-                ).first() or ChatRoom.objects.filter(
-                    host_user=post_author, guest_user=user
-                ).first()
+            post_info = {
+                'id': post.id,
+                'title': post.title,
+                'artist': post.artist,
+                'location': getattr(post, 'location', ''),
+                'reward': getattr(post, 'reward', ''),
+                'status': post.status,
+                'author': post_author,
+                'type': template_post_type
+            }
 
-                if existing_room:
-                    selected_room = existing_room
-                else:
-                    selected_room = ChatRoom.objects.create(
-                        host_user=user,
-                        guest_user=post_author,
-                    )
 
-                messages = ChatMessage.objects.filter(room=selected_room).order_by('timestamp')
+            post_author = post.author
 
-                post_info = {
-                    'id': post.id,
-                    'title': post.title,
-                    'artist': post.artist,
-                    'location': getattr(post, 'location', ''),  # 나눔은 location 없을 수도
-                    'reward': getattr(post, 'reward', ''),  # 동행은 reward 없음
-                    'status': post.status,
-                }
+            existing_room = ChatRoom.objects.filter(
+                host_user=user, guest_user=post_author
+            ).first() or ChatRoom.objects.filter(
+                host_user=post_author, guest_user=user
+            ).first()
 
-            except (ProxyPost.DoesNotExist, CompanionPost.DoesNotExist):
-                selected_room = None
-                messages = []
+            if existing_room:
+                selected_room = existing_room
+            else:
+                selected_room = ChatRoom.objects.create(
+                    host_user=user,
+                    guest_user=post_author,
+                )
+
+            messages = ChatMessage.objects.filter(room=selected_room).order_by('timestamp')
+
+            post_info = {
+                'id': post.id,
+                'title': post.title,
+                'artist': post.artist,
+                'location': getattr(post, 'location', ''),  
+                'reward': getattr(post, 'reward', ''),  
+                'status': post.status,
+                'author': post_author,  # 작성자 정보 추가
+            }
+
+    except (ProxyPost.DoesNotExist, CompanionPost.DoesNotExist):
+        selected_room = None
+        messages = []
+        template_post_type = None
 
         rooms = ChatRoom.objects.filter(host_user=user) | ChatRoom.objects.filter(guest_user=user)
+        rooms = rooms.distinct().order_by('-last_timestamp')
 
-#         rooms = rooms.distinct().order_by('-last_timestamp')
+        # 선택된 방이 없으면 첫 번째 방 선택
+        if not selected_room:
+            first_room = rooms.first()
+            if first_room:
+                selected_room = first_room
+                messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
 
-#         if not selected_room:
-#             first_room = rooms.first()
-#             if first_room:
-#                 messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
-
-#         room_list = []
-#         for room in rooms:
-#             read_count = ChatMessage.objects.filter(
-#                 room=room,
-#                 is_read=False
-#             ).exclude(send_user=user).count()
-
-#             nickname = room.guest_user.nickname if user.nickname == room.host_user.nickname else room.host_user.nickname
-
-#             room_list.append({
-#                 'id': room.id,
-#                 'nickname': nickname,
-#                 'last_timestamp': room.last_timestamp,
-#                 'last_message': room.last_message,
-#                 'read_count': read_count,
-#             })
- 
-        rooms = rooms.distinct().order_by('-last_timestamp').exclude()  # 최근 채팅 순 정렬
-        first_room = rooms.first()
-        messages = ChatMessage.objects.filter(room=first_room).order_by('timestamp')
-        
         room_list = []
         for room in rooms:
-            if room.category in ("exchange", "sale"):
+            # 기존 교환/판매 관련 로직 유지
+            if hasattr(room, 'category') and room.category in ("exchange", "sale"):
                 post = Photocard.objects.get(pno=room.post_id)
                 if post.sell_state == "후" and post.buy_state == "후":
                     continue
@@ -116,19 +117,42 @@ def chatting(request):
                         user_id = room.host_user.user_id
                     
                     room_list.append({
-                        'id':room.id,
-                        'user_id':user_id,
+                        'id': room.id,
+                        'user_id': user_id,
                         'nickname': nickname,
-                        'last_timestamp':room.last_timestamp,
-                        'last_message' : room.last_message,
-                        'read_count' : read_count,
+                        'last_timestamp': room.last_timestamp,
+                        'last_message': room.last_message,
+                        'read_count': read_count,
                     })
+            else:
+                # 일반 채팅방 처리
+                read_count = ChatMessage.objects.filter(
+                    room=room,
+                    is_read=False
+                ).exclude(send_user=user).count()
+
+                if user.nickname == room.host_user.nickname:
+                    nickname = room.guest_user.nickname
+                    other_user_id = room.guest_user.user_id
+                else:
+                    nickname = room.host_user.nickname
+                    other_user_id = room.host_user.user_id
+
+                room_list.append({
+                    'id': room.id,
+                    'user_id': other_user_id,
+                    'nickname': nickname,
+                    'last_timestamp': room.last_timestamp,
+                    'last_message': room.last_message,
+                    'read_count': read_count,
+                })
 
         context = {
             'rooms': room_list,
             'messages': messages,
-            'selected_room_id': selected_room.id if selected_room else (rooms.first().id if rooms.first() else None),
+            'selected_room_id': selected_room.id if selected_room else None,
             'post_info': post_info,
+            'post_type': template_post_type if post_id else None,  # 템플릿용 post_type 추가
         }
 
         return render(request, 'chatting/chatting.html', context)

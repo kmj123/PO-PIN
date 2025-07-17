@@ -215,7 +215,7 @@
           <a>전체 게시글</a>
         </div>
         <div>
-          <p>12</p>
+          <p>{{pending_reports}}</p>
           <a>대기중인 신고</a>
         </div>
         <div>
@@ -239,132 +239,17 @@
   </div>
 
   <script>
-    // 차트 생성
-    window.addEventListener("DOMContentLoaded", () => {
-      const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: {{ months|safe }},
-          datasets: [
-            {
-              label: '전체 거래량',
-              data: {{all}},
-              backgroundColor: 'rgba(54, 162, 235, 0.7)' // 파랑
-            },
-            {
-              label: '교환',
-              data: {{exchange}},
-              backgroundColor: 'rgba(102, 126, 234, 0.7)' // 보라
-            },
-            {
-              label: '판매',
-              data: {{sell}},
-              backgroundColor: 'rgba(255, 159, 64, 0.7)' // 주황
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: { stacked: false },
-            y: {
-              beginAtZero: true,
-              ticks: { color: '#333' }
-            }
-          },
-          {
-            label: '판매',
-            data: sell,
-            backgroundColor: 'rgba(255, 159, 64, 0.7)'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          x: { stacked: false },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#333' }
-          }
-        },
-        plugins: {
-          legend: {
-            labels: { color: '#333' }
-          }
-        }
-      }
-    });
-  }
+  const allLabels = {{ months|safe }}; // 예: ["2023/12", "2024/01", ...]
+  const allDataExchange = {{ exchange|safe }};
+  const allDataSell = {{ sell|safe }};
 
-  // 필터링된 차트 업데이트 함수
-  function updateFilteredChart() {
-  const option = document.getElementById('filterSelect').value;
+  const allDataAll = allDataExchange.map((v, i) => v + allDataSell[i]);
 
-  let labels = [...allLabels];
-  let all = [...allDataAll];
-  let exchange = [...allDataExchange];
-  let sell = [...allDataSell];
+  let chartInstance;
 
-  if (option === 'last3') {
-    const startIndex = Math.max(0, labels.length - 3);
-    labels = labels.slice(startIndex);
-    all = all.slice(startIndex);
-    exchange = exchange.slice(startIndex);
-    sell = sell.slice(startIndex);
-  } else if (option === 'last6_asc') {
-    const startIndex = Math.max(0, labels.length - 6);
-    labels = labels.slice(startIndex);
-    all = all.slice(startIndex);
-    exchange = exchange.slice(startIndex);
-    sell = sell.slice(startIndex);
-  } else if (option === 'all') {
-    const yearMap = {};
-    for (let i = 0; i < labels.length; i++) {
-      const year = labels[i].split('-')[0];
-      if (!yearMap[year]) {
-        yearMap[year] = { all: 0, exchange: 0, sell: 0 };
-      }
-      yearMap[year].all += all[i];
-      yearMap[year].exchange += exchange[i];
-      yearMap[year].sell += sell[i];
-    }
-
-    labels = Object.keys(yearMap).sort();  // 여기서 정렬해줌
-    all = labels.map(y => yearMap[y].all);
-    exchange = labels.map(y => yearMap[y].exchange);
-    sell = labels.map(y => yearMap[y].sell);
-  }
-
-  renderChart(labels, all, exchange, sell);
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  // 초기 필터 값을 "최근 3개월"로 변경
-  const filterSelect = document.getElementById('filterSelect');
-  filterSelect.value = 'last3';  // 초기값 설정
-
-  updateFilteredChart();  // 초기 렌더링 시 필터링 함수 호출
-
-  filterSelect.addEventListener('change', updateFilteredChart);
-});
-
-</script>
-
-</body>
-</html>
-
-
-{% comment %} 
-<script>
-  let chartInstance = null;
-
-  // 차트 그리기 함수
   function renderChart(labels, all, exchange, sell) {
     const ctx = document.getElementById('monthlyTransactionChart').getContext('2d');
 
-    // 기존 차트 제거
     if (chartInstance) {
       chartInstance.destroy();
     }
@@ -394,10 +279,17 @@ window.addEventListener("DOMContentLoaded", () => {
       options: {
         responsive: true,
         scales: {
-          x: { stacked: false },
+          x: {
+            stacked: false,
+            ticks: {
+              color: '#333'
+            }
+          },
           y: {
             beginAtZero: true,
-            ticks: { color: '#333' }
+            ticks: {
+              color: '#333'
+            }
           }
         },
         plugins: {
@@ -409,28 +301,30 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 필터링된 차트 업데이트 함수
   function updateFilteredChart() {
     const option = document.getElementById('filterSelect').value;
 
     let labels = [...allLabels];
-    let all = [...allDataAll];
     let exchange = [...allDataExchange];
     let sell = [...allDataSell];
+    let all = exchange.map((v, i) => v + sell[i]);
 
     if (option === 'last3') {
       const startIndex = Math.max(0, labels.length - 3);
       labels = labels.slice(startIndex);
-      all = all.slice(startIndex);
       exchange = exchange.slice(startIndex);
       sell = sell.slice(startIndex);
+      all = all.slice(startIndex);
+
     } else if (option === 'last6_asc') {
       const startIndex = Math.max(0, labels.length - 6);
       labels = labels.slice(startIndex);
-      all = all.slice(startIndex);
       exchange = exchange.slice(startIndex);
       sell = sell.slice(startIndex);
+      all = all.slice(startIndex);
+
     } else if (option === 'all') {
+      // ✅ 연도별 집계
       const yearMap = {};
       for (let i = 0; i < labels.length; i++) {
         const year = labels[i].split('-')[0];
@@ -442,7 +336,8 @@ window.addEventListener("DOMContentLoaded", () => {
         yearMap[year].sell += sell[i];
       }
 
-      labels = Object.keys(yearMap).sort();  // 연도 정렬 추가
+      // ✅ 연도만 라벨로
+      labels = Object.keys(yearMap).sort();
       all = labels.map(y => yearMap[y].all);
       exchange = labels.map(y => yearMap[y].exchange);
       sell = labels.map(y => yearMap[y].sell);
@@ -451,20 +346,14 @@ window.addEventListener("DOMContentLoaded", () => {
     renderChart(labels, all, exchange, sell);
   }
 
-  // 초기 데이터 전역 변수에 저장
-  const allLabels = {{ months|safe }};
-  const allDataAll = {{ all|safe }};
-  const allDataExchange = {{ exchange|safe }};
-  const allDataSell = {{ sell|safe }};
-
-  // 초기 로드 시 "최근 3개월" 필터 적용하여 차트 렌더링
   window.addEventListener("DOMContentLoaded", () => {
-    // 필터 select 요소가 있다면 초기값 설정
     const filterSelect = document.getElementById('filterSelect');
-    if (filterSelect) {
-      filterSelect.value = 'last3';  // 초기값 '최근 3개월'
-      filterSelect.addEventListener('change', updateFilteredChart);
-    }
+    filterSelect.value = 'last3';
     updateFilteredChart();
+    filterSelect.addEventListener('change', updateFilteredChart);
   });
-</script> {% endcomment %}
+</script>
+
+</body>
+</html>
+

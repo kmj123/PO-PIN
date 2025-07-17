@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>PhotoCard Hub -채팅</title>
+    <title>채팅</title>
     <style>
         * {
             margin: 0;
@@ -157,7 +157,7 @@
             background: #f8f9ff;
         }
 
-        .chat-item.active {
+        .chat-item .active {
             background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
         }
@@ -827,7 +827,7 @@
         <!-- Header -->
         <div class="header">
             <nav class="nav">
-                <div class="logo">PO-PIN</div>
+                <a href="/" class="logo">PO-PIN</a>
                 <button class="back-btn" onclick="goBack()">← 뒤로가기</button>
             </nav>
         </div>
@@ -914,70 +914,70 @@
                 <!-- Transaction/Community Info Panel -->
                 <!-- 게시글 정보가 있을 때만 표시 -->
                 <!-- 동행 -->
-                {% if post_info and post_type == "offline-companion" %}
-                <div class="transaction-info companion" id="companion">
-                    <div class="transaction-header">
-                        <div class="transaction-icon">👫</div>
-                        <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">동행</div>
-                        <div>
-                            <div class="transaction-title">{{ post_info.title }}</div>
+                {% if post_info %}
+                    {% if post_type == "offline-proxy" %}
+                        <!-- 대리구매 -->
+                        <div class="transaction-info" id="transactionInfo">
+                            <div class="transaction-header">
+                                <div class="transaction-icon trade">💰</div>
+                                <div style="font-size: 17px; font-weight: 700; color: rgb(76, 175, 80);">대리구매</div>
+                                <div>
+                                    <div class="transaction-title">{{ post_info.title }}</div>
+                                </div>
+                                <div class="transaction-status active">{{ post_info.status }}</div>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">아티스트</div>
+                                    <div class="detail-value">{{ post_info.artist }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">위치</div>
+                                    <div class="detail-value">{{ post_info.location }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">수고비</div>
+                                    <div class="detail-value">{{ post_info.reward }}</div>
+                                </div>
+                            </div>
+                            <div class="transaction-controls">
+                                <button class="control-btn complete" onclick="completeTransaction()">거래 완료</button>
+                                <button class="control-btn cancel" onclick="cancelTransaction()">거래 취소</button>
+                            </div>
                         </div>
-                        <div class="transaction-status active">{{ post_info.status }}</div>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="detail-item">
-                            <div class="detail-label">아티스트</div>
-                            <div class="detail-value">{{ post_info.artist }}</div>
+
+                    {% elif post_type == "offline-companion" %}
+                        <!-- 동행 -->
+                        <div class="transaction-info companion" id="companion">
+                            <div class="transaction-header">
+                                <div class="transaction-icon">👫</div>
+                                <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">동행</div>
+                                <div>
+                                    <div class="transaction-title">{{ post_info.title }}</div>
+                                </div>
+                                <div class="transaction-status active">{{ post_info.status }}</div>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">아티스트</div>
+                                    <div class="detail-value">{{ post_info.artist }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">공연장</div>
+                                    <div class="detail-value">{{ post_info.location }}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">동행 날짜</div>
+                                    <div class="detail-value">{{ post.event_date|date:"Y.m.d H:i" }}</div>
+                                </div>
+                            </div>
+                            <div class="transaction-controls">
+                                <button class="control-btn request" onclick="requestCompanion()">동행 신청</button>
+                                <button class="control-btn contact" onclick="contactWriter()">종료하기</button>
+                            </div>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">공연장</div>
-                            <div class="detail-value">{{ post_info.location }}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">동행 날짜</div>
-                            <div class="detail-value">2025-08-15</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">작성자</div>
-                            <div class="detail-value">이**님</div>
-                        </div>
-                    </div>
-                    <div class="transaction-controls">
-                        <button class="control-btn request" onclick="requestCompanion()">동행 신청</button>
-                        <button class="control-btn contact" onclick="contactWriter()">종료하기</button>
-                    </div>
-                </div>
-                <!-- 대리구매 -->
-                {% elif post_info and post_type == "offline-proxy" %}
-                <div class="transaction-info" id="transactionInfo">
-                    <div class="transaction-header">
-                        <div class="transaction-icon trade">💰</div>
-                        <div style="font-size: 17px; font-weight: 700; color: rgb(76, 175, 80);">대리구매</div>
-                        <div>
-                            <div class="transaction-title">{{ post_info.title }}</div>
-                        </div>
-                        <div class="transaction-status active">{{ post_info.status }}</div>
-                    </div>
-                    <div class="transaction-details">
-                        <div class="detail-item">
-                            <div class="detail-label">아티스트</div>
-                            <div class="detail-value">{{ post_info.artist }}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">위치</div>
-                            <div class="detail-value">{{ post_info.location }}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">수고비</div>
-                            <div class="detail-value">{{ post_info.reward }}</div>
-                        </div>
-                    </div>
-                    <div class="transaction-controls">
-                        <button class="control-btn complete" onclick="completeTransaction()">거래 완료</button>
-                        <button class="control-btn cancel" onclick="cancelTransaction()">거래 취소</button>
-                    </div>
-                </div>
-                {% endif %}
+                    {% endif %}
+                    {% endif %}
                 <div class="messages-container" id="messagesContainer">
                     <!-- Sample messages -->
                     <div class="message received">

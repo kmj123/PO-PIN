@@ -10,7 +10,7 @@ function reportBtn() {
 //채팅
 function goToChat(postId, postTitle) {
     const encodedTitle = encodeURIComponent(postTitle);
-    window.location.href = "{% url 'chatting:chatting' %}?post_id=" + postId + "&title=" + encodedTitle;
+    window.location.href = "{% url 'chatting:chatting' %}?post_id=" + postId + "&title=" + encodedTitle + "&post_type=offline-companion";
 }
 
 // 메뉴 선택

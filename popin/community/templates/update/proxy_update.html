@@ -321,47 +321,65 @@
       <tbody>
         <tr>
           <th scope="row"><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="title" placeholder="대리구매 제목을 입력해주세요" value = "대리구매글 제목"/></td>
+          <td><input type="text" class="wlong" id="title" placeholder="대리구매 제목을 입력해주세요" value = "{{ post.title }}" /></td>
         </tr>
         <tr>
           <th scope="row"><label for="artist">아티스트 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력해주세요" value = "댈구 아티스트"/></td>
+          <td><input type="text" class="wlong" id="artist" placeholder="아티스트명을 입력해주세요" value = "{{ post.artist }}"/></td>
         </tr>
 
         <tr>
           <th scope="row">날짜 및 시간 <span class="required">*</span></th>
           <td>
             <div class="datetime-group">
-              <input type="date" id="eventDate" required>
-              <input type="time" id="eventTime" required>
+              <input type="date" id="eventDate" value="{{ post.event_date|date:'Y-m-d' }}" required>
+              <input type="time" id="eventTime" value="{{ post.event_date|time:'H:i' }}" required>
             </div>
           </td>
         </tr>
         <tr>
           <th scope="row"><label for="location">장소 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="location" placeholder="대리구매 장소를 입력해주세요" value = "장소장소장소"/></td>
+          <td><input type="text" class="wlong" id="location" placeholder="대리구매 장소를 입력해주세요" value = "{{ post.region }}"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="maxParticipants">최대 모집 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요" value = "4"/></td>
+          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="최대 몇 명까지 모집할 건지 입력해주세요" value = "{{ post.max_people }}"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="maxParticipants">현재 모집된 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="지금까지 모집된 인원을 입력해주세요" value = "4"/></td>
+          <td><input type="number" class="wlong" id="maxParticipants" min="1" max="50" placeholder="지금까지 모집된 인원을 입력해주세요" value = "{{ post.current_people }}"/></td>
         </tr>
 
         <tr>
           <th scope="row"><label for="fee">수고비 <span class="required">*</span></label></th>
-          <td><input type="text" class="wlong" id="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)" value = "5,000원"/></td>
+          <td><input type="text" class="wlong" id="fee" placeholder="수고비를 입력해주세요 (예: 5,000원)" value = "{{ post.reward }}"/></td>
         </tr>
         <tr>
           <th scope="row"><label for="content">본문 <span class="required">*</span></label></th>
-          <td><textarea class="tta" id="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요." >대리구매 상세내용</textarea></td>
+          <td><textarea class="tta" id="content" placeholder="대리구매에 대한 상세한 내용을 작성해주세요." >{{ post.description|linebreaksbr }}</textarea></td>
         </tr>
         <tr>
           <th scope="row"><label for="tags">태그</label></th>
-          <td><input type="text" class="wlong" id="tags" placeholder="#대리구매 #아이돌 #콘서트 등" value = "#태그 #태태그"/></td>
+          <td><input type="text" class="wlong" id="tags" placeholder="#대리구매 #아이돌 #콘서트 등" value = "{{ tags_str }}"/></td>
         </tr>
+        {% if existing_images %}
+        <tr>
+          <th>기존 이미지</th>
+          <td>
+            <div class="existing-images" id="existingImages">
+              {% for img in existing_images %}
+                  <div class="image-preview" data-id="{{ img.id }}">
+                    <img src="{{ img.image.url }}" alt="기존 이미지" style="max-width: 120px; max-height: 120px; display: inline-block;" />
+                    <button type="button" class="delete-image-btn" data-id="{{ img.id }}"
+                      style="background: white; border: none; color: #838383ff; border-radius: 7px; padding: 2px; margin: 3px;">
+                      삭제
+                    </button>
+                  </div>
+                {% endfor %}
+            </div>
+          </td>
+        </tr>
+        {% endif %}
         <tr>
           <th scope="row">사진 첨부</th>
           <td>
@@ -386,6 +404,8 @@
 
   <script>
     let selectedFiles = [];
+    let existingImageCount = document.querySelectorAll('.image-preview').length;
+
 
     document.addEventListener("DOMContentLoaded", function () {
       // 파일 업로드 이벤트
@@ -395,7 +415,7 @@
       setupButtons();
     });
 
-    function setupFileUpload() {
+    {% comment %} function setupFileUpload() {
       const fileUploadArea = document.getElementById('fileUploadArea');
       const fileInput = document.getElementById('fileInput');
       const fileList = document.getElementById('fileList');
@@ -484,7 +504,7 @@
       } else {
         fileCount.style.display = 'none';
       }
-    }
+    } {% endcomment %}
 
     function setupButtons() {
       const writeButton = document.querySelector('button[value="write"]');
@@ -523,6 +543,33 @@
         alert("대리구매 글 작성이 완료되었습니다!");
       });
 
+    }
+
+
+    document.addEventListener("click", function (e) {
+      if (e.target.classList.contains("delete-image-btn")) {
+        const imageId = e.target.dataset.id;
+
+        fetch(`/community/delete-image/${imageId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCSRFToken(), // CSRF 토큰 가져오는 함수
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              e.target.closest(".image-preview").remove();
+              existingImageCount--;  // 필요시 갯수 조정
+            } else {
+              alert(data.error || "이미지 삭제 실패");
+            }
+          });
+      }
+    });
+
+    function getCSRFToken() {
+      return document.querySelector('[name=csrfmiddlewaretoken]').value;
     }
   </script>
 </body>

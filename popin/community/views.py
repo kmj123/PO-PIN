@@ -29,9 +29,96 @@ from django.utils import timezone
 from community.models import  StatusStatus 
 from django.shortcuts import render
 from django.db.models import Count, Avg
+from django.http import HttpResponseForbidden
 
 
 User = get_user_model()
+
+#### 마이페이지 - 커뮤니티글 수정/삭제/
+
+## 동행 이미지 수정
+def delete_image(request, image_id):
+    try:
+        image = CompanionImage.objects.get(id=image_id)
+        image.delete()
+        return JsonResponse({'success': True})
+    except CompanionImage.DoesNotExist:
+        return JsonResponse({'success': False, 'error': '이미지가 존재하지 않습니다.'})
+    
+
+## 교환후기 게시글 삭제
+@login_required
+def deleteC(request, pk):
+    if request.method == "POST":
+        post = get_object_or_404(ExchangeReview, pk=pk)
+
+        if post.author.user_id != request.session.get('user_id'):
+            return HttpResponseForbidden("권한이 없습니다.")
+        
+        post.delete()
+        return redirect('mypage:profile')
+
+    return HttpResponseForbidden("잘못된 접근입니다.")
+
+## 동행 게시글 삭제
+@login_required
+def deleteCo(request, pk):
+    if request.method == "POST":
+        post = get_object_or_404(CompanionPost, pk=pk)
+
+        if post.author.user_id != request.session.get('user_id'):
+            return HttpResponseForbidden("권한이 없습니다.")
+        
+        post.delete()
+        return redirect('mypage:profile')
+
+    return HttpResponseForbidden("잘못된 접근입니다.")
+
+## 나눔 게시글 삭제
+@login_required
+def deleteSh(request, pk):
+    if request.method == "POST":
+        post = get_object_or_404(SharingPost, pk=pk)
+
+        if post.author.user_id != request.session.get('user_id'):
+            return HttpResponseForbidden("권한이 없습니다.")
+        
+        post.delete()
+        return redirect('mypage:profile')
+
+    return HttpResponseForbidden("잘못된 접근입니다.")
+
+## 대리구매 게시글 삭제
+@login_required
+def deleteP(request, pk):
+    if request.method == "POST":
+        post = get_object_or_404(ProxyPost, pk=pk)
+
+        if post.author.user_id != request.session.get('user_id'):
+            return HttpResponseForbidden("권한이 없습니다.")
+        
+        post.delete()
+        return redirect('mypage:profile')
+
+    return HttpResponseForbidden("잘못된 접근입니다.")
+
+## 현황공유 게시글 삭제
+@login_required
+def deleteS(request, pk):
+    if request.method == "POST":
+        post = get_object_or_404(StatusPost, pk=pk)
+
+        if post.author.user_id != request.session.get('user_id'):
+            return HttpResponseForbidden("권한이 없습니다.")
+        
+        post.delete()
+        return redirect('mypage:profile')
+
+    return HttpResponseForbidden("잘못된 접근입니다.")
+
+
+
+
 #########  urls.py 순서대로 정리함 
 
 def updateC(request) :

@@ -1,3 +1,4 @@
+
 {% extends 'header_login.html'%}
 {% load static %}
 <!--상단 헤더-->
@@ -8,7 +9,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css"> 
-  <title>동행 모집 | 게시글 작성</title>
+  <title>동행 모집 | 게시글 수정</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -254,28 +255,28 @@
   {% csrf_token %}
   <div class="Bboard">
     <div class="dash-top">
-      <h2>동행 모집 글 작성</h2>
+      <h2>동행 모집 글 수정</h2>
     </div>
 
     <table class="writebox">
       <tbody>
         <tr>
           <th><label for="title">제목 <span class="required">*</span></label></th>
-          <td><input type="text" id="title" name="title" value="{{ post.title }}" placeholder=" 하입보이 팝업 같이 가실 분!" /></td>
+          <td><input type="text" id="title" name="title" value="{{ post.title }}" /></td>
         </tr>
         <tr>
       <th><label for="artist">아티스트 <span class="required">*</span></label></th>
-      <td><input type="text" id="artist" name="artist" value="{{ post.artist }}" placeholder="예: NewJeans" /></td>
+      <td><input type="text" id="artist" name="artist" value="{{ post.artist }}" /></td>
     </tr>
         <tr>
           <th>유형 <span class="required">*</span></th>
           <td>
             <div class="type-toggle">
-              <button type="button" data-type="콘서트">콘서트</button>
-              <button type="button" data-type="팝업스토어">팝업스토어</button>
-              <button type="button" data-type="팬사인회">팬사인회</button>
-              <button type="button" data-type="굿즈샵">굿즈샵</button>
-              <button type="button" data-type="기타">기타</button>
+              <button type="button" data-type="콘서트" {% if post.category == "콘서트" %}class="active"{% endif %}>콘서트</button>
+              <button type="button" data-type="팝업스토어" {% if post.category == "팝업스토어" %}class="active"{% endif %}>팝업스토어</button>
+              <button type="button" data-type="팬사인회" {% if post.category == "팬사인회" %}class="active"{% endif %}>팬사인회</button>
+              <button type="button" data-type="굿즈샵" {% if post.category == "굿즈샵" %}class="active"{% endif %}>굿즈샵</button>
+              <button type="button" data-type="기타" {% if post.category == "기타" %}class="active"{% endif %}>기타</button>
             </div>
             <input type="hidden" name="category" id="categoryInput" value="{{ post.category }}" >
           </td>
@@ -300,7 +301,7 @@
        </tr>
        <tr>
           <th scope="row"><label for="max_people">현재 모집된 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.max_people }}"placeholder="동행수"/></td>
+          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.current_people }}"placeholder="동행수"/></td>
        </tr>
         <tr>
           <th><label for="content">본문 <span class="required">*</span></label></th>
@@ -312,32 +313,50 @@
           <th scope="row"><label for="region">지역 <span class="required">*</span></label></th>
           <td>
             <select id="region" name="region" value="{{ post.region }}" class="wlong" style="width: 90%; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #ccc; outline: none; transition: border 0.3s ease; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: white url('data:image/svg+xml;charset=US-ASCII,%3csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'14\' height=\'14\' fill=\'%237E6EB0\'%3e%3cpolygon points=\'0,0 14,0 7,7\'/%3e%3c/svg%3e') no-repeat right 10px center; background-size: 12px 7px; cursor: pointer;">
-              <option value="">지역 선택</option>
-              <option value="서울">서울</option>
-              <option value="경기">경기</option>
-              <option value="부산">부산</option>
-              <option value="대구">대구</option>
-              <option value="인천">인천</option>
-              <option value="광주">광주</option>
-              <option value="대전">대전</option>
-              <option value="울산">울산</option>
-              <option value="강원">강원</option>
-              <option value="충북">충북</option>
-              <option value="충남">충남</option>
-              <option value="전북">전북</option>
-              <option value="전남">전남</option>
-              <option value="경북">경북</option>
-              <option value="경남">경남</option>
-              <option value="제주">제주</option>
-              <option value="기타">기타</option>
+              <option value="" {% if not post.region %}selected{% endif %}>지역 선택</option>
+              <option value="서울" {% if post.region == "서울" %}selected{% endif %}>서울</option>
+              <option value="경기" {% if post.region == "경기" %}selected{% endif %}>경기</option>
+              <option value="부산" {% if post.region == "부산" %}selected{% endif %}>부산</option>
+              <option value="대구" {% if post.region == "대구" %}selected{% endif %}>대구</option>
+              <option value="인천" {% if post.region == "인천" %}selected{% endif %}>인천</option>
+              <option value="광주" {% if post.region == "광주" %}selected{% endif %}>광주</option>
+              <option value="대전" {% if post.region == "대전" %}selected{% endif %}>대전</option>
+              <option value="울산" {% if post.region == "울산" %}selected{% endif %}>울산</option>
+              <option value="강원" {% if post.region == "강원" %}selected{% endif %}>강원</option>
+              <option value="충북" {% if post.region == "충북" %}selected{% endif %}>충북</option>
+              <option value="충남" {% if post.region == "충남" %}selected{% endif %}>충남</option>
+              <option value="전북" {% if post.region == "전북" %}selected{% endif %}>전북</option>
+              <option value="전남" {% if post.region == "전남" %}selected{% endif %}>전남</option>
+              <option value="경북" {% if post.region == "경북" %}selected{% endif %}>경북</option>
+              <option value="경남" {% if post.region == "경남" %}selected{% endif %}>경남</option>
+              <option value="제주" {% if post.region == "제주" %}selected{% endif %}>제주</option>
+              <option value="기타" {% if post.region == "기타" %}selected{% endif %}>기타</option>
             </select>
           </td>
         </tr>
  
         <tr>
           <th><label for="tags">태그</label></th>
-          <td><input type="text" id="tags" name="tags" value="{{ tags_str }}" placeholder="#태그1, #태그2" /></td>
+          <td><input type="text" id="tags" name="tags"
+         value="{% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
+         placeholder="#태그1, #태그2" /></td>
         </tr>
+        {% if existing_images %}
+        <tr>
+          <th>기존 이미지</th>
+          <td>
+            <div class="existing-images" id="existingImages">
+              {% for img in existing_images %}
+                <div class="image-preview" data-id="{{ img.id }}">
+                  <img src="{{ img.image.url }}" alt="기존 이미지" style="max-width: 120px; max-height: 120px; display : inline-block;" />
+                  <button type="button" class="delete-image-btn" data-id="{{ img.id }}" 
+                  style = "background : white; border : none; color : #838383ff; border-radius : 7px; padding : 2px; margin : 3px;">삭제</button>
+                </div>
+              {% endfor %}
+            </div>
+          </td>
+        </tr>
+      {% endif %}
         <tr>
           <th scope="row">사진 첨부</th>
           <td>
@@ -363,6 +382,7 @@
 
  <script>
   let selectedFiles = [];
+  let existingImageCount = document.querySelectorAll('.image-preview').length;
 
   document.addEventListener("DOMContentLoaded", function () {
     const toggleButtons = document.querySelectorAll('.type-toggle button');
@@ -558,7 +578,92 @@
         window.history.back();
       }
     });
+
+    document.querySelectorAll('.delete-image-btn').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const imageId = this.dataset.id;
+
+    if (confirm("이미지를 삭제하시겠습니까?")) {
+      fetch(`/community/delete_image/${imageId}/`, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.querySelector(`.image-preview[data-id='${imageId}']`).remove();
+          existingImageCount--;
+          updateFileCount();
+        } else {
+          alert("삭제에 실패했습니다.");
+        }
+      });
+    }
   });
+});
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) {
+      alert(`${file.name}은(는) 이미지 파일이 아닙니다.`);
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert(`${file.name}은(는 10MB를 초과합니다.`);
+      return;
+    }
+
+    if ((selectedFiles.length + existingImageCount) >= maxFileCount) {
+      alert("기존 이미지 포함 최대 5개까지만 업로드할 수 있습니다.");
+      return;
+    }
+
+    if (selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+      alert(`${file.name}은(는) 이미 추가된 파일입니다.`);
+      return;
+    }
+
+    selectedFiles.push(file);
+    displayFile(file);
+    updateFileCount();
+  });
+}
+
+function updateFileCount() {
+  const fileCount = document.getElementById('fileCount');
+  const total = selectedFiles.length + existingImageCount;
+  if (total > 0) {
+    fileCount.style.display = 'block';
+    fileCount.textContent = `총 ${total}개의 이미지 선택됨 (기존 + 신규)`;
+  } else {
+    fileCount.style.display = 'none';
+  }
+}
+
+  });
+
+  function deleteExistingImage(imageId) {
+  if (!confirm("이미지를 삭제하시겠습니까?")) return;
+
+  fetch(`/community/delete-image/${imageId}/`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+    },
+  })
+  .then(response => {
+    if (!response.ok) throw new Error("삭제 실패");
+    document.querySelector(`.file-item[data-image-id="${imageId}"]`).remove();
+  })
+  .catch(err => {
+    alert("삭제 중 오류 발생");
+    console.error(err);
+  });
+}
+
 </script>
 
 {%endblock%}

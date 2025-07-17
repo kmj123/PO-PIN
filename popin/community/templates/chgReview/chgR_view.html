@@ -22,9 +22,7 @@
             <span class="post-tag">#{{ tag.name }}</span>
           {% endfor %}
           <div class="rating-display">
-            {% for i in "12345"|slice:":post.overall_score" %}
                 ⭐
-              {% endfor %}
             <span class="rating-text">{{ post.overall_score }}</span>
           </div>
           <div class="trader-info">
@@ -76,17 +74,14 @@
       <div class="action-buttons">
         <a href="#" class="btn back" onclick="history.back()">이전으로</a>
         <a href="{% url 'community:updateC' pk=post.id %}" class="btn update">수정하기</a>
-        
-        <a href="#" class="btn delete">삭제하기</a>
+        <form action="{% url 'community:deleteC' pk=post.id %}" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            {% csrf_token %}
+            <button type="submit" class="btn delete">삭제하기</button>
+            </form>
       </div>
     </div>
   </div>
 
-  <button type="button" class="topBtn" id="topBtn">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M18 15l-6-6-6 6"/>
-    </svg>
-  </button>
 
   <!-- Image Modal -->
   <div id="imageModal" class="modal">
