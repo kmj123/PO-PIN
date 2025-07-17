@@ -1027,6 +1027,11 @@ def updateS(request, pk):
 # 
 
 def mypage_community_list(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return JsonResponse({'error': '로그인 필요'}, status=403)
+
+    
     if request.method == "GET":
         companion_data = [
             {
@@ -1036,7 +1041,7 @@ def mypage_community_list(request):
                 'views': p.views,
                 'comments_count': 0,
             }
-            for p in CompanionPost.objects.all()
+            for p in CompanionPost.objects.filter(author__user_id=user_id)
         ]
         sharing_data = [
             {
@@ -1046,7 +1051,7 @@ def mypage_community_list(request):
                 'views': p.views,
                 'comments_count': 0,  # ✅ 댓글 모델 없으니 0 고정
             }
-            for p in SharingPost.objects.all()
+            for p in SharingPost.objects.filter(author__user_id=user_id)
         ]
         proxy_data = [
             {
@@ -1056,7 +1061,7 @@ def mypage_community_list(request):
                 'views': p.views,
                 'comments_count': 0,  # ✅ 댓글 모델 없으니 0 고정
             }
-            for p in ProxyPost.objects.all()
+            for p in ProxyPost.objects.filter(author__user_id=user_id)
         ]
         status_data = [
             {
@@ -1066,7 +1071,7 @@ def mypage_community_list(request):
                 'views': p.views,
                 'comments_count': 0,  # ✅ 댓글 모델 없으니 0 고정
             }
-            for p in StatusPost.objects.all()
+            for p in StatusPost.objects.filter(author__user_id=user_id)
         ]
 
         return JsonResponse({
