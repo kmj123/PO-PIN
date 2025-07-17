@@ -24,7 +24,7 @@ function reportBtn() {
 }
 
 const currentUserId = "{{ request.session.user_id }}";
-  $(".start-chat-btn").click(function(e) {
+  $(".join-btn.active").click(function(e) {
     e.preventDefault();
 
     const currentUserId = window.currentUserId;

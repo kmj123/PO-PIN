@@ -110,7 +110,6 @@
               <div class="post-right">
                 <span class="post-status {% if post.status == '모집완료' %}status-full{% elif post.status == '모집중' %}status-recruiting{% else %}progress{% endif %}">{{ post.status }}</span>
                 <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
-                <a href="#" class="start-chat-btn">💬</a>
               </div>
             </div>
             <div class="post-tags">
@@ -156,7 +155,7 @@
             {% if post.status == '모집완료' %}
               <button class="join-btn disabled">모집 완료</button>
             {% else %}
-               <a href="{% url 'chatting:chatting' %}?post_id={{ post.id }}&title={{ post.title|urlencode }}" 
+               <a href="#" 
                class="join-btn active">채팅하기</a>
             {% endif %}
             
