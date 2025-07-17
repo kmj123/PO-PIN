@@ -101,7 +101,6 @@ def main(request):
             'recent':recent,
             'titles': json.dumps(notice_titles),
             'dlist':dlist,
-            'nickname': user.nickname,
         }
         
         return render(request, 'main.html', context)
