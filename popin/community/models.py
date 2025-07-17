@@ -155,7 +155,7 @@ class CompanionPost(models.Model):
     status = models.CharField(
         "모집 상태",
         max_length=10,
-        choices=[('모집중', '모집중'), ('모집완료', '모집완료'),('진행중', '진행중')],
+        choices=[('모집중', '모집중'), ('모집완료', '모집완료'),('진행중', '진행중'),('완료','완료')],
         default='모집중'
     )
 
@@ -221,6 +221,7 @@ class ProxyStatus(models.TextChoices):
     RECRUITING = '모집중', '모집중'
     URGENT = '긴급모집', '긴급모집'
     DEADLINE = '마감', '마감'
+    COMPLETE = '완료', '완료'
 
 
 # --- 태그---

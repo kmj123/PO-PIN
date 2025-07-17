@@ -24,7 +24,6 @@ urlpatterns = [
 
     path('report_post/<str:post_type>/<int:post_id>/', views.report_post, name='report_post'),
     # 수정
-    path("updateC/<int:pk>/", views.updateC, name="updateC"),
     path('updateCo/<int:pk>/', views.updateCo, name='updateCo'),
     path('updateP/<int:pk>/', views.updateP, name='updateP'),
     path('updateSh/<int:pk>/', views.updateSh, name='updateSh'),

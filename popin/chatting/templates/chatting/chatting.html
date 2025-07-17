@@ -842,42 +842,20 @@
                 <input type="text" class="search-chat" placeholder="채팅 검색..." onkeyup="searchChats(event)">
                 <div class="chat-items" id="chatItems">
                     <!-- Sample chat items -->
-                    <div class="chat-item active" data-room-id="trade_123" data-room-nickname="김구매자" data-type="trade" onclick="selectChat(this)">
-                        <div class="chat-avatar">김</div>
-                        <div class="chat-info">
-                            <div class="chat-name">김구매자</div>
-                            <div class="chat-preview">안녕하세요! 거래 가능한지 궁금해서요</div>
-                        </div>
-                        <div class="chat-meta">
-                            <div class="chat-time">14:30</div>
-                            <div class="unread-badge">2</div>
-                        </div>
-                        <div class="chat-type-indicator trade">💰</div>
-                    </div>
-                    <div class="chat-item" data-room-id="community_456" data-room-nickname="박동행자" data-type="community" onclick="selectChat(this)">
-                        <div class="chat-avatar">박</div>
-                        <div class="chat-info">
-                            <div class="chat-name">박동행자</div>
-                            <div class="chat-preview">콘서트 동행 관련해서 문의드립니다</div>
-                        </div>
-                        <div class="chat-meta">
-                            <div class="chat-time">12:15</div>
-                        </div>
-                        <div class="chat-type-indicator community">👥</div>
-                    </div>
-                    <div class="chat-item" data-room-id="trade_789" data-room-nickname="이나눔러" data-type="community" onclick="selectChat(this)">
-                        <div class="chat-avatar">이</div>
-                        <div class="chat-info">
-                            <div class="chat-name">이나눔러</div>
-                            <div class="chat-preview">나눔 참여하고 싶습니다!</div>
-                        </div>
-                        <div class="chat-meta">
-                            <div class="chat-time">11:45</div>
-                        </div>
-                        <div class="chat-type-indicator community">🎁</div>
-                    </div>
                     {% for room in rooms %}
-                    <div class="chat-item active" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" data-room-user-id="{{ room.user_id }}" onclick="selectChat(this)">
+                    <div class="chat-item" data-room-id="{{ room.id }}" data-room-nickname="{{ room.nickname }}" 
+                    data-room-user-id="{{ room.user_id }}" data-room-category="{{ room.category }}" 
+                    onclick="selectChat(this)"  {% if room.category == "companion" %}
+                        data-post-title="{{ room.post.title }}"
+                        data-post-artist="{{ room.post.artist }}"
+                        data-post-member="{{ room.post.member }}"
+                        data-post-location="{{ room.post.location }}"
+                        data-post-place="{{ room.post.place }}"
+                        data-post-status="{{ room.post.status }}"
+                        data-post-sell-status="{{ room.post.sell_status }}"
+                        data-post-author="{{ room.post.author.nickname }}"
+                        data-post-seller="{{ room.post.seller.nickname }}"
+                    {% endif %}>
                         <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
                         <div class="chat-info">
                             <div class="chat-name">{{ room.nickname }}</div>
@@ -885,6 +863,7 @@
                         </div>
                         <div class="chat-meta">
                             <div class="chat-time">{{ room.last_timestamp|date:"h:i" }}</div>
+                            <div class="chat-type-indicator community">🎁</div>
                             {% if room.read_count != 0 %}
                                 <div class="unread-badge">{{ room.read_count }}</div>
                             {% endif %}
@@ -914,42 +893,41 @@
                 <!-- Transaction/Community Info Panel -->
                 <!-- 게시글 정보가 있을 때만 표시 -->
                 <!-- 동행 -->
-                {% if post_info and post_type == "offline-companion" %}
-                <div class="transaction-info companion" id="companion">
+                <div class="transaction-info companion" id="companion" style="display: none;">
                     <div class="transaction-header">
                         <div class="transaction-icon">👫</div>
                         <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">동행</div>
                         <div>
-                            <div class="transaction-title">{{ post_info.title }}</div>
+                            <div class="transaction-title" data-field="title"></div>
                         </div>
-                        <div class="transaction-status active">{{ post_info.status }}</div>
+                        <div class="transaction-status active" data-field="status"></div>
                     </div>
                     <div class="transaction-details">
                         <div class="detail-item">
                             <div class="detail-label">아티스트</div>
-                            <div class="detail-value">{{ post_info.artist }}</div>
+                            <div class="detail-value" data-field="artist"></div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">공연장</div>
-                            <div class="detail-value">{{ post_info.location }}</div>
+                            <div class="detail-value" data-field="location"></div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">동행 날짜</div>
-                            <div class="detail-value">2025-08-15</div>
+                            <div class="detail-value" >2025-08-15</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">작성자</div>
-                            <div class="detail-value">이**님</div>
+                            <div class="detail-value" data-field="author"></div>
                         </div>
                     </div>
                     <div class="transaction-controls">
-                        <button class="control-btn request" onclick="requestCompanion()">동행 신청</button>
-                        <button class="control-btn contact" onclick="contactWriter()">종료하기</button>
+                        <button class="control-btn request" onclick="completed()">동행 완료</button>
+                        <button class="control-btn contact" onclick="cancelChat()">동행 취소</button>
                     </div>
                 </div>
                 <!-- 대리구매 -->
-                {% elif post_info and post_type == "offline-proxy" %}
-                <div class="transaction-info" id="transactionInfo">
+
+                <div class="transaction-info" id="transactionInfo" style="display: none;">
                     <div class="transaction-header">
                         <div class="transaction-icon trade">💰</div>
                         <div style="font-size: 17px; font-weight: 700; color: rgb(76, 175, 80);">대리구매</div>
@@ -977,33 +955,12 @@
                         <button class="control-btn cancel" onclick="cancelTransaction()">거래 취소</button>
                     </div>
                 </div>
-                {% endif %}
+
                 <div class="messages-container" id="messagesContainer">
                     <!-- Sample messages -->
-                    <div class="message received">
-                        <div class="message-avatar">김</div>
-                        <div class="message-content">
-                            <div class="message-bubble">안녕하세요! 뉴진스 앨범 거래 가능한지 궁금해서 연락드렸습니다.</div>
-                            <div class="message-time">14:25</div>
-                        </div>
-                    </div>
-                    <div class="message sent">
-                        <div class="message-avatar">나</div>
-                        <div class="message-content">
-                            <div class="message-bubble">네, 안녕하세요! 거래 가능합니다. 홍대에서 직거래 어떠세요?</div>
-                            <div class="message-time">14:27</div>
-                        </div>
-                    </div>
-                    <div class="message received">
-                        <div class="message-avatar">김</div>
-                        <div class="message-content">
-                            <div class="message-bubble">좋습니다! 내일 오후 3시 괜찮으신가요?</div>
-                            <div class="message-time">14:30</div>
-                        </div>
-                    </div>
-                    <div class="system-message">
+                    {% comment %} <div class="system-message">
                         거래 일정이 설정되었습니다: 2025.07.16 15:00 (홍대)
-                    </div>
+                    </div> {% endcomment %}
                 </div>
                 <div class="message-input-container">
                     <div class="input-actions">
@@ -1027,614 +984,657 @@
         </div>
     </div>
 </body>
-    
-</body>
-     <script type="text/javascript">
-        const currentUserId = "{{ request.session.user_id|escapejs }}";
-        let chatSocket = null;  // 현재 연결된 WebSocket
-        let isTyping = false;
-        let selectedFiles = [];
-        let recentEmojis = [];
-        let emojiPickerVisible = false;
-        let currentRoomId = null;  // 현재 선택된 채팅방 ID 저장 전역변수
-        let selectedUserId = null;  // 현재 선택된 채팅방 상대 유저 아이디 저장 전역변수
+<script type="text/javascript">
+    const currentUserId = "{{ request.session.user_id|escapejs }}";
+    let chatSocket = null;  // 현재 연결된 WebSocket
+    let isTyping = false;
+    let selectedFiles = [];
+    let recentEmojis = [];
+    let emojiPickerVisible = false;
+    let currentRoomId = null;  // 현재 선택된 채팅방 ID 저장 전역변수
+    let selectedUserId = null;  // 현재 선택된 채팅방 상대 유저 아이디 저장 전역변수
 
-        function selectChat(element) {
-            document.querySelectorAll('.chat-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            element.classList.add('active');
+    function selectChat(element) {
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
 
-            const roomName = element.dataset.roomId;
-            const roomUserId = element.dataset.roomUserId;
-            const roomNickname = element.dataset.roomNickname;
+        const roomName = element.dataset.roomId;
+        const roomUserId = element.dataset.roomUserId;
+        const roomNickname = element.dataset.roomNickname;
+        const roomCategory = element.dataset.roomCategory;
 
-            currentRoomId = roomName;
-            selectedUserId = roomUserId;
+        currentRoomId = roomName;
+        selectedUserId = roomUserId;
 
-            // 채팅창 초기화
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML = '';
+        // 채팅창 초기화
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.innerHTML = '';
 
-            const nameContainer = document.querySelector('.chat-header-name');
-            const avatarContainer = document.querySelector('.chat-header-avatar');
-            nameContainer.textContent = roomNickname;
-            avatarContainer.textContent = roomNickname.slice(0, 1);
+        const nameContainer = document.querySelector('.chat-header-name');
+        const avatarContainer = document.querySelector('.chat-header-avatar');
+        nameContainer.textContent = roomNickname;
+        avatarContainer.textContent = roomNickname.slice(0, 1);
 
-            // ① 이전 채팅 불러오기
-            fetch(`/chatting/fetch-messages/${roomName}/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.messages) {
-                        data.messages.forEach(msg => {
-                            addMessage(msg.message, msg.user_id === currentUserId, false, msg.timestamp);
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error('이전 메시지 불러오기 실패:', err);
-                });
+        const companionInfo = document.querySelector('.transaction-info.companion');
+        
+        if (roomCategory === 'companion') {
+            const postTitle = element.dataset.postTitle;
+            const postArtist = element.dataset.postArtist;
+            const postLocation = element.dataset.postLocation;
+            const postStatus = element.dataset.postStatus;
+            const postAuthor = element.dataset.postAuthor;
 
-            // ② 이전 소켓 연결 종료
-            if (chatSocket) {
-                chatSocket.close();
-            }
+            
+            // 존재할 경우에만 값 삽입 (안전하게 처리)
+            companionInfo.querySelector('[data-field="title"]').textContent = postTitle;
+            companionInfo.querySelector('[data-field="artist"]').textContent = postArtist;
+            companionInfo.querySelector('[data-field="location"]').textContent = postLocation;
+            companionInfo.querySelector('[data-field="status"]').textContent = postStatus;
+            companionInfo.querySelector('[data-field="author"]').textContent = postAuthor;
 
-            // ③ 새로운 소켓 연결
-            chatSocket = new WebSocket(`ws://${window.location.host}/ws/chatting/${roomName}/`);
 
-            chatSocket.onmessage = (e) => {
-                const data = JSON.parse(e.data);
-                const { message, user_id, timestamp } = data;
-                addMessage(message, user_id === currentUserId, false, timestamp);
-            };
-
-            chatSocket.onclose = (e) => {
-                console.error('Chat socket closed unexpectedly');
-            };
+            companionInfo.style.display = 'block';
+        } else {
+            companionInfo.style.display = 'none';
         }
 
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
+        //if (roomCategory == 'exchange' || roomCategory == 'sale') {
+        //    const postTitle = element.dataset.postTitle;
+        //    const postArtist = element.dataset.postMember;
+        //    {% comment %} const postLocation = element.dataset.postPlace; {% endcomment %}
+        //    const postStatus = element.dataset.postStatus;
+        //    const postAuthor = element.dataset.postSeller;
 
-            if (!message && selectedFiles.length === 0) return;
+            
+            // 존재할 경우에만 값 삽입 (안전하게 처리)
+        //    companionInfo.querySelector('[data-field="title"]').textContent = postTitle;
+        //    companionInfo.querySelector('[data-field="artist"]').textContent = postArtist;
+        //   companionInfo.querySelector('[data-field="location"]').textContent = postLocation;
+        //    companionInfo.querySelector('[data-field="status"]').textContent = postStatus;
+        //    companionInfo.querySelector('[data-field="author"]').textContent = postAuthor;
 
-            // 텍스트 메시지 보내기
-            if (message) {
-                addMessage(message, true);
+
+        //    companionInfo.style.display = 'block';
+        //} else {
+        //    companionInfo.style.display = 'none';
+        //}
+
+        // ① 이전 채팅 불러오기
+        fetch(`/chatting/fetch-messages/${roomName}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.messages) {
+                    data.messages.forEach(msg => {
+                        addMessage(msg.message, msg.user_id === currentUserId, false, msg.timestamp);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error('이전 메시지 불러오기 실패:', err);
+            });
+
+        // ② 이전 소켓 연결 종료
+        if (chatSocket) {
+            chatSocket.close();
+        }
+
+        // ③ 새로운 소켓 연결
+        chatSocket = new WebSocket(`ws://${window.location.host}/ws/chatting/${roomName}/`);
+
+        chatSocket.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            const { message, user_id, timestamp } = data;
+            addMessage(message, user_id === currentUserId, false, timestamp);
+        };
+
+        chatSocket.onclose = (e) => {
+            console.error('Chat socket closed unexpectedly');
+        };
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('messageInput');
+        const message = input.value.trim();
+
+        if (!message && selectedFiles.length === 0) return;
+
+        // 텍스트 메시지 보내기
+        if (message) {
+            chatSocket.send(JSON.stringify({ message }));
+        }
+
+        // 파일 보내기
+        if (selectedFiles.length > 0) {
+            selectedFiles.forEach(file => {
+                const fileUrl = URL.createObjectURL(file);
+                const fileName = file.name;
+                const fileType = file.type;
+
+                if (fileType.startsWith('image/')) {
+                    addMessage(`<img src="${fileUrl}" alt="${fileName}" style="max-width: 200px; border-radius: 10px;">`, true, true);
+                } else {
+                    addMessage(`<a href="${fileUrl}" download="${fileName}" style="color: #4a90e2; text-decoration: underline;">📎 ${fileName}</a>`, true, true);
+                }
+            });
+        }
+
+        // 초기화
+        input.value = '';
+        input.style.height = 'auto';
+        document.getElementById('sendBtn').disabled = true;
+        selectedFiles = [];
+        document.getElementById('fileInput').value = '';
+        document.getElementById('thumbnailPreview').innerHTML = '';
+        hideTypingIndicator();
+    }
+
+    function addMessage(content, isSent = false, isPhoto = false, customTime = null) {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+
+        let timeString = customTime;
+        if (!timeString) {
+            const now = new Date();
+            timeString = now.getHours().toString().padStart(2, '0') + ':' +
+                        now.getMinutes().toString().padStart(2, '0');
+        }
+
+        const bubbleHTML = isPhoto
+            ? `<div class="message-bubble" style="padding: 8px;">${content}</div>`
+            : `<div class="message-bubble">${content}</div>`;
+
+        messageDiv.innerHTML = `
+            <div class="message-avatar">${isSent ? '나' : '상대'}</div>
+            <div class="message-content">
+                ${bubbleHTML}
+                <div class="message-time">${timeString}</div>
+            </div>
+        `;
+
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+    function handleInput() {
+        const input = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        if (input.value.trim() || selectedFiles.length > 0) {
+            sendBtn.disabled = false;
+            if (input.value.trim()) {
+                showTypingIndicator();
             }
-
-            // 파일 보내기
-            if (selectedFiles.length > 0) {
-                selectedFiles.forEach(file => {
-                    const fileUrl = URL.createObjectURL(file);
-                    const fileName = file.name;
-                    const fileType = file.type;
-
-                    if (fileType.startsWith('image/')) {
-                        addMessage(`<img src="${fileUrl}" alt="${fileName}" style="max-width: 200px; border-radius: 10px;">`, true, true);
-                    } else {
-                        addMessage(`<a href="${fileUrl}" download="${fileName}" style="color: #4a90e2; text-decoration: underline;">📎 ${fileName}</a>`, true, true);
-                    }
-                });
-            }
-
-            // 초기화
-            input.value = '';
-            input.style.height = 'auto';
-            document.getElementById('sendBtn').disabled = true;
-            selectedFiles = [];
-            document.getElementById('fileInput').value = '';
-            document.getElementById('thumbnailPreview').innerHTML = '';
+        } else {
+            sendBtn.disabled = true;
             hideTypingIndicator();
         }
 
-       function addMessage(content, isSent = false, isPhoto = false, customTime = null) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    }
 
-            let timeString = customTime;
-            if (!timeString) {
-                const now = new Date();
-                timeString = now.getHours().toString().padStart(2, '0') + ':' +
-                            now.getMinutes().toString().padStart(2, '0');
-            }
-
-            const bubbleHTML = isPhoto
-                ? `<div class="message-bubble" style="padding: 8px;">${content}</div>`
-                : `<div class="message-bubble">${content}</div>`;
-
-            messageDiv.innerHTML = `
-                <div class="message-avatar">${isSent ? '나' : '상대'}</div>
-                <div class="message-content">
-                    ${bubbleHTML}
-                    <div class="message-time">${timeString}</div>
-                </div>
-            `;
-
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
-
-        function handleInput() {
-            const input = document.getElementById('messageInput');
-            const sendBtn = document.getElementById('sendBtn');
-
-            if (input.value.trim() || selectedFiles.length > 0) {
-                sendBtn.disabled = false;
-                if (input.value.trim()) {
-                    showTypingIndicator();
-                }
-            } else {
-                sendBtn.disabled = true;
-                hideTypingIndicator();
-            }
-
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+    function handleKeyPress(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
+    }
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
-        }
-
-        function showTypingIndicator() {
-            if (!isTyping) {
-                isTyping = true;
-                const indicator = document.getElementById('typingIndicator');
-                if (indicator) {
-                    indicator.style.display = 'flex';
-                }
-            }
-        }
-
-        function hideTypingIndicator() {
-            isTyping = false;
+    function showTypingIndicator() {
+        if (!isTyping) {
+            isTyping = true;
             const indicator = document.getElementById('typingIndicator');
             if (indicator) {
-                indicator.style.display = 'none';
+                indicator.style.display = 'flex';
             }
         }
+    }
 
+    function hideTypingIndicator() {
+        isTyping = false;
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
+    }
+
+    
+    // 파일 첨부 함수
+    function attachFile() {
+        document.getElementById('fileInput').click();
+    }
+
+    // 파일 핸들러
+    function handleFile(event) {
+        const files = Array.from(event.target.files);
+        selectedFiles = files;
+
+        const thumbnailPreview = document.getElementById('thumbnailPreview');
+        thumbnailPreview.innerHTML = '';
+
+        if (files.length > 0) {
+            files.forEach((file, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.display = 'inline-block';
+                wrapper.style.margin = '5px';
+
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.width = '60px';
+                img.style.height = '60px';
+                img.style.objectFit = 'cover';
+                img.style.border = '1px solid #ccc';
+                img.style.borderRadius = '6px';
+                img.style.cursor = 'pointer';
+                img.title = file.name;
+
+                img.onclick = () => {
+                    window.open(img.src, '_blank');
+                };
+
+                const deleteBtn = document.createElement('span');
+                deleteBtn.textContent = '×';
+                deleteBtn.style.position = 'absolute';
+                deleteBtn.style.top = '0px';
+                deleteBtn.style.right = '2px';
+                deleteBtn.style.background = 'rgba(0,0,0,0.6)';
+                deleteBtn.style.color = 'white';
+                deleteBtn.style.fontSize = '12px';
+                deleteBtn.style.borderRadius = '50%';
+                deleteBtn.style.width = '16px';
+                deleteBtn.style.height = '16px';
+                deleteBtn.style.display = 'flex';
+                deleteBtn.style.alignItems = 'center';
+                deleteBtn.style.justifyContent = 'center';
+                deleteBtn.style.cursor = 'pointer';
+
+                deleteBtn.onclick = () => {
+                    selectedFiles.splice(index, 1); // 파일 제거
+                    handleFile({ target: { files: selectedFiles } }); // 미리보기 재렌더
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(deleteBtn);
+                thumbnailPreview.appendChild(wrapper);
+            });
+
+            document.getElementById('sendBtn').disabled = false;
+        } else {
+            document.getElementById('sendBtn').disabled = true;
+        }
+    }
+
+    // 이모지 피커 생성
+    function createEmojiPicker() {
+        const picker = document.createElement('div');
+        picker.id = 'emojiPicker';
+        picker.className = 'emoji-picker';
         
-        // 파일 첨부 함수
-        function attachFile() {
-            document.getElementById('fileInput').click();
-        }
-
-        // 파일 핸들러
-        function handleFile(event) {
-            const files = Array.from(event.target.files);
-            selectedFiles = files;
-
-            const thumbnailPreview = document.getElementById('thumbnailPreview');
-            thumbnailPreview.innerHTML = '';
-
-            if (files.length > 0) {
-                files.forEach((file, index) => {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.position = 'relative';
-                    wrapper.style.display = 'inline-block';
-                    wrapper.style.margin = '5px';
-
-                    const img = document.createElement('img');
-                    img.src = URL.createObjectURL(file);
-                    img.style.width = '60px';
-                    img.style.height = '60px';
-                    img.style.objectFit = 'cover';
-                    img.style.border = '1px solid #ccc';
-                    img.style.borderRadius = '6px';
-                    img.style.cursor = 'pointer';
-                    img.title = file.name;
-
-                    img.onclick = () => {
-                        window.open(img.src, '_blank');
-                    };
-
-                    const deleteBtn = document.createElement('span');
-                    deleteBtn.textContent = '×';
-                    deleteBtn.style.position = 'absolute';
-                    deleteBtn.style.top = '0px';
-                    deleteBtn.style.right = '2px';
-                    deleteBtn.style.background = 'rgba(0,0,0,0.6)';
-                    deleteBtn.style.color = 'white';
-                    deleteBtn.style.fontSize = '12px';
-                    deleteBtn.style.borderRadius = '50%';
-                    deleteBtn.style.width = '16px';
-                    deleteBtn.style.height = '16px';
-                    deleteBtn.style.display = 'flex';
-                    deleteBtn.style.alignItems = 'center';
-                    deleteBtn.style.justifyContent = 'center';
-                    deleteBtn.style.cursor = 'pointer';
-
-                    deleteBtn.onclick = () => {
-                        selectedFiles.splice(index, 1); // 파일 제거
-                        handleFile({ target: { files: selectedFiles } }); // 미리보기 재렌더
-                    };
-
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(deleteBtn);
-                    thumbnailPreview.appendChild(wrapper);
-                });
-
-                document.getElementById('sendBtn').disabled = false;
-            } else {
-                document.getElementById('sendBtn').disabled = true;
-            }
-        }
-
-        // 이모지 피커 생성
-        function createEmojiPicker() {
-            const picker = document.createElement('div');
-            picker.id = 'emojiPicker';
-            picker.className = 'emoji-picker';
+        picker.innerHTML = `
+            <div class="emoji-picker-header">
+                <span class="emoji-picker-title">이모지 선택</span>
+                <button class="emoji-picker-close" onclick="hideEmojiPicker()">×</button>
+            </div>
             
-            picker.innerHTML = `
-                <div class="emoji-picker-header">
-                    <span class="emoji-picker-title">이모지 선택</span>
-                    <button class="emoji-picker-close" onclick="hideEmojiPicker()">×</button>
-                </div>
-                
-                <input type="text" class="emoji-search" placeholder="이모지 검색..." oninput="searchEmojis(this.value)">
-                
-                <div class="emoji-recent">
-                    <div class="emoji-recent-title">최근 사용</div>
-                    <div class="emoji-recent-grid" id="recentEmojisGrid"></div>
-                </div>
-                
-                <div class="emoji-grid" id="emojiGrid"></div>
-            `;
+            <input type="text" class="emoji-search" placeholder="이모지 검색..." oninput="searchEmojis(this.value)">
             
-            document.body.appendChild(picker);
-            updateRecentEmojis();
+            <div class="emoji-recent">
+                <div class="emoji-recent-title">최근 사용</div>
+                <div class="emoji-recent-grid" id="recentEmojisGrid"></div>
+            </div>
+            
+            <div class="emoji-grid" id="emojiGrid"></div>
+        `;
+        
+        document.body.appendChild(picker);
+        updateRecentEmojis();
+        updateEmojiGrid();
+    }
+
+    // 이모지 데이터
+    const faceEmojis = [
+        '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', 
+        '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😙', '😚', 
+        '😋', '😛', '😝', '😜', '🤪', '🤨', '😎', '🤩', 
+        '🥳', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', 
+        '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', 
+        '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓',
+        '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', 
+        '😦','😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', 
+        '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤠', '😈', '👿',
+        '👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉',
+        '👆', '👇', '☝️', '✋', '🤚', '🖐️', '🖖', '👋', '🤏', '✊',
+        '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏',
+        '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔',
+        '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟',
+        '🔥', '💯', '💢', '💥', '💫', '💦', '💨', '🕳️', '💣',
+        '💬', '🗨️', '🗯️', '💭', '💤'
+    ];
+
+    // 이모지 피커 표시
+    function showEmojiPicker() {
+        let picker = document.getElementById('emojiPicker');
+        if (!picker) {
+            createEmojiPicker();
+            picker = document.getElementById('emojiPicker');
+        }
+        picker.classList.add('show');
+        emojiPickerVisible = true;
+    }
+
+    // 이모지 피커 숨기기
+    function hideEmojiPicker() {
+        const picker = document.getElementById('emojiPicker');
+        if (picker) {
+            picker.classList.remove('show');
+        }
+        emojiPickerVisible = false;
+    }
+
+    // 이모지 피커 토글
+    function toggleEmojiPicker() {
+        if (emojiPickerVisible) {
+            hideEmojiPicker();
+        } else {
+            showEmojiPicker();
+        }
+    }
+
+    // 최근 사용한 이모지 업데이트
+    function updateRecentEmojis() {
+        const recentGrid = document.getElementById('recentEmojisGrid');
+        if (!recentGrid) return;
+        
+        recentGrid.innerHTML = '';
+        
+        if (recentEmojis.length === 0) {
+            recentGrid.innerHTML = '<div style="color: #999; font-size: 12px;">최근 사용한 이모지가 없습니다</div>';
+            return;
+        }
+        
+        recentEmojis.forEach(emoji => {
+            const button = document.createElement('button');
+            button.className = 'emoji-recent-item';
+            button.textContent = emoji;
+            button.onclick = () => selectEmoji(emoji);
+            recentGrid.appendChild(button);
+        });
+    }
+
+    // 이모지 그리드 업데이트
+    function updateEmojiGrid(emojis = faceEmojis) {
+        const grid = document.getElementById('emojiGrid');
+        if (!grid) return;
+        
+        grid.innerHTML = '';
+        
+        emojis.forEach(emoji => {
+            const button = document.createElement('button');
+            button.className = 'emoji-item';
+            button.textContent = emoji;
+            button.onclick = () => selectEmoji(emoji);
+            grid.appendChild(button);
+        });
+    }
+
+    // 이모지 검색
+    function searchEmojis(query) {
+        if (!query.trim()) {
             updateEmojiGrid();
+            return;
         }
+        
+        // 간단한 검색 로직 (실제로는 더 복잡한 매칭 로직이 필요)
+        const filteredEmojis = faceEmojis.filter(emoji => {
+            // 이모지 이름이나 카테고리로 검색할 수 있도록 확장 가능
+            return true; // 현재는 모든 이모지 표시
+        });
+        
+        updateEmojiGrid(filteredEmojis);
+    }
 
-        // 이모지 데이터
-        const faceEmojis = [
-            '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', 
-            '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😙', '😚', 
-            '😋', '😛', '😝', '😜', '🤪', '🤨', '😎', '🤩', 
-            '🥳', '😒', '😞', '😔', '😟', '😕', '🙁', '☹️', '😣', 
-            '😖', '😫', '😩', '🥺', '😢', '😭', '😤', '😠', '😡', '🤬', 
-            '🤯', '😳', '🥵', '🥶', '😱', '😨', '😰', '😥', '😓',
-            '🤔', '🤭', '🤫', '🤥', '😶', '😐', '😑', '😬', '🙄', '😯', 
-            '😦','😮', '😲', '🥱', '😴', '🤤', '😪', '😵', '🤐', 
-            '🥴', '🤢', '🤮', '🤧', '😷', '🤒', '🤕', '🤠', '😈', '👿',
-            '👍', '👎', '👌', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉',
-            '👆', '👇', '☝️', '✋', '🤚', '🖐️', '🖖', '👋', '🤏', '✊',
-            '👊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏',
-            '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔',
-            '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟',
-            '🔥', '💯', '💢', '💥', '💫', '💦', '💨', '🕳️', '💣',
-            '💬', '🗨️', '🗯️', '💭', '💤'
-        ];
-
-        // 이모지 피커 표시
-        function showEmojiPicker() {
-            let picker = document.getElementById('emojiPicker');
-            if (!picker) {
-                createEmojiPicker();
-                picker = document.getElementById('emojiPicker');
-            }
-            picker.classList.add('show');
-            emojiPickerVisible = true;
+    // 이모지 선택
+    function selectEmoji(emoji) {
+        // 최근 사용한 이모지에 추가
+        if (recentEmojis.includes(emoji)) {
+            recentEmojis = recentEmojis.filter(e => e !== emoji);
         }
-
+        recentEmojis.unshift(emoji);
+        
+        // 최대 10개까지만 저장
+        if (recentEmojis.length > 10) {
+            recentEmojis = recentEmojis.slice(0, 10);
+        }
+        
+        updateRecentEmojis();
+        
+        // 메시지 입력 필드에 이모지 추가
+        const messageInput = document.getElementById('messageInput');
+        if (messageInput) {
+            const start = messageInput.selectionStart || 0;
+            const end = messageInput.selectionEnd || 0;
+            const value = messageInput.value;
+            
+            messageInput.value = value.slice(0, start) + emoji + value.slice(end);
+            messageInput.selectionStart = messageInput.selectionEnd = start + emoji.length;
+            messageInput.focus();
+            
+            // 전송 버튼 활성화
+            handleInput();
+        }
+        
         // 이모지 피커 숨기기
-        function hideEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            if (picker) {
-                picker.classList.remove('show');
-            }
-            emojiPickerVisible = false;
-        }
+        hideEmojiPicker();
+    }
 
-        // 이모지 피커 토글
-        function toggleEmojiPicker() {
-            if (emojiPickerVisible) {
-                hideEmojiPicker();
-            } else {
-                showEmojiPicker();
-            }
-        }
+    // 이모지 버튼 클릭 함수
+    function sendEmojis() {
+        toggleEmojiPicker();
+    }
 
-        // 최근 사용한 이모지 업데이트
-        function updateRecentEmojis() {
-            const recentGrid = document.getElementById('recentEmojisGrid');
-            if (!recentGrid) return;
-            
-            recentGrid.innerHTML = '';
-            
-            if (recentEmojis.length === 0) {
-                recentGrid.innerHTML = '<div style="color: #999; font-size: 12px;">최근 사용한 이모지가 없습니다</div>';
-                return;
-            }
-            
-            recentEmojis.forEach(emoji => {
-                const button = document.createElement('button');
-                button.className = 'emoji-recent-item';
-                button.textContent = emoji;
-                button.onclick = () => selectEmoji(emoji);
-                recentGrid.appendChild(button);
-            });
-        }
-
-        // 이모지 그리드 업데이트
-        function updateEmojiGrid(emojis = faceEmojis) {
-            const grid = document.getElementById('emojiGrid');
-            if (!grid) return;
-            
-            grid.innerHTML = '';
-            
-            emojis.forEach(emoji => {
-                const button = document.createElement('button');
-                button.className = 'emoji-item';
-                button.textContent = emoji;
-                button.onclick = () => selectEmoji(emoji);
-                grid.appendChild(button);
-            });
-        }
-
-        // 이모지 검색
-        function searchEmojis(query) {
-            if (!query.trim()) {
-                updateEmojiGrid();
-                return;
-            }
-            
-            // 간단한 검색 로직 (실제로는 더 복잡한 매칭 로직이 필요)
-            const filteredEmojis = faceEmojis.filter(emoji => {
-                // 이모지 이름이나 카테고리로 검색할 수 있도록 확장 가능
-                return true; // 현재는 모든 이모지 표시
-            });
-            
-            updateEmojiGrid(filteredEmojis);
-        }
-
-        // 이모지 선택
-        function selectEmoji(emoji) {
-            // 최근 사용한 이모지에 추가
-            if (recentEmojis.includes(emoji)) {
-                recentEmojis = recentEmojis.filter(e => e !== emoji);
-            }
-            recentEmojis.unshift(emoji);
-            
-            // 최대 10개까지만 저장
-            if (recentEmojis.length > 10) {
-                recentEmojis = recentEmojis.slice(0, 10);
-            }
-            
-            updateRecentEmojis();
-            
-            // 메시지 입력 필드에 이모지 추가
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                const start = messageInput.selectionStart || 0;
-                const end = messageInput.selectionEnd || 0;
-                const value = messageInput.value;
-                
-                messageInput.value = value.slice(0, start) + emoji + value.slice(end);
-                messageInput.selectionStart = messageInput.selectionEnd = start + emoji.length;
-                messageInput.focus();
-                
-                // 전송 버튼 활성화
-                handleInput();
-            }
-            
-            // 이모지 피커 숨기기
+    // 외부 클릭 시 이모지 피커 닫기
+    document.addEventListener('click', function(e) {
+        const picker = document.getElementById('emojiPicker');
+        const emojiButton = e.target.closest('.input-btn[title="이모지"]');
+        
+        if (picker && emojiPickerVisible && 
+            !picker.contains(e.target) && 
+            !emojiButton) {
             hideEmojiPicker();
         }
+    });
 
-        // 이모지 버튼 클릭 함수
-        function sendEmojis() {
-            toggleEmojiPicker();
-        }
-
-        // 외부 클릭 시 이모지 피커 닫기
-        document.addEventListener('click', function(e) {
-            const picker = document.getElementById('emojiPicker');
-            const emojiButton = e.target.closest('.input-btn[title="이모지"]');
+    // 채팅 검색 함수
+    function searchChats(event) {
+        const query = event.target.value.toLowerCase();
+        const chatItems = document.querySelectorAll('.chat-item');
+        
+        chatItems.forEach(item => {
+            const chatName = item.querySelector('.chat-name').textContent.toLowerCase();
+            const chatPreview = item.querySelector('.chat-preview').textContent.toLowerCase();
             
-            if (picker && emojiPickerVisible && 
-                !picker.contains(e.target) && 
-                !emojiButton) {
-                hideEmojiPicker();
+            if (chatName.includes(query) || chatPreview.includes(query)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
             }
         });
+    }
 
-        // 채팅 검색 함수
-        function searchChats(event) {
-            const query = event.target.value.toLowerCase();
-            const chatItems = document.querySelectorAll('.chat-item');
-            
-            chatItems.forEach(item => {
-                const chatName = item.querySelector('.chat-name').textContent.toLowerCase();
-                const chatPreview = item.querySelector('.chat-preview').textContent.toLowerCase();
-                
-                if (chatName.includes(query) || chatPreview.includes(query)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+    // 새 채팅 시작
+    function startNewChat() {
+        alert('새 채팅 기능은 아직 구현되지 않았습니다.');
+    }
+
+    // 뒤로가기
+    function goBack() {
+        if (confirm('채팅을 종료하시겠습니까?')) {
+            window.history.back();
+        }
+    }
+
+    // 프로필 보기
+    function viewProfile() {
+        alert('프로필 보기 기능은 아직 구현되지 않았습니다.');
+    }
+
+    // 채팅 설정
+    function chatSettings() {
+        alert('채팅 설정 기능은 아직 구현되지 않았습니다.');
+    }
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        // 초기 설정
+        console.log('채팅 페이지가 로드되었습니다.');
+        
+        // 메시지 컨테이너 스크롤을 맨 아래로
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+
+    // 테스트용 자동 응답 (실제 구현에서는 제거)
+    let autoReplyTimeout;
+    function simulateAutoReply() {
+        clearTimeout(autoReplyTimeout);
+        autoReplyTimeout = setTimeout(() => {
+            const responses = [
+                "네, 알겠습니다! 😊",
+                "좋은 생각이에요!",
+                "어떻게 생각하세요?",
+                "그렇군요~ 👍",
+                "재미있네요! 😄"
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            addMessage(randomResponse, false);
+        }, 1000 + Math.random() * 2000);
+    }
+
+    // 메시지 전송 시 자동 응답 트리거 (테스트용)
+    const originalSendMessage = sendMessage;
+    sendMessage = function() {
+        originalSendMessage();
+        if (document.getElementById('messageInput').value.trim()) {
+            simulateAutoReply();
+        }
+    };
+    
+    
+    
+    function cancelChat() {
+        if (!currentRoomId) {
+            alert("삭제할 채팅방을 먼저 선택하세요.");
+            return;
         }
 
-        // 새 채팅 시작
-        function startNewChat() {
-            alert('새 채팅 기능은 아직 구현되지 않았습니다.');
+        if (!confirm("정말로 이 채팅방을 삭제하시겠습니까?")) {
+            return;
         }
 
-        // 뒤로가기
-        function goBack() {
-            if (confirm('채팅을 종료하시겠습니까?')) {
-                window.history.back();
+        fetch(`/chatting/cancel_chat/${currentRoomId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json',
             }
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // 삭제된 방 UI에서도 제거 (선택사항)
+                document.querySelector(`.chat-item[data-room-id="${currentRoomId}"]`)?.remove();
+                currentRoomId = null;
 
-        // 프로필 보기
-        function viewProfile() {
-            alert('프로필 보기 기능은 아직 구현되지 않았습니다.');
-        }
-
-        // 채팅 설정
-        function chatSettings() {
-            alert('채팅 설정 기능은 아직 구현되지 않았습니다.');
-        }
-
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            // 초기 설정
-            console.log('채팅 페이지가 로드되었습니다.');
-            
-            // 메시지 컨테이너 스크롤을 맨 아래로
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                // 채팅창 초기화
+                document.getElementById('messagesContainer').innerHTML = '';
+                document.querySelector('.chat-header-name').textContent = '';
+                document.querySelector('.chat-header-avatar').textContent = '';
+            } else {
+                alert("오류: " + data.error);
+            }
+        })
+        .catch(error => {
+            console.error("삭제 실패:", error);
+            alert("삭제 중 오류 발생");
         });
+    }
 
-        // 테스트용 자동 응답 (실제 구현에서는 제거)
-        let autoReplyTimeout;
-        function simulateAutoReply() {
-            clearTimeout(autoReplyTimeout);
-            autoReplyTimeout = setTimeout(() => {
-                const responses = [
-                    "네, 알겠습니다! 😊",
-                    "좋은 생각이에요!",
-                    "어떻게 생각하세요?",
-                    "그렇군요~ 👍",
-                    "재미있네요! 😄"
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessage(randomResponse, false);
-            }, 1000 + Math.random() * 2000);
+    function viewProfile() {
+        if (!selectedUserId) {
+            alert("먼저 채팅방을 선택해주세요.");
+            return;
+        }
+        window.location.href = `/mypage/profile/${selectedUserId}`;
+    }
+
+    function reportChat() {
+        if (!selectedUserId) {
+            alert("먼저 채팅방을 선택해주세요.");
+            return;
         }
 
-        // 메시지 전송 시 자동 응답 트리거 (테스트용)
-        const originalSendMessage = sendMessage;
-        sendMessage = function() {
-            originalSendMessage();
-            if (document.getElementById('messageInput').value.trim()) {
-                simulateAutoReply();
-            }
-        };
-       
-       
-       
-        function cancelChat() {
-            if (!currentRoomId) {
-                alert("삭제할 채팅방을 먼저 선택하세요.");
-                return;
-            }
-
-            if (!confirm("정말로 이 채팅방을 삭제하시겠습니까?")) {
-                return;
-            }
-
-            fetch(`/chatting/cancel_chat/${currentRoomId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // 삭제된 방 UI에서도 제거 (선택사항)
-                    document.querySelector(`.chat-item[data-room-id="${currentRoomId}"]`)?.remove();
-                    currentRoomId = null;
-
-                    // 채팅창 초기화
-                    document.getElementById('messagesContainer').innerHTML = '';
-                    document.querySelector('.chat-header-name').textContent = '';
-                    document.querySelector('.chat-header-avatar').textContent = '';
-                } else {
-                    alert("오류: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error("삭제 실패:", error);
-                alert("삭제 중 오류 발생");
-            });
+        const reason = prompt("이 사용자를 차단하려는 사유를 입력하세요:\n(예: 욕설, 스팸, 불쾌한 행동 등)");
+        if (reason === null) {
+            // 사용자가 취소 버튼을 눌렀을 경우
+            return;
         }
 
-        function viewProfile() {
-            if (!selectedUserId) {
-                alert("먼저 채팅방을 선택해주세요.");
-                return;
+        fetch(`/chatting/block_user/${selectedUserId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // 추가적으로 UI 정리하고 싶으면 여기에 처리
+            } else {
+                alert("오류: " + data.error);
             }
-            window.location.href = `/mypage/profile/${selectedUserId}`;
+        })
+        .catch(error => {
+            console.error("차단 중 오류 발생:", error);
+            alert("차단에 실패했습니다.");
+        });
+    }
+
+    function completed() {
+        if (!selectedUserId) {
+            alert("먼저 채팅방을 선택해주세요.");
+            return;
         }
-
-        function reportChat() {
-            if (!selectedUserId) {
-                alert("먼저 채팅방을 선택해주세요.");
-                return;
-            }
-
-            const reason = prompt("이 사용자를 차단하려는 사유를 입력하세요:\n(예: 욕설, 스팸, 불쾌한 행동 등)");
-            if (reason === null) {
-                // 사용자가 취소 버튼을 눌렀을 경우
-                return;
-            }
-
-            fetch(`/chatting/block_user/${selectedUserId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ reason: reason })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // 추가적으로 UI 정리하고 싶으면 여기에 처리
-                } else {
-                    alert("오류: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error("차단 중 오류 발생:", error);
-                alert("차단에 실패했습니다.");
-            });
+        if (!confirm("거래를 완료하시겠습니까? ")) {
+            return;
         }
-
-        function completed() {
-            if (!selectedUserId) {
-                alert("먼저 채팅방을 선택해주세요.");
-                return;
+        fetch(`/chatting/change_poststate/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ room_id : currentRoomId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                // 추가적으로 UI 정리하고 싶으면 여기에 처리
+            } else {
+                alert("오류: " + data.error);
             }
-            if (!confirm("거래를 완료하시겠습니까? ")) {
-                return;
-            }
-            fetch(`/chatting/change_poststate/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ room_id : currentRoomId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // 추가적으로 UI 정리하고 싶으면 여기에 처리
-                } else {
-                    alert("오류: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error("완료 중 오류 발생:", error);
-                alert("완료에 실패했습니다.");
-            });
-        }
+        })
+        .catch(error => {
+            console.error("완료 중 오류 발생:", error);
+            alert("완료에 실패했습니다.");
+        });
+    }
     </script>
