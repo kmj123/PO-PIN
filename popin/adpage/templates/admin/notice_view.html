@@ -392,20 +392,22 @@
                 </div>
               </td>
             </tr>
-            {% comment %} <tr>
+            <tr>
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
                 <div class="file-info">
                   <ul>
-                    {% for file in notice.files.all %}
-                      <li><a href="{{ file.url }}" target="_blank">{{ file.name }}</a></li>
+                    {% for file in images %}
+                      <li>
+                        <img src="/media/{{file.image}}" alt="">
+                      </li>
                     {% empty %}
                       <li>첨부파일이 없습니다.</li>
                     {% endfor %}
                   </ul>
                 </div>
               </td>
-            </tr> {% endcomment %}
+            </tr>
           </tbody>
         </table>
       </div>
