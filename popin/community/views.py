@@ -47,7 +47,7 @@ from .models import CompanionPost, CompanionTag, CompanionImage
 from django.views.decorators.csrf import csrf_exempt
 from community.models import ProxyPost, ProxyImage, ProxyTag
 from django.utils.timezone import make_aware
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponseForbidden
 from django.utils.dateparse import parse_datetime
 from community.models import StatusPost, StatusImage, StatusTag
 from itertools import chain
@@ -74,14 +74,15 @@ User = get_user_model()
 
 #### 마이페이지 - 커뮤니티글 수정/삭제/
 
+
 ## 동행 이미지 수정
+@require_POST
 def delete_image(request, image_id):
-    try:
-        image = CompanionImage.objects.get(id=image_id)
-        image.delete()
-        return JsonResponse({'success': True})
-    except CompanionImage.DoesNotExist:
-        return JsonResponse({'success': False, 'error': '이미지가 존재하지 않습니다.'})
+    image = get_object_or_404(CompanionImage, id=image_id)
+    image.delete()
+    return JsonResponse({'success': True})
+
+
     
 
 ## 교환후기 게시글 삭제
@@ -835,7 +836,8 @@ from datetime import datetime
 
 def updateCo(request, pk):
     post = get_object_or_404(CompanionPost, pk=pk)
-
+    existing_images = post.images.all()
+    
     if request.method == "POST":
         print("🔧 [updateCo POST DATA]", request.POST)
 
@@ -873,7 +875,7 @@ def updateCo(request, pk):
 
         return redirect('community:companionview', pk=post.pk)
 
-    return render(request, 'update/comp_update.html', {'post': post})
+    return render(request, 'update/comp_update.html', {'post': post, 'existing_images': existing_images})
 
 def updateP(request, pk):
     post = get_object_or_404(ProxyPost, pk=pk)

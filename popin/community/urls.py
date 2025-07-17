@@ -31,7 +31,7 @@ urlpatterns = [
     path('delete_image/<int:image_id>/', views.delete_image, name='delete_image'),
     
     # 삭제
-    path('delete-image/<int:image_id>/', views.delete_image, name='delete_image'),
+    path('delete_image/<int:image_id>/', views.delete_image, name='delete_image'),
     # path('deleteC/<int:pk>/', views.deleteC, name='deleteC'),
     path('deleteCo/<int:pk>/', views.deleteCo, name='deleteCo'),
     # path('deleteSharing/<int:pk>/', views.deleteSh, name='deleteSh'),
