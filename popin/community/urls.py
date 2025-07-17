@@ -5,7 +5,7 @@ app_name = 'community'
 
 urlpatterns = [
     path('chgReview/main/', views.chgReviewmain, name='chgReviewmain'),
-    path('chgReview/view/<int:pk>/', views.chgReviewview, name='chgReviewview'),
+    path('chgReview/view/<int:post_id>/', views.chgReviewview, name='chgReviewview'),
    
     path('recent/', views.recent, name='recent'),
     path('write/companion/', views.write_companion, name='write_companion'),

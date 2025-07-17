@@ -73,7 +73,7 @@
 
       <div class="action-buttons">
         <a href="#" class="btn back" onclick="history.back()">이전으로</a>
-        <a href="{% url 'community:updateC' pk=post.id %}" class="btn update">수정하기</a>
+        <a href="/community/updateC/" class="btn update">수정하기</a>
         <form action="{% url 'community:deleteC' pk=post.id %}" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');">
             {% csrf_token %}
             <button type="submit" class="btn delete">삭제하기</button>

@@ -322,10 +322,6 @@
           <th scope="row"><label for="max_people"> 모집 인원 <span class="required">*</span></label></th>
           <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.max_people }}"placeholder="동행수"/></td>
        </tr>
-       <tr>
-          <th scope="row"><label for="max_people">현재 모집된 인원 <span class="required">*</span></label></th>
-          <td><input type="number" class="wlong" id="max_people" name="max_people" min="1" max="50" value="{{ post.current_people }}"placeholder="동행수"/></td>
-       </tr>
         <tr>
           <th><label for="content">본문 <span class="required">*</span></label></th>
           <td><textarea id="content" name="content" placeholder="상세 내용을 적어주세요.">{{ post.content }}</textarea></td>
