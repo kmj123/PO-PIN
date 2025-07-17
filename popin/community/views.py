@@ -250,7 +250,7 @@ def write_companion(request):
             content = request.POST.get('content')
             max_people = request.POST.get('max_people')  
             tags = request.POST.get('tags', '')
-            region = request.POST.get('region', '').strip()
+            
 
             # 3. 날짜 + 시간 → datetime 필드
             date_str = request.POST.get('eventDate')
@@ -267,10 +267,9 @@ def write_companion(request):
                 max_people=max_people,
                 event_date=event_datetime,
                 author=user,
-                region=region
             )
 
-
+    
             # 5. 태그 처리
             tag_list = [tag.strip().lstrip('#') for tag in tags.split(',') if tag.strip()]
             for tag_name in tag_list:
@@ -1034,7 +1033,6 @@ def mypage_community_list(request):
     user_id = request.session.get('user_id')
     if not user_id:
         return JsonResponse({'error': '로그인 필요'}, status=403)
-
     if request.method == "GET":
         companion_data = [
             {

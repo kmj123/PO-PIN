@@ -333,8 +333,15 @@
         </tr>
  
         <tr>
-          <th><label for="tags">태그</label></th>
-          <td><input type="text" id="tags" name="tags" placeholder="#태그1, #태그2" /></td>
+          <th><label for="tagInput">태그</label></th>
+          <td>
+            <div class="tag-input-container">
+              <input type="text" id="tagInput" name="tags" placeholder="#태그1, #태그2" />
+              <div id="tagList" class="tag-list"></div>
+              <small class="tag-limit-msg">최대 5개까지 등록할 수 있어요.</small>
+            </div>
+            <input type="hidden" name="tag" id="hiddenTags" >
+          </td>
         </tr>
         <tr>
           <th scope="row">사진 첨부</th>
@@ -361,6 +368,57 @@
 
 
  <script>
+   // 태그 구현
+    const tagInput = document.getElementById("tagInput");
+    const tagList = document.getElementById("tagList");
+    const hiddenTags = document.getElementById("hiddenTags");
+
+    let tags = [];
+
+    function updateTagDisplay() {
+    tagList.innerHTML = ""; // 기존 초기화
+
+    tags.forEach((tag, index) => {
+        const tagEl = document.createElement("div");
+        tagEl.className = "tag";
+        tagEl.innerHTML = `#${tag} <span class="remove-btn" data-index="${index}">×</span>`;
+        tagList.appendChild(tagEl);
+    });
+
+    // hidden input에 쉼표로 구분된 태그 문자열 저장
+    hiddenTags.value = tags.join(",");
+    }
+
+    function addTag(input) {
+    const newTag = input.trim().replace(/^#/, ""); // # 제거하고 공백 제거
+    if (newTag === "" || tags.includes(newTag)) return;
+
+    if (tags.length >= 5) {
+        alert("최대 5개까지 등록할 수 있어요.");
+        return;
+    }
+
+    tags.push(newTag);
+    updateTagDisplay();
+    tagInput.value = "";
+    }
+
+    // 입력 이벤트: Enter 또는 Space 입력 시 등록
+    tagInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        addTag(tagInput.value);
+        }
+    });
+
+    // 태그 삭제 이벤트
+    tagList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+        const index = parseInt(e.target.dataset.index);
+        tags.splice(index, 1);
+        updateTagDisplay();
+        }
+    });
   let selectedFiles = [];
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -526,7 +584,7 @@
       formData.append("max_people", maxPeople);
       formData.append("content", content);
       formData.append("region", region);
-      formData.append("tags", document.getElementById("tags").value);
+      formData.append("tags", document.getElementById("hiddenTags").value);
 
       // 이미지 추가
       selectedFiles.forEach(file => {
