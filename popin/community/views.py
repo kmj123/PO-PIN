@@ -584,16 +584,106 @@ def main(request):
     if not user_id:
         return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
     
-    all_posts = sorted(
-        chain(
-            SharingPost.objects.all(),
-            CompanionPost.objects.all(),
-            ProxyPost.objects.all()
-        ),
-        key=attrgetter('created_at'),
-        reverse=True
-    )
-    return render(request, 'community/main.html', {'posts': all_posts})
+    today = timezone.now().date()
+
+    # 교환후기
+    total_reviews = ExchangeReview.objects.count()
+    avg_rating = ExchangeReview.objects.aggregate(avg=Avg('overall_score'))['avg'] or 0
+    today_reviews = ExchangeReview.objects.filter(created_at__date=today).count()
+
+    # 나눔 (SharingPost)
+    sharing_active = SharingPost.objects.filter(status='진행중').count()
+    sharing_completed = SharingPost.objects.filter(status='마감').count()
+    sharing_today = SharingPost.objects.filter(created_at__date=today).count()
+
+    # 대리구매 (ProxyPost)
+    proxy_active = ProxyPost.objects.filter(status='모집중').count() + ProxyPost.objects.filter(status='긴급모집').count()
+    proxy_completed = ProxyPost.objects.filter(status='마감').count()
+    proxy_today = ProxyPost.objects.filter(created_at__date=today).count()
+
+    # 현황공유 (StatusPost)
+    status_active = StatusPost.objects.filter(status='진행중').count()
+    status_total = StatusPost.objects.count()
+    status_today = StatusPost.objects.filter(created_at__date=today).count()
+
+    # 동행 (CompanionPost)
+    companion_active = CompanionPost.objects.filter(status='모집중').count() + CompanionPost.objects.filter(status='진행중').count()
+    companion_completed = CompanionPost.objects.filter(status='모집완료').count()
+    companion_today = CompanionPost.objects.filter(created_at__date=today).count()
+
+    # 최근 활동
+    recent_items = []
+    last_review = ExchangeReview.objects.order_by('-created_at').first()
+    if last_review:
+        recent_items.append({
+            'title': f"{last_review.writer.nickname}님과의 교환 후기 등록",
+            'meta': f"교환후기 · 별점 {last_review.overall_score}",
+            'icon': '⭐',
+            'time': last_review.created_at,
+        })
+
+    last_sharing = SharingPost.objects.order_by('-created_at').first()
+    if last_sharing:
+        recent_items.append({
+            'title': last_sharing.title,
+            'meta': f"오프라인 나눔 · 진행상태: {last_sharing.status}",
+            'icon': '🎁',
+            'time': last_sharing.created_at,
+        })
+
+    last_proxy = ProxyPost.objects.order_by('-created_at').first()
+    if last_proxy:
+        recent_items.append({
+            'title': last_proxy.title,
+            'meta': f"대리구매 · 상태: {last_proxy.status}",
+            'icon': '🛒',
+            'time': last_proxy.created_at,
+        })
+
+    last_status = StatusPost.objects.order_by('-created_at').first()
+    if last_status:
+        recent_items.append({
+            'title': last_status.title,
+            'meta': f"현황공유 · 상태: {last_status.status}",
+            'icon': '📊',
+            'time': last_status.created_at,
+        })
+
+    last_companion = CompanionPost.objects.order_by('-created_at').first()
+    if last_companion:
+        recent_items.append({
+            'title': last_companion.title,
+            'meta': f"동행모집 · 상태: {last_companion.status}",
+            'icon': '👥',
+            'time': last_companion.created_at,
+        })
+
+    recent_items = sorted(recent_items, key=lambda x: x['time'], reverse=True)[:5]
+
+    context = {
+        'total_reviews': total_reviews,
+        'avg_rating': round(avg_rating, 1),
+        'today_reviews': today_reviews,
+
+        'sharing_active': sharing_active,
+        'sharing_completed': sharing_completed,
+        'sharing_today': sharing_today,
+
+        'proxy_active': proxy_active,
+        'proxy_completed': proxy_completed,
+        'proxy_today': proxy_today,
+
+        'status_active': status_active,
+        'status_total': status_total,
+        'status_today': status_today,
+
+        'companion_active': companion_active,
+        'companion_completed': companion_completed,
+        'companion_today': companion_today,
+
+        'recent_items': recent_items,
+    }
+    return render(request, 'community/main.html', context)
 
 #########################################
 from .models import CompanionPost

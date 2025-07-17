@@ -441,8 +441,8 @@
                 <div class="spinner" id="loading"></div>
                 <div class="popular-locations">
                     <div class="location-card" data-location="sangam" title="상암월드컵경기장">
-                        <div class="icon">⚽</div>
-                        <span>상암 월드컵 <br> 경기장</span>
+                        <div class="icon">📡</div>
+                        <span>상암</span>
                     </div>
                     <div class="location-card" data-location="hyundai" title="더현대 서울">
                         <div class="icon">🏢</div>
@@ -487,7 +487,9 @@
         let map;
         let markers = []; // 카카오맵 마커들을 저장할 배열
         let currentLocation = { lat: 37.5665, lng: 126.9780 }; // 기본 위치: 서울 시청
-
+        let selectedPlace = null;
+        let nearbyPosts = null;
+        
         // 주요 아이돌 그룹 및 멤버 데이터
         const groupMembersData = {
             "NCT WISH": ["시온", "리쿠", "유우시", "재희", "료", "사쿠야"],
@@ -520,7 +522,7 @@
             const groups = Object.keys(groupMembersData);
             const types = ["교환", "판매", "구매"];
             const baseLocations = [
-                {lat: 37.568490, lng: 126.897344}, // 상암 월드컵 경기장
+                {lat: 37.580534952338624, lng: 126.89203603891819}, // 상암 월드컵 경기장
                 {lat: 37.525533, lng: 126.928268}, // 더현대 서울
                 {lat: 37.383849, lng: 126.639000}, // 인스파이어
                 {lat: 37.556892, lng: 126.923917}, // 홍대입구역
@@ -553,26 +555,26 @@
 
         // 카카오맵 초기화 함수
         function initKakaoMap() {
-    const mapContainer = document.getElementById('map');
-    
+            const mapContainer = document.getElementById('map');
+            
 
-    currentLocation = { lat: 37.556892, lng: 126.923917 }; 
+            currentLocation = { lat: 37.556892, lng: 126.923917 }; 
 
-    const mapOption = {
-        center: new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng),
-        level: 5
-    };
-    map = new kakao.maps.Map(mapContainer, mapOption);
+            const mapOption = {
+                center: new kakao.maps.LatLng(currentLocation.lat, currentLocation.lng),
+                level: 5
+            };
+            map = new kakao.maps.Map(mapContainer, mapOption);
 
-    kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-        const target = mouseEvent.domEvent.target;
-        if (!target.closest('.custom-map-marker') && !target.closest('.bottom-sheet')) {
-            closeBottomSheet();
+            kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+                const target = mouseEvent.domEvent.target;
+                if (!target.closest('.custom-map-marker') && !target.closest('.bottom-sheet')) {
+                    closeBottomSheet();
+                }
+            });
+
+            loadInitialMarkers();
         }
-    });
-
-    loadInitialMarkers();
-}
         function loadInitialMarkers() {
             searchNearby();
         }
@@ -589,7 +591,7 @@
                 const position = new kakao.maps.LatLng(item.lat, item.lng);
 
                 const customOverlayContent = `
-                    <div class="custom-map-marker" onclick="showBottomSheetFromMarker(${item.id})" style="
+                    <div class="custom-map-marker" onclick="showBottomSheetFromMarker(${item.pno})" style="
                         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                         color: white;
                         border-radius: 50%;
@@ -616,15 +618,20 @@
                 });
 
                 markers.push(customOverlay);
+                console.log(item.type, item);
             });
         }
 
         // 마커 클릭 시 호출될 함수
-        function showBottomSheetFromMarker(itemId) {
-            const itemData = sampleData.find(item => item.id === itemId);
-            if (itemData) {
-                showBottomSheet(itemData);
-            }
+        function showBottomSheetFromMarker(pno) {
+            fetch(`/photocard/marker_detail/${pno}/`)
+                .then(response => response.json())
+                .then(data => {
+                    showBottomSheet(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching post detail:', error);
+                });
         }
 
         // 바텀 시트 열기 함수
@@ -645,7 +652,7 @@
                         <span class="distance-badge">${Math.floor(calculateDistance(currentLocation.lat, currentLocation.lng, data.lat, data.lng) * 1000)}m</span>
                     </div>
                 </div>
-                <button class="contact-btn" onclick="contactUser('${data.user}')">
+                <button class="contact-btn" onclick="contactUser('${data.user}', '${data.id}')">
                     포토카드 상세보기
                 </button>
             `;
@@ -662,9 +669,9 @@
         }
 
         // 사용자에게 연락하는 함수
-        function contactUser(username) {
+        function contactUser(username, pno) {
             alert(`'${username}' 님의 포토카드 상세 정보를 확인합니다.`);
-            closeBottomSheet();
+            window.location.href =  `/photocard/detail/${pno}/`
         }
 
         // 두 지점 간 거리 계산 (킬로미터)
@@ -699,6 +706,33 @@
     const artistMemberInputValue = artistMemberInput.value.trim().toLowerCase();
 
     if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+    document.getElementById('searchBtn').addEventListener('click', function () {
+            if (!selectedPlace) {
+                alert('먼저 장소를 선택해주세요.');
+                return;
+            }
+
+            const radiusKm = document.getElementById('radius').value;
+
+            fetch(`/photocard/search_poca/?place=${encodeURIComponent(selectedPlace)}&radius_km=${radiusKm}`)
+                .then(response => response.json())
+                .then(data => {
+                    addMarkersToMap(data.results);  // 마커 추가
+                    const nearbyPosts = document.getElementById('nearbyPosts');
+                    if (nearbyPosts) {
+                        nearbyPosts.textContent = data.results.length;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching photocards:', error);
+                });
+                
+                nearbyPosts = document.getElementById('nearbyPosts');
+                if (nearbyPosts) {
+                    nearbyPosts.textContent = data.results.length;
+                }
+        });
 
     setTimeout(() => {
         let filteredData = sampleData;
@@ -755,7 +789,7 @@
 
         // 인기 장소 좌표 데이터
         const locationCoords = {
-            'sangam': { lat: 37.568490, lng: 126.897344, name: '상암 월드컵 경기장' },
+            'sangam': { lat: 37.580534952338624, lng: 126.89203603891819, name: '상암' },
             'hyundai': { lat: 37.525533, lng: 126.928268, name: '더현대 서울' },
             'inspire': { lat: 37.383849, lng: 126.639000, name: '인스파이어' },
             'hongdae': { lat: 37.556892, lng: 126.923917, name: '홍대입구역' },
@@ -803,9 +837,9 @@
         // 통계 숫자 애니메이션 효과
         function animateStats() {
             const stats = [
-                { element: 'totalPosts', target: sampleData.length },
+                { element: 'totalPosts', target: {{total_photocards}} },
                 { element: 'nearbyPosts', target: 0 },
-                { element: 'activeUsers', target: 89 }
+                { element: 'activeUsers', target: {{active_users}} }
             ];
 
             stats.forEach(stat => {
@@ -837,10 +871,10 @@
             }
 
             // 검색 버튼 이벤트
-            const searchBtn = document.getElementById('searchBtn');
-            if (searchBtn) {
-                searchBtn.addEventListener('click', searchNearby);
-            }
+            //const searchBtn = document.getElementById('searchBtn');
+            //if (searchBtn) {
+            //    searchBtn.addEventListener('click', searchNearby);
+            //}
 
             // 바텀 시트 닫기 버튼 이벤트
             const closeBtn = document.querySelector('.close-btn');
@@ -849,10 +883,10 @@
             }
 
             // 반경 변경 시 자동 검색
-            const radiusElement = document.getElementById('radius');
-            if (radiusElement) {
-                radiusElement.addEventListener('change', searchNearby);
-            }
+            //const radiusElement = document.getElementById('radius');
+            //if (radiusElement) {
+            //    radiusElement.addEventListener('change', searchNearby);
+            //}
 
             // 자동완성 기능
             const artistMemberInput = document.getElementById('artistMemberInput');
@@ -893,6 +927,8 @@
             // 인기 장소 카드 클릭 이벤트
             document.querySelectorAll('.location-card').forEach(card => {
                 card.addEventListener('click', function() {
+                    selectedPlace = this.dataset.location;
+
                     document.querySelectorAll('.location-card').forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
 
@@ -913,7 +949,7 @@
                             locationElement.value = locationData.name;
                         }
 
-                        searchNearby();
+                        // searchNearby();
                     }
                 });
             });
