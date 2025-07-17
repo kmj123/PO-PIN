@@ -6,6 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/static/css/community/companion.css">
   <script src="/static/js/community/companion.js" defer></script>
@@ -46,6 +47,9 @@
       <div class="top">
         <h3>동행 모집</h3>
       </div>
+      <script>
+        window.currentUserId = "{{ request.session.user_id }}";
+      </script>
      <form id = "companionFrm" method="GET" action="{% url 'community:companion' %}"  enctype="multipart/form-data">
       
       <div class="line"></div>
@@ -92,7 +96,7 @@
       <div class="postlist">
           {% for post in posts %}
           <!-- 동행 카드들 -->
-          <div class="post-card" data-category="{{ post.category }}"
+          <div class="post-card" data-category="{{ post.category }}" data-post-id="{{ post.id }}" data-user-id="{{ post.author.user_id }}"
            data-imgs="{% for image in post.images.all %}{{ image.image.url }}{% if not forloop.last %},{% endif %}{% endfor %}">
           <div class="post-header">
             <div class = "postf">
@@ -106,6 +110,7 @@
               <div class="post-right">
                 <span class="post-status {% if post.status == '모집완료' %}status-full{% elif post.status == '모집중' %}status-recruiting{% else %}progress{% endif %}">{{ post.status }}</span>
                 <input type="button" class = "post-btn report-btn" onclick = "reportBtn()" value="🚨">
+                <a href="#" class="start-chat-btn">💬</a>
               </div>
             </div>
             <div class="post-tags">

@@ -1,3 +1,19 @@
+// CSRF 토큰 설정
+function getCSRFToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+}
+
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+      const token = getCSRFToken();
+      if (token) {
+        xhr.setRequestHeader("X-CSRFToken", token);
+      }
+    }
+  }
+});
+
 // 신고버튼
 function reportBtn() {
   if (confirm("신고하시겠습니까?")) {
@@ -6,6 +22,48 @@ function reportBtn() {
     alert("취소");
   }
 }
+
+const currentUserId = "{{ request.session.user_id }}";
+  $(".start-chat-btn").click(function(e) {
+    e.preventDefault();
+
+    const currentUserId = window.currentUserId;
+
+    const $card = $(this).closest(".post-card");
+    const postId = $card.data("post-id");
+    const sellerId = $card.data("user-id");
+
+
+    console.log(currentUserId);
+    console.log(postId);
+    console.log(sellerId);
+
+    if (currentUserId == sellerId) {
+      alert("본인 게시글은 채팅할 수 없습니다");
+      return;
+    } else {
+            $.ajax({
+                url: "/chatting/start_chat/",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    category: "companion",
+                    post_id: postId,             // 테스트용 값
+                }),
+                success: function(data) {
+                    if (data.success) {
+                        alert('채팅방으로 이동합니다.');
+                        location.href='/chatting/';
+                    } else {
+                        alert('오류: ' + (data.error || '알 수 없는 오류'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('서버 에러: ' + error);
+                }
+            });
+        }
+  })
 
 //채팅
 function goToChat(postId, postTitle) {
@@ -96,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const card = e.target.closest(".post-card");
     if (!card) return;
 
-    if (e.target.closest('.report-btn') || e.target.closest('.join-btn')) return;
+    if (e.target.closest('.report-btn') || e.target.closest('.join-btn') || e.target.closest('.start-chat-btn')) return;
 
     const artistText = card.querySelector(".artist")?.textContent.trim();
     const regionText = card.querySelector(".region")?.textContent.trim();
