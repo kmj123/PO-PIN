@@ -251,7 +251,6 @@ def write_companion(request):
             max_people = request.POST.get('max_people')  
             tags = request.POST.get('tags', '')
             
-
             # 3. 날짜 + 시간 → datetime 필드
             date_str = request.POST.get('eventDate')
             time_str = request.POST.get('eventTime')
