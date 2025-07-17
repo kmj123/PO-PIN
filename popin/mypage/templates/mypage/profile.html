@@ -1319,7 +1319,6 @@
                 const companionList = $("#community #WithU");
                 companionList.empty();
 
-
                 const companionData = data.companion.map(companion => {
                      return`<div class="item">
                      <a href="/community/companion/${companion.id}/">
@@ -1742,7 +1741,7 @@
         const formData = new FormData(this);
 
         $.ajax({
-            url: '/mypage/update_profile/',
+            url: 'mypage/update_profile/',
             type: 'POST',
             data: formData,
             processData: false,
