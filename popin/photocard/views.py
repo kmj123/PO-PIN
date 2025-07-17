@@ -110,7 +110,6 @@ def exchange(request):
 
 def detail(request, pno):
     user_id = request.session.get('user_id')
-    user = User.objects.get(user_id=user_id)
     
     if user_id: # 유저 정보가 있는 경우
         latest_list = request.session.get('latest_poca', []) # 세선 안에 latest_poca 있으면 리스트 불러오기 or []
