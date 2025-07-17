@@ -95,6 +95,23 @@
             text-align: center;
         }
 
+        .notice-image {
+          max-width: 200px;
+          max-height: 150px;
+          object-fit: contain;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          margin: 10px 0;
+          display: block;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .file-info {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
         .btn-outline {
             border: 2px solid #667eea;
             color: #667eea;
@@ -195,6 +212,8 @@
       width: 100%;
       border-collapse: collapse;
       margin: px;
+      max-width: 800px; /* 이 부분 추가 */
+       table-layout: fixed; 
       
     }
         table.writebox th,
@@ -420,7 +439,7 @@
           <tr>
             <th scope="row"><label for="file">첨부파일</label></th>
             <td>
-              <div class="file-info">
+              <div class="file-info" >
                 {%if not images%}
                   <span>이미지가 없습니다</span>
                 {%endif%}
