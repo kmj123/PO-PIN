@@ -75,6 +75,9 @@ def view(request, pno):
     return render(request, 'view.html', context)
   
 def exchange(request):
+    user_id = request.session.get('user_id')
+    user = User.objects.get(user_id=user_id)
+
     # 기본 데이터 로드
     groupMember = Member.objects.select_related('group').all()
     # GET 요청에서 필터 값 가져오기
@@ -104,12 +107,14 @@ def exchange(request):
         'place':place,
         'searchgroup':searchgroup,
         'selected_members':selected_members,
+        'nickname': user.nickname,
     }
     return render(request, 'exchange.html', context)
 
 
 def detail(request, pno):
     user_id = request.session.get('user_id')
+    user = User.objects.get(user_id=user_id)
     
     if user_id: # 유저 정보가 있는 경우
         latest_list = request.session.get('latest_poca', []) # 세선 안에 latest_poca 있으면 리스트 불러오기 or []
@@ -154,7 +159,7 @@ def detail(request, pno):
         tags = qs.tag.split(",")
         context = {"info":qs, "is_user":is_user, "is_wish":is_wish, "tags":tags}
     else:
-        context = {"info":qs, "is_user":is_user, "is_wish":is_wish}
+        context = {"info":qs, "is_user":is_user, "is_wish":is_wish,'nickname': user.nickname,}
         
     return render(request, 'pocadetail.html', context)
 
@@ -187,6 +192,7 @@ def toggle_wish(request, pno):
 
 def modify(request, pno):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    user = User.objects.get(user_id=user_id)
     
     if not user_id:
         return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
@@ -209,6 +215,7 @@ def modify(request, pno):
                     'photocard': photo_qs,
                     'tags':tags,
                     'groupMember':groupMember,
+                    'nickname': user.nickname,
                 }
                 return render(request, 'modify.html', context)
             
@@ -279,6 +286,7 @@ def modify(request, pno):
 # 포토카드 거래글 작성
 def write(request):
     user_id = request.session.get('user_id')  # 로그인 시 저장한 user_id 세션
+    
 
     if not user_id:
         return redirect('login:loginp')  # 로그인 안 되어있으면 로그인 페이지로
@@ -486,7 +494,7 @@ from .models import Photocard
 import requests
 from django.conf import settings
 
-def location2_geocode_api(request):
+def location_geocode_api(request):
     query = request.GET.get('query')
     if not query:
         return JsonResponse({'status': 'error', 'message': 'No query provided'})
@@ -527,7 +535,7 @@ def haversine(lon1, lat1, lon2, lat2):
     c = 2 * asin(sqrt(a))
     r = 6371  # 지구 반지름 (km)
     return c * r
-def location2_api(request):
+def location_api(request):
     try:
         lat = float(request.GET.get('lat'))
         lng = float(request.GET.get('lng'))
@@ -562,8 +570,8 @@ def location2_api(request):
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
     
-def location2(request):
-    return render(request, 'photocard/location2.html') 
+def location(request):
+    return render(request, 'photocard/location.html') 
 
 
 

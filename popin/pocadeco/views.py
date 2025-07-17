@@ -15,6 +15,23 @@ import json, base64
 from django.core.paginator import Paginator
 from pocadeco.models import DecoWish
 
+def get_idol_data(request):
+    if request.method == 'GET':
+        try:
+            members = Member.objects.select_related('group').all()
+            member_list = []
+            for member in members:
+                member_list.append({
+                    'id': member.id,
+                    'name': member.name,
+                    'group__name': member.group.name,
+                    'group__gender': member.group.gender,
+                })
+            return JsonResponse({'status': 'success', 'data': {'members': member_list}})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+    return JsonResponse({'status': 'fail', 'message': '허용되지 않은 메서드입니다.'}, status=405)
+
 
 # 데코포토 전체 리스트
 def decolist(request):

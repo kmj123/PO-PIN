@@ -856,7 +856,7 @@
 
                 <div class="form-content">
                     <label for="available_at">거래가능일자</label>
-                    <input id="available_at" name="available_at" required type="date">
+                    <input id="available_at" name="available_at" type="date">
                 </div>
 
                 <div class="form-content">
@@ -912,57 +912,68 @@
                 </div>
             </div>
             <!--//위치정보섹션-->
-                        <!--Current Location-->
+            <!--Current Location-->
             <script>
-                // 지도 생성
-                const mapContainer = document.getElementById('map');
-                const mapOption = {
-                    center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본값: 서울
-                    level: 3
-                };
-                const map = new kakao.maps.Map(mapContainer, mapOption);
+                document.addEventListener('DOMContentLoaded', function () {
+                    const currentBtn = document.querySelector('button[data-location="current"]');
+                    const dbLocationContainer = document.getElementById('dbLocationContainer');
+                    const mapContainer = document.getElementById('mapContainer');
+                    const latInput = document.getElementById('latitude');
+                    const lngInput = document.getElementById('longitude');
 
-                // 마커 생성 (초기 위치는 지도 중심)
-                const marker = new kakao.maps.Marker({
-                    position: map.getCenter(),
-                    map: map
-                });
+                    let map, marker;
 
-                // 현재 위치로 지도 이동
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function (position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
+                    // 지도 초기화
+                    function initMap(lat, lng) {
+                        const center = new kakao.maps.LatLng(lat, lng);
+                        const mapOption = {
+                            center: center,
+                            level: 3
+                        };
 
-                        const currentPos = new kakao.maps.LatLng(lat, lng);
-                        map.setCenter(currentPos);
-                        marker.setPosition(currentPos);
+                        map = new kakao.maps.Map(document.getElementById('map'), mapOption);
+                        marker = new kakao.maps.Marker({
+                            position: center,
+                            map: map
+                        });
 
-                        // 위도/경도 input에 저장
-                        document.getElementById('latitude').value = lat;
-                        document.getElementById('longitude').value = lng;
+                        // 지도 클릭 시 마커 이동
+                        kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
+                            const latlng = mouseEvent.latLng;
+                            marker.setPosition(latlng);
+                            latInput.value = latlng.getLat();
+                            lngInput.value = latlng.getLng();
+                        });
+                    }
 
-                        infowindow.open(map, marker);
+                    // "내 위치" 버튼 클릭 시 지도 표시 + 현재 위치 반영
+                    currentBtn.addEventListener('click', function () {
+                        mapContainer.style.display = 'block';
+
+                        // Geolocation 으로 현재 위치 가져오기
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(function (position) {
+                                const lat = position.coords.latitude;
+                                const lng = position.coords.longitude;
+                                latInput.value = lat;
+                                lngInput.value = lng;
+                                initMap(lat, lng);
+                            }, function () {
+                                alert("위치 정보를 가져올 수 없습니다.");
+                            });
+                        } else {
+                            alert("이 브라우저는 위치 서비스를 지원하지 않습니다.");
+                        }
                     });
-                } else {
-                    alert("Geolocation을 지원하지 않는 브라우저입니다.");
-                }
 
-                // 지도 클릭 시 마커 이동 및 좌표 저장
-                kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
-                    const latlng = mouseEvent.latLng;
+                    // 페이지 초기화: 지도 숨김, 오프라인 장소는 항상 표시
+                    mapContainer.style.display = 'none';
+                    dbLocationContainer.style.display = 'block';
 
-                    // 마커 위치 이동
-                    marker.setPosition(latlng);
-
-                    // 위도/경도 input에 저장
-                    document.getElementById('latitude').value = latlng.getLat();
-                    document.getElementById('longitude').value = latlng.getLng();
-
-                    // 기존 인포윈도우 제거 (선택)
                 });
             </script>
             <!--//Current Location-->
+
 
             <!-- 버튼 -->
             <div class="button-container">
@@ -980,6 +991,30 @@
 <!--//Upload-Container-->
 
 <script>
+    // 위치선택
+    const locationBtns = document.querySelectorAll('.location-btn');
+    const locationTypeInput = document.getElementById('locationType');
+    const dbLocationContainer = document.getElementById('dbLocationContainer');
+    const locationInfo = document.getElementById('locationInfo');
+
+    locationBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            btn.classList.add('active');
+
+            const locationType = btn.dataset.location;
+            locationTypeInput.value = locationType;
+
+            if(locationType == 'db'){
+                dbLocationContainer.style.display = 'block';
+                
+            } else if(locationType == 'current'){
+                dbLocationContainer.style.display = 'block';
+                mapContainer.style.display = 'block';
+            }
+        });
+        mapContainer.style.display = 'none';
+    });
+
     //파일 업로드 관련
     const fileUploadArea = document.getElementById('fileUploadArea');
     const imageinput = document.getElementById('imageInput');
@@ -1121,30 +1156,6 @@
         tags.splice(index, 1);
         updateTagDisplay();
         }
-    });
-
-
-    // 위치선택
-    const locationBtns = document.querySelectorAll('.location-btn');
-    const locationTypeInput = document.getElementById('locationType');
-    const dbLocationContainer = document.getElementById('dbLocationContainer');
-    const locationInfo = document.getElementById('locationInfo');
-
-    locationBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            btn.classList.add('active');
-
-            const locationType = btn.dataset.location;
-            locationTypeInput.value = locationType;
-
-            if(locationType == 'db'){
-                dbLocationContainer.style.display = 'block';
-            } else if(locationType == 'current'){
-                dbLocationContainer.style.display = 'block';
-                mapContainer.style.display = 'block';
-            }
-        });
-        mapContainer.style.display = 'none';
     });
 
     // 아티스트 검색 모달창

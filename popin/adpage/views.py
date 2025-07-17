@@ -27,7 +27,12 @@ def main(request) :
             # 전체 사용자
             total_users = User.objects.all().count() 
             # 대기중인 신고 (게시글)
-            
+            pending_reports = (
+                ExchangeReview.objects.filter(report_level='pending').count() +
+                SharingPost.objects.filter(report_level='pending').count() +
+                ProxyPost.objects.filter(report_level='pending').count() +
+                CompanionPost.objects.filter(report_level='pending').count() +
+                StatusPost.objects.filter(report_level='pending').count())
             # 차단 사용자
             block_users = User.objects.filter(state=3).count()
             
@@ -74,6 +79,7 @@ def main(request) :
                 'total_photocards':total_photocards, # 전체 게시글 (포토카드)
                 'total_users':total_users,  # 전체 사용자
                 'block_users':block_users, # 차단 사용자
+                'pending_reports': pending_reports, 
                 'months':json.dumps(sorted_months), # 월별 거래 통계 (month)
                 'all' : all_counts, # 월별 거래 통계 (총판)
                 'sell':sale_counts, # 월별 거래 통계 (판매)
@@ -219,7 +225,7 @@ def post(request):
     user_id = request.session.get('user_id')
     if not user_id:
         return redirect('login:loginp')
-    
+
     try:
         admin = User.objects.get(user_id=user_id, state=0)
     except User.DoesNotExist:
@@ -234,13 +240,13 @@ def post(request):
             'hidden': '삭제',
         }.get(level, '정상')
 
+    # 🔥 신고수가 1 이상인 글만 가져오는 함수
     def get_reported_posts(queryset, board_name):
         posts = []
-        for post in queryset.filter(report_level='pending'):
-             # 작성자 필드 처리
+        for post in queryset.filter(report_count__gte=1):  # ✅ 여기서 report_level → report_count로 변경
             writer = getattr(post, 'writer', None)
             if writer is None:
-              writer = getattr(post, 'author', None)
+                writer = getattr(post, 'author', None)
 
             posts.append({
                 'id': post.pk,
@@ -248,12 +254,11 @@ def post(request):
                 'title': post.title,
                 'writer': writer.nickname if writer else '알 수 없음',
                 'created_at': post.created_at.strftime('%Y-%m-%d'),
-                'report_count': getattr(post, 'report_count', 0),
+                'report_count': post.report_count,
                 'status': convert_status(post.report_level),
             })
         return posts
 
-    # 신고된 게시글만 추출
     posts = (
         get_reported_posts(ExchangeReview.objects.all(), '교환후기') +
         get_reported_posts(SharingPost.objects.all(), '나눔') +
@@ -262,7 +267,6 @@ def post(request):
         get_reported_posts(StatusPost.objects.all(), '현황공유')
     )
 
-    # 통계 계산용
     all_count = (
         ExchangeReview.objects.count() +
         SharingPost.objects.count() +
@@ -271,12 +275,13 @@ def post(request):
         StatusPost.objects.count()
     )
 
+    # ✅ 신고된 글 수 역시 report_count 기준으로 변경
     reported_count = (
-        ExchangeReview.objects.filter(report_level='pending').count() +
-        SharingPost.objects.filter(report_level='pending').count() +
-        ProxyPost.objects.filter(report_level='pending').count() +
-        CompanionPost.objects.filter(report_level='pending').count() +
-        StatusPost.objects.filter(report_level='pending').count()
+        ExchangeReview.objects.filter(report_count__gte=1).count() +
+        SharingPost.objects.filter(report_count__gte=1).count() +
+        ProxyPost.objects.filter(report_count__gte=1).count() +
+        CompanionPost.objects.filter(report_count__gte=1).count() +
+        StatusPost.objects.filter(report_count__gte=1).count()
     )
 
     today_count = (
