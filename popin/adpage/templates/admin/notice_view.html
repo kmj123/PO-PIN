@@ -392,31 +392,41 @@
                 </div>
               </td>
             </tr>
-            {% comment %} <tr>
+            <tr>
               <th scope="row"><label for="file">첨부파일</label></th>
               <td>
                 <div class="file-info">
                   <ul>
-                    {% for file in notice.files.all %}
-                      <li><a href="{{ file.url }}" target="_blank">{{ file.name }}</a></li>
+                    {% for file in images %}
+                      <li style = " list-style: none;">
+                        <img src="/media/{{file.image}}"
+                        style="max-width: 100%; 
+                max-height: 300px; 
+                width: auto; 
+                height: auto; 
+                object-fit: contain;
+                border: 1px solid #ddd;
+                border-radius: 4px;"
+                 alt="">
+                      </li>
                     {% empty %}
                       <li>첨부파일이 없습니다.</li>
                     {% endfor %}
                   </ul>
                 </div>
               </td>
-            </tr> {% endcomment %}
+            </tr>
           </tbody>
         </table>
       </div>
       
-      {% comment %} <form method = "post" action = "{% url 'adpage:noticeD' notice.id %}" id = "deleteFrm"> {% endcomment %}
+      <form method = "post" action = "{% url 'adpage:noticeD' notice.id %}" id = "deleteFrm">
         <div class="btn">
           <button type="button" onclick="location.href='{% url 'adpage:noticeR' notice.id %}'" value="update">수정</button>
           <button type="button" onclick = "deleteBtn()" value="delete">삭제</button>
           <button type="button" onclick="location.href='{% url 'adpage:notice' %}'" value="back">이전</button></a>
         </div>
-      {% comment %} </form> {% endcomment %}
+      </form>
     </div>
   </div>
 </body>
