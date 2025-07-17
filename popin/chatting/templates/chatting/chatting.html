@@ -848,12 +848,14 @@
                     onclick="selectChat(this)"  {% if room.category == "companion" %}
                         data-post-title="{{ room.post.title }}"
                         data-post-artist="{{ room.post.artist }}"
-                        data-post-member="{{ room.post.member }}"
                         data-post-location="{{ room.post.location }}"
-                        data-post-place="{{ room.post.place }}"
                         data-post-status="{{ room.post.status }}"
-                        data-post-sell-status="{{ room.post.sell_status }}"
                         data-post-author="{{ room.post.author.nickname }}"
+                    {% elif room.category == "exchange" or room.category == "sale" %}
+                        data-post-title="{{ room.post.title }}"
+                        data-post-member="{{ room.post.member }}"
+                        data-post-place="{{ room.post.place }}"
+                        data-post-sellstatus="{{ room.post.sell_state }}"
                         data-post-seller="{{ room.post.seller.nickname }}"
                     {% endif %}>
                         <div class="chat-avatar">{{ room.nickname|slice:":1" }}</div>
@@ -884,10 +886,8 @@
                         </div>
                     </div>
                     <div class="chat-actions">
-                        <button class="action-btn" onclick="completed()" title="거래완료">✅</button>
                         <button class="action-btn" onclick="viewProfile()" title="프로필">👤</button>
                         <button class="action-btn" onclick="reportChat()" title="신고">🚨</button>
-                        <button class="action-btn" onclick="cancelChat()" title="삭제">🗑️</button>
                     </div>
                 </div>
                 <!-- Transaction/Community Info Panel -->
@@ -923,6 +923,39 @@
                     <div class="transaction-controls">
                         <button class="control-btn request" onclick="completed()">동행 완료</button>
                         <button class="control-btn contact" onclick="cancelChat()">동행 취소</button>
+                    </div>
+                </div>
+
+                <div class="transaction-info trade" id="trade" style="display: none;">
+                    <div class="transaction-header">
+                        <div class="transaction-icon">🃏</div>
+                        <div style="font-size: 17px; font-weight: 700; color: rgba(100, 51, 179, 1);">거래</div>
+                        <div>
+                            <div class="transaction-title" data-field="title"></div>
+                        </div>
+                        <div class="transaction-status active" data-field="sellstatus"></div>
+                    </div>
+                    <div class="transaction-details">
+                        <div class="detail-item">
+                            <div class="detail-label">아티스트</div>
+                            <div class="detail-value" data-field="member"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">장소</div>
+                            <div class="detail-value" data-field="place"></div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">거래 날짜</div>
+                            <div class="detail-value" >2025-08-15</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">작성자</div>
+                            <div class="detail-value" data-field="seller"></div>
+                        </div>
+                    </div>
+                    <div class="transaction-controls">
+                        <button class="control-btn request" onclick="completed()">거래 완료</button>
+                        <button class="control-btn contact" onclick="cancelChat()">거래 취소</button>
                     </div>
                 </div>
                 <!-- 대리구매 -->
@@ -962,6 +995,29 @@
                     {% comment %} <div class="system-message">
                         거래 일정이 설정되었습니다: 2025.07.16 15:00 (홍대)
                     </div> {% endcomment %}
+                    <div class="message received">
+                        <div class="message-avatar">김</div>
+                        <div class="message-content">
+                            <div class="message-bubble">안녕하세요! 뉴진스 앨범 거래 가능한지 궁금해서 연락드렸습니다.</div>
+                            <div class="message-time">14:25</div>
+                        </div>
+                    </div>
+
+                    <div class="message sent">
+                        <div class="message-avatar">나</div>
+                        <div class="message-content">
+                            <div class="message-bubble">네, 안녕하세요! 거래 가능합니다. 홍대에서 직거래 어떠세요?</div>
+                            <div class="message-time">14:27</div>
+                        </div>
+                    </div>
+
+                    <div class="message received">
+                        <div class="message-avatar">김</div>
+                        <div class="message-content">
+                            <div class="message-bubble">좋습니다! 내일 오후 3시 괜찮으신가요?</div>
+                            <div class="message-time">14:30</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="message-input-container">
                     <div class="input-actions">
@@ -973,7 +1029,7 @@
                     <textarea
                         class="message-input"
                         id="messageInput"
-                        placeholder="메시지를 입력하세요..."
+                        placeholder="채팅을 진행해 보세요!"
                         onkeypress="handleKeyPress(event)"
                         oninput="handleInput()"
                     ></textarea>
@@ -1019,6 +1075,7 @@
         avatarContainer.textContent = roomNickname.slice(0, 1);
 
         const companionInfo = document.querySelector('.transaction-info.companion');
+        const tradeInfo = document.querySelector('.transaction-info.trade');
         
         if (roomCategory === 'companion') {
             const postTitle = element.dataset.postTitle;
@@ -1041,26 +1098,26 @@
             companionInfo.style.display = 'none';
         }
 
-        //if (roomCategory == 'exchange' || roomCategory == 'sale') {
-        //    const postTitle = element.dataset.postTitle;
-        //    const postArtist = element.dataset.postMember;
-        //    {% comment %} const postLocation = element.dataset.postPlace; {% endcomment %}
-        //    const postStatus = element.dataset.postStatus;
-        //    const postAuthor = element.dataset.postSeller;
+        if (roomCategory == 'exchange' || roomCategory == 'sale') {
+            const postTitle = element.dataset.postTitle;
+            const postArtist = element.dataset.postMember;
+            const postLocation = element.dataset.postPlace;
+            const postStatus = element.dataset.postSellstatus;
+            const postAuthor = element.dataset.postSeller;
 
             
-            // 존재할 경우에만 값 삽입 (안전하게 처리)
-        //    companionInfo.querySelector('[data-field="title"]').textContent = postTitle;
-        //    companionInfo.querySelector('[data-field="artist"]').textContent = postArtist;
-        //   companionInfo.querySelector('[data-field="location"]').textContent = postLocation;
-        //    companionInfo.querySelector('[data-field="status"]').textContent = postStatus;
-        //    companionInfo.querySelector('[data-field="author"]').textContent = postAuthor;
+             // 존재할 경우에만 값 삽입 (안전하게 처리)
+            tradeInfo.querySelector('[data-field="title"]').textContent = postTitle;
+            tradeInfo.querySelector('[data-field="member"]').textContent = postArtist;
+            tradeInfo.querySelector('[data-field="place"]').textContent = postLocation;
+            tradeInfo.querySelector('[data-field="sellstatus"]').textContent = `거래${postStatus}`;
+            tradeInfo.querySelector('[data-field="seller"]').textContent = postAuthor;
 
 
-        //    companionInfo.style.display = 'block';
-        //} else {
-        //    companionInfo.style.display = 'none';
-        //}
+            tradeInfo.style.display = 'block';
+        } else {
+            tradeInfo.style.display = 'none';
+        }
 
         // ① 이전 채팅 불러오기
         fetch(`/chatting/fetch-messages/${roomName}/`)
