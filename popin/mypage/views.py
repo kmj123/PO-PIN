@@ -395,6 +395,8 @@ def update_profile(request):
             
 
             user.save()
+            # 세션도 수동 갱신
+            request.session['nickname'] = user.nickname
             return JsonResponse({'message': '프로필 수정 성공'}, status=200)
 
         except Exception as e:
