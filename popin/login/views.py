@@ -81,6 +81,7 @@ def kakao_callback(request):
 
     # 세션 저장
     request.session['user_id'] = user.user_id
+    request.session['nickname'] = user.nickname
 
     # ✅ 가입 진행 여부 판단 (주소, 최애 멤버 여부)
     if not user.address or user.bias_member.count() == 0:

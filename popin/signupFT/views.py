@@ -171,6 +171,9 @@ def member_select(request):
                 user.bias_group.set(group_queryset_list)
                 user.bias_member.set(member_queryset_list)
                 user.save()
+                
+                request.session['user_id'] = user.user_id
+                request.session['nickname'] = user.nickname
 
                 return redirect('signup:completed')  
             except (User.DoesNotExist, Group.DoesNotExist, Member.DoesNotExist) as e:
