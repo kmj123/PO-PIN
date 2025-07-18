@@ -47,9 +47,9 @@
             <h3>로그인</h3>
             {% if messages %}
             <ul>
-             {% for message in messages %}
-                 <li style="color:red; font-size: 14px; margin-bottom: 10px;">{{ message }}</li>
-             {% endfor %}
+             {% comment %} {% for message in messages %} {% endcomment %}
+                <li style="color:red; font-size: 14px; margin-bottom: 10px;">{{ message }}</li>
+             {% comment %} {% endfor %} {% endcomment %}
              </ul>
             {% endif %}
            <label>아이디</label>

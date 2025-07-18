@@ -851,7 +851,13 @@
                     <label for="poca_state"> 포토카드 상태 <span class="required">*</span></label>
                     <select name="poca_state" style="color: #757575;" id="poca_state">
                         {%for value, label in  poca_state_choices %}
-                        <option value="{{value}}"{% if photocard.poca_state == value %}selected{% endif %}>{{label}}</option>
+                            {% if value == "상" %}
+                                <option value="{{value}}"{% if photocard.poca_state == value %}selected{% endif %}>{{label}} - 미개봉 또는 하자 없음</option>
+                            {% elif value == "중" %}
+                                <option value="{{value}}"{% if photocard.poca_state == value %}selected{% endif %}>{{label}} - 눈에 보이는 하자는 없음</option>
+                            {% elif value == "하" %}
+                                <option value="{{value}}"{% if photocard.poca_state == value %}selected{% endif %}>{{label}} - 찍힘, 기스 등의 눈에 보이는 하자 있음</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </div>

@@ -389,19 +389,14 @@ def update_profile(request):
                 m2 = Member.objects.get(name=second_member, group=g2)
                 groups.append(g2)
                 members.append(m2)
-            else:
-                bias_pairs = zip(user.bias_group.all(), user.bias_member.all())
-                return render(request, 'mypage/profile.html', {
-                    'bias_pairs': bias_pairs,
-                    'nickname': user.nickname,
-                    'introduction': user.introduction,
-                    'profile_image': user.profile_image.url if user.profile_image else '',
-                })
+            
             user.bias_group.set(groups)
             user.bias_member.set(members)
             
 
             user.save()
+            # 세션도 수동 갱신
+            request.session['nickname'] = user.nickname
             return JsonResponse({'message': '프로필 수정 성공'}, status=200)
 
         except Exception as e:
